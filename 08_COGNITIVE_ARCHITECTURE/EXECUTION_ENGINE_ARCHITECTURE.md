@@ -1,35 +1,49 @@
 # EXECUTION_ENGINE_ARCHITECTURE.md
 
 # Art of Business
-## Execution Engine Architecture v1.0
 
-### Purpose
+## Execution Engine Architecture v2.0
 
-The Execution Engine is the operational action layer of the AI-Orchestrated Enterprise.
-
-It transforms approved decisions, playbooks, workflows, tasks, and automation requests into controlled execution across agents, tools, MCP servers, enterprise systems, and human workflows.
+**Status:** Canonical Architecture Specification
+**Owner:** AG031_Operations_Manager
+**Architecture Owner:** AG054_Enterprise_Architect
+**Operational Owner:** AG002_Chief_Orchestrator
+**Audit Owner:** AG003_AI_Auditor
 
 ---
 
-# Mission
+# 1. Purpose
 
-Convert approved decisions into reliable action.
+The Execution Engine is the operational realization layer of the AI-Orchestrated Enterprise.
+
+Its purpose is to transform approved decisions into coordinated actions, workflows, agent activities, human tasks, and measurable outcomes.
+
+The Execution Engine closes the gap between thinking and doing.
+
+---
+
+# 2. Mission
+
+Convert enterprise intent into governed execution.
 
 ```text
 Decision
 → Execution Plan
-→ Agent Assignment
-→ Tool Invocation
-→ Monitoring
-→ Outcome
+→ Workflow
+→ Tasks
+→ Actions
+→ Results
+→ Feedback
 → Learning
 ```
 
 ---
 
-# Architectural Position
+# 3. Architectural Position
 
 ```text
+Enterprise Ontology
+        ↓
 Enterprise Knowledge Graph
         ↓
 Agent Memory System
@@ -47,303 +61,619 @@ Digital Twin Enterprise
 
 ---
 
-# Core Responsibilities
+# 4. Core Principle
 
-- execution planning;
-- task decomposition;
-- agent assignment;
-- workflow activation;
-- playbook execution;
-- tool invocation;
-- MCP server routing;
-- execution monitoring;
-- exception handling;
-- outcome capture.
+No approved decision should exist without a path to execution.
 
----
+Every execution must be:
 
-# Execution Inputs
-
-## Approved Decisions
-
-From Decision Registry.
+- traceable;
+- governed;
+- measurable;
+- auditable;
+- linked to outcomes.
 
 ---
 
-## Playbooks
+# 5. Execution Layer Model
 
-From Playbook Registry.
+## L0 Execution Intake Layer
 
----
+Receives:
 
-## Workflows
+- approved decisions;
+- playbooks;
+- workflows;
+- escalation requests;
+- automation triggers.
 
-From AI Operating System and process architecture.
+Purpose:
 
----
-
-## Agent Capabilities
-
-From Agent Library and Function Registry.
-
----
-
-## Tools and MCP Servers
-
-From Tool Registry and MCP Integration Layer.
+Create executable work.
 
 ---
 
-# Execution Lifecycle
+## L1 Planning Layer
 
-```text
-Receive Approved Action
-↓
-Validate Authority
-↓
-Create Execution Plan
-↓
-Assign Agents
-↓
-Invoke Tools
-↓
-Monitor Progress
-↓
-Handle Exceptions
-↓
-Record Outcome
-↓
-Update Memory
-```
+Creates:
+
+- execution plans;
+- task structures;
+- dependencies;
+- schedules;
+- ownership assignments.
 
 ---
 
-# Execution Record Schema
+## L2 Orchestration Layer
+
+Coordinates:
+
+- agents;
+- humans;
+- systems;
+- MCP tools;
+- workflows.
+
+---
+
+## L3 Action Layer
+
+Performs:
+
+- agent actions;
+- workflow steps;
+- tool invocations;
+- approvals;
+- operational activities.
+
+---
+
+## L4 Monitoring Layer
+
+Tracks:
+
+- progress;
+- KPIs;
+- incidents;
+- blockers;
+- SLA compliance.
+
+---
+
+## L5 Learning Layer
+
+Captures:
+
+- execution outcomes;
+- lessons learned;
+- process improvements;
+- playbook enhancements.
+
+---
+
+# 6. Execution Object Model
 
 ```yaml
 execution_id:
 source_decision:
-objective:
+execution_plan:
 owner:
-assigned_agents:
-workflow:
-tools_used:
 status:
-started_at:
-completed_at:
-outcome:
-exceptions:
-related_memory:
+priority:
+workflow:
+tasks:
+dependencies:
+assigned_agents:
+assigned_humans:
+required_tools:
+required_resources:
+risk_controls:
+kpis:
+start_date:
+end_date:
+outcomes:
 ```
 
 ---
 
-# Execution Statuses
+# 7. Execution Plan Model
+
+Execution plans define how decisions become outcomes.
+
+Structure:
+
+```text
+Objective
+↓
+Milestones
+↓
+Workflows
+↓
+Tasks
+↓
+Actions
+↓
+Results
+```
+
+Execution plan components:
+
+- objective;
+- scope;
+- timeline;
+- ownership;
+- dependencies;
+- KPIs;
+- risk controls.
+
+---
+
+# 8. Workflow Model
+
+Canonical workflow:
+
+```text
+Trigger
+↓
+Preparation
+↓
+Execution
+↓
+Validation
+↓
+Completion
+↓
+Review
+```
+
+Workflow attributes:
+
+```yaml
+workflow_id:
+workflow_type:
+workflow_owner:
+trigger:
+steps:
+controls:
+outputs:
+status:
+```
+
+---
+
+# 9. Task Model
+
+Task schema:
+
+```yaml
+task_id:
+objective:
+owner:
+executor:
+priority:
+status:
+dependencies:
+deadline:
+expected_result:
+actual_result:
+```
+
+Task statuses:
 
 ```text
 Planned
-Queued
+Assigned
 In Progress
 Blocked
-Escalated
 Completed
-Failed
 Cancelled
-Retried
 ```
 
 ---
 
-# Execution Modes
+# 10. Agent Execution Model
 
-## Manual-Assisted Execution
-
-AI prepares tasks and humans execute or approve.
-
----
-
-## Agent-Led Execution
-
-Agents coordinate and perform approved work.
-
----
-
-## Automated Execution
-
-Workflow runs through tools, APIs, and MCP servers.
-
----
-
-## Hybrid Execution
-
-AI agents, systems, and humans collaborate.
-
----
-
-# Tool Invocation Governance
-
-Before using any tool, the Execution Engine checks:
-
-- task authorization;
-- agent authority;
-- tool permissions;
-- risk level;
-- audit requirements;
-- escalation rules.
-
----
-
-# MCP Routing
-
-MCP servers expose external capabilities.
-
-The Execution Engine routes requests based on:
-
-```yaml
-capability_required:
-server_available:
-security_level:
-input_requirements:
-expected_output:
-execution_risk:
-```
-
----
-
-# Exception Handling
-
-Exceptions include:
-
-- tool failure;
-- missing data;
-- authority conflict;
-- workflow blockage;
-- external system error;
-- compliance restriction.
-
-Exception flow:
+Agents execute work according to authority and capability.
 
 ```text
-Exception Detected
+Agent
 ↓
-Classify Severity
+Task
 ↓
-Retry / Reroute / Escalate
+Action
 ↓
-Record Exception
+Result
 ↓
-Update Memory
+Feedback
+```
+
+Agent execution constraints:
+
+- authority validation;
+- policy validation;
+- tool permissions;
+- audit logging.
+
+---
+
+# 11. Human Execution Model
+
+Some tasks require human participation.
+
+Examples:
+
+- approvals;
+- negotiations;
+- legal review;
+- hiring decisions.
+
+Human execution must remain traceable within the same execution chain.
+
+---
+
+# 12. Multi-Agent Orchestration
+
+Complex execution may involve multiple agents.
+
+Example:
+
+```text
+Chief Orchestrator
+↓
+Sales Manager
+↓
+Finance Manager
+↓
+Legal Manager
+↓
+Operations Manager
+```
+
+Responsibilities:
+
+- sequencing;
+- dependency management;
+- conflict resolution;
+- escalation.
+
+---
+
+# 13. MCP Execution Integration
+
+Execution Engine uses MCP infrastructure to perform actions.
+
+Examples:
+
+- CRM updates;
+- ERP transactions;
+- email automation;
+- document generation;
+- analytics queries.
+
+Execution object extension:
+
+```yaml
+mcp_servers:
+mcp_tools:
+mcp_resources:
+execution_permissions:
 ```
 
 ---
 
-# Monitoring
+# 14. Governance Validation Layer
 
-Execution monitoring includes:
+Before execution:
 
-- progress tracking;
-- SLA tracking;
-- task completion;
-- tool success rate;
-- error rate;
-- escalation rate.
+```text
+Authority Check
+↓
+Policy Check
+↓
+Risk Check
+↓
+Compliance Check
+↓
+Resource Check
+```
 
----
+Outputs:
 
-# Integration Points
-
-## Decision Registry
-
-Provides approved decisions and receives execution outcomes.
-
----
-
-## Playbook Registry
-
-Provides standardized execution patterns.
-
----
-
-## Agent Communication Protocol
-
-Coordinates agent-to-agent execution communication.
+```text
+Approved for Execution
+Requires Approval
+Escalated
+Blocked
+```
 
 ---
 
-## AI Operating System
+# 15. Monitoring Model
 
-Provides orchestration environment.
+Execution monitoring tracks:
 
----
+- progress;
+- deadlines;
+- quality;
+- risks;
+- KPI achievement;
+- resource usage.
 
-## Digital Twin Enterprise
+Monitoring events:
 
-Receives execution state updates.
-
----
-
-## Agent Memory System
-
-Stores execution outcomes and lessons learned.
-
----
-
-# Ownership
-
-Primary Owner:
-
-AG052_AI_Automation_Manager
-
-Operational Owner:
-
-AG002_Chief_Orchestrator
-
-Architecture Owner:
-
-AG054_Enterprise_Architect
-
-Audit Owner:
-
-AG003_AI_Auditor
+```text
+Task Started
+Task Completed
+Workflow Delayed
+Risk Triggered
+Approval Granted
+Execution Failed
+```
 
 ---
 
-# KPIs
+# 16. Outcome Management
 
-- Execution Success Rate
-- Workflow Completion Rate
-- Automation Reliability
-- Tool Invocation Success Rate
-- Exception Resolution Time
-- SLA Compliance
-- Outcome Capture Rate
+Execution outcomes must be recorded.
+
+Outcome schema:
+
+```yaml
+outcome_id:
+expected_result:
+actual_result:
+variance:
+root_causes:
+lessons_learned:
+```
+
+Outcome categories:
+
+```text
+Success
+Partial Success
+Failure
+Cancelled
+```
 
 ---
 
-# Risks
+# 17. Knowledge Graph Integration
 
-Potential failures:
+Execution updates enterprise state.
 
-- unauthorized execution;
-- wrong agent assignment;
-- tool misuse;
-- incomplete monitoring;
-- unrecorded outcomes;
-- automation loop failure.
+Graph updates:
+
+```text
+Task Completed
+↓
+Workflow Updated
+↓
+Capability Updated
+↓
+Performance Updated
+```
+
+Purpose:
+
+Keep enterprise knowledge synchronized.
+
+---
+
+# 18. Memory Integration
+
+Execution creates memory objects.
+
+Examples:
+
+- execution history;
+- lessons learned;
+- successful patterns;
+- failed approaches.
+
+Purpose:
+
+Improve future execution.
+
+---
+
+# 19. Decision Registry Integration
+
+Every execution must be linked to a source decision.
+
+```text
+Decision
+↓
+Execution Plan
+↓
+Execution Results
+↓
+Outcome Review
+```
+
+Purpose:
+
+Preserve accountability.
+
+---
+
+# 20. Digital Twin Integration
+
+Execution changes enterprise state.
+
+```text
+Execution Event
+↓
+State Change
+↓
+Knowledge Graph Update
+↓
+Digital Twin Update
+```
+
+Purpose:
+
+Maintain a current enterprise model.
+
+---
+
+# 21. Escalation Model
+
+Escalation triggers:
+
+- blocked task;
+- missed SLA;
+- approval delay;
+- resource shortage;
+- risk threshold exceeded.
+
+Escalation path:
+
+```text
+Executor
+↓
+Manager
+↓
+Chief Orchestrator
+↓
+CEO
+```
+
+---
+
+# 22. Execution Lifecycle
+
+```text
+Receive Decision
+↓
+Create Plan
+↓
+Assign Ownership
+↓
+Validate Governance
+↓
+Execute
+↓
+Monitor
+↓
+Measure Outcome
+↓
+Capture Learning
+↓
+Close
+```
+
+---
+
+# 23. Governance
+
+## AG031_Operations_Manager
+
+Responsibilities:
+
+- execution performance;
+- workflow effectiveness;
+- operational outcomes.
+
+---
+
+## AG002_Chief_Orchestrator
+
+Responsibilities:
+
+- orchestration;
+- dependency management;
+- escalation routing;
+- execution governance.
+
+---
+
+## AG054_Enterprise_Architect
+
+Responsibilities:
+
+- execution architecture;
+- alignment with enterprise model.
+
+---
+
+## AG003_AI_Auditor
+
+Responsibilities:
+
+- execution audit;
+- traceability validation;
+- compliance review.
+
+---
+
+# 24. KPIs
+
+- Execution Success Rate;
+- Time To Execute;
+- SLA Compliance;
+- Task Completion Rate;
+- Workflow Efficiency;
+- Outcome Achievement Rate;
+- Escalation Frequency;
+- Automation Coverage.
+
+---
+
+# 25. Risks
+
+Potential risks:
+
+- execution drift;
+- missed deadlines;
+- resource conflicts;
+- governance bypass;
+- workflow failures;
+- tool failures;
+- escalation delays.
 
 Mitigations:
 
-- authority validation;
-- audit logging;
-- monitoring dashboards;
-- escalation controls;
-- execution records;
-- human override.
+- monitoring;
+- governance controls;
+- escalation management;
+- audit trails;
+- KPI tracking.
 
 ---
 
-# Architectural Role
+# 26. Future Evolution
 
-The Execution Engine is the action layer of Art of Business.
+Planned capabilities:
 
-It transforms approved decisions and playbooks into coordinated enterprise execution while preserving governance, observability, auditability, and continuous learning.
+- autonomous workflow generation;
+- adaptive execution planning;
+- predictive execution monitoring;
+- self-healing workflows;
+- dynamic orchestration;
+- simulation-based execution optimization.
+
+---
+
+# 27. Architectural Role
+
+The Execution Engine is the enterprise action layer of Art of Business.
+
+Ontology defines meaning.
+
+The Knowledge Graph connects meaning.
+
+Memory preserves meaning.
+
+Context assembles meaning.
+
+Reasoning creates recommendations.
+
+Decision Registry governs choices.
+
+The Execution Engine turns choices into results.
+
+Without execution, decisions remain intentions.
+
+With execution, decisions become enterprise outcomes.
