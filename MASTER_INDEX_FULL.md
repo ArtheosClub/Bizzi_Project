@@ -4,10 +4,10 @@
 
 ## Master Index Full
 
-**Version:** 1.1  
-**Status:** Canonical Repository Registry  
-**Repository:** `ArtheosClub/Bizzi_Project`  
-**Owner:** AG054_Enterprise_Architect  
+**Version:** 1.2
+**Status:** Canonical Repository Registry
+**Repository:** `ArtheosClub/Bizzi_Project`
+**Owner:** AG054_Enterprise_Architect
 **Approved By:** AG001_CEO
 
 ---
@@ -160,11 +160,6 @@ Canonical Documents:
 
 Status: Implemented
 
-Note:
-
-AI Operating System documents were normalized into this folder.
-The duplicate folder `09_AI_OPERATING_SYSTEM` has been removed.
-
 ---
 
 # 08_COGNITIVE_ARCHITECTURE
@@ -172,6 +167,7 @@ The duplicate folder `09_AI_OPERATING_SYSTEM` has been removed.
 Documents:
 
 - ENTERPRISE_DATA_MODEL.md
+- ENTERPRISE_ONTOLOGY.md
 - ENTERPRISE_KNOWLEDGE_GRAPH.md
 - AGENT_MEMORY_SYSTEM.md
 - CONTEXT_ENGINE_ARCHITECTURE.md
