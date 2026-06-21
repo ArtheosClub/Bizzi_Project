@@ -4,13 +4,13 @@
 
 **Version:** 1.0 Foundation  
 **Repository:** `ArtheosClub/Bizzi_Project`  
-**Status:** Repository Reconstruction Phase
+**Status:** Canonical Repository Reconstruction in Progress
 
 ---
 
 ## 1. Purpose
 
-Art of Business is an enterprise architecture framework for designing an AI-orchestrated company operated through agents, domains, governance, data, knowledge, playbooks, MCP infrastructure, and execution systems.
+Art of Business is an enterprise architecture framework for designing an AI-orchestrated company operated through agents, domains, governance, capabilities, data, knowledge, playbooks, MCP infrastructure, and execution systems.
 
 The framework is based on the operating chain:
 
@@ -36,7 +36,7 @@ Results
 
 ---
 
-## 2. Repository Structure
+## 2. Canonical Repository Structure
 
 ```text
 00_VISION/
@@ -54,6 +54,9 @@ Results
 MASTER_INDEX_FULL.md
 README.md
 ```
+
+> Note: `07_AI_OPERATING_SYSTEM/` is the canonical folder for AI Operating System documents.  
+> `09_MCP_INFRASTRUCTURE/` is reserved for MCP infrastructure documents.
 
 ---
 
@@ -77,12 +80,23 @@ README.md
 
 This repository is being reconstructed as the canonical GitHub home for **Art of Business Enterprise Architecture v1.0**.
 
+Completed and normalized core areas include:
+
+```text
+01_GOVERNANCE/
+02_CAPABILITY_MAP/
+03_FUNCTION_REGISTRY/
+04_AGENT_LIBRARY/
+07_AI_OPERATING_SYSTEM/
+08_COGNITIVE_ARCHITECTURE/
+```
+
 Current focus:
 
 ```text
-Repository Reconstruction
+Canonical Repository Cleanup
 ↓
-Canonical Document Recovery
+Master Index Synchronization
 ↓
 MCP Reference Architecture
 ↓
@@ -98,7 +112,13 @@ Implementation Roadmap
 Start here:
 
 - `MASTER_INDEX_FULL.md` — full architecture registry and navigation map.
-- `ART_OF_BUSINESS_REPOSITORY_RECONSTRUCTION.md` — recovery plan for canonical repository assembly.
+- `01_GOVERNANCE/GOVERNANCE_MODEL.md` — governance model.
+- `02_CAPABILITY_MAP/CAPABILITY_MAP.md` — enterprise capability map.
+- `03_FUNCTION_REGISTRY/ENTERPRISE_FUNCTION_REGISTRY.md` — enterprise function registry.
+- `07_AI_OPERATING_SYSTEM/AI_OPERATING_SYSTEM.md` — AI Operating System architecture.
+- `07_AI_OPERATING_SYSTEM/AGENT_COMMUNICATION_PROTOCOL.md` — agent communication protocol.
+- `07_AI_OPERATING_SYSTEM/PLAYBOOK_REGISTRY.md` — executable playbook registry.
+- `08_COGNITIVE_ARCHITECTURE/ENTERPRISE_KNOWLEDGE_GRAPH.md` — enterprise knowledge graph architecture.
 
 ---
 
@@ -107,3 +127,5 @@ Start here:
 No placeholder document should become canonical.
 
 Every final file must be reconstructed from the full architecture specification and placed in the correct repository folder.
+
+Canonical folder numbering must remain stable. Duplicate layer folders should be removed after safe migration and SHA verification.
