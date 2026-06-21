@@ -1,23 +1,34 @@
 # DECISION_REGISTRY_ARCHITECTURE.md
 
 # Art of Business
-## Decision Registry Architecture v1.0
 
-### Purpose
+## Decision Registry Architecture v2.0
 
-The Decision Registry is the enterprise system of record for important decisions made by humans, AI agents, governance bodies, and automated workflows.
-
-It ensures that every significant decision is traceable, explainable, auditable, reviewable, and connected to business outcomes.
+**Status:** Canonical Architecture Specification
+**Owner:** AG004_Business_Analyst
+**Architecture Owner:** AG054_Enterprise_Architect
+**Operational Owner:** AG002_Chief_Orchestrator
+**Audit Owner:** AG003_AI_Auditor
 
 ---
 
-# Mission
+# 1. Purpose
 
-Transform decisions from isolated moments into reusable enterprise knowledge.
+The Decision Registry is the authoritative system of record for enterprise decisions.
+
+It captures, governs, traces, evaluates, and preserves all material decisions made by humans, AI agents, workflows, and orchestration systems.
+
+The registry ensures that enterprise decisions become reusable organizational knowledge rather than disappearing inside conversations, meetings, emails, or workflows.
+
+---
+
+# 2. Mission
+
+Create a complete decision memory for the AI-Orchestrated Enterprise.
 
 ```text
-Context
-→ Reasoning
+Reasoning
+→ Recommendation
 → Decision
 → Approval
 → Execution
@@ -25,11 +36,15 @@ Context
 → Learning
 ```
 
+The Decision Registry preserves the entire chain.
+
 ---
 
-# Architectural Position
+# 3. Architectural Position
 
 ```text
+Enterprise Ontology
+        ↓
 Enterprise Knowledge Graph
         ↓
 Agent Memory System
@@ -47,42 +62,99 @@ Digital Twin Enterprise
 
 ---
 
-# Core Responsibilities
+# 4. Core Principle
 
-- decision capture;
-- decision classification;
-- decision approval tracking;
-- rationale documentation;
-- authority verification;
-- outcome tracking;
-- decision auditability;
-- decision reuse;
-- precedent management;
-- governance traceability.
+Every material enterprise decision must be:
+
+- identifiable;
+- explainable;
+- traceable;
+- reviewable;
+- auditable;
+- linked to outcomes.
+
+No important decision should exist without recorded rationale.
 
 ---
 
-# Decision Types
+# 5. Decision Lifecycle
+
+```text
+Issue Identified
+↓
+Context Assembled
+↓
+Reasoning Performed
+↓
+Options Generated
+↓
+Decision Proposed
+↓
+Approval Obtained
+↓
+Decision Registered
+↓
+Execution Initiated
+↓
+Outcome Recorded
+↓
+Lessons Learned
+```
+
+---
+
+# 6. Decision Object Model
+
+Canonical Decision Object:
+
+```yaml
+decision_id:
+decision_title:
+decision_type:
+decision_domain:
+decision_owner:
+decision_status:
+objective:
+context:
+assumptions:
+evidence:
+options:
+selected_option:
+rationale:
+risks:
+approvals:
+execution_plan:
+outcomes:
+confidence:
+priority:
+created_at:
+updated_at:
+closed_at:
+```
+
+---
+
+# 7. Decision Types
 
 ## Strategic Decisions
 
 Examples:
 
-- market entry;
-- business model changes;
-- enterprise roadmap changes;
-- major investments.
+- market expansion;
+- acquisitions;
+- transformation programs;
+- capability investments.
 
 ---
 
-## Governance Decisions
+## Tactical Decisions
 
 Examples:
 
-- authority changes;
-- policy approvals;
-- agent role changes;
-- escalation rule updates.
+- vendor selection;
+- project prioritization;
+- budget allocation;
+- staffing plans.
 
 ---
 
@@ -90,258 +162,482 @@ Examples:
 
 Examples:
 
-- workflow changes;
-- resource allocation;
-- supplier selection;
-- delivery priorities.
+- workflow routing;
+- issue resolution;
+- procurement approvals;
+- escalation actions.
 
 ---
 
-## Financial Decisions
+## Compliance Decisions
 
 Examples:
 
-- budget approvals;
-- funding decisions;
-- pricing decisions;
-- investment choices.
+- regulatory interpretations;
+- policy exceptions;
+- audit responses.
 
 ---
 
-## Technology Decisions
+## Automated Decisions
 
 Examples:
 
-- platform selection;
-- integration architecture;
-- automation approval;
-- MCP server adoption.
+- workflow automation actions;
+- AI recommendations accepted automatically;
+- system-generated approvals.
 
 ---
 
-## AI Decisions
-
-Examples:
-
-- agent activation;
-- tool execution;
-- automation routing;
-- reasoning-based recommendations.
-
----
-
-# Decision Lifecycle
-
-```text
-Proposal
-↓
-Context Assembly
-↓
-Reasoning
-↓
-Authority Check
-↓
-Approval / Rejection
-↓
-Execution Routing
-↓
-Outcome Monitoring
-↓
-Retrospective Review
-```
-
----
-
-# Decision Record Schema
-
-```yaml
-decision_id:
-title:
-decision_type:
-domain:
-owner:
-proposed_by:
-approved_by:
-authority_level:
-context:
-options_considered:
-selected_option:
-rationale:
-risks:
-constraints:
-expected_outcome:
-actual_outcome:
-status:
-created_at:
-updated_at:
-related_entities:
-related_memory:
-related_execution:
-```
-
----
-
-# Decision Statuses
+# 8. Decision Status Model
 
 ```text
 Draft
+↓
+Proposed
+↓
 Under Review
+↓
+Approved
+↓
+Rejected
+↓
+Executed
+↓
+Closed
+```
+
+Alternative states:
+
+```text
+Escalated
+Deferred
+Superseded
+Cancelled
+```
+
+---
+
+# 9. Decision Context Model
+
+Every decision must be linked to:
+
+```text
+Context
+├── Objective
+├── Constraints
+├── Policies
+├── Stakeholders
+├── Risks
+├── Assumptions
+└── Dependencies
+```
+
+Purpose:
+
+Preserve decision circumstances.
+
+---
+
+# 10. Evidence Model
+
+Decision evidence may include:
+
+- reports;
+- metrics;
+- financial analysis;
+- customer feedback;
+- legal opinions;
+- operational data;
+- simulations;
+- external research.
+
+Evidence schema:
+
+```yaml
+evidence_id:
+source:
+source_type:
+reliability:
+summary:
+linked_documents:
+```
+
+---
+
+# 11. Assumption Registry
+
+Every material decision should capture assumptions.
+
+Schema:
+
+```yaml
+assumption_id:
+statement:
+confidence:
+owner:
+validation_status:
+impact_if_invalid:
+```
+
+Purpose:
+
+Prevent hidden reasoning.
+
+---
+
+# 12. Option Registry
+
+Decision options should be recorded.
+
+```text
+Option A
+Option B
+Option C
+```
+
+Each option contains:
+
+```yaml
+option_id:
+description:
+advantages:
+disadvantages:
+risks:
+estimated_impact:
+```
+
+Purpose:
+
+Preserve alternative paths not selected.
+
+---
+
+# 13. Approval Model
+
+Approvals must be traceable.
+
+Approval schema:
+
+```yaml
+approval_id:
+approver:
+role:
+authority_level:
+status:
+comments:
+approved_at:
+```
+
+Approval states:
+
+```text
+Pending
 Approved
 Rejected
 Escalated
-Executed
-Superseded
-Retired
 ```
 
 ---
 
-# Authority Integration
+# 14. Outcome Model
 
-Every decision must be checked against:
+Decision outcomes are mandatory for learning.
 
-- Authority Matrix;
-- Decision Routing Model;
-- Escalation Matrix;
-- RACI Matrix;
-- Governance Model.
+Schema:
 
----
+```yaml
+outcome_id:
+outcome_type:
+actual_result:
+expected_result:
+variance:
+lessons_learned:
+review_date:
+```
 
-# Decision Traceability
-
-Each decision links to:
+Outcome categories:
 
 ```text
-Context Package
-Reasoning Trace
-Approvals
-Execution Record
-Outcome Record
-Lessons Learned
+Successful
+Partially Successful
+Failed
+In Progress
+Unknown
 ```
 
 ---
 
-# Decision Registry Services
+# 15. Ontology Integration
 
-## Decision Capture Service
+Decision Registry implements the Decision Ontology.
 
-Creates structured decision records.
+Mapped concepts:
 
----
+```text
+Decision
+Decision Context
+Evidence
+Assumption
+Option
+Approval
+Outcome
+Audit Trail
+```
 
-## Authority Validation Service
-
-Checks whether the decision owner has authority.
-
----
-
-## Decision Search Service
-
-Retrieves previous decisions and precedents.
-
----
-
-## Outcome Tracking Service
-
-Links decisions to execution results.
+Every decision object must map to ontology concepts.
 
 ---
 
-## Audit Service
+# 16. Knowledge Graph Integration
 
-Supports review and compliance validation.
+Every material decision becomes graph entities.
 
----
+```text
+Decision
+↓
+Evidence
+↓
+Policies
+↓
+Risks
+↓
+Approvals
+↓
+Outcome
+```
 
-# Integration Points
+Graph capabilities:
 
-## Reasoning Engine
-
-Provides options, rationale, assumptions, and recommendations.
-
----
-
-## Execution Engine
-
-Receives approved decisions for implementation.
-
----
-
-## Enterprise Knowledge Graph
-
-Links decisions to entities, processes, agents, and outcomes.
-
----
-
-## Agent Memory System
-
-Stores decision memory and lessons learned.
+- decision traceability;
+- dependency analysis;
+- impact analysis;
+- decision discovery.
 
 ---
 
-## Governance Layer
+# 17. Memory Integration
 
-Controls authority, escalation, and approval rules.
+Every registered decision creates Decision Memory.
 
----
+Decision memory includes:
 
-# Governance
+- context;
+- assumptions;
+- rationale;
+- approvals;
+- outcome;
+- lessons learned.
 
-Primary Owner:
+Purpose:
 
-AG001_CEO
-
-Operational Owner:
-
-AG002_Chief_Orchestrator
-
-Architecture Owner:
-
-AG054_Enterprise_Architect
-
-Audit Owner:
-
-AG003_AI_Auditor
+Enable future reuse.
 
 ---
 
-# KPIs
+# 18. Reasoning Engine Integration
 
-- Decision Traceability Score
-- Approval Accuracy
-- Decision Outcome Tracking Rate
-- Decision Reuse Rate
-- Escalation Compliance
-- Reasoning Trace Completeness
-- Audit Readiness Score
+Reasoning Engine outputs:
+
+```text
+Context
+Assumptions
+Options
+Recommendation
+Risks
+Confidence
+```
+
+Decision Registry receives and preserves them.
 
 ---
 
-# Risks
+# 19. Execution Engine Integration
 
-Potential failures:
+Approved decisions generate execution objects.
+
+```text
+Decision
+↓
+Execution Plan
+↓
+Tasks
+↓
+Workflow
+↓
+Execution Engine
+```
+
+Execution results return to the Decision Registry.
+
+---
+
+# 20. Digital Twin Integration
+
+Decision simulations may occur before approval.
+
+```text
+Decision Option
+↓
+Digital Twin Simulation
+↓
+Predicted Outcome
+↓
+Decision Evaluation
+```
+
+Simulation results become evidence.
+
+---
+
+# 21. Decision Traceability Model
+
+Full trace chain:
+
+```text
+Objective
+↓
+Context
+↓
+Evidence
+↓
+Assumptions
+↓
+Options
+↓
+Decision
+↓
+Approval
+↓
+Execution
+↓
+Outcome
+↓
+Lesson Learned
+```
+
+This chain is mandatory for strategic decisions.
+
+---
+
+# 22. Decision Quality Controls
+
+Controls:
+
+- evidence validation;
+- assumption tracking;
+- approval verification;
+- authority validation;
+- risk review;
+- outcome review;
+- audit trails.
+
+---
+
+# 23. Governance
+
+## AG004_Business_Analyst
+
+Responsibilities:
+
+- decision quality;
+- decision structure;
+- business impact evaluation.
+
+---
+
+## AG002_Chief_Orchestrator
+
+Responsibilities:
+
+- decision routing;
+- escalation management;
+- approval orchestration.
+
+---
+
+## AG054_Enterprise_Architect
+
+Responsibilities:
+
+- architecture alignment;
+- decision framework evolution.
+
+---
+
+## AG003_AI_Auditor
+
+Responsibilities:
+
+- decision audit;
+- rationale validation;
+- approval traceability;
+- governance compliance.
+
+---
+
+# 24. KPIs
+
+- Decision Traceability Rate;
+- Decision Quality Score;
+- Outcome Accuracy;
+- Assumption Validation Rate;
+- Approval Compliance Rate;
+- Decision Reuse Rate;
+- Strategic Alignment Score;
+- Time To Decision.
+
+---
+
+# 25. Risks
+
+Potential risks:
 
 - undocumented decisions;
-- unclear authority;
-- missing rationale;
-- poor outcome tracking;
-- repeated bad decisions;
-- governance bypass.
+- weak rationale;
+- missing evidence;
+- approval bypass;
+- outcome not tracked;
+- hidden assumptions;
+- decision duplication.
 
 Mitigations:
 
-- mandatory decision records;
-- authority validation;
-- audit review;
-- outcome tracking;
-- retrospective learning.
+- mandatory registration;
+- governance validation;
+- audit reviews;
+- evidence requirements;
+- outcome reviews.
 
 ---
 
-# Architectural Role
+# 26. Future Evolution
 
-The Decision Registry is the institutional decision memory of Art of Business.
+Planned capabilities:
 
-It connects reasoning, authority, approval, execution, outcomes, and learning into a governed decision intelligence system that makes enterprise decisions transparent, reusable, and accountable.
+- autonomous decision analysis;
+- decision pattern discovery;
+- decision recommendation ranking;
+- predictive outcome modeling;
+- cross-enterprise decision intelligence;
+- decision quality benchmarking.
+
+---
+
+# 27. Architectural Role
+
+The Decision Registry is the enterprise decision memory of Art of Business.
+
+Ontology defines decision meaning.
+
+The Knowledge Graph connects decisions.
+
+Memory preserves decisions.
+
+Reasoning proposes decisions.
+
+The Decision Registry governs decisions.
+
+Execution validates decisions.
+
+Outcomes improve future decisions.
