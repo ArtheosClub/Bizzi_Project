@@ -2,7 +2,7 @@
 
 # Art of Business
 
-## Enterprise Knowledge Graph Architecture v2.0
+## Enterprise Knowledge Graph Architecture v2.1
 
 **Status:** Canonical Architecture Specification  
 **Owner:** AG053_Data_Manager  
@@ -13,41 +13,13 @@
 
 # 1. Purpose
 
-The Enterprise Knowledge Graph (EKG) is the ontology-driven semantic memory of the AI-Orchestrated Enterprise.
+The Enterprise Knowledge Graph is the ontology-driven semantic memory of the AI-Orchestrated Enterprise.
 
-It transforms enterprise data, documents, decisions, agents, processes, tools, events, risks, and outcomes into a connected graph of meaning.
-
-The EKG enables:
-
-- organizational memory;
-- context retrieval;
-- agent reasoning;
-- decision traceability;
-- impact analysis;
-- digital twin synchronization;
-- cross-domain knowledge discovery;
-- governed enterprise intelligence.
+It connects enterprise data, documents, decisions, agents, processes, tools, MCP invocations, events, risks, and outcomes into a graph of meaning.
 
 ---
 
-# 2. Mission
-
-Create a living semantic network that connects all relevant enterprise knowledge and makes it usable by humans, AI agents, systems, workflows, and governance mechanisms.
-
-```text
-Ontology
-→ Graph Schema
-→ Enterprise Knowledge
-→ Context
-→ Reasoning
-→ Decisions
-→ Execution
-→ Learning
-```
-
----
-
-# 3. Architectural Position
+# 2. Architectural Position
 
 ```text
 Enterprise Data Model
@@ -66,16 +38,14 @@ Decision Registry
         ↓
 Execution Engine
         ↓
+MCP Infrastructure
+        ↓
 Digital Twin Enterprise
 ```
 
 ---
 
-# 4. Ontology-Driven Graph Principle
-
-The Enterprise Knowledge Graph is not an isolated database.
-
-It is a direct implementation of `ENTERPRISE_ONTOLOGY.md`.
+# 3. Ontology-Driven Graph Principle
 
 ```text
 Ontology Entity
@@ -91,77 +61,11 @@ Ontology Event
 → Graph Event
 ```
 
-All graph structures must be traceable to ontology concepts.
+All graph structures must be traceable to `ENTERPRISE_ONTOLOGY.md`.
 
 ---
 
-# 5. Graph Layer Model
-
-## L0 Core Graph Layer
-
-Contains universal graph primitives:
-
-- Node;
-- Edge;
-- Attribute;
-- Event;
-- State;
-- Context;
-- Timestamp.
-
----
-
-## L1 Enterprise Graph Layer
-
-Contains common enterprise node and edge types:
-
-- Organization;
-- Capability;
-- Function;
-- Process;
-- Agent;
-- Decision;
-- Knowledge Asset;
-- Risk;
-- Tool.
-
----
-
-## L2 Domain Graph Layer
-
-Contains domain-specific graph structures:
-
-- Sales Graph;
-- Finance Graph;
-- Operations Graph;
-- Procurement Graph;
-- Logistics Graph;
-- Compliance Graph;
-- Technology Graph.
-
----
-
-## L3 Industry Graph Extensions
-
-Contains industry-specific graph extensions.
-
-Examples:
-
-- Logistics routes;
-- SaaS subscription objects;
-- Manufacturing assets;
-- Healthcare workflows;
-- Retail channels.
-
----
-
-## L4 Organization-Specific Graph Extensions
-
-Contains company-specific nodes, relationships, metrics, and policies.
-
----
-
-# 6. Canonical Node Registry
+# 4. Canonical Node Registry
 
 ## Organization Nodes
 
@@ -174,8 +78,6 @@ Role
 Agent
 ```
 
----
-
 ## Capability Nodes
 
 ```text
@@ -186,8 +88,6 @@ Service
 Value Stream
 Capability Maturity
 ```
-
----
 
 ## Process Nodes
 
@@ -203,8 +103,6 @@ Output
 Control Point
 ```
 
----
-
 ## Decision Nodes
 
 ```text
@@ -218,8 +116,6 @@ Approval
 Outcome
 Audit Trail
 ```
-
----
 
 ## Knowledge Asset Nodes
 
@@ -236,25 +132,26 @@ Conversation
 Lesson Learned
 ```
 
----
-
-## Technology Nodes
+## Technology & MCP Nodes
 
 ```text
 Application
 Platform
 API
+MCP Gateway
 MCP Server
 MCP Tool
 MCP Resource
 MCP Endpoint
+MCP Permission
+MCP Policy
+MCP Invocation Node
+MCP Result
 Data Store
 Integration
 Automation
 Runtime Environment
 ```
-
----
 
 ## Risk Nodes
 
@@ -271,20 +168,38 @@ Residual Risk
 
 ---
 
-## Measurement Nodes
+# 5. MCP Invocation Node
 
-```text
-Metric
-KPI
-Objective
-Target
-Observation
-Performance Result
+The MCP Invocation Node represents a material invocation of an MCP Tool by an Agent, Workflow, Runtime, or Execution Engine.
+
+Canonical attributes:
+
+```yaml
+node_type: MCP Invocation Node
+invocation_id:
+agent:
+mcp_tool:
+mcp_server:
+input_summary:
+result:
+status:
+risk_level:
+approval_reference:
+audit_reference:
+created_at:
+completed_at:
 ```
+
+Purpose:
+
+- preserve tool execution traceability;
+- connect agent actions to MCP tools;
+- connect MCP tool usage to results;
+- support audit, memory, and digital twin synchronization.
 
 ---
 
-# 7. Canonical Edge Registry
+# 6. Canonical Edge Registry
 
 ## Structural Edges
 
@@ -297,8 +212,6 @@ CONTAINS
 COMPOSED_OF
 ```
 
----
-
 ## Ownership Edges
 
 ```text
@@ -308,8 +221,6 @@ GOVERNS
 ACCOUNTABLE_FOR
 RESPONSIBLE_FOR
 ```
-
----
 
 ## Operational Edges
 
@@ -324,336 +235,119 @@ CONSUMES
 TRIGGERS
 ```
 
----
-
-## Dependency Edges
+## MCP Edges
 
 ```text
-DEPENDS_ON
-REQUIRES
-BLOCKS
-CONSTRAINS
-INFLUENCES
-```
-
----
-
-## Collaboration Edges
-
-```text
-COLLABORATES_WITH
-REPORTS_TO
-ESCALATES_TO
-DELEGATES_TO
-CONSULTS
-INFORMS
-```
-
----
-
-## Decision Edges
-
-```text
-APPROVES
-RECOMMENDS
-DECIDES
-REJECTS
-SUPERSEDES
-VALIDATES
-```
-
----
-
-## Risk Edges
-
-```text
-IMPACTS
-MITIGATES
-CONTROLS
+USED
+BELONGS_TO
+PRODUCED
+INVOKES
 EXPOSES
-REDUCES
+AUTHORIZES
+ROUTES_TO
+RECORDS
 ```
 
----
-
-## Knowledge Edges
-
-```text
-DOCUMENTS
-REFERENCES
-DERIVED_FROM
-UPDATES
-REPLACES
-EXPLAINS
-```
-
----
-
-# 8. Canonical Node Schema
-
-```yaml
-node_id:
-node_type:
-name:
-definition:
-ontology_concept:
-ontology_layer:
-domain:
-owner:
-status:
-attributes:
-metadata:
-source:
-confidence:
-created_at:
-updated_at:
-```
-
----
-
-# 9. Canonical Edge Schema
-
-```yaml
-edge_id:
-edge_type:
-source_node:
-target_node:
-ontology_relationship:
-definition:
-constraints:
-confidence:
-status:
-source:
-created_at:
-updated_at:
-```
-
----
-
-# 10. Graph Constraint Model
-
-Graph constraints implement ontology rules.
-
-## Capability Constraints
-
-```yaml
-Capability:
-  requires:
-    - owner
-    - mapped_function
-  required_edges:
-    - OWNS
-    - ENABLES
-```
-
-## Process Constraints
-
-```yaml
-Process:
-  requires:
-    - owner
-    - input
-    - output
-  required_edges:
-    - BELONGS_TO
-    - PRODUCES
-```
-
-## Agent Constraints
-
-```yaml
-Agent:
-  requires:
-    - role
-    - authority_level
-    - domain
-  required_edges:
-    - REPORTS_TO
-    - USES
-    - EXECUTES
-```
-
-## Decision Constraints
-
-```yaml
-Decision:
-  requires:
-    - context
-    - rationale
-    - owner
-    - status
-  required_edges:
-    - DERIVED_FROM
-    - DECIDES
-    - PRODUCES
-```
-
----
-
-# 11. Core Enterprise Graph Domains
-
-## Strategy Graph
-
-```text
-Vision
-→ Mission
-→ Goal
-→ Objective
-→ KPI
-→ Initiative
-→ Outcome
-```
-
-Purpose:
-
-Connect strategy to measurable results.
-
----
-
-## Capability Graph
-
-```text
-Capability Domain
-→ Capability
-→ Function
-→ Process
-→ Task
-→ Result
-```
-
-Purpose:
-
-Trace what the enterprise can do and how those capabilities are executed.
-
----
-
-## Organization Graph
-
-```text
-Organization
-→ Department
-→ Team
-→ Role
-→ Human / Agent
-→ Responsibility
-→ Authority
-```
-
-Purpose:
-
-Represent human and AI accountability structures.
-
----
-
-## Process Graph
-
-```text
-Trigger
-→ Process
-→ Workflow
-→ Task
-→ Output
-→ Control Point
-```
-
-Purpose:
-
-Represent operational execution and process dependencies.
-
----
-
-## Agent Graph
+Required MCP relationships:
 
 ```text
 Agent
-→ Role
-→ Authority
-→ Capability
-→ Tool
-→ Memory
-→ Context
-→ Decision
-→ Action
-→ Observation
-```
-
-Purpose:
-
-Represent agents as governed enterprise actors.
-
----
-
-## Decision Graph
-
-```text
-Context
-→ Evidence
-→ Assumption
-→ Option
-→ Decision
-→ Approval
-→ Outcome
-→ Audit Trail
-```
-
-Purpose:
-
-Enable full decision traceability and explainability.
-
----
-
-## Knowledge Asset Graph
-
-```text
-Document
-→ Policy
-→ Procedure
-→ Playbook
-→ Lesson Learned
-→ Best Practice
-```
-
-Purpose:
-
-Connect enterprise knowledge assets to usage, ownership, and outcomes.
-
----
-
-## Technology Graph
-
-```text
-Application
-→ API
-→ MCP Server
+→ USED
 → MCP Tool
-→ MCP Resource
-→ Workflow
+
+MCP Tool
+→ BELONGS_TO
+→ MCP Server
+
+MCP Invocation Node
+→ PRODUCED
+→ MCP Result
 ```
 
-Purpose:
-
-Represent technical capabilities available to agents and automation systems.
-
----
-
-## Risk Graph
+Extended MCP relationships:
 
 ```text
-Risk
-→ Impact
-→ Control
-→ Mitigation
-→ Residual Risk
-→ Owner
+MCP Invocation Node
+→ USED
+→ MCP Tool
+
+MCP Server
+→ EXPOSES
+→ MCP Resource
+
+MCP Permission
+→ AUTHORIZES
+→ MCP Tool
+
+Audit Trail
+→ RECORDS
+→ MCP Invocation Node
+```
+
+---
+
+# 7. Graph Constraints
+
+## MCP Tool Constraints
+
+```yaml
+MCP_Tool:
+  requires:
+    - owner
+    - risk_level
+    - permission_model
+  required_edges:
+    - BELONGS_TO
+```
+
+## MCP Invocation Node Constraints
+
+```yaml
+MCP_Invocation_Node:
+  requires:
+    - agent
+    - mcp_tool
+    - mcp_server
+    - result
+    - audit_reference
+  required_edges:
+    - USED
+    - PRODUCED
+```
+
+---
+
+# 8. MCP Invocation Graph
+
+```text
+Agent
+→ USED
+→ MCP Tool
+
+MCP Tool
+→ BELONGS_TO
+→ MCP Server
+
+MCP Invocation Node
+→ USED
+→ MCP Tool
+
+MCP Invocation Node
+→ PRODUCED
+→ MCP Result
+
+Audit Trail
+→ RECORDS
+→ MCP Invocation Node
 ```
 
 Purpose:
 
-Support risk propagation, mitigation, and governance.
+Represent tool usage, execution results, auditability, and agent-to-tool traceability.
 
 ---
 
-# 12. MCP Graph Model
+# 9. MCP Graph Model
 
 MCP infrastructure must be represented as a first-class graph domain.
 
@@ -664,322 +358,105 @@ MCP Server
 ├── MCP Endpoint
 ├── MCP Permission
 ├── MCP Workflow
+├── MCP Invocation Node
+├── MCP Result
 └── MCP Execution Context
 ```
 
-MCP graph rules:
+Rules:
 
 ```text
 Every MCP Tool must belong to an MCP Server.
 Every MCP Server must have an Owner.
 Every MCP Tool must have permissions.
-Every MCP execution must be auditable.
+Every MCP Invocation Node must be auditable.
+Every MCP Invocation Node must produce a result or failure record.
 ```
 
 ---
 
-# 13. Graph Event Model
+# 10. Graph Traversal Models
 
-Events represent changes in enterprise state.
-
-Examples:
+## MCP Invocation Trace Traversal
 
 ```text
-Decision Created
-Decision Approved
-Task Completed
-Agent Activated
-Risk Identified
-Policy Updated
-Workflow Executed
-MCP Tool Invoked
+Agent
+→ MCP Tool
+→ MCP Server
+→ MCP Invocation Node
+→ MCP Result
+→ Audit Trail
 ```
 
-Canonical event schema:
-
-```yaml
-event_id:
-event_type:
-source_node:
-affected_nodes:
-timestamp:
-actor:
-context:
-resulting_state:
-```
-
----
-
-# 14. Graph Traversal Models
-
-## Context Neighborhood Traversal
-
-Find relevant nodes around an entity.
-
 Use cases:
 
-- agent context assembly;
-- related documents;
-- connected decisions;
-- related risks.
+- tool usage audit;
+- agent action reconstruction;
+- failed invocation analysis;
+- permission review;
+- execution traceability.
 
 ---
 
-## Impact Traversal
+# 11. Integration Points
 
-Find downstream effects.
+The Enterprise Knowledge Graph integrates with:
 
-Use cases:
+- Enterprise Ontology;
+- Agent Memory System;
+- Context Engine;
+- Reasoning Engine;
+- Decision Registry;
+- Execution Engine;
+- MCP Infrastructure;
+- Digital Twin Enterprise.
 
-- process change impact;
-- capability dependency analysis;
-- risk propagation;
-- tool outage impact.
-
----
-
-## Decision Trace Traversal
-
-Trace decisions from context to outcome.
-
-Use cases:
-
-- audit;
-- compliance;
-- lessons learned;
-- decision quality review.
+MCP Infrastructure creates MCP Invocation Nodes, MCP Result nodes, and MCP audit relationships.
 
 ---
 
-## Agent Dependency Traversal
-
-Find agent dependencies.
-
-Use cases:
-
-- authority validation;
-- escalation routing;
-- tool dependency analysis;
-- delegation planning.
-
----
-
-## Knowledge Discovery Traversal
-
-Find hidden relationships and reusable knowledge.
-
-Use cases:
-
-- recommendation;
-- pattern discovery;
-- best practice reuse;
-- knowledge gap detection.
-
----
-
-# 15. Graph Services
-
-## Context Retrieval Service
-
-Retrieves relevant graph neighborhoods for agents, workflows, and decisions.
-
----
-
-## Relationship Discovery Service
-
-Identifies explicit and inferred relationships.
-
----
-
-## Knowledge Recommendation Service
-
-Suggests relevant documents, lessons learned, decisions, and playbooks.
-
----
-
-## Impact Analysis Service
-
-Calculates downstream effects of changes, decisions, risks, and system failures.
-
----
-
-## Decision Traceability Service
-
-Reconstructs the full decision chain.
-
----
-
-## Agent Support Service
-
-Provides agent-specific semantic context, memory links, tools, authorities, and dependencies.
-
----
-
-# 16. Integration Points
-
-## Enterprise Ontology
-
-Provides graph semantics, node types, edge types, and validation rules.
-
----
-
-## Agent Memory System
-
-Stores memories as graph-linked objects.
-
----
-
-## Context Engine
-
-Retrieves graph neighborhoods for situational awareness.
-
----
-
-## Reasoning Engine
-
-Uses graph traversal during reasoning.
-
----
-
-## Decision Registry
-
-Creates decision-to-context, decision-to-outcome, and decision-to-audit links.
-
----
-
-## Execution Engine
-
-Updates graph state from executed actions.
-
----
-
-## Digital Twin Enterprise
-
-Synchronizes enterprise state through graph updates.
-
----
-
-# 17. Digital Twin Synchronization Model
+# 12. Digital Twin Synchronization
 
 ```text
-Enterprise Event
-→ Graph Event
-→ Graph State Update
+MCP Invocation Node
+→ MCP Result
+→ Enterprise Object Update
+→ Knowledge Graph Update
 → Digital Twin State Update
-→ Simulation
-→ Prediction
-→ Decision Support
-```
-
-Synchronization rules:
-
-```text
-Every material enterprise event should update the Knowledge Graph.
-Every material graph state change should be available to the Digital Twin.
-Every simulation should reference the graph state used.
 ```
 
 ---
 
-# 18. Governance
+# 13. Governance
 
-## Graph Steward
+AG053_Data_Manager is responsible for graph data quality and ontology alignment.
 
-AG053_Data_Manager
+AG054_Enterprise_Architect is responsible for graph architecture and enterprise alignment.
 
-Responsibilities:
-
-- graph data quality;
-- node and edge governance;
-- ontology alignment;
-- semantic consistency.
+AG003_AI_Auditor is responsible for decision traceability, agent action traceability, and MCP invocation traceability.
 
 ---
 
-## Architecture Steward
-
-AG054_Enterprise_Architect
-
-Responsibilities:
-
-- graph architecture;
-- enterprise architecture alignment;
-- graph integration model;
-- future evolution.
-
----
-
-## Audit Steward
-
-AG003_AI_Auditor
-
-Responsibilities:
-
-- graph compliance;
-- decision traceability;
-- agent action traceability;
-- semantic audit.
-
----
-
-# 19. KPIs
+# 14. KPIs
 
 - Graph Coverage;
 - Relationship Density;
-- Context Retrieval Accuracy;
-- Knowledge Reuse Rate;
 - Decision Traceability Score;
+- MCP Invocation Traceability Score;
 - Semantic Consistency Score;
 - Ontology Alignment Rate;
-- Agent Context Quality;
-- Impact Analysis Accuracy.
+- Agent Context Quality.
 
 ---
 
-# 20. Risks
+# 15. Architectural Role
 
-Potential risks:
+The Enterprise Knowledge Graph operationalizes ontology meaning.
 
-- incomplete graph coverage;
-- incorrect relationships;
-- stale nodes;
-- weak ontology alignment;
-- low confidence graph links;
-- excessive complexity;
-- poor governance.
+It now explicitly models MCP Invocation Nodes and the required relationships:
 
-Mitigations:
-
-- ontology validation;
-- graph audits;
-- confidence scoring;
-- source tracking;
-- lifecycle governance;
-- periodic pruning;
-- relationship review.
-
----
-
-# 21. Future Evolution
-
-Planned capabilities:
-
-- graph-based reasoning;
-- predictive relationship discovery;
-- autonomous ontology expansion;
-- graph neural network experimentation;
-- multi-enterprise knowledge federation;
-- digital twin simulation graphs;
-- agent collaboration graphs.
-
----
-
-# 22. Architectural Role
-
-The Enterprise Knowledge Graph is the central semantic memory of Art of Business.
-
-It turns enterprise information into a living network of meaning that powers context awareness, agent reasoning, decision traceability, automation, governance, and digital enterprise intelligence.
-
-Ontology defines meaning.
-
-The Knowledge Graph operationalizes that meaning.
+```text
+Agent → USED → MCP Tool
+MCP Tool → BELONGS_TO → MCP Server
+MCP Invocation Node → PRODUCED → MCP Result
+```
