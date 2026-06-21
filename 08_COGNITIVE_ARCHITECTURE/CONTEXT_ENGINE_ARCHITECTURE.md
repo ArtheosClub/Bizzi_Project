@@ -1,38 +1,46 @@
 # CONTEXT_ENGINE_ARCHITECTURE.md
 
 # Art of Business
-## Context Engine Architecture v1.0
 
-### Purpose
+## Context Engine Architecture v2.0
 
-The Context Engine is responsible for assembling, prioritizing, filtering, and delivering relevant context to AI agents before reasoning and execution occur.
-
-It acts as the cognitive attention system of the enterprise.
-
-Without context, agents produce generic outputs.
-With context, agents produce enterprise-aware decisions.
+**Status:** Canonical Architecture Specification
+**Owner:** AG052_AI_Automation_Manager
+**Architecture Owner:** AG054_Enterprise_Architect
+**Data Owner:** AG053_Data_Manager
+**Audit Owner:** AG003_AI_Auditor
 
 ---
 
-# Mission
+# 1. Purpose
 
-Provide the right information to the right agent at the right time.
+The Context Engine is the intelligence assembly layer of the AI-Orchestrated Enterprise.
+
+Its purpose is to transform enterprise data, ontology concepts, knowledge graph relationships, memory objects, decisions, policies, and live signals into actionable context packages that can be consumed by agents, workflows, and reasoning systems.
+
+---
+
+# 2. Mission
+
+Deliver the right information, at the right time, to the right agent, with the right authority level and business relevance.
 
 ```text
-Knowledge
-→ Context Selection
-→ Context Package
+Data
+→ Ontology
+→ Knowledge Graph
+→ Memory
+→ Context
 → Reasoning
 → Decision
-→ Execution
+→ Action
 ```
 
 ---
 
-# Architectural Position
+# 3. Architectural Position
 
 ```text
-Enterprise Data Model
+Enterprise Ontology
         ↓
 Enterprise Knowledge Graph
         ↓
@@ -45,307 +53,608 @@ Reasoning Engine
 Decision Registry
         ↓
 Execution Engine
+        ↓
+Digital Twin Enterprise
 ```
 
 ---
 
-# Core Responsibilities
+# 4. Core Principle
 
-- context collection;
-- context filtering;
-- context prioritization;
-- context enrichment;
-- context packaging;
-- context delivery;
-- context lifecycle management.
+Agents should never reason directly on raw data.
 
----
+Agents reason on assembled context.
 
-# Context Sources
+The Context Engine is responsible for:
 
-## Enterprise Knowledge Graph
-
-Provides:
-
-- entities;
-- relationships;
-- dependencies;
-- organizational structure.
+- filtering noise;
+- retrieving relevant information;
+- enforcing authority boundaries;
+- prioritizing signals;
+- connecting knowledge;
+- preparing reasoning inputs.
 
 ---
 
-## Agent Memory System
+# 5. Context Layer Model
 
-Provides:
+## L0 Raw Signal Layer
 
-- episodic memory;
-- semantic memory;
-- procedural memory;
-- decision memory;
-- reflective memory.
+Inputs:
 
----
+- documents;
+- databases;
+- APIs;
+- MCP tools;
+- user interactions;
+- execution logs;
+- workflow events.
 
-## Decision Registry
+Purpose:
 
-Provides:
-
-- previous decisions;
-- rationale;
-- outcomes;
-- precedents.
+Capture enterprise signals.
 
 ---
 
-## Playbook Registry
+## L1 Semantic Layer
 
-Provides:
-
-- workflows;
-- SOPs;
-- execution patterns.
-
----
-
-## Digital Twin Enterprise
-
-Provides:
-
-- current enterprise state;
-- active processes;
-- operational metrics.
-
----
-
-# Context Layers
-
-## Layer 1 — Identity Context
+Maps signals into ontology concepts.
 
 ```text
-Who am I?
+Raw Signal
+→ Ontology Concept
 ```
 
-Contains:
+Examples:
 
-- agent role;
-- authority level;
-- domain ownership;
-- responsibilities.
+- invoice → Financial Document;
+- contract → Contract;
+- approval → Decision;
+- workflow event → Process Event.
 
 ---
 
-## Layer 2 — Task Context
+## L2 Graph Context Layer
 
-```text
-What am I trying to do?
-```
+Retrieves graph neighborhoods.
 
-Contains:
+Examples:
 
-- task objectives;
-- scope;
-- constraints;
-- success criteria.
-
----
-
-## Layer 3 — Enterprise Context
-
-```text
-What is happening in the business?
-```
-
-Contains:
-
-- projects;
-- risks;
-- priorities;
-- dependencies.
+- related decisions;
+- connected risks;
+- linked policies;
+- associated agents;
+- dependent processes.
 
 ---
 
-## Layer 4 — Historical Context
+## L3 Memory Context Layer
 
-```text
-What happened before?
-```
+Retrieves:
 
-Contains:
-
-- previous decisions;
+- previous cases;
 - lessons learned;
-- past outcomes.
+- historical decisions;
+- playbooks;
+- domain knowledge.
 
 ---
 
-## Layer 5 — Situational Context
+## L4 Operational Context Layer
 
-```text
-What is happening right now?
-```
+Adds:
 
-Contains:
-
-- active events;
-- alerts;
-- incidents;
-- operational state.
+- current state;
+- active tasks;
+- open risks;
+- pending approvals;
+- workflow status.
 
 ---
 
-# Context Assembly Pipeline
+## L5 Strategic Context Layer
 
-```text
-Task Trigger
-↓
-Agent Identification
-↓
-Context Retrieval
-↓
-Context Ranking
-↓
-Context Filtering
-↓
-Context Enrichment
-↓
-Context Packaging
-↓
-Reasoning Engine
-```
+Adds:
+
+- vision;
+- goals;
+- priorities;
+- constraints;
+- KPIs;
+- strategic initiatives.
 
 ---
 
-# Context Ranking Model
+# 6. Context Object Model
 
-Factors:
-
-```yaml
-relevance:
-recency:
-authority:
-confidence:
-relationship_distance:
-importance:
-```
-
----
-
-# Context Package Schema
+Canonical Context Object:
 
 ```yaml
 context_id:
+request_id:
 agent:
-task:
+domain:
 objective:
-constraints:
-related_entities:
-related_decisions:
+authority_level:
+ontology_concepts:
+graph_nodes:
 related_memories:
-related_playbooks:
-current_state:
+related_decisions:
+related_policies:
+related_risks:
+related_tools:
+strategic_constraints:
 confidence:
+priority:
 created_at:
 ```
 
 ---
 
-# Context Retrieval Methods
+# 7. Context Sources
 
-## Graph Retrieval
+## Ontology Source
 
-Traverse Enterprise Knowledge Graph.
+Provides:
 
----
-
-## Semantic Retrieval
-
-Vector similarity search.
-
----
-
-## Rule-Based Retrieval
-
-Governance-driven retrieval.
+- semantic meaning;
+- concept definitions;
+- relationship definitions;
+- constraints.
 
 ---
 
-## Hybrid Retrieval
+## Knowledge Graph Source
 
-Combination of graph + semantic + rules.
+Provides:
 
----
-
-# Context Governance
-
-Owners:
-
-- AG053 Data Manager
-- AG052 AI Automation Manager
-- AG054 Enterprise Architect
-
-Audit:
-
-- AG003 AI Auditor
+- graph neighborhoods;
+- dependencies;
+- entity relationships;
+- impact chains.
 
 ---
 
-# Access Control
+## Memory Source
 
-Context visibility depends on:
+Provides:
+
+- previous cases;
+- lessons learned;
+- historical decisions;
+- reusable knowledge.
+
+---
+
+## Policy Source
+
+Provides:
+
+- governance;
+- compliance rules;
+- authority restrictions;
+- approval requirements.
+
+---
+
+## Live Operational Source
+
+Provides:
+
+- workflow status;
+- runtime state;
+- incidents;
+- performance metrics.
+
+---
+
+# 8. Context Assembly Pipeline
+
+```text
+Request
+↓
+Intent Detection
+↓
+Ontology Mapping
+↓
+Graph Retrieval
+↓
+Memory Retrieval
+↓
+Policy Retrieval
+↓
+Risk Retrieval
+↓
+Authority Filtering
+↓
+Context Ranking
+↓
+Context Packaging
+↓
+Agent
+```
+
+---
+
+# 9. Context Types
+
+## Strategic Context
+
+Contains:
+
+- goals;
+- initiatives;
+- KPIs;
+- enterprise priorities.
+
+---
+
+## Operational Context
+
+Contains:
+
+- workflows;
+- tasks;
+- current state;
+- incidents.
+
+---
+
+## Decision Context
+
+Contains:
+
+- evidence;
+- assumptions;
+- approvals;
+- alternatives;
+- risks.
+
+---
+
+## Agent Context
+
+Contains:
+
+- authority;
+- capabilities;
+- memory;
+- tools;
+- responsibilities.
+
+---
+
+## Risk Context
+
+Contains:
+
+- threats;
+- controls;
+- mitigations;
+- residual risks.
+
+---
+
+## Tool Context
+
+Contains:
+
+- MCP resources;
+- APIs;
+- integrations;
+- permissions;
+- limitations.
+
+---
+
+# 10. Agent Context Model
+
+Every agent receives a context package.
+
+```text
+Agent
+├── Mission Context
+├── Strategic Context
+├── Operational Context
+├── Decision Context
+├── Risk Context
+├── Memory Context
+├── Tool Context
+└── Governance Context
+```
+
+---
+
+# 11. Authority Filtering Engine
+
+Context must be filtered according to:
 
 - role;
-- authority;
-- domain;
-- confidentiality level;
-- compliance rules.
+- authority level;
+- domain ownership;
+- confidentiality;
+- compliance restrictions.
+
+Example:
+
+```text
+Executive Agent
+→ Full Strategic Context
+
+Sales Agent
+→ Revenue Context Only
+
+Compliance Agent
+→ Regulatory Context
+```
 
 ---
 
-# KPIs
+# 12. Context Ranking Model
 
-- Context Relevance Score
-- Context Retrieval Accuracy
-- Reasoning Improvement Rate
-- Retrieval Latency
-- Decision Quality Improvement
-- Context Reuse Rate
+Context relevance score:
+
+```text
+Relevance
++
+Authority Match
++
+Graph Distance
++
+Memory Confidence
++
+Recency
++
+Business Impact
+```
+
+Higher score = higher context priority.
 
 ---
 
-# Risks
+# 13. Knowledge Graph Integration
 
-Potential failures:
+The Context Engine retrieves graph neighborhoods.
+
+Examples:
+
+```text
+Decision
+↓
+Evidence
+↓
+Related Policies
+↓
+Related Risks
+↓
+Previous Decisions
+```
+
+Graph retrieval strategies:
+
+- neighborhood retrieval;
+- dependency traversal;
+- impact traversal;
+- decision trace traversal;
+- knowledge discovery traversal.
+
+---
+
+# 14. Memory Integration
+
+The Context Engine retrieves:
+
+- similar cases;
+- lessons learned;
+- previous outcomes;
+- reusable playbooks;
+- tool experiences.
+
+Memory retrieval methods:
+
+- semantic retrieval;
+- graph-linked retrieval;
+- role-aware retrieval;
+- confidence-weighted retrieval.
+
+---
+
+# 15. Decision Context Assembly
+
+Decision context package:
+
+```text
+Decision Request
+↓
+Evidence
+↓
+Assumptions
+↓
+Historical Decisions
+↓
+Policies
+↓
+Risks
+↓
+Alternatives
+↓
+Approvals
+↓
+Decision Context Package
+```
+
+---
+
+# 16. MCP Context Integration
+
+MCP resources contribute context.
+
+Examples:
+
+- CRM data;
+- ERP data;
+- financial systems;
+- document repositories;
+- monitoring systems;
+- external knowledge systems.
+
+Context object extension:
+
+```yaml
+mcp_sources:
+mcp_tools:
+mcp_resources:
+mcp_permissions:
+external_dependencies:
+```
+
+---
+
+# 17. Context Lifecycle
+
+```text
+Capture
+↓
+Classify
+↓
+Link to Ontology
+↓
+Link to Graph
+↓
+Retrieve
+↓
+Filter
+↓
+Rank
+↓
+Package
+↓
+Use
+↓
+Expire
+```
+
+---
+
+# 18. Context Quality Controls
+
+Controls:
+
+- source validation;
+- confidence scoring;
+- authority validation;
+- stale context detection;
+- duplication detection;
+- contradiction detection;
+- graph consistency checks.
+
+---
+
+# 19. Governance
+
+## AG052_AI_Automation_Manager
+
+Responsibilities:
+
+- context orchestration;
+- context retrieval services;
+- operational execution.
+
+---
+
+## AG053_Data_Manager
+
+Responsibilities:
+
+- ontology alignment;
+- graph alignment;
+- context quality;
+- metadata governance.
+
+---
+
+## AG054_Enterprise_Architect
+
+Responsibilities:
+
+- context architecture;
+- cognitive stack integration;
+- enterprise alignment.
+
+---
+
+## AG003_AI_Auditor
+
+Responsibilities:
+
+- context audit;
+- decision traceability review;
+- authority compliance;
+- hallucination risk review.
+
+---
+
+# 20. KPIs
+
+- Context Relevance Score;
+- Context Coverage;
+- Retrieval Precision;
+- Retrieval Recall;
+- Decision Support Quality;
+- Context Freshness;
+- Authority Compliance Rate;
+- Agent Productivity Improvement.
+
+---
+
+# 21. Risks
+
+Potential risks:
 
 - missing context;
-- excessive context;
+- irrelevant context;
 - stale context;
+- excessive context volume;
+- authority violations;
 - conflicting context;
-- unauthorized context exposure.
+- context manipulation.
 
-Mitigation:
+Mitigations:
 
-- ranking algorithms;
-- governance rules;
-- memory validation;
-- context expiration policies.
-
----
-
-# Integration Points
-
-Connected Systems:
-
-- Enterprise Knowledge Graph
-- Agent Memory System
-- Reasoning Engine
-- Decision Registry
-- Digital Twin Enterprise
-- AI Operating System
+- ranking models;
+- confidence scoring;
+- authority filtering;
+- freshness controls;
+- contradiction detection;
+- governance reviews.
 
 ---
 
-# Architectural Role
+# 22. Future Evolution
 
-The Context Engine is the cognitive attention layer of Art of Business.
+Planned capabilities:
 
-It determines what information enters the reasoning process and ensures that enterprise intelligence is applied with relevance, precision, governance, and situational awareness.
+- adaptive context assembly;
+- predictive context generation;
+- context simulation;
+- graph-aware context optimization;
+- autonomous context refinement;
+- multi-agent shared context spaces.
+
+---
+
+# 23. Architectural Role
+
+The Context Engine is the situational awareness layer of Art of Business.
+
+Ontology defines meaning.
+
+The Knowledge Graph connects meaning.
+
+Memory preserves meaning.
+
+The Context Engine assembles meaning into actionable understanding.
+
+Without context, reasoning becomes guessing.
+
+With context, reasoning becomes informed intelligence.
