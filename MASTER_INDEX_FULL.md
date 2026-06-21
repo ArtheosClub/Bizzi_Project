@@ -4,7 +4,7 @@
 
 ## Master Index Full
 
-**Version:** 1.2
+**Version:** 1.3
 **Status:** Canonical Repository Registry
 **Repository:** `ArtheosClub/Bizzi_Project`
 **Owner:** AG054_Enterprise_Architect
@@ -182,14 +182,16 @@ Status: Implemented
 
 # 09_MCP_INFRASTRUCTURE
 
-Planned:
+Canonical Documents:
 
 - MCP_REFERENCE_ARCHITECTURE.md
 - MCP_SERVER_CATALOG.md
 - MCP_SECURITY_MODEL.md
 - MCP_DEPLOYMENT_MODEL.md
+- MCP_TOOL_REGISTRY.md
+- MCP_PERMISSION_MATRIX.md
 
-Status: Planned
+Status: Implemented
 
 ---
 
@@ -215,7 +217,7 @@ Function Registry          ✓
 Agent Library              ✓
 AI Operating System        ✓
 Cognitive Architecture     ✓
-MCP Infrastructure         ○
+MCP Infrastructure         ✓
 Implementation             ○
 ```
 
