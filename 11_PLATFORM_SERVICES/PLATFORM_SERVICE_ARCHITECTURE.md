@@ -2,7 +2,7 @@
 
 # Art of Business
 
-## Platform Service Architecture v1.0
+## Platform Service Architecture v1.1
 
 **Status:** Canonical Platform Services Specification  
 **Owner:** AG051_Technology_Manager  
@@ -60,11 +60,11 @@ Enterprise Operations
 
 ```text
 Agent Registry Service
-Context Service
 Knowledge Graph Service
 Memory Service
-Decision Service
+Context Service
 Reasoning Service
+Decision Service
 Execution Service
 MCP Gateway Service
 Digital Twin Service
@@ -84,11 +84,35 @@ Identity Access Service
 
 ## Cognitive Services
 
-- Context Service
+The Cognitive Layer transforms enterprise knowledge into decisions and executable actions.
+
+Canonical cognitive flow:
+
+```text
+Knowledge Graph Service
+↓
+Memory Service
+↓
+Context Service
+↓
+Reasoning Service
+↓
+Decision Service
+↓
+Execution Service
+```
+
+Core Cognitive Services:
+
 - Knowledge Graph Service
 - Memory Service
-- Decision Service
+- Context Service
 - Reasoning Service
+- Decision Service
+
+Execution Transition:
+
+- Execution Service
 
 ## Execution Services
 
@@ -116,11 +140,11 @@ Agent Runtime
 ↓
 Agent Registry Service
 ↓
-Context Service
+Knowledge Graph Service
 ↓
 Memory Service
 ↓
-Knowledge Graph Service
+Context Service
 ↓
 Reasoning Service
 ↓
@@ -147,10 +171,6 @@ Observability Service
 
 Maintains canonical records of AI agents, roles, authority, lifecycle status, and capability mappings.
 
-## Context Service
-
-Assembles execution context for agents, workflows, and decisions.
-
 ## Knowledge Graph Service
 
 Provides access to the Enterprise Knowledge Graph, graph traversal, semantic relationships, and ontology validation.
@@ -159,13 +179,17 @@ Provides access to the Enterprise Knowledge Graph, graph traversal, semantic rel
 
 Manages working memory, episodic memory, semantic memory, execution memory, and tool memory.
 
-## Decision Service
+## Context Service
 
-Manages decision records, approvals, recommendations, rationale, outcomes, and traceability.
+Assembles execution context for agents, workflows, and decisions.
 
 ## Reasoning Service
 
 Provides planning, task decomposition, evaluation, and recommendation capabilities.
+
+## Decision Service
+
+Manages decision records, approvals, recommendations, rationale, outcomes, and traceability.
 
 ## Execution Service
 
@@ -260,11 +284,11 @@ PolicyViolationDetected
 
 ```text
 Agent Registry Service       → Agent metadata
-Context Service              → Context packages
 Knowledge Graph Service      → Graph nodes and edges
 Memory Service               → Agent and enterprise memory
-Decision Service             → Decision records
+Context Service              → Context packages
 Reasoning Service            → Reasoning sessions and outputs
+Decision Service             → Decision records
 Execution Service            → Task and execution records
 MCP Gateway Service          → MCP invocation metadata
 Digital Twin Service         → Enterprise state
@@ -329,7 +353,17 @@ AG003_AI_Auditor owns traceability, control validation, and compliance review.
 
 ---
 
-# 17. Architectural Role
+# 17. Change Log
+
+## v1.1
+
+- Reordered Cognitive Services to align with canonical Cognitive Architecture.
+- Updated Service Interaction Model to follow Knowledge Graph → Memory → Context → Reasoning → Decision → Execution.
+- Updated Core Service Responsibilities and Data Ownership ordering for consistency.
+
+---
+
+# 18. Architectural Role
 
 Platform Service Architecture is the bridge between implementation architecture and real platform deployment.
 
