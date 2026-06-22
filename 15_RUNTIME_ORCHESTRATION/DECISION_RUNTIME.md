@@ -261,3 +261,167 @@ Domain Owner
 ↓
 Executive Owner
 ```
+
+---
+
+# 16. Decision Validation
+
+Validation checks:
+
+- context completeness;
+- policy compliance;
+- authority correctness;
+- rationale quality;
+- workflow compatibility.
+
+Validation failures block execution.
+
+---
+
+# 17. Decision Execution
+
+Execution path:
+
+```text
+Decision Approved
+↓
+Execution Service
+↓
+Action
+↓
+Result
+```
+
+Every execution must remain traceable.
+
+---
+
+# 18. Decision Memory
+
+Decision outcomes are recorded in:
+
+- Memory Service;
+- Knowledge Graph Service;
+- Audit Logging Service.
+
+This supports organizational learning.
+
+---
+
+# 19. Decision Governance
+
+Governance controls:
+
+- decision ownership;
+- approval enforcement;
+- traceability;
+- rationale requirements;
+- policy compliance.
+
+---
+
+# 20. Audit Model
+
+Audited events:
+
+```text
+Decision Requested
+Decision Prepared
+Decision Evaluated
+Decision Approved
+Decision Rejected
+Decision Escalated
+Decision Executed
+Decision Archived
+```
+
+---
+
+# 21. Observability Model
+
+Metrics:
+
+- decision volume;
+- decision latency;
+- confidence distribution;
+- escalation rate;
+- approval latency;
+- decision success rate.
+
+---
+
+# 22. Failure Handling
+
+Failure types:
+
+- insufficient context;
+- low confidence;
+- authority violation;
+- policy conflict;
+- missing approval;
+- reasoning failure.
+
+Failure actions:
+
+```text
+Retry
+Escalate
+Request Approval
+Block Execution
+Request Human Review
+```
+
+---
+
+# 23. Security Model
+
+Decision Runtime enforces:
+
+- identity validation;
+- authority controls;
+- approval controls;
+- policy controls;
+- audit controls.
+
+---
+
+# 24. KPIs
+
+Decision Runtime KPIs:
+
+- Decision Accuracy
+- Decision Latency
+- Approval Completion Rate
+- Escalation Rate
+- Confidence Quality
+- Audit Coverage
+
+---
+
+# 25. Governance Ownership
+
+AG002_Chief_Orchestrator owns Decision Runtime governance.
+
+AG054_Enterprise_Architect owns architectural consistency.
+
+AG003_AI_Auditor owns decision traceability validation.
+
+---
+
+# 26. Architectural Role
+
+Decision Runtime is the judgment engine of the Art of Business runtime layer.
+
+```text
+Knowledge
+↓
+Context Runtime
+↓
+Decision Runtime
+↓
+Execution
+↓
+Business Outcome
+```
+
+It transforms context into governed decisions and decisions into executable actions.
