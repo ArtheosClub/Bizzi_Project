@@ -131,3 +131,133 @@ Escalation Decision
 Approval Decision
 Strategic Decision
 ```
+
+---
+
+# 9. Decision Assembly
+
+Decision Runtime assembles:
+
+```text
+Context
++
+Knowledge
++
+Memory
++
+Policies
++
+Constraints
++
+Objectives
+```
+
+Output:
+
+```text
+Decision Package
+```
+
+---
+
+# 10. Reasoning Integration
+
+Decision Runtime coordinates with:
+
+- Reasoning Service;
+- Knowledge Graph Service;
+- Memory Service.
+
+Responsibilities:
+
+- option generation;
+- tradeoff analysis;
+- recommendation creation;
+- rationale generation.
+
+---
+
+# 11. Confidence Model
+
+Decision confidence levels:
+
+```text
+High
+Medium
+Low
+```
+
+Confidence is calculated from:
+
+- context quality;
+- knowledge coverage;
+- historical evidence;
+- policy certainty;
+- reasoning quality.
+
+---
+
+# 12. Authority Validation
+
+Before execution:
+
+- authority level verified;
+- approval requirements checked;
+- policy constraints checked;
+- segregation-of-duties enforced.
+
+Unauthorized decisions are blocked.
+
+---
+
+# 13. Human-In-The-Loop Integration
+
+Human review is required when:
+
+- confidence threshold is low;
+- financial thresholds exceeded;
+- compliance-sensitive action detected;
+- strategic impact exists;
+- policy requires approval.
+
+---
+
+# 14. Workflow Integration
+
+Decision Runtime interacts with:
+
+```text
+Workflow Engine
+↓
+Decision Runtime
+↓
+Decision Result
+↓
+Workflow State Update
+```
+
+Decisions become workflow events.
+
+---
+
+# 15. Escalation Integration
+
+Escalation triggers:
+
+- insufficient authority;
+- conflicting recommendations;
+- policy conflict;
+- low confidence;
+- unresolved exception.
+
+Escalation path:
+
+```text
+Agent
+↓
+Workflow Owner
+↓
+Domain Owner
+↓
+Executive Owner
+```
