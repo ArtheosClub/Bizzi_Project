@@ -4,7 +4,7 @@
 
 ## Master Index Full
 
-**Version:** 2.0  
+**Version:** 2.1  
 **Status:** Canonical Repository Registry  
 **Repository:** `ArtheosClub/Bizzi_Project`  
 **Owner:** AG054_Enterprise_Architect  
@@ -35,6 +35,7 @@ This document is the authoritative navigation map of the Art of Business reposit
 11_PLATFORM_SERVICES/
 12_APPLICATION_SERVICES/
 13_BUSINESS_PROCESSES/
+14_AGENT_WORKFLOWS/
 
 README.md
 MASTER_INDEX_FULL.md
@@ -122,97 +123,37 @@ Status: Implemented
 
 # 11_PLATFORM_SERVICES
 
-Canonical Platform Architecture:
-
-- PLATFORM_SERVICE_ARCHITECTURE.md
-
-Registry Services:
-
-- AGENT_REGISTRY_SERVICE.md
-
-Cognitive Services:
-
-- KNOWLEDGE_GRAPH_SERVICE.md
-- MEMORY_SERVICE.md
-- CONTEXT_SERVICE.md
-- REASONING_SERVICE.md
-- DECISION_SERVICE.md
-
-Execution Services:
-
-- EXECUTION_SERVICE.md
-- MCP_GATEWAY_SERVICE.md
-- DIGITAL_TWIN_SERVICE.md
-
-Governance & Infrastructure Services:
-
-- AUDIT_LOGGING_SERVICE.md
-- OBSERVABILITY_SERVICE.md
-- IDENTITY_ACCESS_SERVICE.md
-
-Future Platform Services (v1.1):
-
-- SERVICE_REGISTRY.md
-- EVENT_BUS_SERVICE.md
-- POLICY_ENGINE_SERVICE.md
-
-Status: Implemented  
+Status: Implemented
 Version: 1.0
 
 ---
 
 # 12_APPLICATION_SERVICES
 
-Canonical Application Architecture:
-
-- APPLICATION_SERVICE_ARCHITECTURE.md
-
-Sales Domain Services:
-
-- CRM_SERVICE.md
-- LEAD_MANAGEMENT_SERVICE.md
-- OPPORTUNITY_SERVICE.md
-- SALES_PIPELINE_SERVICE.md
-
-Finance Domain Services:
-
-- FINANCE_SERVICE.md
-- ACCOUNTING_SERVICE.md
-
-Procurement Domain Services:
-
-- PROCUREMENT_SERVICE.md
-- SUPPLIER_MANAGEMENT_SERVICE.md
-
-Human Resources Domain Services:
-
-- HR_SERVICE.md
-
-Compliance Domain Services:
-
-- COMPLIANCE_SERVICE.md
-
-Logistics Domain Services:
-
-- LOGISTICS_SERVICE.md
-
-Status: Implemented  
+Status: Implemented
 Version: 1.0
 
 ---
 
 # 13_BUSINESS_PROCESSES
 
-Canonical Business Processes:
+Status: Implemented
+Version: 1.0
 
-- SALES_PROCESS.md
-- PROCUREMENT_PROCESS.md
-- HIRING_PROCESS.md
-- INVOICE_PROCESS.md
-- COMPLIANCE_PROCESS.md
-- LOGISTICS_PROCESS.md
+---
 
-Status: Implemented  
+# 14_AGENT_WORKFLOWS
+
+Canonical Agent Workflows:
+
+- SALES_WORKFLOW.md
+- PROCUREMENT_WORKFLOW.md
+- HIRING_WORKFLOW.md
+- FINANCE_WORKFLOW.md
+- COMPLIANCE_WORKFLOW.md
+- LOGISTICS_WORKFLOW.md
+
+Status: Implemented
 Version: 1.0
 
 ---
@@ -231,6 +172,7 @@ Implementation             ✓
 Platform Services          ✓
 Application Services       ✓
 Business Processes         ✓
+Agent Workflows            ✓
 ```
 
 ---
@@ -264,7 +206,9 @@ Business Processes         ✓
 ↓
 13_BUSINESS_PROCESSES
 ↓
-14_AGENT_WORKFLOWS (Next)
+14_AGENT_WORKFLOWS
+↓
+15_RUNTIME_ORCHESTRATION (Next)
 ```
 
 ---
