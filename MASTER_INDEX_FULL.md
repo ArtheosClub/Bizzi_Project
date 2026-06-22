@@ -4,10 +4,10 @@
 
 ## Master Index Full
 
-**Version:** 1.8
-**Status:** Canonical Repository Registry
-**Repository:** `ArtheosClub/Bizzi_Project`
-**Owner:** AG054_Enterprise_Architect
+**Version:** 2.0  
+**Status:** Canonical Repository Registry  
+**Repository:** `ArtheosClub/Bizzi_Project`  
+**Owner:** AG054_Enterprise_Architect  
 **Approved By:** AG001_CEO
 
 ---
@@ -34,6 +34,7 @@ This document is the authoritative navigation map of the Art of Business reposit
 10_IMPLEMENTATION/
 11_PLATFORM_SERVICES/
 12_APPLICATION_SERVICES/
+13_BUSINESS_PROCESSES/
 
 README.md
 MASTER_INDEX_FULL.md
@@ -45,37 +46,55 @@ MASTER_INDEX_FULL.md
 
 Status: In Development
 
+---
+
 # 01_GOVERNANCE
 
 Status: Implemented
+
+---
 
 # 02_CAPABILITY_MAP
 
 Status: Implemented
 
+---
+
 # 03_FUNCTION_REGISTRY
 
 Status: Implemented
+
+---
 
 # 04_AGENT_LIBRARY
 
 Status: Implemented
 
+---
+
 # 05_INTERACTION_MODELS
 
 Status: Planned
+
+---
 
 # 06_PLAYBOOKS
 
 Status: Planned / To Expand
 
+---
+
 # 07_AI_OPERATING_SYSTEM
 
 Status: Implemented
 
+---
+
 # 08_COGNITIVE_ARCHITECTURE
 
 Status: Implemented
+
+---
 
 # 09_MCP_INFRASTRUCTURE
 
@@ -137,7 +156,7 @@ Future Platform Services (v1.1):
 - EVENT_BUS_SERVICE.md
 - POLICY_ENGINE_SERVICE.md
 
-Status: Implemented
+Status: Implemented  
 Version: 1.0
 
 ---
@@ -177,7 +196,23 @@ Logistics Domain Services:
 
 - LOGISTICS_SERVICE.md
 
-Status: Implemented
+Status: Implemented  
+Version: 1.0
+
+---
+
+# 13_BUSINESS_PROCESSES
+
+Canonical Business Processes:
+
+- SALES_PROCESS.md
+- PROCUREMENT_PROCESS.md
+- HIRING_PROCESS.md
+- INVOICE_PROCESS.md
+- COMPLIANCE_PROCESS.md
+- LOGISTICS_PROCESS.md
+
+Status: Implemented  
 Version: 1.0
 
 ---
@@ -195,6 +230,7 @@ MCP Infrastructure         ✓
 Implementation             ✓
 Platform Services          ✓
 Application Services       ✓
+Business Processes         ✓
 ```
 
 ---
@@ -209,6 +245,30 @@ Application Services       ✓
 
 ---
 
+## Architectural Roadmap
+
+```text
+00_VISION
+↓
+01_GOVERNANCE
+↓
+02_CAPABILITY_MAP
+↓
+03_FUNCTION_REGISTRY
+↓
+04_AGENT_LIBRARY
+↓
+11_PLATFORM_SERVICES
+↓
+12_APPLICATION_SERVICES
+↓
+13_BUSINESS_PROCESSES
+↓
+14_AGENT_WORKFLOWS (Next)
+```
+
+---
+
 ## Architectural Role
 
-MASTER_INDEX_FULL.md is the single source of truth for repository structure, document ownership, and architecture navigation.
+MASTER_INDEX_FULL.md is the single source of truth for repository structure, document ownership, architecture navigation, and repository governance.
