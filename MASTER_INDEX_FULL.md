@@ -4,7 +4,7 @@
 
 ## Master Index Full
 
-**Version:** 1.7
+**Version:** 1.8
 **Status:** Canonical Repository Registry
 **Repository:** `ArtheosClub/Bizzi_Project`
 **Owner:** AG054_Enterprise_Architect
@@ -33,6 +33,7 @@ This document is the authoritative navigation map of the Art of Business reposit
 09_MCP_INFRASTRUCTURE/
 10_IMPLEMENTATION/
 11_PLATFORM_SERVICES/
+12_APPLICATION_SERVICES/
 
 README.md
 MASTER_INDEX_FULL.md
@@ -141,6 +142,46 @@ Version: 1.0
 
 ---
 
+# 12_APPLICATION_SERVICES
+
+Canonical Application Architecture:
+
+- APPLICATION_SERVICE_ARCHITECTURE.md
+
+Sales Domain Services:
+
+- CRM_SERVICE.md
+- LEAD_MANAGEMENT_SERVICE.md
+- OPPORTUNITY_SERVICE.md
+- SALES_PIPELINE_SERVICE.md
+
+Finance Domain Services:
+
+- FINANCE_SERVICE.md
+- ACCOUNTING_SERVICE.md
+
+Procurement Domain Services:
+
+- PROCUREMENT_SERVICE.md
+- SUPPLIER_MANAGEMENT_SERVICE.md
+
+Human Resources Domain Services:
+
+- HR_SERVICE.md
+
+Compliance Domain Services:
+
+- COMPLIANCE_SERVICE.md
+
+Logistics Domain Services:
+
+- LOGISTICS_SERVICE.md
+
+Status: Implemented
+Version: 1.0
+
+---
+
 ## Current Repository Status
 
 ```text
@@ -153,6 +194,7 @@ Cognitive Architecture     ✓
 MCP Infrastructure         ✓
 Implementation             ✓
 Platform Services          ✓
+Application Services       ✓
 ```
 
 ---
