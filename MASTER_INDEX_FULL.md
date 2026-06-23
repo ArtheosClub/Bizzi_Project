@@ -4,7 +4,7 @@
 
 ## Master Index Full
 
-**Version:** 2.2  
+**Version:** 2.3  
 **Status:** Canonical Repository Registry  
 **Repository:** `ArtheosClub/Bizzi_Project`  
 **Owner:** AG054_Enterprise_Architect  
@@ -37,6 +37,8 @@ This document is the authoritative navigation map of the Art of Business reposit
 13_BUSINESS_PROCESSES/
 14_AGENT_WORKFLOWS/
 15_RUNTIME_ORCHESTRATION/
+16_ENTERPRISE_OPERATIONS/
+17_OBSERVABILITY_AND_INTELLIGENCE/
 
 README.md
 MASTER_INDEX_FULL.md
@@ -180,22 +182,71 @@ Version: 1.0
 
 ---
 
+# 16_ENTERPRISE_OPERATIONS
+
+Canonical Enterprise Operations Documents:
+
+- OPERATIONS_ARCHITECTURE.md
+- KPI_MANAGEMENT.md
+- SLA_MANAGEMENT.md
+- CAPACITY_MANAGEMENT.md
+- RISK_OPERATIONS.md
+- PORTFOLIO_MANAGEMENT.md
+- CONTINUOUS_IMPROVEMENT.md
+- AI_GOVERNANCE_MILESTONE.md
+- ENTERPRISE_OPERATIONS_MILESTONE.md
+
+Canonical AI Governance Documents:
+
+- AI_GOVERNANCE/README.md
+- AI_GOVERNANCE/AI_GOVERNANCE_FRAMEWORK.md
+- AI_GOVERNANCE/AI_POLICY.md
+- AI_GOVERNANCE/MODEL_GOVERNANCE.md
+- AI_GOVERNANCE/PROMPT_GOVERNANCE.md
+- AI_GOVERNANCE/AGENT_GOVERNANCE.md
+- AI_GOVERNANCE/AI_RISK_MANAGEMENT.md
+- AI_GOVERNANCE/AI_COMPLIANCE.md
+
+Status: Implemented
+Version: 1.0
+
+---
+
+# 17_OBSERVABILITY_AND_INTELLIGENCE
+
+Canonical Observability & Intelligence Documents:
+
+- OBSERVABILITY_ARCHITECTURE.md
+- METRICS_ENGINE.md
+- AUDIT_INTELLIGENCE.md
+- ENTERPRISE_ANALYTICS.md
+- EXECUTIVE_DASHBOARDS.md
+- KNOWLEDGE_GRAPH.md
+- OBSERVABILITY_INTELLIGENCE_MILESTONE.md
+
+Status: Implemented
+Version: 1.0
+
+---
+
 ## Current Repository Status
 
 ```text
-Governance                 ✓
-Capability Map             ✓
-Function Registry          ✓
-Agent Library              ✓
-AI Operating System        ✓
-Cognitive Architecture     ✓
-MCP Infrastructure         ✓
-Implementation             ✓
-Platform Services          ✓
-Application Services       ✓
-Business Processes         ✓
-Agent Workflows            ✓
-Runtime Orchestration      ✓
+Governance                          ✓
+Capability Map                      ✓
+Function Registry                   ✓
+Agent Library                       ✓
+AI Operating System                 ✓
+Cognitive Architecture              ✓
+MCP Infrastructure                  ✓
+Implementation                      ✓
+Platform Services                   ✓
+Application Services                ✓
+Business Processes                  ✓
+Agent Workflows                     ✓
+Runtime Orchestration               ✓
+Enterprise Operations               ✓
+Observability & Intelligence        ✓
 ```
 
 ---
@@ -233,7 +284,9 @@ Runtime Orchestration      ✓
 ↓
 15_RUNTIME_ORCHESTRATION
 ↓
-16_ENTERPRISE_OPERATIONS (Next)
+16_ENTERPRISE_OPERATIONS
+↓
+17_OBSERVABILITY_AND_INTELLIGENCE
 ```
 
 ---
