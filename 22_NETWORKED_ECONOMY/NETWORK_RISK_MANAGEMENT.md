@@ -5,7 +5,7 @@
 ## Network Risk Management v1.0
 
 **Status:** Canonical Networked Economy Specification
-**Architecture Layer:** 22_ENTERPRISE_NETWORKED_ECONOMY
+**Architecture Layer:** 22_NETWORKED_ECONOMY
 **Owner:** AG001_CEO
 **Architecture Owner:** AG054_Enterprise_Architect
 **Operational Owner:** AG002_Chief_Orchestrator
