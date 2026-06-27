@@ -5,7 +5,7 @@
 ## Core Runtime Components
 
 **Layer:** 25_RUNTIME_PLATFORM  
-**Component Type:** Runtime Platform Component Specification  
+**Component Type:** Runtime Component Specification  
 **Foundation:** Art of Business Canonical Release v1.0  
 **Product Definition Reference:** 24_PRODUCTIZATION_AND_IMPLEMENTATION  
 **Previous Documents:** 00_RUNTIME_VISION.md, 01_RUNTIME_ARCHITECTURE.md  
@@ -17,39 +17,39 @@
 
 # 1. Purpose
 
-This document defines the core runtime components required for the Bizzi Platform MVP.
+This document defines the core runtime components required for the first runnable Bizzi Platform MVP.
 
-It answers the product-engineering question:
+It translates Runtime Architecture into concrete platform components that can be designed, implemented, tested and evolved.
+
+Core question:
 
 ```text
-Which executable runtime components must exist for Bizzi to deliver the first operating system experience to a business owner?
+Which executable components must exist for Bizzi to run the first end-to-end product journey?
 ```
 
 ---
 
 # 2. Component Design Principle
 
-Each runtime component must satisfy five rules:
+Bizzi runtime components must be:
 
 ```text
-Own a clear responsibility
-Operate on structured objects
-Emit or consume runtime events
-Support memory and audit where required
-Remain traceable to Art of Business v1.0
+Small enough to build
+Clear enough to govern
+Structured enough to scale
+Traceable enough to audit
 ```
 
-Components must be small enough to build and test, but stable enough to become future service boundaries.
+The first runtime should avoid unnecessary complexity while preserving architectural integrity.
 
 ---
 
-# 3. Core Component Map
+# 3. Core Runtime Component Map
 
 The MVP runtime consists of the following core components:
 
 ```text
 Workspace Runtime
-Identity and Access Runtime
 Onboarding Runtime
 Operating Map Runtime
 Function Registry Runtime
@@ -62,132 +62,127 @@ Memory Runtime
 Audit Runtime
 Dashboard Runtime
 Event Runtime
+Security Runtime
 AI Orchestration Runtime
 Export Runtime
 ```
 
 ---
 
-# 4. Component Interaction Overview
+# 4. Runtime Component Groups
+
+## 4.1 Foundation Components
 
 ```text
-User
-↓
 Workspace Runtime
-↓
-Onboarding Runtime
-↓
-Operating Map Runtime
-↓
-Function / Responsibility / Agent Runtime
-↓
-Task / Decision / Process Runtime
-↓
-Memory Runtime
-↓
-Audit Runtime
-↓
-Dashboard Runtime
+Security Runtime
+Event Runtime
 ```
 
-The Event Runtime coordinates state changes across components.
+These components create the basic execution environment.
 
-The AI Orchestration Runtime assists onboarding, operating map generation, gap detection, task suggestions and memory extraction.
+## 4.2 Operating Model Components
+
+```text
+Onboarding Runtime
+Operating Map Runtime
+Function Registry Runtime
+Responsibility Runtime
+Process Runtime
+```
+
+These components model the business as an operating system.
+
+## 4.3 Execution Components
+
+```text
+Agent Registry Runtime
+Task Runtime
+Decision Runtime
+```
+
+These components turn structure into action.
+
+## 4.4 Intelligence and Evidence Components
+
+```text
+Memory Runtime
+Audit Runtime
+Dashboard Runtime
+AI Orchestration Runtime
+```
+
+These components preserve context, provide visibility and support intelligent recommendations.
+
+## 4.5 Output Components
+
+```text
+Export Runtime
+```
+
+This component turns operating data into shareable outputs.
 
 ---
 
-# 5. Component: Workspace Runtime
+# 5. Component 1 — Workspace Runtime
 
-## Responsibility
+## Purpose
 
-Manages company workspaces.
+Creates and manages company workspaces.
 
-## Owns
-
-- CompanyWorkspace;
-- WorkspaceMember;
-- workspace metadata;
-- workspace lifecycle.
-
-## Core Actions
+## Responsibilities
 
 - create workspace;
-- update workspace;
-- retrieve workspace;
-- archive workspace;
-- initialize default runtime state.
+- store company metadata;
+- link users to workspace;
+- maintain workspace status;
+- provide workspace context to other components.
 
-## Events
+## Primary Objects
+
+```text
+CompanyWorkspace
+WorkspaceMember
+User
+```
+
+## Key Events
 
 ```text
 workspace.created
 workspace.updated
-workspace.archived
+workspace.member_added
 ```
 
 ## MVP Requirement
 
-The MVP must support one company workspace for the primary user.
+One owner user must be able to create one company workspace.
 
 ---
 
-# 6. Component: Identity and Access Runtime
+# 6. Component 2 — Onboarding Runtime
 
-## Responsibility
+## Purpose
 
-Controls user identity and workspace access.
+Captures structured business context during first user activation.
 
-## Owns
+## Responsibilities
 
-- User;
-- authentication state;
-- workspace membership;
-- basic role assignment.
+- ask intake questions;
+- store answers;
+- classify user pain points;
+- prepare structured context for AI processing;
+- mark onboarding completion.
 
-## Core Actions
-
-- register user;
-- authenticate user;
-- authorize workspace access;
-- assign owner role;
-- enforce workspace boundary.
-
-## Events
+## Primary Objects
 
 ```text
-user.created
-user.authenticated
-workspace_access.granted
-workspace_access.denied
+BusinessIntake
+IntakeAnswer
+StructuredBusinessContext
 ```
 
-## MVP Requirement
-
-The MVP must support basic authentication and workspace-owner access.
-
----
-
-# 7. Component: Onboarding Runtime
-
-## Responsibility
-
-Captures structured business context from the user.
-
-## Owns
-
-- BusinessIntake;
-- intake questions;
-- intake answers;
-- structured context object.
-
-## Core Actions
-
-- start intake;
-- save answer;
-- complete intake;
-- produce structured business context.
-
-## Events
+## Key Events
 
 ```text
 intake.started
@@ -197,330 +192,335 @@ intake.completed
 
 ## MVP Requirement
 
-The onboarding flow must generate enough structured context to create the first Business Operating Map.
+User must complete a lightweight intake that provides enough context to generate the first Business Operating Map.
 
 ---
 
-# 8. Component: Operating Map Runtime
+# 7. Component 3 — Operating Map Runtime
 
-## Responsibility
+## Purpose
 
-Generates and manages the Business Operating Map.
+Generates and maintains the Business Operating Map.
 
-## Owns
+## Responsibilities
 
-- OperatingMap;
-- operating gaps;
-- suggested functions;
-- suggested agents;
-- suggested tasks;
-- map status.
+- generate initial map;
+- suggest functions;
+- detect gaps;
+- link functions, responsibilities, agents and tasks;
+- update map after user confirmation.
 
-## Core Actions
+## Primary Objects
 
-- generate operating map;
-- update operating map;
-- identify gaps;
-- link map items to functions, responsibilities, agents and tasks.
+```text
+OperatingMap
+OperatingGap
+OperatingRecommendation
+```
 
-## Events
+## Key Events
 
 ```text
 operating_map.generated
 operating_map.updated
 operating_gap.detected
+recommendation.created
 ```
 
 ## MVP Requirement
 
-This component is central to activation. The user must receive a useful operating map in the first hour.
+Bizzi must generate a useful first operating map from onboarding inputs.
 
 ---
 
-# 9. Component: Function Registry Runtime
+# 8. Component 4 — Function Registry Runtime
 
-## Responsibility
+## Purpose
 
 Stores and manages business functions.
 
-## Owns
+## Responsibilities
 
-- Function;
-- function category;
-- function status;
-- function relationships.
+- create functions;
+- edit functions;
+- archive functions;
+- link functions to responsibilities, agents, processes, tasks and decisions;
+- provide function structure for dashboard and AI recommendations.
 
-## Core Actions
+## Primary Objects
 
-- create function;
-- edit function;
-- confirm suggested function;
-- archive function;
-- list functions.
+```text
+Function
+FunctionCategory
+FunctionStatus
+```
 
-## Events
+## Key Events
 
 ```text
 function.created
 function.updated
-function.confirmed
 function.archived
 ```
 
 ## MVP Requirement
 
-The user must be able to confirm, edit or remove suggested functions.
+User must be able to confirm or edit several core business functions.
 
 ---
 
-# 10. Component: Responsibility Runtime
+# 9. Component 5 — Responsibility Runtime
 
-## Responsibility
+## Purpose
 
-Manages ownership and accountability.
+Tracks ownership across functions, processes and tasks.
 
-## Owns
+## Responsibilities
 
-- Responsibility;
-- owner assignment;
-- ownership gaps;
-- responsibility status.
+- assign owners;
+- mark unassigned areas;
+- detect ownership gaps;
+- support human and AI-assisted ownership;
+- link responsibility to audit trail.
 
-## Core Actions
+## Primary Objects
 
-- assign responsibility;
-- change owner;
-- mark unassigned;
-- detect ownership gap;
-- link responsibility to function, task or process.
+```text
+Responsibility
+OwnerAssignment
+OwnershipGap
+```
 
-## Events
+## Key Events
 
 ```text
 responsibility.assigned
 responsibility.updated
-responsibility.unassigned
-responsibility_gap.detected
+ownership_gap.detected
 ```
 
 ## MVP Requirement
 
-The system must make missing ownership visible.
+User must see which functions or tasks have owners and which remain unassigned.
 
 ---
 
-# 11. Component: Agent Registry Runtime
+# 10. Component 6 — Agent Registry Runtime
 
-## Responsibility
+## Purpose
 
-Manages AI agent definitions inside the workspace.
+Registers AI agents as governed support roles inside the company operating model.
 
-## Owns
+## Responsibilities
 
-- Agent;
-- agent role;
-- human owner;
-- allowed actions;
-- escalation rule;
-- agent status.
-
-## Core Actions
-
-- suggest agent;
-- create agent;
-- edit agent;
+- suggest agents;
+- create agent records;
 - assign human owner;
+- define role;
 - define allowed actions;
-- define escalation route.
+- define escalation rule;
+- link agent to function or process.
 
-## Events
+## Primary Objects
+
+```text
+Agent
+AgentRole
+AgentAuthorityScope
+AgentEscalationRule
+```
+
+## Key Events
 
 ```text
 agent.suggested
 agent.created
+agent.assigned
 agent.updated
-agent.owner_assigned
-agent.archived
 ```
 
 ## MVP Requirement
 
-Agents must remain advisory and governed. Every agent must have a human owner.
+AI agents are suggestions and support roles only. Human ownership is required.
 
 ---
 
-# 12. Component: Process Runtime
+# 11. Component 7 — Process Runtime
 
-## Responsibility
+## Purpose
 
-Stores simple process definitions and links them to functions and tasks.
+Stores lightweight process definitions.
 
-## Owns
+## Responsibilities
 
-- Process;
-- process purpose;
-- process steps;
-- process owner;
-- input/output definitions.
-
-## Core Actions
-
-- create process;
-- edit process;
+- create process drafts;
+- define process purpose;
+- define steps;
 - link process to function;
-- link process to tasks;
-- archive process.
+- link process to tasks, agents, decisions and memory.
 
-## Events
+## Primary Objects
+
+```text
+Process
+ProcessStep
+ProcessInput
+ProcessOutput
+```
+
+## Key Events
 
 ```text
 process.created
 process.updated
-process.linked_to_function
-process.archived
+process.linked
 ```
 
 ## MVP Requirement
 
-The process runtime can remain simple and should support lightweight process drafts.
+Processes may start as simple structured drafts. Complex workflow automation is not required in first MVP.
 
 ---
 
-# 13. Component: Task Runtime
+# 12. Component 8 — Task Runtime
 
-## Responsibility
+## Purpose
 
-Creates, routes and tracks tasks.
+Creates and routes tasks across the workspace.
 
-## Owns
+## Responsibilities
 
-- Task;
-- task status;
-- task owner;
-- task priority;
-- due date;
-- task relationships.
+- create tasks;
+- assign owners;
+- set priority;
+- set status;
+- link tasks to functions, processes, decisions and agents;
+- expose open tasks to dashboard.
 
-## Core Actions
+## Primary Objects
 
-- create task;
-- assign owner;
-- update status;
-- update priority;
-- link task to function, process or decision.
+```text
+Task
+TaskStatus
+TaskPriority
+TaskAssignment
+```
 
-## Events
+## Key Events
 
 ```text
 task.created
 task.assigned
 task.status_changed
-task.priority_changed
 task.completed
 ```
 
 ## MVP Requirement
 
-Tasks must be created from onboarding gaps, operating map recommendations and user actions.
+User must see actionable next tasks generated from operating gaps.
 
 ---
 
-# 14. Component: Decision Runtime
+# 13. Component 9 — Decision Runtime
 
-## Responsibility
+## Purpose
 
-Records business decisions and decision rationale.
+Records important business decisions and rationale.
 
-## Owns
+## Responsibilities
 
-- Decision;
-- decision context;
-- options considered;
-- final decision;
-- rationale;
-- linked objects.
-
-## Core Actions
-
-- create decision;
-- edit decision;
+- create decision records;
+- capture decision context;
+- capture rationale;
 - link decision to function, task or process;
-- generate decision memory.
+- create decision memory;
+- expose recent decisions to dashboard.
 
-## Events
+## Primary Objects
 
 ```text
-decision.created
+Decision
+DecisionContext
+DecisionRationale
+DecisionOption
+```
+
+## Key Events
+
+```text
+decision.logged
 decision.updated
-decision.linked
 decision.memory_created
 ```
 
 ## MVP Requirement
 
-The user must be able to record at least one meaningful business decision.
+User must be able to log a decision so it does not disappear into chat history.
 
 ---
 
-# 15. Component: Memory Runtime
+# 14. Component 10 — Memory Runtime
 
-## Responsibility
+## Purpose
 
 Creates and retrieves structured enterprise memory.
 
-## Owns
+## Responsibilities
 
-- MemoryEntry;
-- memory type;
-- memory source;
-- confidence;
-- memory status.
+- create memory entries;
+- classify memory type;
+- link memory to source objects;
+- store operating context;
+- support future AI retrieval;
+- preserve decision, process and task context.
 
-## Core Actions
+## Primary Objects
 
-- create memory entry;
-- extract memory from object;
-- link memory to source;
-- retrieve memory by workspace;
-- archive memory entry.
+```text
+MemoryEntry
+MemoryType
+MemorySource
+MemoryStatus
+```
 
-## Events
+## Key Events
 
 ```text
 memory.created
 memory.updated
 memory.linked
-memory.archived
 ```
 
 ## MVP Requirement
 
-Memory must be created from onboarding, operating maps, decisions, tasks and process drafts.
+Memory must be created from onboarding, operating map, decisions, tasks and processes.
 
 ---
 
-# 16. Component: Audit Runtime
+# 15. Component 11 — Audit Runtime
 
-## Responsibility
+## Purpose
 
-Creates audit evidence for governed runtime actions.
+Records traceable evidence of important runtime activity.
 
-## Owns
+## Responsibilities
 
-- AuditEvent;
-- actor;
-- action;
-- target object;
-- timestamp;
-- metadata.
+- create audit events;
+- capture actor;
+- capture action;
+- capture object reference;
+- capture timestamp;
+- expose audit trail.
 
-## Core Actions
+## Primary Objects
 
-- record audit event;
-- retrieve audit trail;
-- link audit event to runtime object.
+```text
+AuditEvent
+AuditActor
+AuditObjectReference
+```
 
-## Events
+## Key Events
 
 ```text
 audit.recorded
@@ -528,34 +528,36 @@ audit.recorded
 
 ## MVP Requirement
 
-Every important product action must create an audit event.
+Every governed action must be auditable.
 
 ---
 
-# 17. Component: Dashboard Runtime
+# 16. Component 12 — Dashboard Runtime
 
-## Responsibility
+## Purpose
 
-Aggregates runtime state into user-visible operating views.
+Aggregates runtime state into a visible operating dashboard.
 
-## Owns
+## Responsibilities
 
-- DashboardMetric;
-- dashboard summary;
-- operating status;
-- next actions.
-
-## Core Actions
-
-- calculate metrics;
-- show open tasks;
+- calculate dashboard metrics;
+- show functions;
 - show ownership gaps;
+- show open tasks;
+- show agents;
 - show recent decisions;
-- show active agents;
-- show memory status;
-- show recommended next actions.
+- show memory count;
+- show suggested next actions.
 
-## Events
+## Primary Objects
+
+```text
+DashboardMetric
+DashboardView
+OperatingSummary
+```
+
+## Key Events
 
 ```text
 dashboard.updated
@@ -564,110 +566,152 @@ dashboard.viewed
 
 ## MVP Requirement
 
-Dashboard must not be empty. It must be populated from onboarding, operating map, tasks, functions and responsibility gaps.
+Dashboard must answer:
+
+```text
+What is happening?
+Who is responsible?
+What should happen next?
+```
 
 ---
 
-# 18. Component: Event Runtime
+# 17. Component 13 — Event Runtime
 
-## Responsibility
+## Purpose
 
-Coordinates important state changes across runtime components.
+Coordinates runtime state changes through internal events.
 
-## Owns
+## Responsibilities
 
-- RuntimeEvent;
-- event type;
-- event payload;
-- event status.
+- emit events;
+- persist events;
+- notify interested services;
+- trigger audit creation;
+- trigger dashboard recalculation;
+- support future async processing.
 
-## Core Actions
+## Primary Objects
 
-- emit event;
-- persist event;
-- dispatch event to subscribers;
-- trigger audit update;
-- trigger memory update;
-- trigger dashboard update.
+```text
+RuntimeEvent
+EventType
+EventPayload
+```
 
-## Events
+## Key Events
 
 ```text
 runtime_event.emitted
 runtime_event.processed
-runtime_event.failed
 ```
 
 ## MVP Requirement
 
-The MVP may use an internal event table and simple dispatcher rather than a complex external event bus.
+Internal events may be simple and synchronous. External event bus is not required.
 
 ---
 
-# 19. Component: AI Orchestration Runtime
+# 18. Component 14 — Security Runtime
 
-## Responsibility
+## Purpose
 
-Coordinates AI-assisted recommendations and generation.
+Controls identity, access and workspace boundaries.
 
-## Owns
+## Responsibilities
 
-- AI request context;
-- prompt templates;
-- structured output schemas;
-- AI draft outputs;
-- validation status.
+- authenticate users;
+- authorize workspace access;
+- enforce owner role;
+- protect workspace data;
+- support audit of sensitive actions.
 
-## Core Actions
+## Primary Objects
 
-- prepare AI request;
-- generate operating map draft;
-- suggest functions;
-- suggest agents;
-- suggest tasks;
-- summarize decisions;
-- extract memory;
-- validate AI output;
-- require user confirmation.
+```text
+User
+Role
+Permission
+Session
+```
 
-## Events
+## Key Events
+
+```text
+user.authenticated
+access.granted
+access.denied
+```
+
+## MVP Requirement
+
+One authenticated owner must securely access one workspace.
+
+---
+
+# 19. Component 15 — AI Orchestration Runtime
+
+## Purpose
+
+Coordinates AI-assisted recommendations and generated outputs.
+
+## Responsibilities
+
+- prepare structured AI context;
+- call AI provider;
+- validate AI output shape;
+- convert AI output into draft objects;
+- require user confirmation;
+- record AI-assisted events.
+
+## Primary Objects
+
+```text
+AIRequest
+AIResponse
+AIDraftObject
+AIRecommendation
+```
+
+## Key Events
 
 ```text
 ai.requested
-ai.output_generated
-ai.output_validated
-ai.output_rejected
+ai.response_received
+ai.recommendation_created
 ai.output_confirmed
 ```
 
 ## MVP Requirement
 
-AI must produce draft recommendations. Human confirmation is required before important persistence.
+AI must recommend and draft. Human confirmation is required before persistence of important objects.
 
 ---
 
-# 20. Component: Export Runtime
+# 20. Component 16 — Export Runtime
 
-## Responsibility
+## Purpose
 
-Generates simple exports for user-visible value and portability.
+Creates shareable outputs from runtime data.
 
-## Owns
-
-- export request;
-- export format;
-- export content;
-- export status.
-
-## Core Actions
+## Responsibilities
 
 - export operating map;
 - export function registry;
+- export responsibility map;
 - export task list;
 - export decision log;
 - export audit trail.
 
-## Events
+## Primary Objects
+
+```text
+ExportJob
+ExportFile
+ExportFormat
+```
+
+## Key Events
 
 ```text
 export.requested
@@ -677,39 +721,79 @@ export.downloaded
 
 ## MVP Requirement
 
-Exports may initially be Markdown, CSV or PDF depending on implementation priority.
+Initial exports may be Markdown, CSV or PDF.
 
 ---
 
-# 21. Component Dependency Matrix
+# 21. Component Interaction Model
 
-| Component | Depends On | Feeds |
-|---|---|---|
-| Workspace Runtime | Identity Runtime | All workspace components |
-| Onboarding Runtime | Workspace Runtime | Operating Map Runtime |
-| Operating Map Runtime | Onboarding Runtime, AI Runtime | Functions, Responsibilities, Agents, Tasks |
-| Function Registry Runtime | Workspace Runtime | Responsibility, Process, Task, Dashboard |
-| Responsibility Runtime | Function Registry | Dashboard, Audit |
-| Agent Registry Runtime | Function Registry, Responsibility | Dashboard, Task, Audit |
-| Process Runtime | Function Registry | Task, Memory |
-| Task Runtime | Function, Responsibility, Process | Dashboard, Memory, Audit |
-| Decision Runtime | Workspace, Function, Task | Memory, Audit, Dashboard |
-| Memory Runtime | Runtime Objects | Dashboard, AI Context |
-| Audit Runtime | Runtime Events | Audit Trail |
-| Dashboard Runtime | All Runtime State | User Visibility |
-| Event Runtime | All Components | Audit, Memory, Dashboard |
-| AI Orchestration Runtime | Structured Context | Operating Map, Suggestions, Memory |
-| Export Runtime | Runtime State | User Exports |
-
----
-
-# 22. First Runnable Component Sequence
-
-Recommended build sequence:
+The core runtime interaction model:
 
 ```text
-1. Identity and Access Runtime
-2. Workspace Runtime
+Workspace Runtime
+↓
+Onboarding Runtime
+↓
+AI Orchestration Runtime
+↓
+Operating Map Runtime
+↓
+Function Registry Runtime
+↓
+Responsibility Runtime
+↓
+Agent Registry Runtime
+↓
+Task Runtime
+↓
+Decision Runtime
+↓
+Memory Runtime
+↓
+Audit Runtime
+↓
+Dashboard Runtime
+```
+
+Event Runtime supports all components.
+
+Security Runtime protects all components.
+
+Export Runtime creates outputs from selected runtime objects.
+
+---
+
+# 22. Component Dependency Rules
+
+## Rule 1 — Workspace First
+
+No runtime object may exist without a workspace.
+
+## Rule 2 — Events for Important Changes
+
+Important state changes must emit runtime events.
+
+## Rule 3 — Audit for Governed Actions
+
+Governed actions must create audit records.
+
+## Rule 4 — Memory from Meaningful Context
+
+Decisions, processes, onboarding and operating map changes should create memory where useful.
+
+## Rule 5 — AI Output Requires Review
+
+AI-generated recommendations must remain draft until confirmed by the user.
+
+---
+
+# 23. MVP Component Priority
+
+Build priority:
+
+```text
+1. Workspace Runtime
+2. Security Runtime
 3. Onboarding Runtime
 4. AI Orchestration Runtime
 5. Operating Map Runtime
@@ -721,55 +805,57 @@ Recommended build sequence:
 11. Memory Runtime
 12. Decision Runtime
 13. Agent Registry Runtime
-14. Export Runtime
+14. Process Runtime
+15. Event Runtime refinement
+16. Export Runtime
 ```
 
-This sequence prioritizes first-hour value.
+Event handling may begin as simple internal service logic and mature over time.
 
 ---
 
-# 23. Component Definition of Done
+# 24. Component Definition of Done
 
-A runtime component is complete when:
+A runtime component is considered ready when it defines:
 
-- its owned objects are defined;
-- its actions are implemented;
-- its events are emitted;
-- audit is recorded where required;
-- memory is created where relevant;
-- dashboard receives needed state;
-- tests cover core behavior;
-- component boundaries are documented.
+- purpose;
+- primary objects;
+- core operations;
+- emitted events;
+- audit requirements;
+- memory behavior if applicable;
+- dashboard contribution if applicable;
+- MVP acceptance criteria.
 
 ---
 
-# 24. Architecture Alignment
+# 25. Architecture Alignment
 
-| Runtime Component | Art of Business Reference |
+| Runtime Component | Product / Architecture Reference |
 |---|---|
-| Workspace Runtime | Enterprise Foundation |
-| Identity and Access Runtime | Governance / Security |
-| Onboarding Runtime | Capability Discovery |
-| Operating Map Runtime | Capability Map / Function Registry |
-| Function Registry Runtime | Function Registry |
-| Responsibility Runtime | Governance / Decision Routing |
+| Workspace Runtime | 01_MVP_SCOPE.md |
+| Onboarding Runtime | 04_CORE_USER_JOURNEY.md |
+| Operating Map Runtime | 00_PRODUCT_VISION.md |
+| Function Registry Runtime | Art of Business Function Registry |
+| Responsibility Runtime | Governance Baseline |
 | Agent Registry Runtime | Agent Library |
 | Process Runtime | Process Architecture |
 | Task Runtime | Operating Model |
-| Decision Runtime | Decision Routing / Enterprise Memory |
+| Decision Runtime | Decision Routing |
 | Memory Runtime | Enterprise Memory |
 | Audit Runtime | Observability and Intelligence |
-| Dashboard Runtime | Enterprise Operations |
-| Event Runtime | Enterprise Operations |
-| AI Orchestration Runtime | Enterprise Autonomy / Governance |
-| Export Runtime | Knowledge and Reporting |
+| Dashboard Runtime | Product Value Proposition |
+| Event Runtime | Runtime Architecture |
+| Security Runtime | Security / Governance Baseline |
+| AI Orchestration Runtime | Enterprise Autonomy Governance |
+| Export Runtime | MVP Exports |
 
 ---
 
-# 25. Final Component Statement
+# 26. Final Component Statement
 
 ```text
-Bizzi Core Runtime Components define the executable building blocks that transform product vision into workspace creation, operating maps, registries, tasks, decisions, memory, auditability and dashboard visibility.
+Bizzi Core Runtime Components define the executable building blocks required to transform product vision into a working AI-orchestrated enterprise operating system.
 ```
 
-This document becomes the component map for building the first Bizzi Runtime Platform.
+This document becomes the component catalog for the Runtime Platform layer.
