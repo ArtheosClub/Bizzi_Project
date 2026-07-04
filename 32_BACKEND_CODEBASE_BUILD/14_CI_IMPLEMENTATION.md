@@ -7,55 +7,83 @@
 **Layer:** 32_BACKEND_CODEBASE_BUILD  
 **Component Type:** Codebase Build Specification  
 **Foundation:** Art of Business Canonical Release v1.0  
-**Previous Document:** 13_TEST_IMPLEMENTATION.md  
-**Status:** Draft v0.1  
-**Product:** Bizzi Platform
+**Product:** Bizzi Platform  
+**Status:** Draft v0.1
 
 ---
 
 # 1. Purpose
 
-This document defines the concrete continuous integration implementation for the Bizzi backend codebase.
+This document defines the concrete CI implementation for the Bizzi backend codebase.
 
-It specifies the GitHub Actions workflow files, runtime services, quality gates, commands, environment variables and merge-readiness checks required before backend changes are accepted.
+The CI implementation converts the CI workflow execution plan into repository files, package scripts and automated GitHub quality gates.
 
----
-
-# 2. Target Workflow Files
+Core question:
 
 ```text
-.github/workflows/backend-ci.yml
-.github/workflows/backend-pr-check.yml optional later
-```
-
-MVP rule:
-
-```text
-Start with one reliable backend-ci.yml before adding specialized workflows.
+How should Bizzi verify every backend change automatically before it is accepted into the main branch?
 ```
 
 ---
 
-# 3. CI Responsibilities
-
-The backend CI workflow must verify:
+# 2. CI Thesis
 
 ```text
-dependency installation
-TypeScript type safety
-lint quality
+CI is the first automated guardian of Bizzi architecture. It must verify install, schema, type safety, tests, migrations and build before code is trusted.
+```
+
+The CI implementation must prove:
+
+```text
+reproducible dependency install
 Prisma schema validity
-Prisma client generation
-migration deployability on clean PostgreSQL
+migration deployability
+TypeScript correctness
+lint correctness
 unit tests
 integration tests
 e2e tests
 backend build
+no production secrets required
 ```
 
 ---
 
-# 4. Trigger Strategy
+# 3. Target Files
+
+Primary workflow file:
+
+```text
+.github/workflows/backend-ci.yml
+```
+
+Supporting backend files:
+
+```text
+backend/package.json
+backend/prisma/schema.prisma
+backend/jest.config.ts
+backend/jest.e2e.config.ts
+backend/.env.example
+backend/test/setup/test-database.ts
+backend/test/setup/test-app.ts
+```
+
+---
+
+# 4. GitHub Actions Workflow
+
+Workflow name:
+
+```text
+Backend CI
+```
+
+Workflow file:
+
+```text
+.github/workflows/backend-ci.yml
+```
 
 Recommended triggers:
 
@@ -65,51 +93,75 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/backend-ci.yml'
-      - 'package.json'
       - 'pnpm-lock.yaml'
+      - 'package.json'
   push:
     branches:
       - main
     paths:
       - 'backend/**'
       - '.github/workflows/backend-ci.yml'
-      - 'package.json'
       - 'pnpm-lock.yaml'
+      - 'package.json'
 ```
 
 ---
 
 # 5. Runtime Environment
 
+Runner:
+
 ```text
-runner: ubuntu-latest
-node: Node.js LTS
-package manager: pnpm
-database: PostgreSQL 16
+ubuntu-latest
+```
+
+Node:
+
+```text
+Node.js LTS
+```
+
+Package manager:
+
+```text
+pnpm
+```
+
+Database service:
+
+```text
+PostgreSQL 16
 ```
 
 ---
 
-# 6. Environment Variables
+# 6. CI Environment Variables
+
+Required CI values:
 
 ```text
 NODE_ENV=test
 DATABASE_URL=postgresql://bizzi:bizzi@localhost:5432/bizzi_test
 DEV_AUTH_MODE=true
-JWT_SECRET=ci-test-secret
+DEV_USER_EMAIL=ci@bizzi.local
+DEV_USER_NAME=Bizzi CI User
+JWT_SECRET=ci-test-only
 ```
 
 Rules:
 
 ```text
-CI must not require production secrets.
-CI must use disposable test infrastructure.
-CI must not print sensitive values.
+CI must not require production credentials.
+CI must not require cloud services.
+CI must use a disposable test database.
+CI must not print secrets.
 ```
 
 ---
 
 # 7. PostgreSQL Service
+
+Required GitHub Actions service:
 
 ```yaml
 services:
@@ -128,42 +180,62 @@ services:
       --health-retries 5
 ```
 
+Rule:
+
+```text
+CI must wait for PostgreSQL health before running Prisma or tests.
+```
+
 ---
 
-# 8. Pipeline Steps
+# 8. Required Package Scripts
+
+Backend `package.json` must provide:
+
+```json
+{
+  "scripts": {
+    "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
+    "typecheck": "tsc --noEmit",
+    "build": "nest build",
+    "test": "jest",
+    "test:unit": "jest --config jest.config.ts",
+    "test:integration": "jest --config jest.integration.config.ts",
+    "test:e2e": "jest --config jest.e2e.config.ts",
+    "db:test:reset": "prisma migrate reset --force --skip-seed"
+  }
+}
+```
+
+Rule:
+
+```text
+Scripts may be adapted to actual NestJS/Jest setup, but CI command names should remain stable.
+```
+
+---
+
+# 9. CI Job Stages
+
+Required stages:
 
 ```text
 checkout repository
 setup pnpm
 setup Node.js
-install dependencies with frozen lockfile
+install dependencies
 validate Prisma schema
 generate Prisma client
 apply migrations
-run lint
-run typecheck
-run unit tests
-run integration tests
-run e2e tests
-run build
+lint
+typecheck
+unit tests
+integration tests
+e2e tests
+build
 ```
 
----
-
-# 9. Required Commands
-
-```bash
-pnpm install --frozen-lockfile
-cd backend && pnpm prisma validate
-cd backend && pnpm prisma generate
-cd backend && pnpm prisma migrate deploy
-cd backend && pnpm lint
-cd backend && pnpm typecheck
-cd backend && pnpm test:unit
-cd backend && pnpm test:integration
-cd backend && pnpm test:e2e
-cd backend && pnpm build
-```
+Every stage is a quality gate.
 
 ---
 
@@ -177,16 +249,16 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/backend-ci.yml'
-      - 'package.json'
       - 'pnpm-lock.yaml'
+      - 'package.json'
   push:
     branches:
       - main
     paths:
       - 'backend/**'
       - '.github/workflows/backend-ci.yml'
-      - 'package.json'
       - 'pnpm-lock.yaml'
+      - 'package.json'
 
 permissions:
   contents: read
@@ -214,16 +286,21 @@ jobs:
       NODE_ENV: test
       DATABASE_URL: postgresql://bizzi:bizzi@localhost:5432/bizzi_test
       DEV_AUTH_MODE: 'true'
-      JWT_SECRET: ci-test-secret
+      DEV_USER_EMAIL: ci@bizzi.local
+      DEV_USER_NAME: Bizzi CI User
+      JWT_SECRET: ci-test-only
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 9
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'pnpm'
@@ -231,13 +308,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Validate Prisma schema
+      - name: Prisma validate
         run: cd backend && pnpm prisma validate
 
-      - name: Generate Prisma client
+      - name: Prisma generate
         run: cd backend && pnpm prisma generate
 
-      - name: Apply migrations
+      - name: Prisma migrate deploy
         run: cd backend && pnpm prisma migrate deploy
 
       - name: Lint
@@ -261,51 +338,79 @@ jobs:
 
 ---
 
-# 11. Quality Gates
+# 11. Branch Protection Readiness
 
-The workflow must fail on:
-
-```text
-lockfile mismatch
-install failure
-Prisma validation failure
-migration failure
-lint failure
-typecheck failure
-unit test failure
-integration test failure
-e2e test failure
-build failure
-```
-
----
-
-# 12. Branch Protection Readiness
-
-After CI stabilizes, `main` should require:
+After CI is stable, the `main` branch may require:
 
 ```text
 Backend CI success
 pull request before merge
-no direct force push
-review approval optional for early stage
+no force pushes
+conversation resolution optional
+linear history optional
+```
+
+Rule:
+
+```text
+Do not enable strict branch protection until the first CI workflow is reliable.
 ```
 
 ---
 
-# 13. Acceptance Criteria
+# 12. Failure Handling
+
+Common failures:
+
+```text
+missing package script
+lockfile mismatch
+PostgreSQL unavailable
+wrong DATABASE_URL
+Prisma migration failure
+Prisma client not generated
+lint failure
+typecheck failure
+flaky tests
+build failure
+```
+
+Expected response:
+
+```text
+fix the root cause, do not disable CI to bypass failure.
+```
+
+---
+
+# 13. Secret Safety
+
+Rules:
+
+```text
+no production credentials in workflow YAML
+no cloud secrets for MVP CI
+no raw tokens in logs
+use test-only local values
+use minimal workflow permissions
+```
+
+---
+
+# 14. Acceptance Criteria
 
 CI Implementation is accepted when:
 
-- backend CI workflow target file is defined;
-- trigger strategy is defined;
+- backend CI workflow file is defined;
+- workflow triggers are defined;
 - PostgreSQL service is defined;
-- environment variables are defined;
+- test environment variables are defined;
 - install, Prisma, lint, typecheck, test and build gates are defined;
-- workflow skeleton is documented;
-- quality gates are documented;
+- required package scripts are defined;
+- minimal permissions are defined;
 - branch protection readiness is documented;
-- no production secrets are required.
+- failure handling is documented;
+- secret safety is documented.
 
 Status:
 
@@ -315,10 +420,10 @@ Accepted for Backend Codebase Milestone
 
 ---
 
-# 14. Final Statement
+# 15. Final Statement
 
 ```text
-Bizzi CI Implementation defines the automated quality gate for backend source-code evolution.
+Bizzi CI Implementation defines the automated backend quality gate for source code construction.
 ```
 
-This workflow protects the backend codebase from regressions and prepares the project for controlled AI-assisted development.
+This CI layer ensures that the future executable Bizzi backend can be validated consistently before merge and before deployment automation is introduced.
