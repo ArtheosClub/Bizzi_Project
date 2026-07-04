@@ -4,69 +4,142 @@
 
 ## CI Implementation
 
-**Layer:** 32_BACKEND_CODEBASE_BUILD
+**Layer:** 32_BACKEND_CODEBASE_BUILD  
+**Component Type:** Codebase Build Specification  
+**Foundation:** Art of Business Canonical Release v1.0  
+**Previous Document:** 13_TEST_IMPLEMENTATION.md  
+**Status:** Draft v0.1  
+**Product:** Bizzi Platform
 
-### Purpose
+---
 
-Define the concrete implementation of continuous integration for the Bizzi backend codebase.
+# 1. Purpose
 
-### Scope
+This document defines the concrete continuous integration implementation for the Bizzi backend codebase.
 
-The CI implementation covers:
+It specifies the GitHub Actions workflow files, runtime services, quality gates, commands, environment variables and merge-readiness checks required before backend changes are accepted.
 
-- dependency installation
-- TypeScript validation
-- linting
-- Prisma schema validation
-- Prisma client generation
-- test database startup
-- migrations
-- unit tests
-- integration tests
-- e2e tests
-- production build verification
+---
 
-### Target Workflow File
+# 2. Target Workflow Files
 
 ```text
 .github/workflows/backend-ci.yml
+.github/workflows/backend-pr-check.yml optional later
 ```
 
-### CI Runtime
+MVP rule:
 
 ```text
-GitHub Actions
-Ubuntu latest
-Node.js LTS
-pnpm
-PostgreSQL service container
+Start with one reliable backend-ci.yml before adding specialized workflows.
 ```
 
-### Workflow Triggers
+---
+
+# 3. CI Responsibilities
+
+The backend CI workflow must verify:
 
 ```text
-pull_request
-push to main
-manual workflow_dispatch
+dependency installation
+TypeScript type safety
+lint quality
+Prisma schema validity
+Prisma client generation
+migration deployability on clean PostgreSQL
+unit tests
+integration tests
+e2e tests
+backend build
 ```
 
-### Required Job
+---
+
+# 4. Trigger Strategy
+
+Recommended triggers:
+
+```yaml
+on:
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+```
+
+---
+
+# 5. Runtime Environment
 
 ```text
-backend-ci
+runner: ubuntu-latest
+node: Node.js LTS
+package manager: pnpm
+database: PostgreSQL 16
 ```
 
-### Backend CI Steps
+---
+
+# 6. Environment Variables
+
+```text
+NODE_ENV=test
+DATABASE_URL=postgresql://bizzi:bizzi@localhost:5432/bizzi_test
+DEV_AUTH_MODE=true
+JWT_SECRET=ci-test-secret
+```
+
+Rules:
+
+```text
+CI must not require production secrets.
+CI must use disposable test infrastructure.
+CI must not print sensitive values.
+```
+
+---
+
+# 7. PostgreSQL Service
+
+```yaml
+services:
+  postgres:
+    image: postgres:16
+    env:
+      POSTGRES_USER: bizzi
+      POSTGRES_PASSWORD: bizzi
+      POSTGRES_DB: bizzi_test
+    ports:
+      - 5432:5432
+    options: >-
+      --health-cmd pg_isready
+      --health-interval 10s
+      --health-timeout 5s
+      --health-retries 5
+```
+
+---
+
+# 8. Pipeline Steps
 
 ```text
 checkout repository
-setup Node.js
 setup pnpm
-install dependencies
-start PostgreSQL service
+setup Node.js
+install dependencies with frozen lockfile
 validate Prisma schema
 generate Prisma client
-run migrations
+apply migrations
 run lint
 run typecheck
 run unit tests
@@ -75,61 +148,177 @@ run e2e tests
 run build
 ```
 
-### CI Environment
+---
 
-The CI environment must use test-only configuration values.
+# 9. Required Commands
 
-Required variables:
-
-```text
-NODE_ENV=test
-DATABASE_URL points to disposable PostgreSQL test database
-DEV_AUTH_MODE=true
-JWT secret value must be test-only and never production
+```bash
+pnpm install --frozen-lockfile
+cd backend && pnpm prisma validate
+cd backend && pnpm prisma generate
+cd backend && pnpm prisma migrate deploy
+cd backend && pnpm lint
+cd backend && pnpm typecheck
+cd backend && pnpm test:unit
+cd backend && pnpm test:integration
+cd backend && pnpm test:e2e
+cd backend && pnpm build
 ```
 
-### PostgreSQL Service
+---
 
-```text
-PostgreSQL version: 16
-Database role: bizzi
-Database name: bizzi_test
+# 10. Workflow Skeleton
+
+```yaml
+name: Backend CI
+
+on:
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  backend-ci:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: bizzi
+          POSTGRES_PASSWORD: bizzi
+          POSTGRES_DB: bizzi_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://bizzi:bizzi@localhost:5432/bizzi_test
+      DEV_AUTH_MODE: 'true'
+      JWT_SECRET: ci-test-secret
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate Prisma schema
+        run: cd backend && pnpm prisma validate
+
+      - name: Generate Prisma client
+        run: cd backend && pnpm prisma generate
+
+      - name: Apply migrations
+        run: cd backend && pnpm prisma migrate deploy
+
+      - name: Lint
+        run: cd backend && pnpm lint
+
+      - name: Typecheck
+        run: cd backend && pnpm typecheck
+
+      - name: Unit tests
+        run: cd backend && pnpm test:unit
+
+      - name: Integration tests
+        run: cd backend && pnpm test:integration
+
+      - name: E2E tests
+        run: cd backend && pnpm test:e2e
+
+      - name: Build
+        run: cd backend && pnpm build
 ```
 
-### Quality Gates
+---
 
-CI must fail if any of the following fail:
+# 11. Quality Gates
+
+The workflow must fail on:
 
 ```text
-install
-lint
-typecheck
-Prisma validation
-migration execution
-unit tests
-integration tests
-e2e tests
-build
+lockfile mismatch
+install failure
+Prisma validation failure
+migration failure
+lint failure
+typecheck failure
+unit test failure
+integration test failure
+e2e test failure
+build failure
 ```
 
-### Security Rules
+---
 
-- No production secrets in CI.
-- CI uses test-only credentials.
-- Workflow permissions are minimal.
-- Logs must not expose secrets.
+# 12. Branch Protection Readiness
 
-### Acceptance Criteria
+After CI stabilizes, `main` should require:
 
-- CI workflow exists.
-- CI runs on pull requests.
-- CI runs on main branch pushes.
-- PostgreSQL test database starts.
-- Migrations run successfully.
-- All tests pass.
-- Backend build passes.
-- Failed tests block merge.
+```text
+Backend CI success
+pull request before merge
+no direct force push
+review approval optional for early stage
+```
 
-### Outcome
+---
 
-The CI Implementation makes Bizzi backend changes verifiable, repeatable and protected by automated quality gates before merge.
+# 13. Acceptance Criteria
+
+CI Implementation is accepted when:
+
+- backend CI workflow target file is defined;
+- trigger strategy is defined;
+- PostgreSQL service is defined;
+- environment variables are defined;
+- install, Prisma, lint, typecheck, test and build gates are defined;
+- workflow skeleton is documented;
+- quality gates are documented;
+- branch protection readiness is documented;
+- no production secrets are required.
+
+Status:
+
+```text
+Accepted for Backend Codebase Milestone
+```
+
+---
+
+# 14. Final Statement
+
+```text
+Bizzi CI Implementation defines the automated quality gate for backend source-code evolution.
+```
+
+This workflow protects the backend codebase from regressions and prepares the project for controlled AI-assisted development.
