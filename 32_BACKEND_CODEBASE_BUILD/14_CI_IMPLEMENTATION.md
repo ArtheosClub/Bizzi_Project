@@ -8,11 +8,23 @@
 
 ### Purpose
 
-Define the concrete implementation of the GitHub Actions continuous integration workflow for the Bizzi backend.
+Define the concrete implementation of continuous integration for the Bizzi backend codebase.
 
 ### Scope
 
-The CI implementation validates that the backend can be installed, checked, tested and built automatically on every relevant change.
+The CI implementation covers:
+
+- dependency installation
+- TypeScript validation
+- linting
+- Prisma schema validation
+- Prisma client generation
+- test database startup
+- migrations
+- unit tests
+- integration tests
+- e2e tests
+- production build verification
 
 ### Target Workflow File
 
@@ -20,36 +32,41 @@ The CI implementation validates that the backend can be installed, checked, test
 .github/workflows/backend-ci.yml
 ```
 
-### Trigger Strategy
+### CI Runtime
+
+```text
+GitHub Actions
+Ubuntu latest
+Node.js LTS
+pnpm
+PostgreSQL service container
+```
+
+### Workflow Triggers
 
 ```text
 pull_request
 push to main
-changes under backend/**
-changes to workflow files
-changes to lockfile
+manual workflow_dispatch
 ```
 
-### CI Runtime
-
-- Ubuntu runner
-- Node.js LTS
-- pnpm
-- PostgreSQL service
-- Prisma CLI
-- Jest
-- Supertest
-
-### Workflow Jobs
+### Required Job
 
 ```text
-checkout
-setup node
+backend-ci
+```
+
+### Backend CI Steps
+
+```text
+checkout repository
+setup Node.js
 setup pnpm
 install dependencies
+start PostgreSQL service
 validate Prisma schema
 generate Prisma client
-run migrations against test database
+run migrations
 run lint
 run typecheck
 run unit tests
@@ -58,57 +75,61 @@ run e2e tests
 run build
 ```
 
-### Environment Variables
+### CI Environment
+
+The CI environment must use test-only configuration values.
+
+Required variables:
 
 ```text
 NODE_ENV=test
-DATABASE_URL=postgresql://bizzi:bizzi@localhost:5432/bizzi_test
+DATABASE_URL points to disposable PostgreSQL test database
 DEV_AUTH_MODE=true
-JWT_SECRET=ci-test-only
+JWT secret value must be test-only and never production
 ```
 
 ### PostgreSQL Service
 
-CI must provide a disposable PostgreSQL database for migrations and tests.
-
 ```text
-POSTGRES_USER=bizzi
-POSTGRES_PASSWORD=bizzi
-POSTGRES_DB=bizzi_test
+PostgreSQL version: 16
+Database role: bizzi
+Database name: bizzi_test
 ```
 
-### Required Commands
+### Quality Gates
 
-```bash
-pnpm install --frozen-lockfile
-cd backend && pnpm prisma validate
-cd backend && pnpm prisma generate
-cd backend && pnpm prisma migrate deploy
-cd backend && pnpm lint
-cd backend && pnpm typecheck
-cd backend && pnpm test:unit
-cd backend && pnpm test:integration
-cd backend && pnpm test:e2e
-cd backend && pnpm build
+CI must fail if any of the following fail:
+
+```text
+install
+lint
+typecheck
+Prisma validation
+migration execution
+unit tests
+integration tests
+e2e tests
+build
 ```
 
 ### Security Rules
 
-- CI must not use production secrets.
-- CI must use disposable test database.
-- Workflow permissions should be read-only where possible.
-- Secrets are reserved for future deployment workflows.
+- No production secrets in CI.
+- CI uses test-only credentials.
+- Workflow permissions are minimal.
+- Logs must not expose secrets.
 
 ### Acceptance Criteria
 
-- Workflow runs on pull requests.
-- Workflow runs on main branch pushes.
-- Dependencies install from lockfile.
-- Prisma validates and migrates.
-- Tests pass against test database.
-- Build succeeds.
-- Failed checks block merge once branch protection is enabled.
+- CI workflow exists.
+- CI runs on pull requests.
+- CI runs on main branch pushes.
+- PostgreSQL test database starts.
+- Migrations run successfully.
+- All tests pass.
+- Backend build passes.
+- Failed tests block merge.
 
 ### Outcome
 
-The CI implementation establishes an automated quality gate for Bizzi backend development and prepares the repository for reliable AI-assisted and human code contributions.
+The CI Implementation makes Bizzi backend changes verifiable, repeatable and protected by automated quality gates before merge.
