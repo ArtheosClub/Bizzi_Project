@@ -7,15 +7,7 @@
 **Layer:** 32_BACKEND_CODEBASE_BUILD  
 **Component Type:** Layer Milestone  
 **Foundation:** Art of Business Canonical Release v1.0  
-**Product Definition Reference:** 24_PRODUCTIZATION_AND_IMPLEMENTATION  
-**Runtime Reference:** 25_RUNTIME_PLATFORM  
-**Domain Reference:** 26_DOMAIN_MODEL  
-**Data Model Reference:** 27_DATA_MODEL v1.1  
-**API Contracts Reference:** 28_API_CONTRACTS  
-**Backend Service Reference:** 29_BACKEND_SERVICE_DESIGN  
-**Implementation Plan Reference:** 30_BACKEND_IMPLEMENTATION_PLAN  
-**Execution Reference:** 31_BACKEND_IMPLEMENTATION_EXECUTION  
-**Previous Document:** 14_CI_IMPLEMENTATION.md  
+**Previous Layer:** 31_BACKEND_IMPLEMENTATION_EXECUTION  
 **Status:** Milestone Passed  
 **Product:** Bizzi Platform  
 **Implementation Phase:** Epoch IV — Backend Codebase Build
@@ -24,14 +16,14 @@
 
 # 1. Purpose
 
-This document records milestone completion for the `32_BACKEND_CODEBASE_BUILD` layer of Bizzi Platform.
+This document records the milestone completion for the `32_BACKEND_CODEBASE_BUILD` layer of Bizzi Platform.
 
-It confirms that the backend codebase build specification has been decomposed into implementation-ready documents covering scaffold, Prisma schema, shared kernel, core modules, API bootstrap, test implementation and CI implementation.
+It confirms that the backend codebase build specification has been created and is ready to guide the next transition from canonical implementation documents into actual backend source files.
 
 Core question:
 
 ```text
-Is the Bizzi Backend Codebase Build layer complete enough to guide creation of the real backend source files and runnable MVP backend?
+Is the Bizzi Backend Codebase Build layer complete enough to authorize final audit and transition into real source code construction?
 ```
 
 ---
@@ -62,30 +54,28 @@ This milestone covers the following documents:
 
 # 3. Layer Objective
 
-The objective of `32_BACKEND_CODEBASE_BUILD` is to transform backend execution specifications into a concrete build blueprint for real source code.
+The objective of `32_BACKEND_CODEBASE_BUILD` is to convert backend execution planning into a canonical backend codebase build specification.
 
 The layer connects:
 
 ```text
-Backend Execution Specifications
+Architecture and implementation plans
 ↓
-Codebase Build Specifications
+Backend source structure
 ↓
-Physical Backend Structure
+Prisma schema implementation
 ↓
-Prisma Persistence Layer
+Shared kernel implementation
 ↓
-Shared Kernel
+Feature module implementation
 ↓
-Concrete Backend Modules
+API bootstrap implementation
 ↓
-API Bootstrap
+Test implementation
 ↓
-Test Implementation
+CI implementation
 ↓
-CI Implementation
-↓
-Ready-to-Code Backend MVP
+Ready-to-build backend codebase
 ```
 
 ---
@@ -95,7 +85,7 @@ Ready-to-Code Backend MVP
 The Backend Codebase Build layer now defines:
 
 ```text
-backend codebase vision
+backend codebase build vision
 backend project scaffold
 Prisma schema implementation
 shared kernel implementation
@@ -124,21 +114,21 @@ Passed
 
 | Document | Status | Role |
 |---|---|---|
-| 00_CODEBASE_BUILD_VISION.md | Complete | Defines transition from execution specs to real backend codebase build |
-| 01_BACKEND_PROJECT_SCAFFOLD.md | Complete | Defines physical backend project structure and initial scaffold |
-| 02_PRISMA_SCHEMA_IMPLEMENTATION.md | Complete | Defines first executable persistence layer and schema strategy |
-| 03_SHARED_KERNEL_IMPLEMENTATION.md | Complete | Defines shared primitives, errors, context and infrastructure helpers |
-| 04_IDENTITY_MODULE_IMPLEMENTATION.md | Complete | Defines current user identity and actor context foundation |
-| 05_WORKSPACE_MODULE_IMPLEMENTATION.md | Complete | Defines workspace tenant boundary and settings implementation |
-| 06_AUTHORIZATION_MODULE_IMPLEMENTATION.md | Complete | Defines owner-only security and future RBAC extension point |
-| 07_TASK_MODULE_IMPLEMENTATION.md | Complete | Defines executable work item module and task lifecycle |
-| 08_DECISION_MODULE_IMPLEMENTATION.md | Complete | Defines business decision capture and confirmation module |
-| 09_MEMORY_MODULE_IMPLEMENTATION.md | Complete | Defines organizational knowledge and memory lifecycle module |
-| 10_AUDIT_MODULE_IMPLEMENTATION.md | Complete | Defines append-only business evidence module |
-| 11_DASHBOARD_MODULE_IMPLEMENTATION.md | Complete | Defines workspace operational visibility and metrics module |
-| 12_API_BOOTSTRAP_IMPLEMENTATION.md | Complete | Defines NestJS application entrypoint and global runtime setup |
-| 13_TEST_IMPLEMENTATION.md | Complete | Defines verification suite for backend MVP behavior |
-| 14_CI_IMPLEMENTATION.md | Complete | Defines automated CI gates for backend build verification |
+| 00_CODEBASE_BUILD_VISION.md | Complete | Defines transition from execution specs to backend codebase build |
+| 01_BACKEND_PROJECT_SCAFFOLD.md | Complete | Defines physical backend project structure |
+| 02_PRISMA_SCHEMA_IMPLEMENTATION.md | Complete | Defines initial persistence implementation |
+| 03_SHARED_KERNEL_IMPLEMENTATION.md | Complete | Defines common backend primitives |
+| 04_IDENTITY_MODULE_IMPLEMENTATION.md | Complete | Defines current user and actor context implementation |
+| 05_WORKSPACE_MODULE_IMPLEMENTATION.md | Complete | Defines tenant boundary implementation |
+| 06_AUTHORIZATION_MODULE_IMPLEMENTATION.md | Complete | Defines workspace authorization implementation |
+| 07_TASK_MODULE_IMPLEMENTATION.md | Complete | Defines executable task module implementation |
+| 08_DECISION_MODULE_IMPLEMENTATION.md | Complete | Defines business decision module implementation |
+| 09_MEMORY_MODULE_IMPLEMENTATION.md | Complete | Defines organizational memory implementation |
+| 10_AUDIT_MODULE_IMPLEMENTATION.md | Complete | Defines audit evidence implementation |
+| 11_DASHBOARD_MODULE_IMPLEMENTATION.md | Complete | Defines operational dashboard implementation |
+| 12_API_BOOTSTRAP_IMPLEMENTATION.md | Complete | Defines backend runtime bootstrap implementation |
+| 13_TEST_IMPLEMENTATION.md | Complete | Defines backend test implementation |
+| 14_CI_IMPLEMENTATION.md | Complete | Defines CI implementation expectations |
 
 Overall document result:
 
@@ -150,32 +140,26 @@ PASSED
 
 # 6. Implementation Readiness
 
-The layer confirms readiness to create actual files under:
+The layer confirms readiness for implementing:
 
 ```text
-backend/src
-backend/prisma
-backend/test
-.github/workflows
+backend folder and package files
+NestJS application bootstrap
+Prisma schema and migrations
+shared kernel primitives
+identity and development auth
+workspace module
+authorization module
+task module
+decision module
+memory module
+audit module
+dashboard module
+test suite
+GitHub Actions CI
 ```
 
-Implementation readiness includes:
-
-```text
-NestJS scaffold
-TypeScript project structure
-PostgreSQL/Prisma persistence
-workspace-scoped repositories
-service layer boundaries
-module controllers
-DTO and mapper conventions
-authorization and validation enforcement
-audit evidence integration
-test suite structure
-CI workflow structure
-```
-
-Readiness result:
+Implementation readiness:
 
 ```text
 Passed
@@ -183,14 +167,13 @@ Passed
 
 ---
 
-# 7. MVP Backend Coverage
+# 7. MVP Vertical Slice Readiness
 
-The layer covers the MVP backend vertical slice:
+The layer supports the backend MVP vertical slice:
 
 ```text
 GET /api/v1/me
 POST /api/v1/workspaces
-GET /api/v1/workspaces
 POST /api/v1/workspaces/{workspace_id}/tasks
 POST /api/v1/workspaces/{workspace_id}/tasks/{task_id}/complete
 POST /api/v1/workspaces/{workspace_id}/decisions
@@ -201,7 +184,7 @@ GET /api/v1/workspaces/{workspace_id}/audit-events
 GET /api/v1/workspaces/{workspace_id}/dashboard
 ```
 
-MVP backend coverage:
+MVP readiness:
 
 ```text
 Passed
@@ -231,82 +214,54 @@ Passed
 
 ---
 
-# 9. Safety and Control Readiness
+# 9. Known Limitations
 
-The layer preserves required controls:
-
-```text
-workspace_id scoping
-owner-only MVP access
-archived workspace mutation blocking
-canonical error handling
-transaction-aware mutations
-audit-first state changes
-payload sanitization
-cross-workspace reference validation
-unit/integration/e2e test coverage
-CI verification gates
-```
-
-Safety readiness:
-
-```text
-Passed
-```
-
----
-
-# 10. Known Limitations
-
-This layer defines implementation specifications and codebase build blueprint, not the final generated source code itself.
+This layer defines the canonical backend codebase build specification, not the final source code itself.
 
 Not yet completed by this layer:
 
 ```text
-actual TypeScript source files
-actual schema.prisma file
-actual migrations
+actual generated NestJS source tree
+actual package.json and lockfile
+actual schema.prisma
+actual migration files
+actual controller/service/repository TypeScript files
 actual Jest test files
 actual GitHub Actions YAML
 actual Docker Compose runtime
-actual runnable local API
 ```
 
-These belong to the next layer:
-
-```text
-33_BACKEND_SOURCE_CODE_GENERATION
-```
+These are intentionally assigned to the next concrete source construction layer.
 
 ---
 
-# 11. Recommended Next Layer
+# 10. Recommended Next Step
 
 Recommended next layer:
 
 ```text
-33_BACKEND_SOURCE_CODE_GENERATION
+33_BACKEND_SOURCE_CONSTRUCTION
 ```
 
 Purpose:
 
 ```text
-Create the actual backend source files, Prisma schema, migrations, tests, CI YAML, Docker Compose configuration and runnable backend MVP.
+Create actual backend source files, package configuration, Prisma schema, migrations, tests, Docker Compose and CI workflow.
 ```
 
-Recommended first documents or tasks:
+Recommended first files/tasks:
 
 ```text
-33_BACKEND_SOURCE_CODE_GENERATION/00_SOURCE_CODE_GENERATION_VISION.md
-33_BACKEND_SOURCE_CODE_GENERATION/01_CREATE_BACKEND_PACKAGE_FILES.md
-33_BACKEND_SOURCE_CODE_GENERATION/02_CREATE_PRISMA_SCHEMA_FILE.md
-33_BACKEND_SOURCE_CODE_GENERATION/03_CREATE_APP_BOOTSTRAP_FILES.md
-33_BACKEND_SOURCE_CODE_GENERATION/04_CREATE_SHARED_KERNEL_FILES.md
+33_BACKEND_SOURCE_CONSTRUCTION/00_SOURCE_CONSTRUCTION_VISION.md
+33_BACKEND_SOURCE_CONSTRUCTION/01_CREATE_BACKEND_PACKAGE_FILES.md
+33_BACKEND_SOURCE_CONSTRUCTION/02_CREATE_NESTJS_BOOTSTRAP_FILES.md
+33_BACKEND_SOURCE_CONSTRUCTION/03_CREATE_PRISMA_SCHEMA_FILE.md
+33_BACKEND_SOURCE_CONSTRUCTION/04_CREATE_SHARED_KERNEL_FILES.md
 ```
 
 ---
 
-# 12. Milestone Acceptance Criteria
+# 11. Milestone Acceptance Criteria
 
 The `32_BACKEND_CODEBASE_BUILD` milestone is accepted when:
 
@@ -325,7 +280,7 @@ The `32_BACKEND_CODEBASE_BUILD` milestone is accepted when:
 - API bootstrap implementation is defined;
 - test implementation is defined;
 - CI implementation is defined;
-- transition to audit is authorized.
+- final audit is authorized.
 
 Result:
 
@@ -335,25 +290,25 @@ Accepted
 
 ---
 
-# 13. Milestone Verdict
+# 12. Milestone Verdict
 
 ```text
 Layer: 32_BACKEND_CODEBASE_BUILD
 Documents: 00-15
 Milestone Result: PASSED
 Codebase Build Vision: PASSED
-Project Scaffold: PASSED
+Backend Project Scaffold: PASSED
 Prisma Schema Implementation: PASSED
-Shared Kernel: PASSED
-Identity Module: PASSED
-Workspace Module: PASSED
-Authorization Module: PASSED
-Task Module: PASSED
-Decision Module: PASSED
-Memory Module: PASSED
-Audit Module: PASSED
-Dashboard Module: PASSED
-API Bootstrap: PASSED
+Shared Kernel Implementation: PASSED
+Identity Module Implementation: PASSED
+Workspace Module Implementation: PASSED
+Authorization Module Implementation: PASSED
+Task Module Implementation: PASSED
+Decision Module Implementation: PASSED
+Memory Module Implementation: PASSED
+Audit Module Implementation: PASSED
+Dashboard Module Implementation: PASSED
+API Bootstrap Implementation: PASSED
 Test Implementation: PASSED
 CI Implementation: PASSED
 Architecture Alignment: PASSED
@@ -364,14 +319,14 @@ Next Document: 16_BACKEND_CODEBASE_AUDIT.md
 
 ---
 
-# 14. Final Declaration
+# 13. Final Declaration
 
 ```text
 BIZZI PLATFORM
 32_BACKEND_CODEBASE_BUILD
 MILESTONE PASSED
 
-The Backend Codebase Build layer now defines the complete blueprint required to generate and implement the real backend source code for the Bizzi MVP.
+The Backend Codebase Build layer now defines the canonical specification required to turn Bizzi backend architecture into actual source code.
 ```
 
 This milestone authorizes formal audit of the `32_BACKEND_CODEBASE_BUILD` layer.
