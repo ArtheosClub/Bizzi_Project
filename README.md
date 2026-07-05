@@ -28,6 +28,10 @@ Art of Business — архитектурная спецификация пред
 | `PB002_Budget_Approval.md` | Playbook: годовой/квартальный цикл бюджетирования |
 | `PB003_Customer_Onboarding.md` | Playbook: передача клиента из Sales в Customer Success |
 | `PB004_Lead_to_Contract.md` | Playbook: полный цикл продажи от лида до контракта |
+| `PB008_Monthly_Financial_Close.md` | Playbook: ежемесячное закрытие финансового периода |
+| `PB011_Employee_Onboarding.md` | Playbook: онбординг нового сотрудника |
+| `PB012_Recruitment_Cycle.md` | Playbook: цикл найма от заявки до оффера |
+| `PB013_Contract_Review_Approval.md` | Playbook: ревью и утверждение контрактов |
 | `PLAYBOOK_ROADMAP.md` | Backlog всех 50 целевых playbooks со статусами |
 | `PLAYBOOK_TEMPLATE.md` | Шаблон для создания новых playbooks в единой структуре |
 
@@ -49,12 +53,13 @@ Art of Business — архитектурная спецификация пред
 
 Текущий охват:
 - Capabilities: 16/16, все 160 под-способностей имеют Function Group
-  (включая новый C16 Administration & Executive Support)
-- Functions: 181 документировано из целевых ~600 (следующий шаг — углубление
-  каждой Function Group с 1 функции до 3–5: варианты review, exception-handling, reporting)
+  (включая C16 Administration & Executive Support)
+- Functions: 300 документировано из целевых ~600 — ровно половина. Каждая
+  Function Group теперь имеет минимум 2 функции (основное действие + Review
+  или Exception Handling)
 - Agents: 84/84 определены и полностью привязаны к Capability доменам
-  (см. AGENT_REGISTRY.md v2.1 — все открытые вопросы закрыты)
-- Playbooks: 4/50 написаны полностью, 46 определены в roadmap с привязкой к функциям
+- Playbooks: 8/50 написаны полностью (Finance ×2, Sales, Customer Success,
+  HR ×2, Legal), 42 определены в roadmap с привязкой к функциям
 
 ## Contributing
 
