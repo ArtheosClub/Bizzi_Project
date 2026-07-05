@@ -1,131 +1,55 @@
 # Art of Business
 
-## AI-Orchestrated Enterprise Framework
+AI-Orchestrated Enterprise Framework — операционная система для цифрового
+двойника малого и среднего бизнеса, управляемая сетью AI-агентов под
+контролем человека.
 
-**Version:** 1.0 Foundation  
-**Repository:** `ArtheosClub/Bizzi_Project`  
-**Status:** Canonical Repository Reconstruction in Progress
+## Что это
 
----
+Art of Business — архитектурная спецификация предприятия, в котором:
+- Бизнес-процессы разложены на измеримые **функции** (Function Registry)
+- Каждой функцией владеет конкретный **AI-агент** (Agent Registry)
+- Решения принимаются по чётким **уровням** (Governance Model, L0–L5)
+- Повторяемые процессы описаны как **playbooks** (пошаговые сценарии)
 
-## 1. Purpose
+Человек сохраняет право вето на критические и стратегические решения
+(см. GOVERNANCE_MODEL.md, п.9 Human Override).
 
-Art of Business is an enterprise architecture framework for designing an AI-orchestrated company operated through agents, domains, governance, capabilities, data, knowledge, playbooks, MCP infrastructure, and execution systems.
+## Структура репозитория
 
-The framework is based on the operating chain:
+| Файл | Назначение |
+|---|---|
+| `Vision.md` | Миссия и долгосрочное видение проекта |
+| `CAPABILITY_MAP_v1.0.md` | 15 бизнес-доменов (C01–C15) и 150 базовых способностей предприятия |
+| `ENTERPRISE_FUNCTION_REGISTRY.md` | Реестр функций: Function ID, Owner Agent, Decision Level, Escalation |
+| `AGENT_REGISTRY.md` | 28 AI-агентов, их зона ответственности и подчинённость |
+| `GOVERNANCE_MODEL.md` | Конституционные принципы, уровни решений, эскалация, аудит |
+| `PB001_Grant_Acquisition.md` | Пример playbook: полный цикл получения гранта |
 
-```text
-Vision
-↓
-Strategy
-↓
-Capabilities
-↓
-Processes
-↓
-Functions
-↓
-Agents
-↓
-Tools
-↓
-Actions
-↓
-Results
-```
+## Как читать документацию
 
----
+Рекомендуемый порядок для нового участника:
+1. `Vision.md` — зачем существует проект
+2. `CAPABILITY_MAP_v1.0.md` — что предприятие умеет делать
+3. `GOVERNANCE_MODEL.md` — как принимаются решения
+4. `AGENT_REGISTRY.md` — кто (какой агент) за что отвечает
+5. `ENTERPRISE_FUNCTION_REGISTRY.md` — как способности превращаются в конкретные функции
+6. `PB001_Grant_Acquisition.md` — пример полного playbook в действии
 
-## 2. Canonical Repository Structure
+## Статус проекта
 
-```text
-00_VISION/
-01_GOVERNANCE/
-02_CAPABILITY_MAP/
-03_FUNCTION_REGISTRY/
-04_AGENT_LIBRARY/
-05_INTERACTION_MODELS/
-06_PLAYBOOKS/
-07_AI_OPERATING_SYSTEM/
-08_COGNITIVE_ARCHITECTURE/
-09_MCP_INFRASTRUCTURE/
-10_IMPLEMENTATION/
+Ранняя архитектурная стадия. Заложен каркас (15 доменов, 28 агентов,
+governance-модель), исполняемый код агентов и playbooks — в разработке.
 
-MASTER_INDEX_FULL.md
-README.md
-```
+Текущий охват:
+- Capabilities: 15/15 описаны
+- Functions: ~62 документированы из целевых ~600
+- Agents: 28/28 определены (роли требуют финального ревью владельцем проекта)
+- Playbooks: 1/50+ (PB001 Grant Acquisition)
 
-> Note: `07_AI_OPERATING_SYSTEM/` is the canonical folder for AI Operating System documents.  
-> `09_MCP_INFRASTRUCTURE/` is reserved for MCP infrastructure documents.
+## Contributing
 
----
-
-## 3. Core Architecture Layers
-
-1. Vision Layer
-2. Governance Layer
-3. Capability Map
-4. Function Registry
-5. Agent Library
-6. Interaction Models
-7. Playbooks
-8. AI Operating System
-9. Cognitive Architecture
-10. MCP Infrastructure
-11. Implementation Architecture
-
----
-
-## 4. Current Repository Status
-
-This repository is being reconstructed as the canonical GitHub home for **Art of Business Enterprise Architecture v1.0**.
-
-Completed and normalized core areas include:
-
-```text
-01_GOVERNANCE/
-02_CAPABILITY_MAP/
-03_FUNCTION_REGISTRY/
-04_AGENT_LIBRARY/
-07_AI_OPERATING_SYSTEM/
-08_COGNITIVE_ARCHITECTURE/
-```
-
-Current focus:
-
-```text
-Canonical Repository Cleanup
-↓
-Master Index Synchronization
-↓
-MCP Reference Architecture
-↓
-Agent Runtime Architecture
-↓
-Implementation Roadmap
-```
-
----
-
-## 5. Key Documents
-
-Start here:
-
-- `MASTER_INDEX_FULL.md` — full architecture registry and navigation map.
-- `01_GOVERNANCE/GOVERNANCE_MODEL.md` — governance model.
-- `02_CAPABILITY_MAP/CAPABILITY_MAP.md` — enterprise capability map.
-- `03_FUNCTION_REGISTRY/ENTERPRISE_FUNCTION_REGISTRY.md` — enterprise function registry.
-- `07_AI_OPERATING_SYSTEM/AI_OPERATING_SYSTEM.md` — AI Operating System architecture.
-- `07_AI_OPERATING_SYSTEM/AGENT_COMMUNICATION_PROTOCOL.md` — agent communication protocol.
-- `07_AI_OPERATING_SYSTEM/PLAYBOOK_REGISTRY.md` — executable playbook registry.
-- `08_COGNITIVE_ARCHITECTURE/ENTERPRISE_KNOWLEDGE_GRAPH.md` — enterprise knowledge graph architecture.
-
----
-
-## 6. Development Principle
-
-No placeholder document should become canonical.
-
-Every final file must be reconstructed from the full architecture specification and placed in the correct repository folder.
-
-Canonical folder numbering must remain stable. Duplicate layer folders should be removed after safe migration and SHA verification.
+Проект находится в приватной разработке ArtheosClub. Изменения в
+CAPABILITY_MAP, GOVERNANCE_MODEL и AGENT_REGISTRY требуют согласования
+с владельцем проекта, так как эти файлы — источник истины для остальной
+архитектуры.
