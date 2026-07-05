@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C15 Governance
-Related Functions: GOV-AIG-001, GOV-AIG-001-002, GOV-CTL-001
+Related Functions: GOV-AIG-001, GOV-AIG-002, GOV-CTL-001
 Owner Agent: AG003 AI Auditor
 Escalation Path: AG003 → AG010 Governance Agent → AG001 CEO Agent →
 Human Board (для существенных изменений в принципах AI Governance)
@@ -87,7 +87,7 @@ Corporate Memory) — это верхнеуровневый аудит само�
 
 ## Stage 6 — Audit
 
-**Function:** GOV-AIG-001-002 AI Governance Compliance Review Exception Handling
+**Function:** GOV-AIG-002 AI Governance Compliance Review Exception Handling
 **Owner:** AG079 Audit Manager
 **Decision Level:** L3
 
