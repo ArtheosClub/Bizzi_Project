@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C01 Strategy
-Related Functions: STR-PAR-001, STR-PAR-001-002
+Related Functions: STR-PAR-001, STR-PAR-002
 Owner Agent: AG006 Strategy Agent
 Escalation Path: AG006 → AG004 Business Analyst → AG001 CEO Agent
 
@@ -76,7 +76,7 @@ Playbook описывает оценку и заключение стратег�
 
 ## Stage 6 — Audit
 
-**Function:** STR-PAR-001-002 Partnership Opportunity Evaluation Review
+**Function:** STR-PAR-002 Partnership Opportunity Evaluation Review
 **Owner:** AG003 AI Auditor
 **Decision Level:** L3
 
