@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C12 People Management
-Related Functions: PEO-TAL-001, PEO-SUC-001, PEO-SUC-001-002
+Related Functions: PEO-TAL-001, PEO-SUC-001, PEO-SUC-002
 Owner Agent: AG021 HR Manager
 Escalation Path: AG021 → AG001 CEO Agent → Human Board (для succession
 на позиции C-level)
@@ -73,7 +73,7 @@ Playbook описывает ежегодную оценку талантов и 
 
 ## Stage 6 — Audit
 
-**Function:** PEO-SUC-001-002 Succession Plan Review Exception Handling
+**Function:** PEO-SUC-002 Succession Plan Review Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L3
 
