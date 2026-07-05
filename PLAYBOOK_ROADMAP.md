@@ -12,7 +12,7 @@ Capability домену и конкретным Function ID из ENTERPRISE_FUNC
 Статусы: **Done** (написан полностью), **Draft** (частично описан),
 **Planned** (только определён, не начат).
 
-## Done (8)
+## Done (14) — Priority 1 fully complete ✅
 
 | ID | Название | Домен | Функции |
 |---|---|---|---|
@@ -20,23 +20,18 @@ Capability домену и конкретным Function ID из ENTERPRISE_FUNC
 | PB002 | Budget Planning & Approval | C09 Finance | FIN-BUD-001..003 |
 | PB003 | Customer Onboarding | C06 Customer Success | CUS-ONB-001..002 |
 | PB004 | Lead-to-Contract (Sales Cycle) | C05 Sales | SAL-LEAD, SAL-OPP, SAL-CTR |
+| PB005 | Renewal & Retention Cycle | C05/C06 | SAL-REN-001, CUS-RET-001, CUS-HLT |
+| PB006 | Upsell & Cross-Sell Motion | C05 Sales | SAL-XSL-001, SAL-UPS-001 |
+| PB007 | Support Ticket Escalation | C06 Customer Success | CUS-SUP-001, CUS-ESC-001 |
 | PB008 | Monthly Financial Close | C09 Finance | FIN-ACC-001, FIN-FPA-001 |
+| PB009 | Vendor Onboarding & Evaluation | C08 Supply Chain | SCM-VEN-001, SCM-CSU-001 |
+| PB010 | Procurement Request-to-Pay | C08 Supply Chain | SCM-PRC-001, SCM-PRC-002 |
 | PB011 | Employee Onboarding | C12 People | PEO-ONB-001, PEO-WFP-001 |
 | PB012 | Recruitment Cycle | C12 People | PEO-REC-001, PEO-REC-002 |
 | PB013 | Contract Review & Approval | C10 Legal | LEG-CON-001..003 |
-
-## Planned — Priority 1 (core revenue & operations cycle)
-
-| ID | Название | Домен | Функции (основные) |
-|---|---|---|---|
-| PB005 | Renewal & Retention Cycle | C05/C06 | SAL-REN-001, CUS-RET-001 |
-| PB006 | Upsell & Cross-Sell Motion | C05 Sales | SAL-XSL-001, SAL-UPS-001 |
-| PB007 | Support Ticket Escalation | C06 Customer Success | CUS-SUP-001, CUS-ESC-001 |
-| PB009 | Vendor Onboarding & Evaluation | C08 Supply Chain | SCM-VEN-001, SCM-CSU-001 |
-| PB010 | Procurement Request-to-Pay | C08 Supply Chain | SCM-PRC-001, SCM-PRC-002 |
 | PB014 | Compliance Monitoring Cycle | C10 Legal | LEG-CMP-001, LEG-REG-001 |
 
-## Planned — Priority 2 (governance & risk)
+## Planned — Priority 2 (governance & risk) — NEXT UP
 
 | ID | Название | Домен | Функции (основные) |
 |---|---|---|---|
