@@ -12,7 +12,7 @@ Capability домену и конкретным Function ID из ENTERPRISE_FUNC
 Статусы: **Done** (написан полностью), **Draft** (частично описан),
 **Planned** (только определён, не начат).
 
-## Done (22) — Priority 1 & 2 fully complete ✅✅
+## Done (30) — Priority 1, 2 & 3 fully complete ✅✅✅
 
 | ID | Название | Домен | Функции |
 |---|---|---|---|
@@ -38,21 +38,16 @@ Capability домену и конкретным Function ID из ENTERPRISE_FUNC
 | PB020 | Agent Lifecycle (Onboarding/Retirement) | C15 Governance | GOV-LIF-001 |
 | PB021 | Escalation Handling Protocol | C15 Governance | GOV-ORC-003 |
 | PB022 | AI Governance Compliance Review | C15 Governance | GOV-AIG-001 |
-
-## Planned — Priority 3 (growth & innovation) — NEXT UP
-
-| ID | Название | Домен | Функции (основные) |
-|---|---|---|---|
 | PB023 | Idea-to-MVP Pipeline | C02 Innovation | INN-IDE, INN-MVP |
 | PB024 | Market Entry Assessment | C01/C03 | STR-INT-001, MKT-IND-001 |
-| PB025 | Partnership Evaluation | C01 Strategy | STR-PAR-001 |
+| PB025 | Partnership Opportunity Evaluation | C01 Strategy | STR-PAR-001 |
 | PB026 | M&A Target Screening | C01 Strategy | STR-MNA-001 |
 | PB027 | Product Launch (Go-to-Market) | C02/C04 | INN-COM-001, MRK-PMK-001 |
 | PB028 | Content Marketing Cycle | C04 Marketing | MRK-CON-001, MRK-SEO-001 |
 | PB029 | Campaign Planning & Execution | C04 Marketing | MRK-CAM-001..003 |
 | PB030 | Event Planning & Execution | C04 Marketing | MRK-EVT-001 |
 
-## Planned — Priority 4 (operations & technology)
+## Planned — Priority 4 (operations & technology) — NEXT UP
 
 | ID | Название | Домен | Функции (основные) |
 |---|---|---|---|
