@@ -1825,14 +1825,75 @@ Owner: AG003 AI Auditor
 Decision: L2
 Escalation: E2
 
+## Non-Standard International Expansion Functions (Signature Layer)
+
+> Классический выход на рынок — юрлицо, найм, локализация, годы до
+> окупаемости. Быстрорастущие компании чаще используют более лёгкие и
+> быстрые пути: тестировать спрос до физического присутствия, использовать
+> локальных партнёров вместо собственной инфраструктуры, покупать
+> регуляторный доступ через tuck-in вместо получения лицензий с нуля.
+
+STR-DIG-001 Digital-First Market Testing (Pre-Presence Validation)
+Owner: AG006 Strategy Agent
+Decision: L2
+Escalation: E2
+
+STR-LIC-001 Licensing & Franchise-Light Expansion
+Owner: AG006 Strategy Agent
+Decision: L3
+Escalation: E3
+
+STR-CHM-001 Local Champion & Embassy Partnership Model
+Owner: AG006 Strategy Agent
+Decision: L3
+Escalation: E3
+
+STR-DIA-001 Diaspora & Cross-Border Community Leverage
+Owner: AG084 Market Intelligence Analyst
+Decision: L2
+Escalation: E2
+
+LEG-SBX-001 Regulatory Sandbox & Arbitrage Scanning
+Owner: AG017 Legal Counsel
+Decision: L3
+Escalation: E3
+
+STR-TCK-001 Tuck-In Acquisition for Instant Market Access
+Owner: AG001 CEO Agent
+Decision: L4
+Escalation: E4
+
+FIN-HDG-001 Currency & Cross-Border Hedging Agility
+Owner: AG014 Treasury Agent
+Decision: L3
+Escalation: E3
+
+PEO-ARB-001 Cross-Border Talent Arbitrage Sourcing
+Owner: AG022 Recruiter
+Decision: L2
+Escalation: E2
+
+MKT-LOC-001 Rapid Localization Sprint (Minimum Viable Localization)
+Owner: AG084 Market Intelligence Analyst
+Decision: L2
+Escalation: E2
+
 ## Summary
 
 Capabilities: 16/16 — все 160 под-способностей (включая C16) имеют Function Group
 Function Groups: ~35 documented, все теперь имеют минимум 2 функции (create/do + review или exception-handling)
-Functions documented: 341 — Target: ~600 (naturally, as real needs emerge)
+Functions documented: 350 — Target: ~600 (naturally, as real needs emerge)
 Agents: 84 (см. AGENT_REGISTRY.md) — Owner-поля во всех функциях выше
 приведены в соответствие с подтверждённым org chart
 Playbooks: 51 (50 base + PB051 flagship) — см. PLAYBOOK_ROADMAP.md
+
+Changelog v2.4 → v2.5:
+- Добавлен слой "Non-Standard International Expansion" (9 функций):
+  digital-first market testing до физического присутствия,
+  licensing/franchise-light, local champion model, diaspora leverage,
+  regulatory sandbox scanning, tuck-in acquisition, cross-border talent
+  arbitrage — быстрые пути на новый рынок вместо классического
+  юрлицо+найм+годы окупаемости
 
 Changelog v2.3 → v2.4:
 - Добавлен слой "Growth Mechanics & Capital Agility" (15 функций): growth
