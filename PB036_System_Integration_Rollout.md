@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C13 Technology
-Related Functions: TEC-INT-001, TEC-INT-001-002, TEC-APP-001
+Related Functions: TEC-INT-001, TEC-INT-002, TEC-APP-001
 Owner Agent: AG065 Data Engineer
 Escalation Path: AG065 → AG009 Enterprise Architect → AG002 Chief Orchestrator
 (для интеграций, затрагивающих несколько доменов)
@@ -74,7 +74,7 @@ Playbook описывает подключение нового внешнего
 
 ## Stage 6 — Audit
 
-**Function:** TEC-INT-001-002 System Integration Monitoring Exception Handling
+**Function:** TEC-INT-002 System Integration Monitoring Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
