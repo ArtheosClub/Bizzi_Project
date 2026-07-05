@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C08 Supply Chain
-Related Functions: SCM-VEN-001, SCM-VEN-001-002, SCM-CSU-001, SCM-SRK-001
+Related Functions: SCM-VEN-001, SCM-VEN-002, SCM-CSU-001, SCM-SRK-001
 Owner Agent: AG037 Supplier Evaluation Agent
 Escalation Path: AG037 → AG036 Procurement Manager → AG005 Risk Manager
 (для высокорисковых поставщиков)
@@ -79,7 +79,7 @@ Playbook описывает процесс проверки, онбординг�
 
 ## Stage 6 — Audit
 
-**Function:** SCM-VEN-001-002 Vendor Performance Review Exception Handling
+**Function:** SCM-VEN-002 Vendor Performance Review Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
