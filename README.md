@@ -21,12 +21,14 @@ Art of Business — архитектурная спецификация пред
 
 ## С чего начать (если у вас 2 минуты)
 
-1. `PB051_Rapid_Market_Response.md` — флагманский playbook, показывающий,
-   как система реагирует на движение конкурента за часы, а не недели
-2. Секция "Growth & Market Reactivity Functions" в
-   `ENTERPRISE_FUNCTION_REGISTRY.md` — war-gaming, dynamic pricing,
-   fail-fast, real-time market sensing
-3. `Vision.md` — почему "порядок" — это необходимое, но не достаточное
+1. `PB051_Rapid_Market_Response.md` — как система реагирует на движение
+   конкурента за часы, а не недели
+2. `PB052_Capital_Stack_Sprint.md` — как привлекать капитал из нескольких
+   нестандартных источников параллельно, не размывая долю как единственный
+   equity-раунд
+3. `PB053_Blameless_Retrospective_Pivot.md` — как ошибки становятся видимым
+   источником побед, а не тем, что скрывают
+4. `Vision.md` — почему "порядок" — это необходимое, но не достаточное
    условие
 
 ## Структура репозитория
@@ -39,7 +41,7 @@ Art of Business — архитектурная спецификация пред
 | `AGENT_REGISTRY.md` | 84 AI-агента, их зона ответственности и подчинённость |
 | `GOVERNANCE_MODEL.md` | Конституционные принципы, Decision Architecture, Fast-Track протокол |
 | `PB001`–`PB050` | 50 playbooks — полные операционные процессы по всем доменам |
-| `PB051_Rapid_Market_Response.md` | Флагманский playbook — мгновенная реакция на рынок |
+| `PB051`–`PB053` | Флагманские playbooks: мгновенная реакция на рынок, нестандартный капитал, обучение на ошибках |
 | `PLAYBOOK_ROADMAP.md` | Реестр всех playbooks с привязкой к доменам |
 | `PLAYBOOK_TEMPLATE.md` | Шаблон для создания новых playbooks |
 
@@ -60,20 +62,23 @@ Art of Business — архитектурная спецификация пред
 
 Текущий охват:
 - **Capabilities: 16/16** — все 160 под-способностей имеют Function Group
-- **Functions: 320+ из целевых ~600**, включая 20 сигнатурных функций
-  Growth & Market Reactivity (war-gaming, dynamic pricing, fail-fast,
-  real-time market sensing, opportunistic capital deployment)
+- **Functions: 341+ из целевых ~600**, включая три сигнатурных слоя:
+  Growth & Market Reactivity (war-gaming, dynamic pricing, fail-fast),
+  Growth Mechanics & Capital Agility (growth loops, PLG, network effects,
+  alternative financing, non-dilutive stacking), Adaptive Learning &
+  Failure-to-Opportunity (blameless retrospectives, pivot framework)
 - **Agents: 84/84** — подтверждённая владельцем проекта организационная структура
-- **Playbooks: 50/50 базовых + PB051 флагманский = 51** ✅
+- **Playbooks: 50/50 базовых + 3 флагманских (PB051-053) = 53**
 
 ### Философия дальнейшего роста реестра функций
 
-Оставшиеся ~280 функций до цели в 600 сознательно не добавляются
-механически (ещё review/exception-варианты для галочки). Приоритет — на
-функциях, усиливающих способность системы **замечать раньше и реагировать
-быстрее**: более глубокая сегментация real-time market sensing, больше
-специфичных war-gaming сценариев, детализация fail-fast критериев по
-доменам. Количество наращивается вслед за качеством, а не вместо него.
+Оставшиеся ~260 функций до цели в 600 сознательно не добавляются
+механически. Приоритет — на функциях, усиливающих три способности, которые
+реально отличают агрессивно растущую компанию: замечать раньше и
+реагировать быстрее (Market Reactivity), финансировать рост нестандартно
+и без чрезмерного размытия (Capital Agility), и извлекать пользу из каждой
+неудачи быстрее конкурентов (Adaptive Learning). Количество наращивается
+вслед за качеством, а не вместо него.
 
 ## Contributing
 
