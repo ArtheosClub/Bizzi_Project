@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C05 Sales / C06 Customer Success
-Related Functions: SAL-REN-001, SAL-REN-001-002, CUS-RET-001, CUS-HLT-001, CUS-HLT-002
+Related Functions: SAL-REN-001, SAL-REN-002, CUS-RET-001, CUS-HLT-001, CUS-HLT-002
 Owner Agent: AG029 Customer Success Agent
 Escalation Path: AG029 → AG025 Sales Director (для коммерческих условий) →
 AG012 CFO Agent (для скидок на renewal выше лимита)
@@ -75,7 +75,7 @@ Playbook описывает цикл продления контракта кл�
 
 ## Stage 6 — Audit
 
-**Function:** SAL-REN-001-002 Renewal Risk Review Exception Handling
+**Function:** SAL-REN-002 Renewal Risk Review Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
