@@ -12,7 +12,7 @@ Capability домену и конкретным Function ID из ENTERPRISE_FUNC
 Статусы: **Done** (написан полностью), **Draft** (частично описан),
 **Planned** (только определён, не начат).
 
-## Done (14) — Priority 1 fully complete ✅
+## Done (22) — Priority 1 & 2 fully complete ✅✅
 
 | ID | Название | Домен | Функции |
 |---|---|---|---|
@@ -30,11 +30,6 @@ Capability домену и конкретным Function ID из ENTERPRISE_FUNC
 | PB012 | Recruitment Cycle | C12 People | PEO-REC-001, PEO-REC-002 |
 | PB013 | Contract Review & Approval | C10 Legal | LEG-CON-001..003 |
 | PB014 | Compliance Monitoring Cycle | C10 Legal | LEG-CMP-001, LEG-REG-001 |
-
-## Planned — Priority 2 (governance & risk) — NEXT UP
-
-| ID | Название | Домен | Функции (основные) |
-|---|---|---|---|
 | PB015 | Risk Identification & Treatment | C11 Risk | RSK-ERM-001..003 |
 | PB016 | Cyber Incident Response | C11/C13 | RSK-CYB-001, TEC-SEC-001 |
 | PB017 | Crisis Management Activation | C11 Risk | RSK-CRI-001, RSK-BCP-001 |
@@ -44,7 +39,7 @@ Capability домену и конкретным Function ID из ENTERPRISE_FUNC
 | PB021 | Escalation Handling Protocol | C15 Governance | GOV-ORC-003 |
 | PB022 | AI Governance Compliance Review | C15 Governance | GOV-AIG-001 |
 
-## Planned — Priority 3 (growth & innovation)
+## Planned — Priority 3 (growth & innovation) — NEXT UP
 
 | ID | Название | Домен | Функции (основные) |
 |---|---|---|---|
