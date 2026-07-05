@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C11 Risk Management / C13 Technology
-Related Functions: RSK-CYB-001, TEC-SEC-001, RSK-CYB-001-002
+Related Functions: RSK-CYB-001, TEC-SEC-001, RSK-CYB-002
 Owner Agent: AG050 Incident Response Agent
 Escalation Path: AG050 → AG048 Security Officer → AG005 Risk Manager →
 AG001 CEO Agent (для инцидентов с утечкой данных клиентов)
@@ -81,7 +81,7 @@ Playbook описывает обнаружение, локализацию и у
 
 ## Stage 6 — Audit
 
-**Function:** RSK-CYB-001-002 Cyber Risk Assessment Exception Handling
+**Function:** RSK-CYB-002 Cyber Risk Assessment Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L3
 
