@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C11 Risk Management
-Related Functions: RSK-CRI-001, RSK-BCP-001, RSK-BCP-001-002
+Related Functions: RSK-CRI-001, RSK-BCP-001, RSK-BCP-002
 Owner Agent: AG001 CEO Agent
 Escalation Path: AG005 Risk Manager → AG001 CEO Agent → Human Board
 (немедленно, без промежуточных уровней)
@@ -83,7 +83,7 @@ PB015 — который работает на превентивном/план
 
 ## Stage 6 — Audit
 
-**Function:** RSK-BCP-001-002 Business Continuity Plan Test Review
+**Function:** RSK-BCP-002 Business Continuity Plan Test Review
 **Owner:** AG003 AI Auditor
 **Decision Level:** L4
 
