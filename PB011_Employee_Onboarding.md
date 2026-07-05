@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C12 People Management
-Related Functions: PEO-ONB-001, PEO-ONB-001-002, PEO-WFP-001, PEO-CUL-001
+Related Functions: PEO-ONB-001, PEO-ONB-002, PEO-WFP-001, PEO-CUL-001
 Owner Agent: AG021 HR Manager
 Escalation Path: AG021 → AG002 Chief Orchestrator (для доступа к системам) →
 AG001 CEO Agent (для C-level найма)
@@ -77,7 +77,7 @@ Playbook описывает цикл выхода нового сотрудни�
 
 ## Stage 6 — Audit
 
-**Function:** PEO-ONB-001-002 New Hire Onboarding Exception Handling
+**Function:** PEO-ONB-002 New Hire Onboarding Exception Handling
 **Owner:** AG021 HR Manager
 **Decision Level:** L1
 
