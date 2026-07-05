@@ -162,57 +162,53 @@ Escalation: E3
 
 ## Market Intelligence Functions
 
-> ⚠️ Открытый вопрос: в утверждённой структуре нет выделенного Market
-> Intelligence агента. Владение временно закреплено за AG004 Business Analyst —
-> см. Open Items в AGENT_REGISTRY.md.
-
 MKT-RES-001 Market Research
-Owner: AG004 Business Analyst
+Owner: AG084 Market Intelligence Analyst
 Decision: L1
 Escalation: E1
 
 MKT-RES-002 Competitor Analysis
-Owner: AG004 Business Analyst
+Owner: AG084 Market Intelligence Analyst
 Decision: L2
 Escalation: E2
 
 MKT-RES-003 Country Analysis
-Owner: AG004 Business Analyst
+Owner: AG084 Market Intelligence Analyst
 Decision: L2
 Escalation: E2
 
 MKT-IND-001 Industry Landscape Analysis
-Owner: AG004 Business Analyst
+Owner: AG084 Market Intelligence Analyst
 Decision: L2
 Escalation: E2
 
 MKT-TRD-001 Emerging Trend Scan
-Owner: AG004 Business Analyst
+Owner: AG084 Market Intelligence Analyst
 Decision: L1
 Escalation: E1
 
 MKT-SEG-001 Market Segmentation Update
-Owner: AG004 Business Analyst
+Owner: AG084 Market Intelligence Analyst
 Decision: L2
 Escalation: E2
 
 MKT-DEM-001 Demand Forecast Model
-Owner: AG004 Business Analyst
+Owner: AG084 Market Intelligence Analyst
 Decision: L2
 Escalation: E2
 
 MKT-OPP-001 Market Opportunity Sizing
-Owner: AG004 Business Analyst
+Owner: AG084 Market Intelligence Analyst
 Decision: L2
 Escalation: E2
 
 MKT-CUR-001 Customer Research Study
-Owner: AG004 Business Analyst
+Owner: AG084 Market Intelligence Analyst
 Decision: L1
 Escalation: E1
 
 MKT-PRI-001 Competitive Pricing Scan
-Owner: AG004 Business Analyst
+Owner: AG084 Market Intelligence Analyst
 Decision: L2
 Escalation: E2
 
@@ -940,14 +936,72 @@ Owner: AG003 AI Auditor
 Decision: L4
 Escalation: E4
 
+## Administration Functions
+
+ADM-SUP-001 Executive Support Request Handling
+Owner: AG072 Executive Assistant
+Decision: L1
+Escalation: E1
+
+ADM-CAL-001 Calendar Management
+Owner: AG075 Calendar Agent
+Decision: L1
+Escalation: E1
+
+ADM-MTG-001 Meeting Scheduling & Logistics
+Owner: AG074 Meeting Coordinator
+Decision: L1
+Escalation: E1
+
+ADM-COR-001 Correspondence Handling
+Owner: AG073 Secretary
+Decision: L1
+Escalation: E1
+
+ADM-TRV-001 Travel Arrangement
+Owner: AG072 Executive Assistant
+Decision: L1
+Escalation: E1
+
+ADM-DOC-001 Document Filing & Organization
+Owner: AG073 Secretary
+Decision: L1
+Escalation: E1
+
+ADM-OFF-001 Office Administration Tasks
+Owner: AG073 Secretary
+Decision: L1
+Escalation: E1
+
+ADM-COM-001 Executive Communication Drafting
+Owner: AG072 Executive Assistant
+Decision: L2
+Escalation: E2
+
+ADM-REC-001 Records Retention Management
+Owner: AG073 Secretary
+Decision: L1
+Escalation: E1
+
+ADM-REP-001 Administrative Reporting
+Owner: AG072 Executive Assistant
+Decision: L1
+Escalation: E1
+
 ## Summary
 
-Capabilities: 15/15 — все 150 под-способностей имеют Function Group
-Function Groups: ~34 documented
-Functions documented: 171 — Target: ~600
-Agents: 83 (см. AGENT_REGISTRY.md v2.0) — Owner-поля во всех функциях выше
+Capabilities: 16/16 — все 160 под-способностей (включая новый C16) имеют Function Group
+Function Groups: ~35 documented
+Functions documented: 181 — Target: ~600
+Agents: 84 (см. AGENT_REGISTRY.md v2.1) — Owner-поля во всех функциях выше
 приведены в соответствие с подтверждённым org chart
 Playbooks: 4 documented (PB001-004), roadmap на 50 в PLAYBOOK_ROADMAP.md
+
+Changelog v2.0 → v2.1:
+- Market Intelligence functions (MKT-*) переназначены с временного владельца
+  (AG004 Business Analyst) на нового AG084 Market Intelligence Analyst
+- Добавлена секция Administration Functions (ADM-*, 10 функций) для нового
+  домена C16 Administration & Executive Support
 
 Changelog v1.2 → v2.0:
 - Полная замена Owner-полей: реконструированный список из 28 агентов заменён
