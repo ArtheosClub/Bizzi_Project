@@ -1590,14 +1590,133 @@ Owner: AG072 Executive Assistant
 Decision: L1
 Escalation: E1
 
+## Growth & Market Reactivity Functions (Signature Layer)
+
+> Эти функции — не дополнение "для галочки" к существующим доменам, а
+> отдельный сквозной слой, ради которого вообще стоит выбирать
+> AI-оркестрированное предприятие вместо традиционного. Они закрывают то,
+> что в реальных быстрорастущих компаниях (Amazon, Uber на ранних этапах,
+> топовые SaaS-скейлапы) делает разницу между "мы отреагировали через
+> квартал" и "мы отреагировали за день": непрерывный мониторинг рынка,
+> готовность мгновенно менять цену/позиционирование, дисциплинированный
+> fail-fast, и решительное удвоение ставки там, где сработало.
+
+STR-AGR-001 Aggressive Growth Target Setting (Moonshot OKRs)
+Owner: AG001 CEO Agent
+Decision: L4
+Escalation: E4
+
+STR-WAR-001 Competitive War-Gaming
+Owner: AG006 Strategy Agent
+Decision: L3
+Escalation: E3
+
+STR-EXP-001 Rapid Experiment Portfolio Management
+Owner: AG006 Strategy Agent
+Decision: L2
+Escalation: E2
+
+MKT-RTM-001 Real-Time Market Signal Monitoring
+Owner: AG084 Market Intelligence Analyst
+Decision: L1
+Escalation: E1
+
+MKT-ALT-001 Competitor Move Alert & Rapid Response
+Owner: AG084 Market Intelligence Analyst
+Decision: L3
+Escalation: E3
+
+MRK-GRW-001 Growth Hacking Experiment Cycle
+Owner: AG034 Campaign Manager
+Decision: L2
+Escalation: E2
+
+MRK-VIR-001 Viral & Referral Loop Design
+Owner: AG034 Campaign Manager
+Decision: L2
+Escalation: E2
+
+SAL-DYN-001 Dynamic Pricing Adjustment
+Owner: AG025 Sales Director
+Decision: L2
+Escalation: E2
+
+SAL-WIN-001 Competitive Win/Loss Rapid Analysis
+Owner: AG025 Sales Director
+Decision: L1
+Escalation: E1
+
+SAL-EXP-001 Expansion Beachhead Identification
+Owner: AG025 Sales Director
+Decision: L3
+Escalation: E3
+
+FIN-DYN-001 Real-Time Cash & Runway Dashboard
+Owner: AG014 Treasury Agent
+Decision: L1
+Escalation: E1
+
+FIN-OPP-001 Opportunistic Capital Deployment
+Owner: AG012 CFO Agent
+Decision: L4
+Escalation: E4
+
+RSK-OPP-001 Risk-to-Opportunity Conversion Review
+Owner: AG005 Risk Manager
+Decision: L3
+Escalation: E3
+
+INN-FFL-001 Fail-Fast Kill Criteria Enforcement
+Owner: AG077 Innovation Manager
+Decision: L2
+Escalation: E2
+
+INN-SCL-001 Rapid Scale Decision (Double-Down Trigger)
+Owner: AG001 CEO Agent
+Decision: L4
+Escalation: E4
+
+CUS-PRE-001 Predictive Churn Preemption
+Owner: AG029 Customer Success Agent
+Decision: L2
+Escalation: E2
+
+GOV-SPD-001 Rapid Decision Fast-Track Protocol
+Owner: AG010 Governance Agent
+Decision: L3
+Escalation: E3
+
+GOV-KLL-001 Portfolio Kill/Scale Gate Review
+Owner: AG002 Chief Orchestrator
+Decision: L4
+Escalation: E4
+
+TEC-RTA-001 Real-Time Market Signal Analytics Pipeline
+Owner: AG067 Analytics Agent
+Decision: L2
+Escalation: E2
+
+MKT-DEM-002 Real-Time Demand Sensing
+Owner: AG084 Market Intelligence Analyst
+Decision: L2
+Escalation: E2
+
 ## Summary
 
 Capabilities: 16/16 — все 160 под-способностей (включая C16) имеют Function Group
 Function Groups: ~35 documented, все теперь имеют минимум 2 функции (create/do + review или exception-handling)
-Functions documented: 300 — Target: ~600 (halfway point reached)
-Agents: 84 (см. AGENT_REGISTRY.md v2.1) — Owner-поля во всех функциях выше
+Functions documented: 320 — Target: ~600
+Agents: 84 (см. AGENT_REGISTRY.md) — Owner-поля во всех функциях выше
 приведены в соответствие с подтверждённым org chart
-Playbooks: 4 documented (PB001-004), roadmap на 50 в PLAYBOOK_ROADMAP.md
+Playbooks: 50/50 COMPLETE — см. PLAYBOOK_ROADMAP.md
+
+Changelog v2.2 → v2.3:
+- Добавлен сигнатурный слой "Growth & Market Reactivity" (20 функций) —
+  не механическое расширение существующих групп, а функции, воплощающие
+  агрессивную стратегию роста: war-gaming конкурентов, динамическое
+  ценообразование, fail-fast, real-time market sensing, oppортунистическое
+  использование капитала. Это отличает проект от типовой ERP-подобной
+  спецификации и делает ценность ощутимой с первого знакомства.
 
 Changelog v2.1 → v2.2:
 - Добавлено 119 companion-функций (-002) — каждая из ранее "одиночных" Function
