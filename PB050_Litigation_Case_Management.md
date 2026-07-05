@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C10 Legal & Compliance
-Related Functions: LEG-LIT-001, LEG-LIT-001-002
+Related Functions: LEG-LIT-001, LEG-LIT-002
 Owner Agent: AG017 Legal Counsel
 Escalation Path: AG017 → AG001 CEO Agent → Human Board (для существенных
 исков)
@@ -82,7 +82,7 @@ Playbook описывает управление судебными и прет�
 
 ## Stage 6 — Audit
 
-**Function:** LEG-LIT-001-002 Litigation Case Tracking Exception Handling
+**Function:** LEG-LIT-002 Litigation Case Tracking Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L4
 
