@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C12 People Management
-Related Functions: PEO-LDR-001, PEO-LDR-001-002
+Related Functions: PEO-LDR-001, PEO-LDR-002
 Owner Agent: AG023 Learning & Development Agent
 Escalation Path: AG023 → AG021 HR Manager → AG001 CEO Agent (для программ
 уровня C-level)
@@ -72,7 +72,7 @@ C-level или требующих существенного бюджета)
 
 ## Stage 6 — Audit
 
-**Function:** PEO-LDR-001-002 Leadership Development Plan Review
+**Function:** PEO-LDR-002 Leadership Development Plan Review
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
