@@ -2,82 +2,111 @@
 
 # Art of Business Playbook Roadmap
 
-Version: 1.0
-Status: Living Document — обновляется по мере создания новых playbooks
+Version: 2.0
+Status: COMPLETE — все 50 целевых playbooks написаны ✅✅✅✅✅
 
 ## Purpose
 
-Единый backlog всех целевых playbooks (50+). Каждый playbook привязан к
-Capability домену и конкретным Function ID из ENTERPRISE_FUNCTION_REGISTRY.md.
-Статусы: **Done** (написан полностью), **Draft** (частично описан),
-**Planned** (только определён, не начат).
+Единый реестр всех 50 playbooks. Каждый playbook привязан к Capability
+домену и конкретным Function ID из ENTERPRISE_FUNCTION_REGISTRY.md, следует
+7-стадийной Decision Architecture (Idea → Analysis → Risk Review → Decision
+→ Execution → Audit → Knowledge Capture) из GOVERNANCE_MODEL.md.
 
-## Done (38) — Priority 1-4 fully complete ✅✅✅✅
+## Done (50/50) — 100% Complete
 
-| ID | Название | Домен | Функции |
-|---|---|---|---|
-| PB001 | Grant Acquisition | C09 Finance | FIN-GRA-001..004 |
-| PB002 | Budget Planning & Approval | C09 Finance | FIN-BUD-001..003 |
-| PB003 | Customer Onboarding | C06 Customer Success | CUS-ONB-001..002 |
-| PB004 | Lead-to-Contract (Sales Cycle) | C05 Sales | SAL-LEAD, SAL-OPP, SAL-CTR |
-| PB005 | Renewal & Retention Cycle | C05/C06 | SAL-REN-001, CUS-RET-001, CUS-HLT |
-| PB006 | Upsell & Cross-Sell Motion | C05 Sales | SAL-XSL-001, SAL-UPS-001 |
-| PB007 | Support Ticket Escalation | C06 Customer Success | CUS-SUP-001, CUS-ESC-001 |
-| PB008 | Monthly Financial Close | C09 Finance | FIN-ACC-001, FIN-FPA-001 |
-| PB009 | Vendor Onboarding & Evaluation | C08 Supply Chain | SCM-VEN-001, SCM-CSU-001 |
-| PB010 | Procurement Request-to-Pay | C08 Supply Chain | SCM-PRC-001, SCM-PRC-002 |
-| PB011 | Employee Onboarding | C12 People | PEO-ONB-001, PEO-WFP-001 |
-| PB012 | Recruitment Cycle | C12 People | PEO-REC-001, PEO-REC-002 |
-| PB013 | Contract Review & Approval | C10 Legal | LEG-CON-001..003 |
-| PB014 | Compliance Monitoring Cycle | C10 Legal | LEG-CMP-001, LEG-REG-001 |
-| PB015 | Risk Identification & Treatment | C11 Risk | RSK-ERM-001..003 |
-| PB016 | Cyber Incident Response | C11/C13 | RSK-CYB-001, TEC-SEC-001 |
-| PB017 | Crisis Management Activation | C11 Risk | RSK-CRI-001, RSK-BCP-001 |
-| PB018 | Agent Performance Review | C15 Governance | GOV-PRF-001 |
-| PB019 | Decision Audit Cycle | C15 Governance | GOV-AUD-001..002 |
-| PB020 | Agent Lifecycle (Onboarding/Retirement) | C15 Governance | GOV-LIF-001 |
-| PB021 | Escalation Handling Protocol | C15 Governance | GOV-ORC-003 |
-| PB022 | AI Governance Compliance Review | C15 Governance | GOV-AIG-001 |
-| PB023 | Idea-to-MVP Pipeline | C02 Innovation | INN-IDE, INN-MVP |
-| PB024 | Market Entry Assessment | C01/C03 | STR-INT-001, MKT-IND-001 |
-| PB025 | Partnership Opportunity Evaluation | C01 Strategy | STR-PAR-001 |
-| PB026 | M&A Target Screening | C01 Strategy | STR-MNA-001 |
-| PB027 | Product Launch (Go-to-Market) | C02/C04 | INN-COM-001, MRK-PMK-001 |
-| PB028 | Content Marketing Cycle | C04 Marketing | MRK-CON-001, MRK-SEO-001 |
-| PB029 | Campaign Planning & Execution | C04 Marketing | MRK-CAM-001..003 |
-| PB030 | Event Planning & Execution | C04 Marketing | MRK-EVT-001 |
-| PB031 | Quality Audit Cycle | C07 Operations | OPS-QUA-001 |
-| PB032 | Process Optimization Review | C07 Operations | OPS-PRO-002, OPS-IMP-001 |
-| PB033 | Resource Capacity Planning | C07 Operations | OPS-RES-001 |
-| PB034 | Supply & Demand Planning | C08 Supply Chain | SCM-SUP-001, SCM-DMP-001 |
-| PB035 | Import/Export & Customs Compliance | C08 Supply Chain | SCM-IMX-001, SCM-CUS-001 |
-| PB036 | System Integration Rollout | C13 Technology | TEC-INT-001 |
-| PB037 | AI Model Deployment & Retraining | C13 Technology | TEC-AIP-001, TEC-MLO-001 |
-| PB038 | Deployment Pipeline Health Check | C13 Technology | TEC-DEV-001 |
+### Priority 1 — Core Revenue & Operations (14)
 
-## Planned — Priority 5 (finance, people, knowledge) — FINAL STRETCH
+| ID | Название | Домен |
+|---|---|---|
+| PB001 | Grant Acquisition | C09 Finance |
+| PB002 | Budget Planning & Approval | C09 Finance |
+| PB003 | Customer Onboarding | C06 Customer Success |
+| PB004 | Lead-to-Contract (Sales Cycle) | C05 Sales |
+| PB005 | Renewal & Retention Cycle | C05/C06 |
+| PB006 | Upsell & Cross-Sell Motion | C05 Sales |
+| PB007 | Support Ticket Escalation | C06 Customer Success |
+| PB008 | Monthly Financial Close | C09 Finance |
+| PB009 | Vendor Onboarding & Evaluation | C08 Supply Chain |
+| PB010 | Procurement Request-to-Pay | C08 Supply Chain |
+| PB011 | Employee Onboarding | C12 People |
+| PB012 | Recruitment Cycle | C12 People |
+| PB013 | Contract Review & Approval | C10 Legal |
+| PB014 | Compliance Monitoring Cycle | C10 Legal |
 
-| ID | Название | Домен | Функции (основные) |
-|---|---|---|---|
-| PB039 | Tax Filing Cycle | C09 Finance | FIN-TAX-001 |
-| PB040 | External Audit Coordination | C09 Finance | FIN-AUD-001 |
-| PB041 | Investor Relations Update | C09 Finance | FIN-IR-001 |
-| PB042 | Capital Structure Review | C09 Finance | FIN-CAP-001 |
-| PB043 | Compensation Benchmarking Cycle | C12 People | PEO-COM-001 |
-| PB044 | Talent Review & Succession Planning | C12 People | PEO-TAL-001, PEO-SUC-001 |
-| PB045 | Leadership Development Program | C12 People | PEO-LDR-001 |
-| PB046 | Knowledge Base Quality Audit | C14 Knowledge | KNW-AUD-001 |
-| PB047 | SOP Drafting & Approval | C14 Knowledge | KNW-SOP-001..002 |
-| PB048 | Policy Document Lifecycle | C14/C15 | KNW-POL-001, GOV-POL-001 |
-| PB049 | Data Privacy Impact Assessment | C10 Legal | LEG-DPR-001 |
-| PB050 | Litigation Case Management | C10 Legal | LEG-LIT-001 |
+### Priority 2 — Governance & Risk (8)
 
-## How to add a new Playbook
+| ID | Название | Домен |
+|---|---|---|
+| PB015 | Risk Identification & Treatment | C11 Risk |
+| PB016 | Cyber Incident Response | C11/C13 |
+| PB017 | Crisis Management Activation | C11 Risk |
+| PB018 | Agent Performance Review | C15 Governance |
+| PB019 | Decision Audit Cycle | C15 Governance |
+| PB020 | Agent Lifecycle (Onboarding/Retirement) | C15 Governance |
+| PB021 | Escalation Handling Protocol | C15 Governance |
+| PB022 | AI Governance Compliance Review | C15 Governance |
 
-1. Взять следующий свободный ID из этого roadmap
+### Priority 3 — Growth & Innovation (8)
+
+| ID | Название | Домен |
+|---|---|---|
+| PB023 | Idea-to-MVP Pipeline | C02 Innovation |
+| PB024 | Market Entry Assessment | C01/C03 |
+| PB025 | Partnership Opportunity Evaluation | C01 Strategy |
+| PB026 | M&A Target Screening | C01 Strategy |
+| PB027 | Product Launch (Go-to-Market) | C02/C04 |
+| PB028 | Content Marketing Cycle | C04 Marketing |
+| PB029 | Campaign Planning & Execution | C04 Marketing |
+| PB030 | Event Planning & Execution | C04 Marketing |
+
+### Priority 4 — Operations & Technology (8)
+
+| ID | Название | Домен |
+|---|---|---|
+| PB031 | Quality Audit Cycle | C07 Operations |
+| PB032 | Process Optimization Review | C07 Operations |
+| PB033 | Resource Capacity Planning | C07 Operations |
+| PB034 | Supply & Demand Planning | C08 Supply Chain |
+| PB035 | Import/Export & Customs Compliance | C08 Supply Chain |
+| PB036 | System Integration Rollout | C13 Technology |
+| PB037 | AI Model Deployment & Retraining | C13 Technology |
+| PB038 | Deployment Pipeline Health Check | C13 Technology |
+
+### Priority 5 — Finance, People, Knowledge (12)
+
+| ID | Название | Домен |
+|---|---|---|
+| PB039 | Tax Filing Cycle | C09 Finance |
+| PB040 | External Audit Coordination | C09 Finance |
+| PB041 | Investor Relations Update | C09 Finance |
+| PB042 | Capital Structure Review | C09 Finance |
+| PB043 | Compensation Benchmarking Cycle | C12 People |
+| PB044 | Talent Review & Succession Planning | C12 People |
+| PB045 | Leadership Development Program | C12 People |
+| PB046 | Knowledge Base Quality Audit | C14 Knowledge |
+| PB047 | SOP Drafting & Approval | C14 Knowledge |
+| PB048 | Policy Document Lifecycle | C14/C15 |
+| PB049 | Data Privacy Impact Assessment | C10 Legal |
+| PB050 | Litigation Case Management | C10 Legal |
+
+## Coverage Summary
+
+- **Все 16 Capability доменов** имеют минимум один playbook
+- **Cross-referencing:** playbooks ссылаются друг на друга как источники/
+  получатели (например, PB004 Lead-to-Contract → PB003 Customer Onboarding
+  → PB005 Renewal → PB006 Upsell, замкнутый цикл клиента)
+- **Мета-playbooks:** PB021 (Escalation Protocol) и PB038 (Deployment
+  Pipeline) работают как общие сервисы, на которые ссылаются другие
+  playbooks вместо дублирования логики
+- **Границы автоматизации честно обозначены:** PB026 (M&A) и PB050
+  (Litigation) явно указывают, что финальная часть процесса ведётся людьми
+  и внешними советниками вне Decision Architecture
+
+## How to add a new Playbook (для будущего расширения за пределы 50)
+
+1. Определить Capability домен и Function ID, которые playbook покрывает
 2. Использовать PLAYBOOK_TEMPLATE.md как основу
-3. Обязательно пройти все 7 стадий Decision Architecture (Idea → Analysis →
-   Risk Review → Decision → Execution → Audit → Knowledge Capture)
-4. Привязать к реальным Function ID из ENTERPRISE_FUNCTION_REGISTRY.md
-5. Обновить статус в этом файле с Planned на Draft, затем на Done
+3. Пройти все 7 стадий Decision Architecture
+4. Указать Related Documents — связи с существующими playbooks/функциями
+5. Добавить запись в этот файл
 6. Обновить счётчик в README.md
