@@ -1701,14 +1701,148 @@ Owner: AG084 Market Intelligence Analyst
 Decision: L2
 Escalation: E2
 
+## Growth Mechanics & Capital Agility Functions (Signature Layer)
+
+> Продолжение слоя Growth & Market Reactivity. Здесь — конкретные рычаги
+> роста, которые в реальных быстрорастущих компаниях создают несоразмерный
+> эффект относительно вложенных денег (growth loops, PLG, network effects),
+> и нестандартные способы финансировать этот рост без единственной ставки
+> на классический equity-раунд.
+
+### Sales/Marketing Growth Mechanics
+
+MRK-NET-001 Network Effect Loop Design
+Owner: AG034 Campaign Manager
+Decision: L2
+Escalation: E2
+
+MRK-REF-001 Referral Program Incentive Tuning
+Owner: AG034 Campaign Manager
+Decision: L2
+Escalation: E2
+
+SAL-PLG-001 Product-Led Growth Funnel Optimization
+Owner: AG058 Product Manager
+Decision: L2
+Escalation: E2
+
+MRK-COM-001 Community Building & Advocacy Engine
+Owner: AG030 Marketing Manager
+Decision: L2
+Escalation: E2
+
+MRK-INF-001 Influencer & Micro-Partnership Sourcing
+Owner: AG034 Campaign Manager
+Decision: L2
+Escalation: E2
+
+SAL-PSY-001 Pricing Psychology Experimentation
+Owner: AG025 Sales Director
+Decision: L2
+Escalation: E2
+
+SAL-INC-001 Sales Incentive & Spiff Design
+Owner: AG025 Sales Director
+Decision: L2
+Escalation: E2
+
+MRK-ABM-001 Account-Based Marketing Targeting
+Owner: AG034 Campaign Manager
+Decision: L2
+Escalation: E2
+
+MRK-LOOP-001 Growth Loop Instrumentation & Analytics
+Owner: AG067 Analytics Agent
+Decision: L2
+Escalation: E2
+
+### Non-Standard Capital Agility
+
+FIN-ALT-001 Alternative Financing Sourcing (Revenue-Based, Venture Debt)
+Owner: AG012 CFO Agent
+Decision: L3
+Escalation: E3
+
+FIN-STR-001 Strategic Investor Targeting (Smart Money, Not Just Capital)
+Owner: AG012 CFO Agent
+Decision: L4
+Escalation: E4
+
+FIN-BRG-001 Bridge Financing Rapid Activation
+Owner: AG012 CFO Agent
+Decision: L4
+Escalation: E4
+
+FIN-CRW-001 Crowdfunding & Community Capital Campaign
+Owner: AG012 CFO Agent
+Decision: L3
+Escalation: E3
+
+FIN-STK-001 Non-Dilutive Funding Stack Optimization
+Owner: AG078 Grant Manager
+Decision: L3
+Escalation: E3
+
+FIN-RUN-001 Runway Extension Lever Activation
+Owner: AG014 Treasury Agent
+Decision: L3
+Escalation: E3
+
+## Adaptive Learning & Failure-to-Opportunity Functions (Signature Layer)
+
+> Способность быстро учиться на ошибках — не просто "провести ретро", а
+> системный механизм, который отделяет вину от анализа (blameless), находит
+> паттерны провалов до того, как они повторятся в другом домене, и
+> целенаправленно ищет, какую возможность открывает каждая неудача.
+
+GOV-RET-001 Blameless Retrospective Engine
+Owner: AG053 Knowledge Curator
+Decision: L2
+Escalation: E2
+
+KNW-FAIL-001 Failure Pattern Library & Cross-Domain Matching
+Owner: AG053 Knowledge Curator
+Decision: L1
+Escalation: E1
+
+STR-PIV-001 Pivot Decision Framework
+Owner: AG001 CEO Agent
+Decision: L4
+Escalation: E4
+
+MRK-REC-001 Crisis-to-Opportunity Reframing
+Owner: AG030 Marketing Manager
+Decision: L3
+Escalation: E3
+
+INN-MIS-001 Mistake-Derived Innovation Capture
+Owner: AG077 Innovation Manager
+Decision: L2
+Escalation: E2
+
+GOV-LRN-001 Learning Velocity Tracking
+Owner: AG003 AI Auditor
+Decision: L2
+Escalation: E2
+
 ## Summary
 
 Capabilities: 16/16 — все 160 под-способностей (включая C16) имеют Function Group
 Function Groups: ~35 documented, все теперь имеют минимум 2 функции (create/do + review или exception-handling)
-Functions documented: 320 — Target: ~600
+Functions documented: 341 — Target: ~600 (naturally, as real needs emerge)
 Agents: 84 (см. AGENT_REGISTRY.md) — Owner-поля во всех функциях выше
 приведены в соответствие с подтверждённым org chart
-Playbooks: 50/50 COMPLETE — см. PLAYBOOK_ROADMAP.md
+Playbooks: 51 (50 base + PB051 flagship) — см. PLAYBOOK_ROADMAP.md
+
+Changelog v2.3 → v2.4:
+- Добавлен слой "Growth Mechanics & Capital Agility" (15 функций): growth
+  loops, PLG, network effects, ABM, pricing psychology — для Sales/Marketing;
+  alternative financing, strategic investor targeting, non-dilutive stacking,
+  runway extension — для нестандартного привлечения капитала
+- Добавлен слой "Adaptive Learning & Failure-to-Opportunity" (6 функций):
+  blameless retrospectives, failure pattern matching, pivot framework,
+  crisis-to-opportunity reframing — системная способность превращать
+  ошибки в следующее конкурентное преимущество, а не просто "разбор полётов"
 
 Changelog v2.2 → v2.3:
 - Добавлен сигнатурный слой "Growth & Market Reactivity" (20 функций) —
