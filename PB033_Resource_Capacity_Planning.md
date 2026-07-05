@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C07 Operations
-Related Functions: OPS-RES-001, OPS-RES-001-002, PEO-WFP-001
+Related Functions: OPS-RES-001, OPS-RES-002, PEO-WFP-001
 Owner Agent: AG007 Operations Manager
 Escalation Path: AG007 → AG002 Chief Orchestrator → AG001 CEO Agent
 (для решений о найме/инвестициях в capacity)
@@ -76,7 +76,7 @@ Playbook описывает планирование операционной ё
 
 ## Stage 6 — Audit
 
-**Function:** OPS-RES-001-002 Resource Capacity Planning Review
+**Function:** OPS-RES-002 Resource Capacity Planning Review
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
