@@ -12,7 +12,7 @@ Capability домену и конкретным Function ID из ENTERPRISE_FUNC
 Статусы: **Done** (написан полностью), **Draft** (частично описан),
 **Planned** (только определён, не начат).
 
-## Done (30) — Priority 1, 2 & 3 fully complete ✅✅✅
+## Done (38) — Priority 1-4 fully complete ✅✅✅✅
 
 | ID | Название | Домен | Функции |
 |---|---|---|---|
@@ -46,11 +46,6 @@ Capability домену и конкретным Function ID из ENTERPRISE_FUNC
 | PB028 | Content Marketing Cycle | C04 Marketing | MRK-CON-001, MRK-SEO-001 |
 | PB029 | Campaign Planning & Execution | C04 Marketing | MRK-CAM-001..003 |
 | PB030 | Event Planning & Execution | C04 Marketing | MRK-EVT-001 |
-
-## Planned — Priority 4 (operations & technology) — NEXT UP
-
-| ID | Название | Домен | Функции (основные) |
-|---|---|---|---|
 | PB031 | Quality Audit Cycle | C07 Operations | OPS-QUA-001 |
 | PB032 | Process Optimization Review | C07 Operations | OPS-PRO-002, OPS-IMP-001 |
 | PB033 | Resource Capacity Planning | C07 Operations | OPS-RES-001 |
@@ -60,7 +55,7 @@ Capability домену и конкретным Function ID из ENTERPRISE_FUNC
 | PB037 | AI Model Deployment & Retraining | C13 Technology | TEC-AIP-001, TEC-MLO-001 |
 | PB038 | Deployment Pipeline Health Check | C13 Technology | TEC-DEV-001 |
 
-## Planned — Priority 5 (finance, people, knowledge)
+## Planned — Priority 5 (finance, people, knowledge) — FINAL STRETCH
 
 | ID | Название | Домен | Функции (основные) |
 |---|---|---|---|
