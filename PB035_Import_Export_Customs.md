@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C08 Supply Chain
-Related Functions: SCM-IMX-001, SCM-CUS-001, SCM-CUS-001-002
+Related Functions: SCM-IMX-001, SCM-CUS-001, SCM-CUS-002
 Owner Agent: AG044 Customs Consultant
 Escalation Path: AG044 → AG040 Logistics Manager → AG011 Compliance Agent
 (для регуляторных вопросов)
@@ -75,7 +75,7 @@ Playbook описывает оформление трансграничных п
 
 ## Stage 6 — Audit
 
-**Function:** SCM-CUS-001-002 Customs Compliance Check Exception Handling
+**Function:** SCM-CUS-002 Customs Compliance Check Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L3
 
