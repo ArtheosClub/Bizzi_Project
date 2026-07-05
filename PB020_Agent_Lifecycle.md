@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C15 Governance
-Related Functions: GOV-LIF-001, GOV-LIF-001-002
+Related Functions: GOV-LIF-001, GOV-LIF-002
 Owner Agent: AG057 Agent Registry Manager
 Escalation Path: AG057 → AG002 Chief Orchestrator → AG001 CEO Agent
 (для новых доменов/существенных изменений структуры)
@@ -81,7 +81,7 @@ Playbook описывает добавление нового агента в AG
 
 ## Stage 6 — Audit
 
-**Function:** GOV-LIF-001-002 Agent Onboarding/Retirement Review
+**Function:** GOV-LIF-002 Agent Onboarding/Retirement Review
 **Owner:** AG003 AI Auditor
 **Decision Level:** L3
 
