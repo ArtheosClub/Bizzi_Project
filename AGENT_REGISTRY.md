@@ -2,8 +2,9 @@
 
 # Art of Business Agent Registry
 
-Version: 2.0
-Status: Confirmed structure (replaces v1.0 reconstruction)
+Version: 2.1
+Status: Confirmed structure — Market Intelligence agent added, Administration
+mapped to new C16 domain (both per owner decision)
 
 ## Purpose
 
@@ -15,11 +16,11 @@ Level (см. GOVERNANCE_MODEL.md).
 ## Structure Overview
 
 - **Executive Layer** — высшее руководство и governance-ядро (5 агентов)
-- **Business Layer** — 17 департаментов, операционные агенты (~73 агента)
+- **Business Layer** — 18 департаментов, операционные агенты (~74 агента)
 - **Platform Layer** — инфраструктура оркестра, не бизнес-функции (5 агентов,
   из которых 5 уже входят в Executive Layer как разделяемые роли)
 
-Итого уникальных агентов: **83**
+Итого уникальных агентов: **84**
 
 ## Executive Layer
 
@@ -30,6 +31,12 @@ Level (см. GOVERNANCE_MODEL.md).
 | AG003 | AI Auditor | C15 Governance | AG002 | L4 |
 | AG004 | Business Analyst | C01 Strategy | AG001 | L3 |
 | AG005 | Risk Manager (Enterprise Risk Manager) | C11 Risk Management | AG002 | L4 |
+
+## Market Intelligence
+
+| Agent ID | Name | Capability | Reports To | Decision Level |
+|---|---|---|---|---|
+| AG084 | Market Intelligence Analyst | C03 Market Intelligence | AG004 | L2 |
 
 ## Enterprise Management
 
@@ -174,10 +181,10 @@ Level (см. GOVERNANCE_MODEL.md).
 
 | Agent ID | Name | Capability | Reports To | Decision Level |
 |---|---|---|---|---|
-| AG072 | Executive Assistant | — (см. Open Items) | AG001 | L1 |
-| AG073 | Secretary | — (см. Open Items) | AG072 | L1 |
-| AG074 | Meeting Coordinator | — (см. Open Items) | AG072 | L1 |
-| AG075 | Calendar Agent | — (см. Open Items) | AG072 | L1 |
+| AG072 | Executive Assistant | C16 Administration & Executive Support | AG001 | L1 |
+| AG073 | Secretary | C16 Administration & Executive Support | AG072 | L1 |
+| AG074 | Meeting Coordinator | C16 Administration & Executive Support | AG072 | L1 |
+| AG075 | Calendar Agent | C16 Administration & Executive Support | AG072 | L1 |
 
 ## Innovation
 
@@ -210,25 +217,21 @@ Level (см. GOVERNANCE_MODEL.md).
 
 ## Coverage Check
 
-- Все 15 Capability доменов (C01–C15) имеют минимум одного владеющего агента.
+- Все 16 Capability доменов (C01–C16) теперь имеют минимум одного владеющего агента.
 - Governance (C15) обслуживается: AG002, AG003, AG010 Governance Agent,
   AG057 Agent Registry Manager, плюс Platform Layer (AG079–AG083).
 - Technology (C13) — самый насыщенный домен: Enterprise Architect, AI Platform
   (6 агентов), Product Development (7 агентов), Data (4 агента) — итого 18 агентов.
+- Market Intelligence (C03) и Administration (C16) закрыты после решения
+  владельца проекта (AG084 добавлен; AG072–075 привязаны к C16).
 
 ## Open Items (требуют решения владельца проекта)
 
-- [ ] **Market Intelligence (C03)** не имеет выделенного агента в утверждённой
-  структуре. Временно функции этого домена (MKT-*) переданы AG004 Business
-  Analyst. Нужно решить: создавать отдельного Market Intelligence Analyst
-  или оставить за Business Analyst на постоянной основе.
-- [ ] **Administration** (AG072–AG075: Executive Assistant, Secretary, Meeting
-  Coordinator, Calendar Agent) не имеет домена в CAPABILITY_MAP_v1.0.md
-  (домены только C01–C15). Варианты: (а) добавить C16 Administration &
-  Executive Support, (б) закрепить эти функции как под-функции C01 Strategy
-  (поддержка исполнительного слоя). Требует решения, так как влияет на
-  Capability Map — файл, который без вашего утверждения не меняется.
+- [x] ~~Market Intelligence (C03) не имеет выделенного агента~~ — решено:
+  добавлен AG084 Market Intelligence Analyst.
+- [x] ~~Administration не имеет домена в Capability Map~~ — решено: добавлен
+  C16 Administration & Executive Support (CAPABILITY_MAP_v1.0.md v1.1).
 - [ ] Некоторые узкоспециализированные агенты (Prompt Engineer, BI Analyst,
   Fleet Agent и др.) пока не имеют функций в ENTERPRISE_FUNCTION_REGISTRY.md —
-  это ожидаемо на текущей стадии (171 функция из ~600 целевых) и будет
+  это ожидаемо на текущей стадии (~180 функций из ~600 целевых) и будет
   закрываться по мере углубления Function Registry.
