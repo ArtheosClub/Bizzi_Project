@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C04 Marketing
-Related Functions: MRK-CON-001, MRK-CON-001-002, MRK-SEO-001, MRK-ANA-001
+Related Functions: MRK-CON-001, MRK-CON-002, MRK-SEO-001, MRK-ANA-001
 Owner Agent: AG031 Content Agent
 Escalation Path: AG031 → AG030 Marketing Manager → AG035 Brand Agent
 (для вопросов бренд-соответствия)
@@ -74,7 +74,7 @@ Playbook описывает регулярный цикл производств
 
 ## Stage 6 — Audit
 
-**Function:** MRK-CON-001-002 Content Calendar Management Exception Handling
+**Function:** MRK-CON-002 Content Calendar Management Exception Handling
 **Owner:** AG067 Analytics Agent
 **Decision Level:** L1
 
