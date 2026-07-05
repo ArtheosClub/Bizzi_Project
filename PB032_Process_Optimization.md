@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C07 Operations
-Related Functions: OPS-PRO-002, OPS-IMP-001, OPS-IMP-001-002
+Related Functions: OPS-PRO-002, OPS-IMP-001, OPS-IMP-002
 Owner Agent: AG047 Process Controller
 Escalation Path: AG047 → AG007 Operations Manager → AG002 Chief Orchestrator
 (для изменений, затрагивающих несколько доменов)
@@ -74,7 +74,7 @@ Playbook описывает цикл выявления и реализации 
 
 ## Stage 6 — Audit
 
-**Function:** OPS-IMP-001-002 Improvement Initiative Tracking Exception Handling
+**Function:** OPS-IMP-002 Improvement Initiative Tracking Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
