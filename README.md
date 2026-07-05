@@ -20,7 +20,7 @@ Art of Business — архитектурная спецификация пред
 | Файл | Назначение |
 |---|---|
 | `Vision.md` | Миссия и долгосрочное видение проекта |
-| `CAPABILITY_MAP_v1.0.md` | 15 бизнес-доменов (C01–C15), 150 базовых способностей |
+| `CAPABILITY_MAP_v1.0.md` | 16 бизнес-доменов (C01–C16), 160 базовых способностей |
 | `ENTERPRISE_FUNCTION_REGISTRY.md` | Реестр функций: Function ID, Owner Agent, Decision Level, Escalation |
 | `AGENT_REGISTRY.md` | 28 AI-агентов, их зона ответственности и подчинённость |
 | `GOVERNANCE_MODEL.md` | Конституционные принципы, уровни решений, эскалация, аудит |
@@ -48,12 +48,12 @@ Art of Business — архитектурная спецификация пред
 агенты и playbooks ссылаются друг на друга по единым ID.
 
 Текущий охват:
-- Capabilities: 15/15, все 150 под-способностей имеют Function Group
-- Functions: 171 документировано из целевых ~600 (следующий шаг — углубление
+- Capabilities: 16/16, все 160 под-способностей имеют Function Group
+  (включая новый C16 Administration & Executive Support)
+- Functions: 181 документировано из целевых ~600 (следующий шаг — углубление
   каждой Function Group с 1 функции до 3–5: варианты review, exception-handling, reporting)
-- Agents: 83/83 — подтверждённая владельцем проекта организационная структура
-  (см. AGENT_REGISTRY.md v2.0); 2 открытых вопроса зафиксированы там же
-  (Market Intelligence без выделенного агента, Administration без Capability домена)
+- Agents: 84/84 определены и полностью привязаны к Capability доменам
+  (см. AGENT_REGISTRY.md v2.1 — все открытые вопросы закрыты)
 - Playbooks: 4/50 написаны полностью, 46 определены в roadmap с привязкой к функциям
 
 ## Contributing
