@@ -988,14 +988,623 @@ Owner: AG072 Executive Assistant
 Decision: L1
 Escalation: E1
 
+## Function Depth Enrichment (v2.2 — companion functions)
+
+Ниже добавлены вторые функции для групп, у которых была только одна.
+Паттерн: `-002 Review` для функций типа Create/Plan/Manage, `-002 Exception
+Handling` для функций типа Monitor/Review/Assess (второй виток анализа не
+нужен — нужна обработка отклонений).
+
+STR-MIS-002 Maintain Mission Statement Review
+Owner: AG001 CEO Agent
+Decision: L4
+Escalation: E4
+
+STR-OKR-002 Define Quarterly OKRs Review
+Owner: AG006 Strategy Agent
+Decision: L3
+Escalation: E3
+
+STR-POR-002 Strategic Portfolio Review Exception Handling
+Owner: AG004 Business Analyst
+Decision: L3
+Escalation: E3
+
+STR-CAP-002 Capital Allocation Decision Review
+Owner: AG001 CEO Agent
+Decision: L4
+Escalation: E4
+
+STR-GRW-002 Growth Strategy Formulation Review
+Owner: AG006 Strategy Agent
+Decision: L3
+Escalation: E3
+
+STR-INT-002 Market Entry Assessment Exception Handling
+Owner: AG006 Strategy Agent
+Decision: L4
+Escalation: E4
+
+STR-PAR-002 Partnership Opportunity Evaluation Review
+Owner: AG006 Strategy Agent
+Decision: L3
+Escalation: E3
+
+STR-MNA-002 M&A Target Screening Review
+Owner: AG001 CEO Agent
+Decision: L4
+Escalation: E4
+
+INN-OPP-002 Opportunity Scouting Review
+Owner: AG077 Innovation Manager
+Decision: L1
+Escalation: E1
+
+INN-PDI-002 Product Discovery Sprint Review
+Owner: AG077 Innovation Manager
+Decision: L2
+Escalation: E2
+
+INN-PVA-002 Product Validation Testing Review
+Owner: AG077 Innovation Manager
+Decision: L2
+Escalation: E2
+
+INN-VEN-002 New Venture Charter Review
+Owner: AG001 CEO Agent
+Decision: L4
+Escalation: E4
+
+INN-BMD-002 Business Model Canvas Update Review
+Owner: AG077 Innovation Manager
+Decision: L2
+Escalation: E2
+
+INN-POR-002 Innovation Portfolio Review Exception Handling
+Owner: AG004 Business Analyst
+Decision: L3
+Escalation: E3
+
+INN-RND-002 R&D Initiative Tracking Exception Handling
+Owner: AG076 R&D Agent
+Decision: L2
+Escalation: E2
+
+INN-COM-002 Go-to-Market Readiness Review Exception Handling
+Owner: AG077 Innovation Manager
+Decision: L3
+Escalation: E3
+
+MKT-IND-002 Industry Landscape Analysis Exception Handling
+Owner: AG084 Market Intelligence Analyst
+Decision: L2
+Escalation: E2
+
+MKT-TRD-002 Emerging Trend Scan Exception Handling
+Owner: AG084 Market Intelligence Analyst
+Decision: L1
+Escalation: E1
+
+MKT-SEG-002 Market Segmentation Update Review
+Owner: AG084 Market Intelligence Analyst
+Decision: L2
+Escalation: E2
+
+MKT-DEM-002 Demand Forecast Model Review
+Owner: AG084 Market Intelligence Analyst
+Decision: L2
+Escalation: E2
+
+MKT-OPP-002 Market Opportunity Sizing Review
+Owner: AG084 Market Intelligence Analyst
+Decision: L2
+Escalation: E2
+
+MKT-CUR-002 Customer Research Study Review
+Owner: AG084 Market Intelligence Analyst
+Decision: L1
+Escalation: E1
+
+MKT-PRI-002 Competitive Pricing Scan Exception Handling
+Owner: AG084 Market Intelligence Analyst
+Decision: L2
+Escalation: E2
+
+MRK-CON-002 Content Calendar Management Review
+Owner: AG031 Content Agent
+Decision: L1
+Escalation: E1
+
+MRK-SEO-002 SEO Performance Review Exception Handling
+Owner: AG032 SEO Agent
+Decision: L1
+Escalation: E1
+
+MRK-SOC-002 Social Media Posting Plan Review
+Owner: AG033 Social Media Agent
+Decision: L1
+Escalation: E1
+
+MRK-LGN-002 Lead Generation Campaign Review
+Owner: AG034 Campaign Manager
+Decision: L2
+Escalation: E2
+
+MRK-PR-002 Press Release Coordination Review
+Owner: AG030 Marketing Manager
+Decision: L2
+Escalation: E2
+
+MRK-EVT-002 Event Planning & Execution Review
+Owner: AG030 Marketing Manager
+Decision: L2
+Escalation: E2
+
+MRK-PMK-002 Product Launch Messaging Review
+Owner: AG030 Marketing Manager
+Decision: L2
+Escalation: E2
+
+MRK-ANA-002 Marketing Performance Dashboard Exception Handling
+Owner: AG067 Analytics Agent
+Decision: L1
+Escalation: E1
+
+SAL-CTR-002 Sales Contract Finalization Review
+Owner: AG018 Contract Review Agent
+Decision: L2
+Escalation: E2
+
+SAL-ACC-002 Key Account Review Exception Handling
+Owner: AG025 Sales Director
+Decision: L2
+Escalation: E2
+
+SAL-REN-002 Renewal Risk Review Exception Handling
+Owner: AG029 Customer Success Agent
+Decision: L2
+Escalation: E2
+
+SAL-XSL-002 Cross-Sell Opportunity Identification Review
+Owner: AG025 Sales Director
+Decision: L1
+Escalation: E1
+
+SAL-UPS-002 Upsell Proposal Review
+Owner: AG025 Sales Director
+Decision: L1
+Escalation: E1
+
+CUS-ADO-002 Feature Adoption Tracking Exception Handling
+Owner: AG029 Customer Success Agent
+Decision: L1
+Escalation: E1
+
+CUS-SUP-002 Support Ticket Resolution Exception Handling
+Owner: AG069 Support Agent
+Decision: L1
+Escalation: E1
+
+CUS-RET-002 Retention Risk Intervention Review
+Owner: AG029 Customer Success Agent
+Decision: L2
+Escalation: E2
+
+CUS-EXP-002 Expansion Opportunity Review Exception Handling
+Owner: AG029 Customer Success Agent
+Decision: L2
+Escalation: E2
+
+CUS-NPS-002 NPS Survey Cycle Review
+Owner: AG029 Customer Success Agent
+Decision: L1
+Escalation: E1
+
+CUS-ADV-002 Reference Customer Program Review
+Owner: AG029 Customer Success Agent
+Decision: L2
+Escalation: E2
+
+CUS-SPL-002 Customer Success Plan Review
+Owner: AG029 Customer Success Agent
+Decision: L2
+Escalation: E2
+
+OPS-SRV-002 Service Delivery Tracking Exception Handling
+Owner: AG007 Operations Manager
+Decision: L1
+Escalation: E1
+
+OPS-PMG-002 Project Milestone Review Exception Handling
+Owner: AG008 PMO Agent
+Decision: L2
+Escalation: E2
+
+OPS-AST-002 Asset Register Update Review
+Owner: AG007 Operations Manager
+Decision: L1
+Escalation: E1
+
+OPS-RES-002 Resource Capacity Planning Review
+Owner: AG007 Operations Manager
+Decision: L2
+Escalation: E2
+
+OPS-COS-002 Cost Optimization Review Exception Handling
+Owner: AG007 Operations Manager
+Decision: L3
+Escalation: E3
+
+OPS-IMP-002 Improvement Initiative Tracking Exception Handling
+Owner: AG047 Process Controller
+Decision: L2
+Escalation: E2
+
+SCM-VEN-002 Vendor Performance Review Exception Handling
+Owner: AG037 Supplier Evaluation Agent
+Decision: L2
+Escalation: E2
+
+SCM-SUP-002 Supply Plan Update Review
+Owner: AG040 Logistics Manager
+Decision: L2
+Escalation: E2
+
+SCM-DMP-002 Demand Plan Reconciliation Exception Handling
+Owner: AG040 Logistics Manager
+Decision: L2
+Escalation: E2
+
+SCM-IMX-002 Import/Export Documentation Review
+Owner: AG044 Customs Consultant
+Decision: L2
+Escalation: E2
+
+SCM-CUS-002 Customs Compliance Check Exception Handling
+Owner: AG044 Customs Consultant
+Decision: L3
+Escalation: E3
+
+SCM-CSU-002 Supplier Contract Negotiation Review
+Owner: AG018 Contract Review Agent
+Decision: L2
+Escalation: E2
+
+SCM-SRK-002 Supplier Risk Assessment Exception Handling
+Owner: AG005 Risk Manager
+Decision: L3
+Escalation: E3
+
+FIN-ACC-002 Monthly Close Process Review
+Owner: AG013 Accounting Agent
+Decision: L2
+Escalation: E2
+
+FIN-TRE-002 Cash Position Monitoring Exception Handling
+Owner: AG014 Treasury Agent
+Decision: L2
+Escalation: E2
+
+FIN-FCS-002 Financial Forecast Update Review
+Owner: AG016 Financial Planning & Analysis Agent
+Decision: L2
+Escalation: E2
+
+FIN-FPA-002 Variance Analysis Exception Handling
+Owner: AG016 Financial Planning & Analysis Agent
+Decision: L2
+Escalation: E2
+
+FIN-TAX-002 Tax Filing Preparation Review
+Owner: AG015 Tax Consultant
+Decision: L3
+Escalation: E3
+
+FIN-AUD-002 External Audit Coordination Exception Handling
+Owner: AG012 CFO Agent
+Decision: L3
+Escalation: E3
+
+FIN-IR-002 Investor Update Preparation Review
+Owner: AG012 CFO Agent
+Decision: L4
+Escalation: E4
+
+FIN-CAP-002 Capital Structure Review Exception Handling
+Owner: AG012 CFO Agent
+Decision: L4
+Escalation: E4
+
+LEG-LIC-002 License Renewal Tracking Exception Handling
+Owner: AG017 Legal Counsel
+Decision: L2
+Escalation: E2
+
+LEG-REG-002 Regulatory Change Monitoring Exception Handling
+Owner: AG011 Compliance Agent
+Decision: L2
+Escalation: E2
+
+LEG-AML-002 AML Screening Exception Handling
+Owner: AG011 Compliance Agent
+Decision: L3
+Escalation: E3
+
+LEG-KYC-002 KYC Verification Exception Handling
+Owner: AG011 Compliance Agent
+Decision: L2
+Escalation: E2
+
+LEG-DPR-002 Data Privacy Impact Assessment Exception Handling
+Owner: AG011 Compliance Agent
+Decision: L3
+Escalation: E3
+
+LEG-CMP-002 Compliance Checklist Review Exception Handling
+Owner: AG011 Compliance Agent
+Decision: L2
+Escalation: E2
+
+LEG-LIT-002 Litigation Case Tracking Exception Handling
+Owner: AG017 Legal Counsel
+Decision: L4
+Escalation: E4
+
+LEG-IP-002 IP Filing Management Review
+Owner: AG020 IP Agent
+Decision: L3
+Escalation: E3
+
+LEG-INT-002 Cross-Border Legal Review Exception Handling
+Owner: AG017 Legal Counsel
+Decision: L3
+Escalation: E3
+
+RSK-FIN-002 Financial Risk Monitoring Exception Handling
+Owner: AG005 Risk Manager
+Decision: L3
+Escalation: E3
+
+RSK-OPR-002 Operational Risk Assessment Exception Handling
+Owner: AG005 Risk Manager
+Decision: L2
+Escalation: E2
+
+RSK-LEG-002 Legal Risk Review Exception Handling
+Owner: AG005 Risk Manager
+Decision: L3
+Escalation: E3
+
+RSK-CYB-002 Cyber Risk Assessment Exception Handling
+Owner: AG049 Information Security Agent
+Decision: L3
+Escalation: E3
+
+RSK-REP-002 Reputation Risk Monitoring Exception Handling
+Owner: AG005 Risk Manager
+Decision: L2
+Escalation: E2
+
+RSK-CTR-002 Country Risk Rating Exception Handling
+Owner: AG005 Risk Manager
+Decision: L2
+Escalation: E2
+
+RSK-VND-002 Vendor Risk Screening Exception Handling
+Owner: AG005 Risk Manager
+Decision: L2
+Escalation: E2
+
+RSK-CRI-002 Crisis Response Activation Review
+Owner: AG001 CEO Agent
+Decision: L5
+Escalation: E5
+
+RSK-BCP-002 Business Continuity Plan Test Review
+Owner: AG051 Business Continuity Agent
+Decision: L3
+Escalation: E3
+
+PEO-WFP-002 Headcount Planning Review
+Owner: AG021 HR Manager
+Decision: L2
+Escalation: E2
+
+PEO-ONB-002 New Hire Onboarding Exception Handling
+Owner: AG021 HR Manager
+Decision: L1
+Escalation: E1
+
+PEO-COM-002 Compensation Benchmarking Review
+Owner: AG021 HR Manager
+Decision: L3
+Escalation: E3
+
+PEO-TAL-002 Talent Review Cycle Exception Handling
+Owner: AG021 HR Manager
+Decision: L2
+Escalation: E2
+
+PEO-CUL-002 Culture Survey Review
+Owner: AG021 HR Manager
+Decision: L1
+Escalation: E1
+
+PEO-LDR-002 Leadership Development Plan Review
+Owner: AG023 Learning & Development Agent
+Decision: L2
+Escalation: E2
+
+PEO-SUC-002 Succession Plan Review Exception Handling
+Owner: AG001 CEO Agent
+Decision: L4
+Escalation: E4
+
+TEC-APP-002 Application Portfolio Review Exception Handling
+Owner: AG009 Enterprise Architect
+Decision: L2
+Escalation: E2
+
+TEC-INT-002 System Integration Monitoring Exception Handling
+Owner: AG065 Data Engineer
+Decision: L2
+Escalation: E2
+
+TEC-AIP-002 AI Model Performance Review Exception Handling
+Owner: AG055 Model Evaluation Agent
+Decision: L2
+Escalation: E2
+
+TEC-DEV-002 Deployment Pipeline Health Check Exception Handling
+Owner: AG064 DevOps Agent
+Decision: L1
+Escalation: E1
+
+TEC-MLO-002 Model Retraining Schedule Review
+Owner: AG056 AI Trainer
+Decision: L2
+Escalation: E2
+
+TEC-DWP-002 Digital Workplace Tools Review Exception Handling
+Owner: AG009 Enterprise Architect
+Decision: L1
+Escalation: E1
+
+KNW-POL-002 Policy Document Maintenance Review
+Owner: AG053 Knowledge Curator
+Decision: L2
+Escalation: E2
+
+KNW-MEM-002 Corporate Memory Archive Update Review
+Owner: AG054 Memory Manager
+Decision: L1
+Escalation: E1
+
+KNW-GRA-002 Knowledge Graph Enrichment Review
+Owner: AG053 Knowledge Curator
+Decision: L2
+Escalation: E2
+
+KNW-SRC-002 Knowledge Search Index Update Review
+Owner: AG053 Knowledge Curator
+Decision: L1
+Escalation: E1
+
+KNW-EXP-002 Expert Network Directory Review
+Owner: AG053 Knowledge Curator
+Decision: L1
+Escalation: E1
+
+KNW-ANL-002 Knowledge Usage Analytics Exception Handling
+Owner: AG067 Analytics Agent
+Decision: L1
+Escalation: E1
+
+KNW-AUD-002 Knowledge Base Quality Audit Exception Handling
+Owner: AG003 AI Auditor
+Decision: L2
+Escalation: E2
+
+GOV-AUT-002 Authority Matrix Review Exception Handling
+Owner: AG081 Authorization Manager
+Decision: L3
+Escalation: E3
+
+GOV-POL-002 Governance Policy Update Review
+Owner: AG010 Governance Agent
+Decision: L4
+Escalation: E4
+
+GOV-DEC-002 Decision Log Maintenance Review
+Owner: AG079 Audit Manager
+Decision: L2
+Escalation: E2
+
+GOV-PRF-002 Agent Performance Review Exception Handling
+Owner: AG002 Chief Orchestrator
+Decision: L3
+Escalation: E3
+
+GOV-LIF-002 Agent Onboarding/Retirement Review
+Owner: AG057 Agent Registry Manager
+Decision: L3
+Escalation: E3
+
+GOV-CTL-002 Enterprise Control Testing Exception Handling
+Owner: AG003 AI Auditor
+Decision: L4
+Escalation: E4
+
+GOV-AIG-002 AI Governance Compliance Review Exception Handling
+Owner: AG003 AI Auditor
+Decision: L4
+Escalation: E4
+
+ADM-SUP-002 Executive Support Request Handling Review
+Owner: AG072 Executive Assistant
+Decision: L1
+Escalation: E1
+
+ADM-CAL-002 Calendar Management Review
+Owner: AG075 Calendar Agent
+Decision: L1
+Escalation: E1
+
+ADM-MTG-002 Meeting Scheduling & Logistics Review
+Owner: AG074 Meeting Coordinator
+Decision: L1
+Escalation: E1
+
+ADM-COR-002 Correspondence Handling Review
+Owner: AG073 Secretary
+Decision: L1
+Escalation: E1
+
+ADM-TRV-002 Travel Arrangement Review
+Owner: AG072 Executive Assistant
+Decision: L1
+Escalation: E1
+
+ADM-DOC-002 Document Filing & Organization Review
+Owner: AG073 Secretary
+Decision: L1
+Escalation: E1
+
+ADM-OFF-002 Office Administration Tasks Review
+Owner: AG073 Secretary
+Decision: L1
+Escalation: E1
+
+ADM-COM-002 Executive Communication Drafting Review
+Owner: AG072 Executive Assistant
+Decision: L2
+Escalation: E2
+
+ADM-REC-002 Records Retention Management Review
+Owner: AG073 Secretary
+Decision: L1
+Escalation: E1
+
+ADM-REP-002 Administrative Reporting Review
+Owner: AG072 Executive Assistant
+Decision: L1
+Escalation: E1
+
 ## Summary
 
-Capabilities: 16/16 — все 160 под-способностей (включая новый C16) имеют Function Group
-Function Groups: ~35 documented
-Functions documented: 181 — Target: ~600
+Capabilities: 16/16 — все 160 под-способностей (включая C16) имеют Function Group
+Function Groups: ~35 documented, все теперь имеют минимум 2 функции (create/do + review или exception-handling)
+Functions documented: 300 — Target: ~600 (halfway point reached)
 Agents: 84 (см. AGENT_REGISTRY.md v2.1) — Owner-поля во всех функциях выше
 приведены в соответствие с подтверждённым org chart
 Playbooks: 4 documented (PB001-004), roadmap на 50 в PLAYBOOK_ROADMAP.md
+
+Changelog v2.1 → v2.2:
+- Добавлено 119 companion-функций (-002) — каждая из ранее "одиночных" Function
+  Group теперь имеет минимум 2 функции: основное действие + Review (для
+  Create/Plan/Manage функций) или Exception Handling (для Monitor/Assess
+  функций, где повторный анализ избыточен, а нужна обработка отклонений)
+- Достигнут ровно половинный рубеж к целевым ~600 функциям
 
 Changelog v2.0 → v2.1:
 - Market Intelligence functions (MKT-*) переназначены с временного владельца
