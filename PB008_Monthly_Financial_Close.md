@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C09 Finance
-Related Functions: FIN-ACC-001, FIN-ACC-001-002, FIN-FPA-001
+Related Functions: FIN-ACC-001, FIN-ACC-002, FIN-FPA-001
 Owner Agent: AG013 Accounting Agent
 Escalation Path: AG013 → AG012 CFO Agent → AG001 CEO Agent (при существенных
 расхождениях)
@@ -74,7 +74,7 @@ Playbook описывает ежемесячный цикл закрытия ф�
 
 ## Stage 6 — Audit
 
-**Function:** FIN-ACC-001-002 Monthly Close Process Review
+**Function:** FIN-ACC-002 Monthly Close Process Review
 **Owner:** AG012 CFO Agent
 **Decision Level:** L2
 
