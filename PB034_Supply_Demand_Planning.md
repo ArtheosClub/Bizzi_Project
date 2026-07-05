@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C08 Supply Chain
-Related Functions: SCM-SUP-001, SCM-DMP-001, SCM-DMP-001-002
+Related Functions: SCM-SUP-001, SCM-DMP-001, SCM-DMP-002
 Owner Agent: AG040 Logistics Manager
 Escalation Path: AG040 → AG007 Operations Manager → AG012 CFO Agent
 (для решений, влияющих на оборотный капитал)
@@ -75,7 +75,7 @@ Playbook описывает цикл согласования прогноза �
 
 ## Stage 6 — Audit
 
-**Function:** SCM-DMP-001-002 Demand Plan Reconciliation Exception Handling
+**Function:** SCM-DMP-002 Demand Plan Reconciliation Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
