@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C13 Technology
-Related Functions: TEC-AIP-001, TEC-MLO-001, TEC-MLO-001-002
+Related Functions: TEC-AIP-001, TEC-MLO-001, TEC-MLO-002
 Owner Agent: AG056 AI Trainer
 Escalation Path: AG056 → AG009 Enterprise Architect → AG003 AI Auditor
 (для моделей, влияющих на Decision Level L3+)
@@ -88,7 +88,7 @@ Playbook описывает жизненный цикл AI/ML моделей, и
 
 ## Stage 7 — Knowledge Capture
 
-**Function:** TEC-MLO-001-002 Model Retraining Schedule Review
+**Function:** TEC-MLO-002 Model Retraining Schedule Review
 **Owner:** AG053 Knowledge Curator
 **Decision Level:** L1
 
