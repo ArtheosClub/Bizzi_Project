@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C04 Marketing
-Related Functions: MRK-EVT-001, MRK-EVT-001-002
+Related Functions: MRK-EVT-001, MRK-EVT-002
 Owner Agent: AG030 Marketing Manager
 Escalation Path: AG030 → AG012 CFO Agent (для бюджета выше лимита) →
 AG074 Meeting Coordinator (для логистики)
@@ -75,7 +75,7 @@ Playbook описывает организацию мероприятий (ве�
 
 ## Stage 6 — Audit
 
-**Function:** MRK-EVT-001-002 Event Planning & Execution Review
+**Function:** MRK-EVT-002 Event Planning & Execution Review
 **Owner:** AG067 Analytics Agent
 **Decision Level:** L2
 
