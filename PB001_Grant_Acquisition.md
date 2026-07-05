@@ -4,8 +4,8 @@ Version: 1.0
 Status: Active Playbook
 Related Capability: C09 Finance
 Related Functions: FIN-GRA-001, FIN-GRA-002, FIN-GRA-003, FIN-GRA-004
-Owner Agent: AG025 Grant & Funding Agent
-Escalation Path: AG025 → AG014 Finance Manager → AG001 CEO Agent (per Decision Architecture)
+Owner Agent: AG078 Grant Manager
+Escalation Path: AG025 → AG012 CFO Agent → AG001 CEO Agent (per Decision Architecture)
 
 ## Purpose
 
@@ -23,7 +23,7 @@ Audit → Knowledge Capture.
 ## Stage 1 — Idea (Grant Discovery)
 
 **Function:** FIN-GRA-001 Grant Discovery
-**Owner:** AG025 Grant & Funding Agent
+**Owner:** AG078 Grant Manager
 **Decision Level:** L1 (автономно)
 
 Действия:
@@ -37,8 +37,8 @@ Audit → Knowledge Capture.
 ## Stage 2 — Analysis (Eligibility Review)
 
 **Function:** FIN-GRA-002 Grant Eligibility Review
-**Owner:** AG025 Grant & Funding Agent
-**Decision Level:** L2 (требует подтверждения AG014)
+**Owner:** AG078 Grant Manager
+**Decision Level:** L2 (требует подтверждения AG012)
 
 Действия:
 1. Проверить формальные критерии допуска (юрлицо, отрасль, размер выручки, регион)
@@ -63,7 +63,7 @@ Audit → Knowledge Capture.
 
 ## Stage 4 — Decision
 
-**Owner:** AG014 Finance Manager (или AG001 CEO Agent при высокой сумме/риске)
+**Owner:** AG012 CFO Agent (или AG001 CEO Agent при высокой сумме/риске)
 **Decision Level:** L3–L4 в зависимости от суммы
 
 Критерии принятия решения:
@@ -77,7 +77,7 @@ Audit → Knowledge Capture.
 ## Stage 5 — Execution (Application Preparation)
 
 **Function:** FIN-GRA-003 Grant Application Preparation
-**Owner:** AG025 Grant & Funding Agent
+**Owner:** AG078 Grant Manager
 **Decision Level:** L2
 
 Действия:
@@ -103,7 +103,7 @@ Audit → Knowledge Capture.
 ## Stage 7 — Knowledge Capture
 
 **Function:** KNW-LES-001 Lessons Learned Capture
-**Owner:** AG026 Knowledge Manager
+**Owner:** AG053 Knowledge Curator
 **Decision Level:** L1
 
 Действия:
@@ -115,11 +115,11 @@ Audit → Knowledge Capture.
 ## Post-Award: Grant Reporting
 
 **Function:** FIN-GRA-004 Grant Reporting
-**Owner:** AG025 Grant & Funding Agent
+**Owner:** AG078 Grant Manager
 **Decision Level:** L2
 
 Периодическая отчётность перед грантодателем по установленному графику;
-эскалация к AG014 при отклонениях от заявленного плана использования средств.
+эскалация к AG012 при отклонениях от заявленного плана использования средств.
 
 ## KPIs
 
@@ -133,4 +133,4 @@ Audit → Knowledge Capture.
 - CAPABILITY_MAP_v1.0.md (C09 Finance)
 - ENTERPRISE_FUNCTION_REGISTRY.md (FIN-GRA-001..004)
 - GOVERNANCE_MODEL.md (Decision Architecture, Escalation Framework)
-- AGENT_REGISTRY.md (AG025, AG014, AG005, AG003, AG026)
+- AGENT_REGISTRY.md (AG078, AG012, AG005, AG003, AG053)
