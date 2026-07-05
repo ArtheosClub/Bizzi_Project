@@ -1,8 +1,10 @@
 # Art of Business
 
 AI-Orchestrated Enterprise Framework — операционная система для цифрового
-двойника малого и среднего бизнеса, управляемая сетью AI-агентов под
-контролем человека.
+двойника малого и среднего бизнеса, спроектированная для агрессивного роста:
+пока обычная компания собирает совещание, эта система уже заметила сигнал
+рынка, смоделировала ответ и готова действовать (см.
+`PB051_Rapid_Market_Response.md`).
 
 ## Что это
 
@@ -11,73 +13,72 @@ Art of Business — архитектурная спецификация пред
 - Каждой функцией владеет конкретный **AI-агент** (Agent Registry)
 - Решения принимаются по чётким **уровням** (Governance Model, L0–L5)
 - Повторяемые процессы описаны как **playbooks** (пошаговые сценарии)
+- Рыночные вызовы обрабатываются через **Fast-Track протокол** — та же
+  Governance-дисциплина, но со сжатым до часов циклом реакции
 
-Человек сохраняет право вето на критические и стратегические решения
-(см. GOVERNANCE_MODEL.md, п.9 Human Override).
+Человек сохраняет право вето на критические и стратегические решения даже
+на ускоренном треке (см. GOVERNANCE_MODEL.md, п.9 Human Override).
+
+## С чего начать (если у вас 2 минуты)
+
+1. `PB051_Rapid_Market_Response.md` — флагманский playbook, показывающий,
+   как система реагирует на движение конкурента за часы, а не недели
+2. Секция "Growth & Market Reactivity Functions" в
+   `ENTERPRISE_FUNCTION_REGISTRY.md` — war-gaming, dynamic pricing,
+   fail-fast, real-time market sensing
+3. `Vision.md` — почему "порядок" — это необходимое, но не достаточное
+   условие
 
 ## Структура репозитория
 
 | Файл | Назначение |
 |---|---|
-| `Vision.md` | Миссия и долгосрочное видение проекта |
+| `Vision.md` | Миссия и позиционирование (порядок + скорость реакции) |
 | `CAPABILITY_MAP_v1.0.md` | 16 бизнес-доменов (C01–C16), 160 базовых способностей |
-| `ENTERPRISE_FUNCTION_REGISTRY.md` | Реестр функций: Function ID, Owner Agent, Decision Level, Escalation |
+| `ENTERPRISE_FUNCTION_REGISTRY.md` | Реестр функций, включая сигнатурный слой Growth & Market Reactivity |
 | `AGENT_REGISTRY.md` | 84 AI-агента, их зона ответственности и подчинённость |
-| `GOVERNANCE_MODEL.md` | Конституционные принципы, уровни решений, эскалация, аудит |
+| `GOVERNANCE_MODEL.md` | Конституционные принципы, Decision Architecture, Fast-Track протокол |
 | `PB001`–`PB050` | 50 playbooks — полные операционные процессы по всем доменам |
-| `PLAYBOOK_ROADMAP.md` | Реестр всех 50 playbooks с привязкой к доменам |
-| `PLAYBOOK_TEMPLATE.md` | Шаблон для создания новых playbooks сверх 50 |
+| `PB051_Rapid_Market_Response.md` | Флагманский playbook — мгновенная реакция на рынок |
+| `PLAYBOOK_ROADMAP.md` | Реестр всех playbooks с привязкой к доменам |
+| `PLAYBOOK_TEMPLATE.md` | Шаблон для создания новых playbooks |
 
 ## Как читать документацию
 
 Рекомендуемый порядок для нового участника:
-1. `Vision.md` — зачем существует проект
-2. `CAPABILITY_MAP_v1.0.md` — что предприятие умеет делать (16 доменов)
-3. `GOVERNANCE_MODEL.md` — как принимаются решения
-4. `AGENT_REGISTRY.md` — кто (какой агент) за что отвечает (84 агента)
-5. `ENTERPRISE_FUNCTION_REGISTRY.md` — как способности превращаются в конкретные функции
-6. `PLAYBOOK_ROADMAP.md` — навигация по всем 50 playbooks
-7. Начать с любого playbook своего домена — все они следуют единой
-   7-стадийной структуре (Idea → Analysis → Risk Review → Decision →
-   Execution → Audit → Knowledge Capture)
+1. `PB051_Rapid_Market_Response.md` — сразу увидеть характер системы в действии
+2. `Vision.md` — зачем существует проект
+3. `CAPABILITY_MAP_v1.0.md` — что предприятие умеет делать (16 доменов)
+4. `GOVERNANCE_MODEL.md` — как принимаются решения (и как ускоряются при необходимости)
+5. `AGENT_REGISTRY.md` — кто (какой агент) за что отвечает (84 агента)
+6. `ENTERPRISE_FUNCTION_REGISTRY.md` — полный реестр функций
+7. `PLAYBOOK_ROADMAP.md` — навигация по остальным 50 playbooks
 
 ## Статус проекта
 
-Архитектурный каркас полностью выстроен и внутренне непротиворечив: все
-домены, функции, агенты и все 50 playbooks ссылаются друг на друга по
-единым ID без разрывов.
+Архитектурный каркас полностью выстроен и внутренне непротиворечив.
 
 Текущий охват:
 - **Capabilities: 16/16** — все 160 под-способностей имеют Function Group
-  (включая C16 Administration & Executive Support)
-- **Functions: 300 из целевых ~600** (ровно половина). Каждая Function
-  Group имеет минимум 2 функции (основное действие + Review или Exception
-  Handling)
-- **Agents: 84/84** — полная организационная структура, подтверждённая
-  владельцем проекта, все агенты привязаны к Capability доменам
-- **Playbooks: 50/50 — 100% ЗАВЕРШЕНО** ✅ Все 5 приоритетных волн
-  реализованы: revenue & operations, governance & risk, growth & innovation
-  (включая весь Marketing), operations & technology, finance/people/knowledge
+- **Functions: 320+ из целевых ~600**, включая 20 сигнатурных функций
+  Growth & Market Reactivity (war-gaming, dynamic pricing, fail-fast,
+  real-time market sensing, opportunistic capital deployment)
+- **Agents: 84/84** — подтверждённая владельцем проекта организационная структура
+- **Playbooks: 50/50 базовых + PB051 флагманский = 51** ✅
 
-### Что дальше (после 50/50 playbooks)
+### Философия дальнейшего роста реестра функций
 
-Единственный незакрытый количественный разрыв — функции: 300 из ~600.
-Следующий шаг для дальнейшего углубления — расширение каждой Function
-Group сверх текущих 2 функций (добавление узкоспециализированных
-вариантов: например, отдельная функция для каждого типа исключения,
-а не одна общая "Exception Handling").
-
-Все 50 playbooks образуют связный граф — например, полный цикл клиента
-проходит через PB004 (Lead-to-Contract) → PB003 (Onboarding) → PB005
-(Renewal) ↔ PB006 (Upsell) ↔ PB007 (Support), с общими сервисами
-PB021 (Escalation Protocol) и PB038 (Deployment Pipeline), на которые
-ссылаются остальные playbooks вместо дублирования логики.
+Оставшиеся ~280 функций до цели в 600 сознательно не добавляются
+механически (ещё review/exception-варианты для галочки). Приоритет — на
+функциях, усиливающих способность системы **замечать раньше и реагировать
+быстрее**: более глубокая сегментация real-time market sensing, больше
+специфичных war-gaming сценариев, детализация fail-fast критериев по
+доменам. Количество наращивается вслед за качеством, а не вместо него.
 
 ## Contributing
 
 Проект находится в приватной разработке ArtheosClub. Изменения в
 CAPABILITY_MAP, GOVERNANCE_MODEL и AGENT_REGISTRY требуют согласования
-с владельцем проекта, так как эти файлы — источник истины для остальной
-архитектуры. Изменения состава агентов проводятся через процедуру
-PB020_Agent_Lifecycle.md. Новые playbooks создавайте по
-PLAYBOOK_TEMPLATE.md и добавляйте в PLAYBOOK_ROADMAP.md.
+с владельцем проекта. Изменения состава агентов — через
+PB020_Agent_Lifecycle.md. Новые playbooks — по PLAYBOOK_TEMPLATE.md с
+добавлением в PLAYBOOK_ROADMAP.md.
