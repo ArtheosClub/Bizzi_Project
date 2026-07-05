@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C12 People Management
-Related Functions: PEO-COM-001, PEO-COM-001-002
+Related Functions: PEO-COM-001, PEO-COM-002
 Owner Agent: AG021 HR Manager
 Escalation Path: AG021 → AG012 CFO Agent (влияние на бюджет) → AG001 CEO
 Agent (для изменений компенсационной политики)
@@ -72,7 +72,7 @@ Playbook описывает периодическую сверку компен
 
 ## Stage 6 — Audit
 
-**Function:** PEO-COM-001-002 Compensation Benchmarking Exception Handling
+**Function:** PEO-COM-002 Compensation Benchmarking Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
