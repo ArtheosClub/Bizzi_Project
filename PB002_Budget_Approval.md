@@ -4,8 +4,8 @@ Version: 1.0
 Status: Active Playbook
 Related Capability: C09 Finance
 Related Functions: FIN-BUD-001, FIN-BUD-002, FIN-BUD-003, FIN-FCS-001, FIN-FPA-001
-Owner Agent: AG014 Finance Manager
-Escalation Path: AG014 → AG001 CEO Agent (per Decision Architecture)
+Owner Agent: AG012 CFO Agent
+Escalation Path: AG012 → AG001 CEO Agent (per Decision Architecture)
 
 ## Purpose
 
@@ -21,7 +21,7 @@ Playbook описывает годовой и квартальный цикл б
 ## Stage 1 — Idea (Budget Framing)
 
 **Function:** FIN-FCS-001 Financial Forecast Update
-**Owner:** AG014 Finance Manager
+**Owner:** AG012 CFO Agent
 **Decision Level:** L2
 
 Действия:
@@ -34,7 +34,7 @@ Playbook описывает годовой и квартальный цикл б
 ## Stage 2 — Analysis (Budget Planning)
 
 **Function:** FIN-BUD-001 Budget Planning
-**Owner:** AG014 Finance Manager
+**Owner:** AG012 CFO Agent
 **Decision Level:** L3
 
 Действия:
@@ -71,7 +71,7 @@ Playbook описывает годовой и квартальный цикл б
 
 ## Stage 5 — Execution (Budget Distribution)
 
-**Owner:** AG014 Finance Manager
+**Owner:** AG012 CFO Agent
 **Decision Level:** L2
 
 Действия:
@@ -82,7 +82,7 @@ Playbook описывает годовой и квартальный цикл б
 ## Stage 6 — Audit (Ongoing Monitoring)
 
 **Function:** FIN-FPA-001 Variance Analysis
-**Owner:** AG014 Finance Manager
+**Owner:** AG012 CFO Agent
 **Decision Level:** L2
 
 Действия:
@@ -93,7 +93,7 @@ Playbook описывает годовой и квартальный цикл б
 ## Stage 7 — Knowledge Capture
 
 **Function:** KNW-LES-001 Lessons Learned Capture
-**Owner:** AG026 Knowledge Manager
+**Owner:** AG053 Knowledge Curator
 **Decision Level:** L1
 
 Действия:
@@ -110,4 +110,4 @@ Playbook описывает годовой и квартальный цикл б
 
 - ENTERPRISE_FUNCTION_REGISTRY.md (FIN-BUD, FIN-FCS, FIN-FPA, RSK-FIN)
 - GOVERNANCE_MODEL.md (Human Override, Decision Architecture)
-- AGENT_REGISTRY.md (AG014, AG001, AG005)
+- AGENT_REGISTRY.md (AG012, AG001, AG005)
