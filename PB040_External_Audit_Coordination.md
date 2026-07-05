@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C09 Finance
-Related Functions: FIN-AUD-001, FIN-AUD-001-002
+Related Functions: FIN-AUD-001, FIN-AUD-002
 Owner Agent: AG012 CFO Agent
 Escalation Path: AG012 → AG001 CEO Agent (для существенных находок аудита)
 
@@ -69,7 +69,7 @@ Playbook описывает координацию годового внешне
 
 ## Stage 6 — Audit (Findings Resolution)
 
-**Function:** FIN-AUD-001-002 External Audit Coordination Exception Handling
+**Function:** FIN-AUD-002 External Audit Coordination Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L3 (L4 для существенных находок)
 
