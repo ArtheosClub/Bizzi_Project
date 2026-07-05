@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C07 Operations
-Related Functions: OPS-QUA-001, OPS-QUA-001-002
+Related Functions: OPS-QUA-001, OPS-QUA-002
 Owner Agent: AG046 Quality Assurance Agent
 Escalation Path: AG046 → AG007 Operations Manager → AG001 CEO Agent
 (для системных проблем качества)
@@ -70,7 +70,7 @@ Automation Agent), который проверяет программный ко
 
 ## Stage 6 — Audit
 
-**Function:** OPS-QUA-001-002 Quality Audit Exception Handling
+**Function:** OPS-QUA-002 Quality Audit Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
