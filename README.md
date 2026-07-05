@@ -51,8 +51,9 @@ Art of Business — архитектурная спецификация пред
 - Capabilities: 15/15, все 150 под-способностей имеют Function Group
 - Functions: 171 документировано из целевых ~600 (следующий шаг — углубление
   каждой Function Group с 1 функции до 3–5: варианты review, exception-handling, reporting)
-- Agents: 28/28 определены (роли — реконструкция v1, требуют финального ревью
-  владельцем проекта, см. AGENT_REGISTRY.md)
+- Agents: 83/83 — подтверждённая владельцем проекта организационная структура
+  (см. AGENT_REGISTRY.md v2.0); 2 открытых вопроса зафиксированы там же
+  (Market Intelligence без выделенного агента, Administration без Capability домена)
 - Playbooks: 4/50 написаны полностью, 46 определены в roadmap с привязкой к функциям
 
 ## Contributing
