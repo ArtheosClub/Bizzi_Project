@@ -2,7 +2,7 @@
 
 # Art of Business Enterprise Capability Map
 
-Version: 1.0
+Version: 1.1
 
 Status: Foundational Specification
 
@@ -27,6 +27,7 @@ Capability Map определяет полный перечень способн
 - C13 Technology
 - C14 Knowledge Management
 - C15 Governance
+- C16 Administration & Executive Support
 
 ## C01 Strategy
 STR001 Vision Management
@@ -208,9 +209,28 @@ GOV008 Agent Lifecycle
 GOV009 Enterprise Control
 GOV010 AI Governance
 
+## C16 Administration & Executive Support
+ADM001 Executive Support
+ADM002 Scheduling & Calendar Management
+ADM003 Meeting Coordination
+ADM004 Correspondence Management
+ADM005 Travel Management
+ADM006 Document Filing
+ADM007 Office Administration
+ADM008 Executive Communication
+ADM009 Records Management
+ADM010 Administrative Reporting
+
 ## Summary
 
-Total Enterprise Capabilities: 15
+Total Enterprise Capabilities: 16
 Future Functions: 500–1000+
 Future Playbooks: 50+
-Future Agents: 28+
+Future Agents: 84+
+
+## Changelog
+
+v1.0 → v1.1: Added C16 Administration & Executive Support (10 sub-capabilities)
+to cover Executive Assistant, Secretary, Meeting Coordinator, and Calendar
+Agent — previously these agents existed in AGENT_REGISTRY.md without a
+Capability domain to own.
