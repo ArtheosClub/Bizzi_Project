@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C10 Legal & Compliance
-Related Functions: LEG-CMP-001, LEG-CMP-001-002, LEG-REG-001
+Related Functions: LEG-CMP-001, LEG-CMP-002, LEG-REG-001
 Owner Agent: AG011 Compliance Agent
 Escalation Path: AG011 → AG017 Legal Counsel → AG001 CEO Agent (для
 существенных нарушений)
@@ -81,7 +81,7 @@ Playbook описывает непрерывный цикл мониторинг
 
 ## Stage 6 — Audit
 
-**Function:** LEG-CMP-001-002 Compliance Checklist Review Exception Handling
+**Function:** LEG-CMP-002 Compliance Checklist Review Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
