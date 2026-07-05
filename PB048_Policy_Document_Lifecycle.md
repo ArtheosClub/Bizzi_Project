@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C14 Knowledge Management / C15 Governance
-Related Functions: KNW-POL-001, GOV-POL-001, GOV-POL-001-002
+Related Functions: KNW-POL-001, GOV-POL-001, GOV-POL-002
 Owner Agent: AG010 Governance Agent
 Escalation Path: AG010 → AG002 Chief Orchestrator → AG001 CEO Agent
 (для политик уровня предприятия)
@@ -75,7 +75,7 @@ SOP из PB047, политики задают правила и ограниче
 
 ## Stage 6 — Audit
 
-**Function:** GOV-POL-001-002 Governance Policy Update Review
+**Function:** GOV-POL-002 Governance Policy Update Review
 **Owner:** AG003 AI Auditor
 **Decision Level:** L3
 
