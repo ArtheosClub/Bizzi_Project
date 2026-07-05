@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C01 Strategy / C03 Market Intelligence
-Related Functions: STR-INT-001, STR-INT-001-002, MKT-IND-001, MKT-OPP-001
+Related Functions: STR-INT-001, STR-INT-002, MKT-IND-001, MKT-OPP-001
 Owner Agent: AG006 Strategy Agent
 Escalation Path: AG006 → AG004 Business Analyst → AG001 CEO Agent
 
@@ -79,7 +79,7 @@ AG025 Sales Director для коммерческого запуска)
 
 ## Stage 6 — Audit
 
-**Function:** STR-INT-001-002 Market Entry Assessment Exception Handling
+**Function:** STR-INT-002 Market Entry Assessment Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L3
 
