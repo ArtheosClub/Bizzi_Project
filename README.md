@@ -58,8 +58,10 @@ Art of Business — архитектурная спецификация пред
   Function Group теперь имеет минимум 2 функции (основное действие + Review
   или Exception Handling)
 - Agents: 84/84 определены и полностью привязаны к Capability доменам
-- Playbooks: 8/50 написаны полностью (Finance ×2, Sales, Customer Success,
-  HR ×2, Legal), 42 определены в roadmap с привязкой к функциям
+- Playbooks: 14/50 написаны полностью — весь Priority 1 (core revenue &
+  operations) закрыт: Finance ×2, Sales ×3, Customer Success ×2, HR ×2,
+  Legal ×2, Supply Chain ×2, 1 cross-domain. Следующий — Priority 2
+  (governance & risk), см. PLAYBOOK_ROADMAP.md
 
 ## Contributing
 
