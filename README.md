@@ -20,11 +20,16 @@ Art of Business — архитектурная спецификация пред
 | Файл | Назначение |
 |---|---|
 | `Vision.md` | Миссия и долгосрочное видение проекта |
-| `CAPABILITY_MAP_v1.0.md` | 15 бизнес-доменов (C01–C15) и 150 базовых способностей предприятия |
+| `CAPABILITY_MAP_v1.0.md` | 15 бизнес-доменов (C01–C15), 150 базовых способностей |
 | `ENTERPRISE_FUNCTION_REGISTRY.md` | Реестр функций: Function ID, Owner Agent, Decision Level, Escalation |
 | `AGENT_REGISTRY.md` | 28 AI-агентов, их зона ответственности и подчинённость |
 | `GOVERNANCE_MODEL.md` | Конституционные принципы, уровни решений, эскалация, аудит |
-| `PB001_Grant_Acquisition.md` | Пример playbook: полный цикл получения гранта |
+| `PB001_Grant_Acquisition.md` | Playbook: полный цикл получения гранта |
+| `PB002_Budget_Approval.md` | Playbook: годовой/квартальный цикл бюджетирования |
+| `PB003_Customer_Onboarding.md` | Playbook: передача клиента из Sales в Customer Success |
+| `PB004_Lead_to_Contract.md` | Playbook: полный цикл продажи от лида до контракта |
+| `PLAYBOOK_ROADMAP.md` | Backlog всех 50 целевых playbooks со статусами |
+| `PLAYBOOK_TEMPLATE.md` | Шаблон для создания новых playbooks в единой структуре |
 
 ## Как читать документацию
 
@@ -34,22 +39,26 @@ Art of Business — архитектурная спецификация пред
 3. `GOVERNANCE_MODEL.md` — как принимаются решения
 4. `AGENT_REGISTRY.md` — кто (какой агент) за что отвечает
 5. `ENTERPRISE_FUNCTION_REGISTRY.md` — как способности превращаются в конкретные функции
-6. `PB001_Grant_Acquisition.md` — пример полного playbook в действии
+6. `PB001`–`PB004` — примеры полных playbooks в разных доменах
+7. `PLAYBOOK_ROADMAP.md` — что предстоит сделать дальше
 
 ## Статус проекта
 
-Ранняя архитектурная стадия. Заложен каркас (15 доменов, 28 агентов,
-governance-модель), исполняемый код агентов и playbooks — в разработке.
+Архитектурный каркас выстроен и внутренне непротиворечив: все домены, функции,
+агенты и playbooks ссылаются друг на друга по единым ID.
 
 Текущий охват:
-- Capabilities: 15/15 описаны
-- Functions: ~62 документированы из целевых ~600
-- Agents: 28/28 определены (роли требуют финального ревью владельцем проекта)
-- Playbooks: 1/50+ (PB001 Grant Acquisition)
+- Capabilities: 15/15, все 150 под-способностей имеют Function Group
+- Functions: 171 документировано из целевых ~600 (следующий шаг — углубление
+  каждой Function Group с 1 функции до 3–5: варианты review, exception-handling, reporting)
+- Agents: 28/28 определены (роли — реконструкция v1, требуют финального ревью
+  владельцем проекта, см. AGENT_REGISTRY.md)
+- Playbooks: 4/50 написаны полностью, 46 определены в roadmap с привязкой к функциям
 
 ## Contributing
 
 Проект находится в приватной разработке ArtheosClub. Изменения в
 CAPABILITY_MAP, GOVERNANCE_MODEL и AGENT_REGISTRY требуют согласования
 с владельцем проекта, так как эти файлы — источник истины для остальной
-архитектуры.
+архитектуры. Новые playbooks создавайте по PLAYBOOK_TEMPLATE.md и добавляйте
+в PLAYBOOK_ROADMAP.md.
