@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C05 Sales
-Related Functions: SAL-XSL-001, SAL-UPS-001, SAL-UPS-001-002, CUS-EXP-001
+Related Functions: SAL-XSL-001, SAL-UPS-001, SAL-UPS-002, CUS-EXP-001
 Owner Agent: AG025 Sales Director
 Escalation Path: AG025 → AG012 CFO Agent (для нестандартного pricing)
 
@@ -75,7 +75,7 @@ Playbook описывает выявление и реализацию возм�
 
 ## Stage 6 — Audit
 
-**Function:** SAL-UPS-001-002 Upsell Proposal Exception Handling
+**Function:** SAL-UPS-002 Upsell Proposal Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
