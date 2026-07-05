@@ -20,73 +20,40 @@ It specifies the GitHub Actions workflow, required quality gates, test database 
 
 ---
 
-# 2. CI Thesis
-
-```text
-CI is the automated guardian of Bizzi backend integrity.
-```
-
-Every backend change must prove:
-
-```text
-installability
-type safety
-lint safety
-schema validity
-migration validity
-test correctness
-build correctness
-no production secret dependency
-```
-
----
-
-# 3. Target Workflow File
-
-Primary file:
+# 2. Target Workflow File
 
 ```text
 .github/workflows/backend-ci.yml
 ```
 
-Supporting files:
+The CI workflow belongs at repository root and validates the backend codebase on pull requests and main branch pushes.
+
+---
+
+# 3. CI Responsibilities
+
+The CI workflow must:
 
 ```text
-backend/package.json
-backend/prisma/schema.prisma
-backend/jest.config.ts
-backend/.env.example
-backend/test/setup/test-database.ts
-docker-compose.yml
+checkout repository
+install Node.js LTS
+install pnpm
+install dependencies with lockfile enforcement
+start PostgreSQL test service
+validate Prisma schema
+generate Prisma client
+apply migrations to test database
+run lint
+run typecheck
+run unit tests
+run integration tests
+run e2e tests
+build backend
 ```
 
 ---
 
-# 4. Workflow Triggers
-
-The workflow should run on:
-
-```text
-pull_request to main
-push to main
-manual workflow_dispatch
-```
-
-Path filters should include:
-
-```text
-backend/**
-.github/workflows/backend-ci.yml
-package.json
-pnpm-lock.yaml
-docker-compose.yml
-```
-
----
-
-# 5. Runtime Environment
-
-Recommended CI runtime:
+# 4. Runtime Environment
 
 ```text
 ubuntu-latest
@@ -95,24 +62,52 @@ pnpm
 PostgreSQL 16
 ```
 
-Environment variables:
+---
+
+# 5. Required Environment Variables
 
 ```text
 NODE_ENV=test
 DATABASE_URL=postgresql://bizzi:bizzi@localhost:5432/bizzi_test
 DEV_AUTH_MODE=true
-DEV_USER_EMAIL=dev@bizzi.local
-DEV_USER_NAME=Bizzi Developer
 JWT_SECRET=ci-test-only
+```
+
+Rules:
+
+```text
+CI must not use production credentials.
+CI must use disposable test values only.
+CI must not print secrets into logs.
 ```
 
 ---
 
-# 6. PostgreSQL Service
+# 6. Workflow Triggers
 
-The workflow must start a disposable PostgreSQL service.
+Recommended triggers:
 
-Required service configuration:
+```yaml
+on:
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+      - 'pnpm-lock.yaml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+      - 'pnpm-lock.yaml'
+```
+
+---
+
+# 7. PostgreSQL Service
+
+The workflow must start a disposable PostgreSQL service:
 
 ```yaml
 services:
@@ -131,45 +126,29 @@ services:
       --health-retries 5
 ```
 
-Rule:
-
-```text
-CI must never connect to development or production databases.
-```
-
 ---
 
-# 7. Quality Gates
+# 8. Workflow Gates
 
 Required gates:
 
 ```text
-checkout
-setup pnpm
-setup Node.js
-install dependencies
-validate Prisma schema
-generate Prisma client
-apply migrations
-lint
-typecheck
-unit tests
-integration tests
-e2e tests
-build
+install gate
+prisma validation gate
+migration gate
+lint gate
+typecheck gate
+unit test gate
+integration test gate
+e2e test gate
+build gate
 ```
 
-Failure rule:
-
-```text
-Any failed gate fails the workflow.
-```
+Any failed gate must fail the workflow.
 
 ---
 
-# 8. Command Sequence
-
-Expected commands:
+# 9. Recommended Command Sequence
 
 ```bash
 pnpm install --frozen-lockfile
@@ -187,195 +166,47 @@ pnpm build
 
 ---
 
-# 9. Required package.json Scripts
+# 10. Minimal Permissions
 
-Backend package should expose:
-
-```json
-{
-  "scripts": {
-    "dev": "nest start --watch",
-    "build": "nest build",
-    "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "test": "jest",
-    "test:unit": "jest --config jest.unit.config.ts",
-    "test:integration": "jest --config jest.integration.config.ts",
-    "test:e2e": "jest --config jest.e2e.config.ts",
-    "db:test:reset": "tsx test/setup/reset-test-db.ts"
-  }
-}
-```
-
----
-
-# 10. Workflow Skeleton
+Recommended permissions:
 
 ```yaml
-name: Backend CI
-
-on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'backend/**'
-      - '.github/workflows/backend-ci.yml'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
-      - 'docker-compose.yml'
-  push:
-    branches:
-      - main
-    paths:
-      - 'backend/**'
-      - '.github/workflows/backend-ci.yml'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
-      - 'docker-compose.yml'
-  workflow_dispatch:
-
 permissions:
   contents: read
-
-jobs:
-  backend-ci:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: bizzi
-          POSTGRES_PASSWORD: bizzi
-          POSTGRES_DB: bizzi_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      NODE_ENV: test
-      DATABASE_URL: postgresql://bizzi:bizzi@localhost:5432/bizzi_test
-      DEV_AUTH_MODE: 'true'
-      DEV_USER_EMAIL: dev@bizzi.local
-      DEV_USER_NAME: Bizzi Developer
-      JWT_SECRET: ci-test-only
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Validate Prisma schema
-        run: cd backend && pnpm prisma validate
-
-      - name: Generate Prisma client
-        run: cd backend && pnpm prisma generate
-
-      - name: Apply migrations
-        run: cd backend && pnpm prisma migrate deploy
-
-      - name: Lint
-        run: cd backend && pnpm lint
-
-      - name: Typecheck
-        run: cd backend && pnpm typecheck
-
-      - name: Unit tests
-        run: cd backend && pnpm test:unit
-
-      - name: Integration tests
-        run: cd backend && pnpm test:integration
-
-      - name: E2E tests
-        run: cd backend && pnpm test:e2e
-
-      - name: Build
-        run: cd backend && pnpm build
 ```
+
+CI does not need write access for the initial quality gate.
 
 ---
 
-# 11. Secret Safety
-
-CI must not require production secrets.
-
-Rules:
-
-```text
-use test-only values
-never print secrets
-never store real provider credentials in workflow YAML
-use GitHub Secrets only for later deployment workflows
-keep permissions minimal
-```
-
----
-
-# 12. Branch Protection Readiness
-
-After CI stabilizes, `main` may require:
-
-```text
-Backend CI must pass
-pull request required before merge
-no force pushes
-conversation resolution optional
-linear history optional
-```
-
-Rule:
-
-```text
-Do not enable strict branch protection until workflow is stable.
-```
-
----
-
-# 13. Acceptance Criteria
+# 11. Acceptance Criteria
 
 CI Implementation is accepted when:
 
-- backend CI workflow path is defined;
-- triggers are defined;
-- PostgreSQL test service is defined;
-- environment variables are defined;
-- quality gates are documented;
-- command sequence is documented;
-- required package scripts are documented;
-- workflow skeleton is provided;
-- secret safety rules are defined;
-- branch protection readiness is defined.
-
-Status:
-
 ```text
-Accepted for Backend Codebase Milestone
+[ ] backend-ci.yml exists
+[ ] workflow runs on pull requests
+[ ] workflow runs on main branch pushes
+[ ] PostgreSQL service starts successfully
+[ ] dependencies install with frozen lockfile
+[ ] Prisma schema validates
+[ ] Prisma client generates
+[ ] migrations apply to test database
+[ ] lint passes
+[ ] typecheck passes
+[ ] unit tests pass
+[ ] integration tests pass
+[ ] e2e tests pass
+[ ] backend build passes
+[ ] failed quality gate blocks merge
 ```
 
 ---
 
-# 14. Final Statement
+# 12. Final Statement
 
 ```text
-Bizzi CI Implementation defines the automated verification gate for backend codebase construction.
+Bizzi CI Implementation defines the automated quality gate for backend codebase changes.
 ```
 
-This workflow ensures that backend changes can be installed, migrated, typed, tested and built before they are accepted into the main codebase.
+This workflow protects the repository before Bizzi proceeds into executable source generation, full module implementation and deployment readiness.
