@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C10 Legal & Compliance
-Related Functions: LEG-DPR-001, LEG-DPR-001-002
+Related Functions: LEG-DPR-001, LEG-DPR-002
 Owner Agent: AG011 Compliance Agent
 Escalation Path: AG011 → AG017 Legal Counsel → AG001 CEO Agent (для
 существенных изменений в обработке данных клиентов)
@@ -76,7 +76,7 @@ Playbook описывает оценку рисков конфиденциаль
 
 ## Stage 6 — Audit
 
-**Function:** LEG-DPR-001-002 Data Privacy Impact Assessment Review
+**Function:** LEG-DPR-002 Data Privacy Impact Assessment Review
 **Owner:** AG003 AI Auditor
 **Decision Level:** L3
 
