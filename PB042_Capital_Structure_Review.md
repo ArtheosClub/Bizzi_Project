@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C09 Finance
-Related Functions: FIN-CAP-001, FIN-CAP-001-002, STR-CAP-001
+Related Functions: FIN-CAP-001, FIN-CAP-002, STR-CAP-001
 Owner Agent: AG012 CFO Agent
 Escalation Path: AG012 → AG001 CEO Agent → Human Board (для изменения
 структуры капитала)
@@ -79,7 +79,7 @@ Playbook описывает периодическую оценку структ
 
 ## Stage 6 — Audit
 
-**Function:** FIN-CAP-001-002 Capital Structure Review Exception Handling
+**Function:** FIN-CAP-002 Capital Structure Review Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L4
 
