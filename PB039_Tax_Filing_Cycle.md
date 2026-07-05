@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C09 Finance
-Related Functions: FIN-TAX-001, FIN-TAX-001-002
+Related Functions: FIN-TAX-001, FIN-TAX-002
 Owner Agent: AG015 Tax Consultant
 Escalation Path: AG015 → AG012 CFO Agent → AG001 CEO Agent (для существенных
 налоговых позиций/споров)
@@ -69,7 +69,7 @@ Playbook описывает цикл подготовки и подачи нал
 
 ## Stage 6 — Audit
 
-**Function:** FIN-TAX-001-002 Tax Filing Preparation Review
+**Function:** FIN-TAX-002 Tax Filing Preparation Review
 **Owner:** AG003 AI Auditor
 **Decision Level:** L3
 
