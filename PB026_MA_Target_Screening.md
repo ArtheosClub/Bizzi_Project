@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C01 Strategy
-Related Functions: STR-MNA-001, STR-MNA-001-002, STR-CAP-001
+Related Functions: STR-MNA-001, STR-MNA-002, STR-CAP-001
 Owner Agent: AG001 CEO Agent
 Escalation Path: AG006 Strategy Agent → AG012 CFO Agent → AG001 CEO Agent →
 Human Board (для завершения сделки)
@@ -79,7 +79,7 @@ Playbook описывает выявление и первичную оценк�
 
 ## Stage 6 — Audit
 
-**Function:** STR-MNA-001-002 M&A Target Screening Review
+**Function:** STR-MNA-002 M&A Target Screening Review
 **Owner:** AG003 AI Auditor
 **Decision Level:** L4
 
