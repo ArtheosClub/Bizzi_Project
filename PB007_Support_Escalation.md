@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C06 Customer Success
-Related Functions: CUS-SUP-001, CUS-SUP-001-002, CUS-ESC-001
+Related Functions: CUS-SUP-001, CUS-SUP-002, CUS-ESC-001
 Owner Agent: AG069 Support Agent
 Escalation Path: AG069 → AG070 Helpdesk Agent → AG029 Customer Success Agent →
 AG050 Incident Response Agent (для инцидентов безопасности)
@@ -76,7 +76,7 @@ Playbook описывает обработку обращений в подде�
 
 ## Stage 6 — Audit
 
-**Function:** CUS-SUP-001-002 Support Ticket Resolution Exception Handling
+**Function:** CUS-SUP-002 Support Ticket Resolution Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
