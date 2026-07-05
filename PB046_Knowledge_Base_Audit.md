@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C14 Knowledge Management
-Related Functions: KNW-AUD-001, KNW-AUD-001-002
+Related Functions: KNW-AUD-001, KNW-AUD-002
 Owner Agent: AG003 AI Auditor
 Escalation Path: AG003 → AG053 Knowledge Curator → AG002 Chief Orchestrator
 (для системных пробелов в Knowledge Base)
@@ -76,7 +76,7 @@ Base напрямую влияет на качество работы всех 8
 
 ## Stage 6 — Audit
 
-**Function:** KNW-AUD-001-002 Knowledge Base Quality Audit Exception Handling
+**Function:** KNW-AUD-002 Knowledge Base Quality Audit Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
