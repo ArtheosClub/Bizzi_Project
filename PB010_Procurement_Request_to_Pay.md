@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C08 Supply Chain
-Related Functions: SCM-PRC-001, SCM-PRC-001-002, FIN-ACC-001
+Related Functions: SCM-PRC-001, SCM-PRC-002, FIN-ACC-001
 Owner Agent: AG039 Purchasing Agent
 Escalation Path: AG039 → AG036 Procurement Manager → AG012 CFO Agent
 (для закупок выше лимита)
@@ -76,7 +76,7 @@ Approved Vendor List (см. PB009).
 
 ## Stage 6 — Audit
 
-**Function:** SCM-PRC-001-002 Purchase Requisition Exception Handling
+**Function:** SCM-PRC-002 Purchase Requisition Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
