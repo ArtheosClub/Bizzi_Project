@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C15 Governance
-Related Functions: GOV-PRF-001, GOV-PRF-001-002
+Related Functions: GOV-PRF-001, GOV-PRF-002
 Owner Agent: AG002 Chief Orchestrator
 Escalation Path: AG002 → AG001 CEO Agent (для решений о замене/расширении
 полномочий агента)
@@ -75,7 +75,7 @@ ENTERPRISE_FUNCTION_REGISTRY.md.
 
 ## Stage 6 — Audit
 
-**Function:** GOV-PRF-001-002 Agent Performance Review Exception Handling
+**Function:** GOV-PRF-002 Agent Performance Review Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L3
 
