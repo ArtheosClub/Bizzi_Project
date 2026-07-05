@@ -4,8 +4,8 @@ Version: 1.0
 Status: Active Playbook
 Related Capability: C06 Customer Success
 Related Functions: CUS-ONB-001, CUS-ONB-002, CUS-ADO-001, CUS-SPL-001
-Owner Agent: AG011 Customer Success Manager
-Escalation Path: AG011 → AG012 Operations Manager → AG002 Chief Orchestrator
+Owner Agent: AG029 Customer Success Agent
+Escalation Path: AG029 → AG007 Operations Manager → AG002 Chief Orchestrator
 
 ## Purpose
 
@@ -20,11 +20,11 @@ Playbook описывает передачу клиента от Sales к Custom
 ## Stage 1 — Idea (Handoff Intake)
 
 **Function:** CUS-ONB-001 Onboarding Plan Creation
-**Owner:** AG011 Customer Success Manager
+**Owner:** AG029 Customer Success Agent
 **Decision Level:** L2
 
 Действия:
-1. Получить от AG010 Sales Manager пакет передачи: контракт, ожидания клиента,
+1. Получить от AG025 Sales Director пакет передачи: контракт, ожидания клиента,
    ключевые заинтересованные лица
 2. Проверить полноту данных (SAL-ACC-001 Key Account Review как источник)
 3. Сформировать первичный Onboarding Plan с контрольными точками
@@ -34,7 +34,7 @@ Playbook описывает передачу клиента от Sales к Custom
 ## Stage 2 — Analysis (Success Criteria Definition)
 
 **Function:** CUS-SPL-001 Customer Success Plan
-**Owner:** AG011 Customer Success Manager
+**Owner:** AG029 Customer Success Agent
 **Decision Level:** L2
 
 Действия:
@@ -51,12 +51,12 @@ Playbook описывает передачу клиента от Sales к Custom
 Действия:
 1. Проверить, не превышает ли клиент текущую операционную ёмкость команды
    (см. OPS-RES-001 Resource Capacity Planning)
-2. При высокой сложности — запросить дополнительные ресурсы у AG012
+2. При высокой сложности — запросить дополнительные ресурсы у AG007
 
 ## Stage 4 — Decision (Onboarding Kickoff Approval)
 
-**Owner:** AG011 Customer Success Manager
-**Decision Level:** L2 (эскалация к AG012 при нехватке ресурсов — L3)
+**Owner:** AG029 Customer Success Agent
+**Decision Level:** L2 (эскалация к AG007 при нехватке ресурсов — L3)
 
 Критерии:
 - Onboarding Plan согласован с клиентом
@@ -66,7 +66,7 @@ Playbook описывает передачу клиента от Sales к Custom
 ## Stage 5 — Execution (Onboarding Delivery)
 
 **Function:** CUS-ONB-002 Onboarding Completion Tracking
-**Owner:** AG011 Customer Success Manager
+**Owner:** AG029 Customer Success Agent
 **Decision Level:** L1
 
 Действия:
@@ -88,7 +88,7 @@ Playbook описывает передачу клиента от Sales к Custom
 ## Stage 7 — Knowledge Capture
 
 **Function:** KNW-LES-001 Lessons Learned Capture
-**Owner:** AG026 Knowledge Manager
+**Owner:** AG053 Knowledge Curator
 **Decision Level:** L1
 
 Действия:
@@ -107,4 +107,4 @@ Playbook описывает передачу клиента от Sales к Custom
 
 - ENTERPRISE_FUNCTION_REGISTRY.md (CUS-ONB, CUS-ADO, CUS-SPL, CUS-HLT, CUS-RET)
 - PB004_Lead_to_Contract.md (предыдущий этап — передача из Sales)
-- AGENT_REGISTRY.md (AG011, AG010, AG012, AG005)
+- AGENT_REGISTRY.md (AG029, AG025, AG007, AG005)
