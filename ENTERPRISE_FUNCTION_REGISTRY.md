@@ -435,6 +435,11 @@ Owner: AG046 Quality Assurance Agent
 Decision: L2
 Escalation: E2
 
+OPS-QUA-002 Quality Audit Exception Handling
+Owner: AG046 Quality Assurance Agent
+Decision: L2
+Escalation: E2
+
 OPS-COS-001 Cost Optimization Review
 Owner: AG007 Operations Manager
 Decision: L3
@@ -600,6 +605,11 @@ LEG-CON-003 Contract Approval
 Owner: AG017 Legal Counsel
 Decision: L4
 Escalation: E4
+
+LEG-CON-004 Contract Review Exception Handling
+Owner: AG017 Legal Counsel
+Decision: L3
+Escalation: E3
 
 LEG-LIC-001 License Renewal Tracking
 Owner: AG017 Legal Counsel
