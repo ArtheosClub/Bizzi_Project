@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C13 Technology
-Related Functions: TEC-DEV-001, TEC-DEV-001-002, TEC-INF-001
+Related Functions: TEC-DEV-001, TEC-DEV-002, TEC-INF-001
 Owner Agent: AG064 DevOps Agent
 Escalation Path: AG064 → AG009 Enterprise Architect → AG050 Incident
 Response Agent (при сбое production)
@@ -77,7 +77,7 @@ pipeline — механизма, через который любой код, и
 
 ## Stage 6 — Audit
 
-**Function:** TEC-DEV-001-002 Deployment Pipeline Health Check Exception Handling
+**Function:** TEC-DEV-002 Deployment Pipeline Health Check Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
