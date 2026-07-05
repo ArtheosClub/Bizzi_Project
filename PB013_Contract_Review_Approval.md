@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C10 Legal & Compliance
-Related Functions: LEG-CON-001, LEG-CON-002, LEG-CON-003, LEG-CON-002-002
+Related Functions: LEG-CON-001, LEG-CON-002, LEG-CON-003, LEG-CON-004
 Owner Agent: AG018 Contract Review Agent
 Escalation Path: AG018 → AG017 Legal Counsel → AG001 CEO Agent (для контрактов
 с обязательствами выше установленного лимита)
@@ -47,7 +47,7 @@ Playbook описывает цикл рассмотрения и утвержд�
 
 ## Stage 3 — Risk Review
 
-**Function:** LEG-CON-002-002 Contract Review Exception Handling
+**Function:** LEG-CON-004 Contract Review Exception Handling
 **Owner:** AG017 Legal Counsel
 **Decision Level:** L3
 
