@@ -4,8 +4,8 @@ Version: 1.0
 Status: Active Playbook
 Related Capability: C05 Sales
 Related Functions: SAL-LEAD-001, SAL-LEAD-002, SAL-OPP-001, SAL-OPP-002, SAL-OPP-003, SAL-CTR-001
-Owner Agent: AG010 Sales Manager
-Escalation Path: AG010 → AG014 Finance Manager (pricing) / AG015 Legal Counsel Agent (contract terms) → AG001 CEO Agent
+Owner Agent: AG025 Sales Director
+Escalation Path: AG025 → AG012 CFO Agent (pricing) / AG017 Legal Counsel (contract terms) → AG001 CEO Agent
 
 ## Purpose
 
@@ -20,7 +20,7 @@ Playbook описывает полный цикл продажи — от зах
 ## Stage 1 — Idea (Lead Capture & Qualification)
 
 **Functions:** SAL-LEAD-001 Lead Capture, SAL-LEAD-002 Lead Qualification
-**Owner:** AG010 Sales Manager
+**Owner:** AG025 Sales Director
 **Decision Level:** L1
 
 Действия:
@@ -31,7 +31,7 @@ Playbook описывает полный цикл продажи — от зах
 ## Stage 2 — Analysis (Opportunity Development)
 
 **Function:** SAL-OPP-001 Opportunity Creation
-**Owner:** AG010 Sales Manager
+**Owner:** AG025 Sales Director
 **Decision Level:** L1
 
 Действия:
@@ -55,25 +55,25 @@ Playbook описывает полный цикл продажи — от зах
 ## Stage 4 — Decision (Proposal & Negotiation)
 
 **Functions:** SAL-OPP-002 Proposal Preparation, SAL-OPP-003 Negotiation Support
-**Owner:** AG010 Sales Manager
-**Decision Level:** L2 (скидки выше стандартного порога — L3, требуют AG014)
+**Owner:** AG025 Sales Director
+**Decision Level:** L2 (скидки выше стандартного порога — L3, требуют AG012)
 
 Действия:
 1. Подготовить коммерческое предложение
 2. Провести переговоры по условиям (цена, сроки, SLA)
-3. При скидке выше установленного лимита — согласовать с AG014 Finance Manager
+3. При скидке выше установленного лимита — согласовать с AG012 CFO Agent
 
 ## Stage 5 — Execution (Contracting)
 
 **Function:** SAL-CTR-001 Sales Contract Finalization
-**Owner:** AG024 Contract Management Agent
+**Owner:** AG018 Contract Review Agent
 **Decision Level:** L2
 
 Действия:
 1. Подготовить финальный контракт на основе согласованных условий
 2. Направить на юридическое ревью (LEG-CON-002 Contract Review) при нестандартных пунктах
 3. Получить подписи сторон
-4. Передать пакет (контракт + ожидания клиента + ключевые лица) в AG011 Customer
+4. Передать пакет (контракт + ожидания клиента + ключевые лица) в AG029 Customer
    Success Manager — запуск PB003_Customer_Onboarding.md
 
 ## Stage 6 — Audit
@@ -89,7 +89,7 @@ Playbook описывает полный цикл продажи — от зах
 ## Stage 7 — Knowledge Capture
 
 **Function:** KNW-LES-001 Lessons Learned Capture
-**Owner:** AG026 Knowledge Manager
+**Owner:** AG053 Knowledge Curator
 **Decision Level:** L1
 
 Действия:
@@ -107,4 +107,4 @@ Playbook описывает полный цикл продажи — от зах
 
 - ENTERPRISE_FUNCTION_REGISTRY.md (SAL-LEAD, SAL-OPP, SAL-CTR, LEG-CON, RSK-FIN)
 - PB003_Customer_Onboarding.md (следующий этап после подписания контракта)
-- AGENT_REGISTRY.md (AG010, AG024, AG014, AG005, AG015)
+- AGENT_REGISTRY.md (AG025, AG018, AG012, AG005, AG017)
