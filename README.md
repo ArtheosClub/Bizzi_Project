@@ -62,13 +62,11 @@ Art of Business — архитектурная спецификация пред
 
 Текущий охват:
 - **Capabilities: 16/16** — все 160 под-способностей имеют Function Group
-- **Functions: 341+ из целевых ~600**, включая три сигнатурных слоя:
-  Growth & Market Reactivity (war-gaming, dynamic pricing, fail-fast),
-  Growth Mechanics & Capital Agility (growth loops, PLG, network effects,
-  alternative financing, non-dilutive stacking), Adaptive Learning &
-  Failure-to-Opportunity (blameless retrospectives, pivot framework)
+- **Functions: 350+ из целевых ~600**, включая четыре сигнатурных слоя:
+  Growth & Market Reactivity, Growth Mechanics & Capital Agility, Adaptive
+  Learning & Failure-to-Opportunity, Non-Standard International Expansion
 - **Agents: 84/84** — подтверждённая владельцем проекта организационная структура
-- **Playbooks: 50/50 базовых + 3 флагманских (PB051-053) = 53**
+- **Playbooks: 50/50 базовых + 4 флагманских (PB051-054) = 54**
 
 ### Философия дальнейшего роста реестра функций
 
