@@ -3,7 +3,7 @@
 Version: 1.0
 Status: Active Playbook
 Related Capability: C02 Innovation / C04 Marketing
-Related Functions: INN-COM-001, MRK-PMK-001, MRK-PMK-001-002
+Related Functions: INN-COM-001, MRK-PMK-001, MRK-PMK-002
 Owner Agent: AG030 Marketing Manager
 Escalation Path: AG030 → AG077 Innovation Manager → AG001 CEO Agent
 (для запуска флагманского продукта)
@@ -77,7 +77,7 @@ Playbook описывает вывод на рынок нового продук
 
 ## Stage 6 — Audit
 
-**Function:** MRK-PMK-001-002 Product Launch Messaging Exception Handling
+**Function:** MRK-PMK-002 Product Launch Messaging Exception Handling
 **Owner:** AG003 AI Auditor
 **Decision Level:** L2
 
