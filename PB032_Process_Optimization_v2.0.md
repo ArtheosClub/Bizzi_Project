@@ -182,7 +182,7 @@ The core data objects are:
 
 The minimum traceability chain is:
 
-OPT → SCN → SIM → ECON → RISKREV → DEC → ROLLOUT → AUD → PAT → KNOW
+OPT -> SCN -> SIM -> ECON -> RISKREV -> DEC -> ROLLOUT -> AUD -> PAT -> KNOW
 
 If this chain is broken, the initiative is not considered governance-complete.
 
@@ -452,9 +452,233 @@ Stage 1 is complete when the opportunity is either:
 
 ---
 
+## Stage 2 — Process Mining
+
+### Purpose
+
+Stage 2 reconstructs the real operational process using execution evidence instead of relying only on written SOPs or agent assumptions.
+
+The purpose of Process Mining is to reveal how the process actually behaves in practice: variants, bottlenecks, waiting time, rework loops, handoff delays, SLA breaches, control deviations, and hidden cost leakage.
+
+Stage 2 converts the accepted Optimization Opportunity (`OPT`) into evidence-based process understanding through Event Logs (`EVT`), Process Metrics (`MET`), and a Process Graph (`PGRAPH`).
+
+### Function
+
+OPS-PRO-002 Process Optimization  
+OPS-PER-001 Operational KPI Monitoring
+
+### Primary Owner
+
+AG047 Process Controller
+
+### Data Owner
+
+AG065 Data Engineer
+
+### Supporting Agents
+
+| Agent | Role |
+|---|---|
+| AG065 Data Engineer | Collects, normalizes, and validates event logs |
+| AG066 BI Analyst | Builds baseline metrics and process measurements |
+| AG067 Analytics Agent | Reconstructs process variants and detects anomalies |
+| AG003 AI Auditor | Reviews traceability and evidence integrity |
+| AG005 Risk Manager | Flags operational and compliance risk patterns |
+| AG007 Operations Manager | Confirms operational interpretation |
+
+### Decision Level
+
+L2 for normal process mining.  
+L3 if the process is critical, cross-domain, high-cost, or contains governance-sensitive data.
+
+### Input Objects
+
+Stage 2 consumes:
+
+- `OPT` — Optimization Opportunity;
+- `PROC` or Process Candidate;
+- `PROCV` if an official process version exists;
+- available `MET` baseline metrics;
+- raw or structured execution evidence.
+
+### Evidence Sources
+
+Evidence may come from:
+
+- task execution logs;
+- workflow or ticketing events;
+- CRM / ERP records;
+- calendar and approval events;
+- document lifecycle events;
+- agent action logs;
+- customer support timestamps;
+- finance or procurement transaction states;
+- deployment or system logs where relevant;
+- manually captured timestamps when automated logs do not exist.
+
+### Required Mining Data
+
+Before mining begins, AG065 and AG047 should define:
+
+- process scope;
+- observation period;
+- case identifier;
+- event names;
+- event timestamps;
+- actor / agent field;
+- source system;
+- start and end events;
+- official SOP reference if available;
+- known data gaps.
+
+If these fields cannot be defined, Stage 2 produces a Data Gap Note and may return to Stage 1 or request manual evidence collection.
+
+### Process Mining Activities
+
+Stage 2 includes the following activities:
+
+1. Collect raw event evidence.
+2. Normalize event names and timestamps.
+3. Group events into process cases.
+4. Reconstruct observed process flow.
+5. Identify process variants.
+6. Compare observed flow with official SOP.
+7. Detect bottlenecks and waiting states.
+8. Detect repeated rework loops.
+9. Detect handoff delays between agents.
+10. Detect SLA breaches.
+11. Estimate cost leakage where possible.
+12. Assign confidence level to the observed process graph.
+
+### Output Objects
+
+Stage 2 creates or updates:
+
+- `EVT` — Event Logs;
+- `MET` — Process Metrics;
+- `PGRAPH` — Process Graph;
+- Process Mining Report.
+
+### Process Mining Report Structure
+
+```yaml
+id: PGRAPH-YYYY-####
+related_opportunity: OPT-YYYY-####
+related_process:
+observed_period:
+data_sources:
+number_of_cases:
+number_of_events:
+official_sop_reference:
+observed_variants:
+main_bottlenecks:
+waiting_time_hotspots:
+rework_loops:
+handoff_delays:
+sla_breaches:
+control_deviations:
+estimated_cost_leakage:
+confidence_level:
+known_data_gaps:
+recommended_next_action:
+```
+
+### Confidence Model
+
+| Confidence | Meaning |
+|---|---|
+| Low | Data is incomplete or manually reconstructed |
+| Medium | Enough evidence for analysis, but gaps remain |
+| High | Strong event coverage and clear process reconstruction |
+| Verified | Evidence reviewed and accepted by audit |
+
+A Process Graph with Low confidence may proceed only if AG047 and AG007 explicitly accept the limitation.
+
+### Key Findings Classification
+
+Findings should be classified as:
+
+- Bottleneck;
+- Waiting Time;
+- Rework Loop;
+- Duplicate Step;
+- Unclear Ownership;
+- SLA Breach;
+- Control Deviation;
+- Manual Workload;
+- Cost Leakage;
+- Process Variant Explosion;
+- Hidden Dependency;
+- Data Quality Gap.
+
+### Stage Gate 2
+
+The opportunity may move to Stage 3 — Digital Twin Construction only if Stage 2 produces:
+
+- Process Graph or documented reason why graph cannot be built;
+- baseline metrics or metric gap note;
+- known process variants;
+- identified bottlenecks or confirmation that no bottleneck was found;
+- confidence level;
+- known data limitations;
+- recommendation for twin construction.
+
+### Control Points
+
+| Control Point | Owner | Purpose |
+|---|---|---|
+| Data Scope Defined | AG047 / AG065 | Prevent analysis drift |
+| Event Logs Normalized | AG065 | Ensure comparable evidence |
+| Baseline Metrics Captured | AG066 | Enable later impact comparison |
+| Process Graph Built | AG067 | Reconstruct actual flow |
+| Confidence Assigned | AG047 / AG067 | Make uncertainty visible |
+| Evidence Integrity Review | AG003 | Prevent false learning from weak evidence |
+| Risk Pattern Review | AG005 | Identify early operational risk |
+
+### Escalation Criteria
+
+Escalate to AG007 or AG002 if:
+
+- process mining reveals a critical operational bottleneck;
+- official SOP materially differs from real execution;
+- data quality is too weak for reliable analysis;
+- control points are bypassed in practice;
+- agent responsibilities are unclear or conflicting;
+- customer-impacting SLA breaches are systemic;
+- financial leakage appears material;
+- a cross-domain dependency is discovered.
+
+### Output
+
+Primary output:
+
+- Process Mining Report
+- Process Graph (`PGRAPH`)
+
+Secondary outputs when applicable:
+
+- Baseline Process Metrics (`MET`)
+- Data Gap Note
+- Control Deviation Note
+- Risk Pattern Note
+- Escalation Request
+
+### Stage 2 Completion Criteria
+
+Stage 2 is complete when Bizzi has enough evidence-based understanding of the current process to either:
+
+- move to Stage 3 — Digital Twin Construction;
+- return to Stage 1 for re-scoping;
+- request more data;
+- escalate a critical finding;
+- reject the opportunity if evidence disproves the problem.
+
+---
+
 ## Version History
 
 | Version | Date | Change |
 |---|---|---|
 | 2.0 Draft | 2026-07-08 | Initial PB032 v2.0 draft created with executive summary, principles, architecture mapping, and data mapping |
 | 2.0 Draft | 2026-07-08 | Added Stage 1 — Optimization Intake |
+| 2.0 Draft | 2026-07-08 | Added Stage 2 — Process Mining |
