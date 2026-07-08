@@ -207,8 +207,254 @@ The following stages will be expanded in the next iterations of PB032 v2.0:
 
 ---
 
+## Stage 1 — Optimization Intake
+
+### Purpose
+
+Stage 1 captures, qualifies, classifies, and prioritizes potential process improvement opportunities before analytical work begins.
+
+The purpose of this stage is to ensure that PB032 v2.0 does not waste enterprise attention on vague, emotional, duplicated, or low-value improvement ideas.
+
+Optimization Intake converts raw signals into structured **Optimization Opportunity** objects (`OPT`) that can enter the Enterprise Continuous Improvement Engine.
+
+### Function
+
+OPS-IMP-001 Improvement Initiative Tracking
+
+### Primary Owner
+
+AG047 Process Controller
+
+### Supporting Agents
+
+| Agent | Role |
+|---|---|
+| AG007 Operations Manager | Confirms operational relevance and priority |
+| AG066 BI Analyst | Provides baseline metrics where available |
+| AG067 Analytics Agent | Supports signal clustering and pattern detection |
+| AG003 AI Auditor | Flags audit-originated opportunities |
+| AG005 Risk Manager | Flags risk-originated opportunities |
+| AG083 Dashboard Manager | Connects opportunity to portfolio visibility |
+
+### Decision Level
+
+L2 for intake qualification.  
+L3 if the opportunity affects multiple teams, core operations, or high-cost processes.
+
+### Input Signals
+
+Stage 1 may be triggered by:
+
+- PB031 Quality Audit findings;
+- operational KPI deviation;
+- cost increase or margin pressure;
+- repeated customer complaints;
+- SLA breach;
+- backlog growth;
+- long waiting time;
+- repeated rework;
+- manual bottleneck;
+- duplicated approval;
+- agent conflict;
+- compliance concern;
+- risk review observation;
+- human management request;
+- process mining anomaly;
+- dashboard alert;
+- strategic growth bottleneck.
+
+### Required Input Data
+
+Before an opportunity can be accepted into the engine, AG047 should collect at least the following:
+
+- signal source;
+- affected process or process candidate;
+- problem statement;
+- observed impact;
+- initial metric or qualitative evidence;
+- affected agents;
+- affected capability domain;
+- urgency;
+- known constraints;
+- duplicate check result.
+
+If the affected process is not yet formally registered, the opportunity is marked as **Process Candidate** and routed for process identification before Stage 2.
+
+### Output Object
+
+Stage 1 creates or updates:
+
+- `OPT` — Optimization Opportunity;
+- optionally `PORT` — Portfolio Item, if accepted for active tracking;
+- optionally `MET` — Process Metric, if a baseline metric is already available.
+
+### Optimization Opportunity Structure
+
+Each accepted opportunity should contain:
+
+```yaml
+id: OPT-YYYY-####
+title:
+source_signal:
+source_agent:
+related_process:
+process_candidate:
+problem_statement:
+impact_type:
+initial_metric:
+affected_agents:
+affected_capability:
+priority:
+confidence_level:
+duplicate_check:
+owner_agent: AG047
+status:
+created_at:
+next_stage:
+```
+
+### Classification Model
+
+Each opportunity is classified by primary impact type:
+
+| Type | Description |
+|---|---|
+| Efficiency | Time, waiting, throughput, delay |
+| Cost | Direct or indirect process cost |
+| Quality | Errors, rework, non-conformance |
+| Control | Missing or weak audit / approval / risk control |
+| Automation | Manual work that may be automated |
+| Coordination | Handoff, routing, ownership, agent conflict |
+| Capacity | Overload, underutilization, scaling constraint |
+| Customer Experience | Friction visible to customer or partner |
+| Strategic | Process limits growth, speed, market response, or adaptability |
+| Risk Reduction | Reduces operational, compliance, continuity, or financial exposure |
+
+### Priority Model
+
+Initial priority is assigned using five factors:
+
+1. Business impact
+2. Customer impact
+3. Cost / capacity impact
+4. Risk impact
+5. Urgency
+
+Priority classes:
+
+| Priority | Meaning |
+|---|---|
+| P0 | Critical; immediate review required |
+| P1 | High-value or high-risk initiative |
+| P2 | Important improvement |
+| P3 | Useful but non-urgent |
+| P4 | Low-value backlog item |
+
+### Qualification Criteria
+
+An opportunity is accepted into PB032 if at least one of the following is true:
+
+- the issue is measurable;
+- the issue repeats;
+- the issue creates visible cost, delay, risk, or customer impact;
+- the issue blocks another process or agent;
+- the issue affects a critical process;
+- the opportunity supports strategic scalability;
+- the opportunity may become a reusable optimization pattern.
+
+### Rejection Criteria
+
+An opportunity is rejected or parked if:
+
+- it is only a one-time anomaly with no systemic impact;
+- there is no evidence and no way to collect evidence;
+- the issue belongs to another playbook and is not a process optimization problem;
+- the expected value is clearly lower than analysis cost;
+- it duplicates an existing active opportunity;
+- it attempts to bypass governance or risk controls;
+- it proposes automation without understanding the current process.
+
+### Duplicate Check
+
+Before accepting a new opportunity, AG047 checks whether similar opportunities already exist in:
+
+- active Optimization Opportunities;
+- Enterprise Improvement Portfolio;
+- prior Audit Reports;
+- Optimization Pattern Library;
+- Enterprise Memory;
+- PB031 audit findings;
+- open PB020 / PB021 governance or escalation cases.
+
+If a duplicate exists, the new signal is attached to the existing opportunity instead of creating a separate improvement thread.
+
+### Intake Decision
+
+At the end of Stage 1, AG047 assigns one of the following decisions:
+
+| Decision | Meaning |
+|---|---|
+| Accept | Move to Stage 2 — Process Mining |
+| Accept Fast Track | Move directly to focused analysis if evidence is already strong |
+| Merge | Attach to existing opportunity |
+| Park | Keep in backlog but do not analyze yet |
+| Reject | Close with rationale |
+| Escalate | Route to AG007 / AG002 if cross-domain or high-risk |
+
+### Stage Gate 1
+
+The opportunity may move to Stage 2 only if it has:
+
+- Optimization Opportunity ID;
+- problem statement;
+- source signal;
+- affected process or process candidate;
+- impact classification;
+- initial priority;
+- owner agent;
+- duplicate check result;
+- next action.
+
+### Control Points
+
+| Control Point | Owner | Purpose |
+|---|---|---|
+| Signal Captured | AG047 | Ensure no improvement signal is lost |
+| Duplicate Check | AG047 | Avoid fragmented initiatives |
+| Impact Classification | AG047 | Route correctly |
+| Initial Priority | AG007 / AG047 | Allocate attention correctly |
+| Evidence Check | AG066 / AG067 | Confirm that analysis can proceed |
+| Governance Check | AG002 if needed | Detect early escalation needs |
+
+### Output
+
+Primary output:
+
+- Optimization Opportunity Record (`OPT`)
+
+Secondary outputs when applicable:
+
+- Initial Process Metric (`MET`)
+- Portfolio Item (`PORT`)
+- Escalation Request
+- Backlog Entry
+- Rejection Note
+
+### Stage 1 Completion Criteria
+
+Stage 1 is complete when the opportunity is either:
+
+- accepted into Stage 2;
+- merged into an existing opportunity;
+- parked with a review date;
+- rejected with rationale;
+- escalated to the appropriate governance route.
+
+---
+
 ## Version History
 
 | Version | Date | Change |
 |---|---|---|
 | 2.0 Draft | 2026-07-08 | Initial PB032 v2.0 draft created with executive summary, principles, architecture mapping, and data mapping |
+| 2.0 Draft | 2026-07-08 | Added Stage 1 — Optimization Intake |
