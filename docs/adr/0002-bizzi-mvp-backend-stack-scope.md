@@ -1,6 +1,6 @@
 # ADR-0002: Scope the Bizzi Platform MVP backend to TypeScript/NestJS/PostgreSQL/Prisma
 
-- Status: Accepted
+- Status: Superseded by ADR-0007
 - Date: 2026-07-11
 - Deciders: Engineering (scope conflict surfaced during development-plan authoring; flagged for project-owner visibility — see Consequences)
 - Governance level: L3 (architecture/tech-stack scoping decision — see note below)
