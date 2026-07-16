@@ -10,12 +10,27 @@ finished runbook yet.
 
 ## Status
 
-Gate B in progress. Currently: repository scaffold only — no application
-code, no dependencies declared yet. Nothing to run.
+Gate B in progress. Currently: FastAPI skeleton with a health endpoint.
+No database dependency yet — that's step 3+.
 
 ## Requirements (so far)
 
 - Python 3.11+
 
-Further requirements (FastAPI, PostgreSQL/Docker, Alembic, dev tooling) are
-added as later Gate B steps land, each noted here when it does.
+Further requirements (PostgreSQL/Docker, Alembic, dev tooling) are added as
+later Gate B steps land, each noted here when it does.
+
+## Run locally (step 2 — no database required)
+
+```sh
+cd backend
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+Then `curl http://127.0.0.1:8000/health` should return `{"status":"ok"}`.
+
+Logs are structured JSON on stdout (`app/core/logging.py`) — no external
+logging dependency yet, per MVP-simplicity principle B15.
