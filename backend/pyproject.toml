@@ -1,0 +1,8 @@
+[project]
+name = "bizzi-backend"
+version = "0.1.0"
+description = "Bizzi Platform MVP backend — Workspace Execution Loop v0.1 (ADR-0007: Python + FastAPI)"
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
