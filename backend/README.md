@@ -11,10 +11,9 @@ finished runbook yet.
 ## Status
 
 Gate B in progress. Currently: FastAPI skeleton with a health endpoint, a
-Postgres dev/test Docker Compose setup, typed startup configuration, and
-Alembic migrations wired up. No route touches the database yet — nothing
-in Gate B needs that (Gate C's concern) — this step only proves the
-migration path works end to end.
+Postgres dev/test Docker Compose setup, typed startup configuration,
+Alembic migrations, and a CI workflow enforcing all of the above. No route
+touches the database yet — nothing in Gate B needs that (Gate C's concern).
 
 ## Requirements (so far)
 
@@ -24,12 +23,11 @@ migration path works end to end.
   environments, and the lockfile — no plain `pip`/`venv` workflow is
   maintained
 - Docker + Docker Compose (for Postgres)
-
 - SQLAlchemy + Alembic + `psycopg[binary]` (v3) for migrations (step 5)
+- ruff + mypy + pytest + httpx as dev tooling (step 6)
 
-Further requirements (dev/lint/CI tooling) are added as later Gate B steps
-land, each noted here when it does. Full rationale for every pinned version
-lives in `docs/planning/TECH_STACK.md`.
+Full rationale for every pinned version lives in
+`docs/planning/TECH_STACK.md`.
 
 ## Run locally
 
@@ -108,3 +106,39 @@ doesn't have), created a fresh `bizzi_dev` database, ran
 `alembic upgrade head`, confirmed the `alembic_version` table exists and
 contains the baseline revision, then `alembic current` reported it as
 `(head)`. Database and role dropped afterward, cluster stopped.
+
+## Dev tooling & CI (step 6)
+
+```sh
+cd backend
+uv sync --all-groups     # installs the dev dependency-group too
+uv run ruff check .
+uv run mypy app
+uv run pytest -v
+```
+
+`.github/workflows/backend-ci.yml` runs all of this on every PR/push
+touching `backend/**`, against a real `postgres:18.4-alpine` service
+container: checkout, install uv + Python 3.13.14
+(`astral-sh/setup-uv@v8.3.2`), `uv sync --locked --all-groups` (fails if
+`uv.lock` is stale), ruff, mypy, `alembic upgrade head` against the service
+container, then pytest. Action versions verified current via
+`git ls-remote --tags` on 2026-07-17 (GitHub's REST API wasn't reachable
+from this session to cross-check via a different method, but `git
+ls-remote` talks to the same repositories directly over git's protocol, so
+it's an equally direct source, not a fallback guess).
+
+**This is the step where "it actually works" stops being a locally-verified
+claim and becomes something CI proves independently**: GitHub Actions
+runners have a working Docker daemon, unlike this sandbox, so the
+Postgres-service-container + migration + test steps above will run for
+real, against the exact pinned versions, the first time this workflow
+executes — not against the native-Postgres-16 substitute used for local
+verification in steps 3 and 5.
+
+Added `backend/tests/test_health.py` (`fastapi.testclient.TestClient` +
+`httpx`) as the first real test, and switched `app/main.py` from
+`@app.on_event("startup")` (deprecated in current FastAPI) to the `lifespan`
+context manager — found via the deprecation warning pytest surfaced when
+this step ran the test locally for the first time, fixed immediately rather
+than shipped as a known warning.

@@ -9,8 +9,7 @@ fields so log lines are machine-parseable from day one.
 import json
 import logging
 import sys
-from datetime import datetime, timezone
-
+from datetime import UTC, datetime
 
 _RESERVED_RECORD_ATTRS = frozenset(logging.LogRecord("", 0, "", 0, "", (), None).__dict__)
 
@@ -19,7 +18,7 @@ class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         payload = {
             "timestamp": datetime.fromtimestamp(
-                record.created, tz=timezone.utc
+                record.created, tz=UTC
             ).isoformat(),
             "level": record.levelname,
             "logger": record.name,

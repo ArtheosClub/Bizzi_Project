@@ -34,6 +34,18 @@ before trusting these numbers if it's been a while.
 | Database | PostgreSQL | 18.4 (`postgres:18.4-alpine` image) | Current stable major (18), patch 18.4, image last updated 2026-07-08 — mature GA (multiple patches past 18.0), not beta/rc. Bumped up from an earlier draft's `postgres:16-alpine`. |
 | Base Docker image (backend, Gate B step 7) | `python:3.13.14-slim-bookworm` | pinned patch + Debian codename | Matches the language pin exactly (3.13.14); `-slim-bookworm` over plain `-slim` for a named, stable Debian base rather than a floating "whatever's current" tag. |
 
+## CI GitHub Actions (step 6)
+
+| Action | Pinned version | How verified |
+|---|---|---|
+| `actions/checkout` | v7.0.0 | `git ls-remote --tags --refs https://github.com/actions/checkout` on 2026-07-17. `api.github.com` wasn't reachable from this session (scoped to `ArtheosClub/Bizzi_Project` only) so this used git's own protocol against the target repo directly instead — not a fallback guess, an equally direct source. |
+| `astral-sh/setup-uv` | v8.3.2 | Same method, same date, `astral-sh/setup-uv` repo. |
+
+Both pin uv itself to `0.11.29` and Python to `3.13.14` via
+`astral-sh/setup-uv`'s `version`/`python-version` inputs — matching the
+Language runtime and Package manager rows above exactly, with no separate
+`actions/setup-python` step needed.
+
 ## Explicitly not included
 
 - **Redis** — no Gate B step has a concrete, demonstrated need for it yet.
@@ -59,10 +71,11 @@ cannot fetch the pinned 3.13.14 build.
   / `uv run --python 3.13.12 ...`. Same 3.13.x minor line, functionally
   equivalent for everything exercised in Gate B so far.
 - **CI is where 3.13.14 itself actually gets proven**: GitHub Actions
-  runners are not behind this sandbox's proxy, so `actions/setup-python`
-  with `python-version: '3.13.14'` (Gate B step 6) genuinely installs and
-  runs the exact pinned patch. Anyone running this locally outside this
-  sandbox should hit no such restriction either.
+  runners are not behind this sandbox's proxy, so `astral-sh/setup-uv`
+  with `python-version: '3.13.14'` (Gate B step 6,
+  `.github/workflows/backend-ci.yml`) genuinely installs and runs the exact
+  pinned patch. Anyone running this locally outside this sandbox should hit
+  no such restriction either.
 - Same pattern as the Docker-daemon and Postgres-version caveats already
   noted in the Gate B step 3 commit: substitute the closest available
   real thing locally, verify against it honestly, rely on CI/a real machine
