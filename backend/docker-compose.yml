@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:18.4-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-bizzi}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bizzi}
@@ -16,7 +16,7 @@ services:
       retries: 10
 
   postgres-test:
-    image: postgres:16-alpine
+    image: postgres:18.4-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-bizzi}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bizzi}

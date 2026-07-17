@@ -1,7 +1,0 @@
-# Runtime dependencies. Populated incrementally per Gate B step
-# (docs/planning/PRE-CODING-BRIEF.md Section 6/8) — see backend/README.md
-# for which step introduced each line.
-
-# Step 2: FastAPI skeleton
-fastapi==0.115.6
-uvicorn[standard]==0.34.0
