@@ -8,7 +8,13 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - bizzi_postgres_dev:/var/lib/postgresql/data
+      # Postgres 18+ images reject a volume mounted directly at
+      # .../data (pg_ctlcluster-style layout now expects the mount at the
+      # parent dir, with data placed in a version subdirectory internally).
+      # See https://github.com/docker-library/postgres/pull/1259 — this
+      # broke CI's compose-e2e job on first run (postgres-1 exited 1,
+      # postgres-test-1 was unaffected since it has no persistent volume).
+      - bizzi_postgres_dev:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bizzi} -d ${POSTGRES_DB:-bizzi_dev}"]
       interval: 5s
