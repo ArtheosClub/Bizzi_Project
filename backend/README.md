@@ -10,9 +10,10 @@ finished runbook yet.
 
 ## Status
 
-Gate B in progress. Currently: FastAPI skeleton with a health endpoint, plus
-a Postgres dev/test Docker Compose setup. The app doesn't talk to the
-database yet — that's step 4/5 (config module, then Alembic).
+Gate B in progress. Currently: FastAPI skeleton with a health endpoint, a
+Postgres dev/test Docker Compose setup, and typed startup configuration.
+The app validates `DATABASE_URL` exists at startup but doesn't open a
+database connection yet — that's step 5 (Alembic + SQLAlchemy session).
 
 ## Requirements (so far)
 
@@ -27,10 +28,11 @@ Further requirements (Alembic, dev tooling) are added as later Gate B steps
 land, each noted here when it does. Full rationale for every pinned version
 lives in `docs/planning/TECH_STACK.md`.
 
-## Run locally (step 2 — no database required)
+## Run locally
 
 ```sh
 cd backend
+cp .env.example .env   # required from step 4 onward — see Configuration below
 uv sync
 uv run uvicorn app.main:app --reload
 ```
@@ -40,8 +42,23 @@ uv run uvicorn app.main:app --reload
 step. Then `curl http://127.0.0.1:8000/health` should return
 `{"status":"ok"}`.
 
-Logs are structured JSON on stdout (`app/core/logging.py`) — no external
+Logs are structured JSON on stdout (`app/core/logging.py`), including any
+extra fields passed via `logger.info(..., extra={...})` — no external
 logging dependency yet, per MVP-simplicity principle B15.
+
+## Configuration (step 4)
+
+`app/core/config.py` loads typed settings (`pydantic-settings`) from `.env`
+or the real environment. `database_url` is **required** — startup fails
+fast with a clear `pydantic` validation error if it's missing, even though
+nothing queries the database yet (that's intentional: the fail-fast
+behavior is proven now, before step 5 gives it something to actually do).
+`env` and `port` have defaults and are optional.
+
+Verified both directions locally: running with `DATABASE_URL` unset raises
+`ValidationError: 1 validation error for Settings / database_url / Field
+required` and the server exits; running with it set starts normally and the
+startup log line includes `"env": "development"`.
 
 ## PostgreSQL (step 3 — dev + test instances)
 
