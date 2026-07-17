@@ -11,9 +11,10 @@ finished runbook yet.
 ## Status
 
 Gate B in progress. Currently: FastAPI skeleton with a health endpoint, a
-Postgres dev/test Docker Compose setup, and typed startup configuration.
-The app validates `DATABASE_URL` exists at startup but doesn't open a
-database connection yet — that's step 5 (Alembic + SQLAlchemy session).
+Postgres dev/test Docker Compose setup, typed startup configuration, and
+Alembic migrations wired up. No route touches the database yet — nothing
+in Gate B needs that (Gate C's concern) — this step only proves the
+migration path works end to end.
 
 ## Requirements (so far)
 
@@ -24,7 +25,9 @@ database connection yet — that's step 5 (Alembic + SQLAlchemy session).
   maintained
 - Docker + Docker Compose (for Postgres)
 
-Further requirements (Alembic, dev tooling) are added as later Gate B steps
+- SQLAlchemy + Alembic + `psycopg[binary]` (v3) for migrations (step 5)
+
+Further requirements (dev/lint/CI tooling) are added as later Gate B steps
 land, each noted here when it does. Full rationale for every pinned version
 lives in `docs/planning/TECH_STACK.md`.
 
@@ -75,8 +78,33 @@ This starts two Postgres 18 instances:
 | `postgres` | 5432 | `bizzi_dev` | local development |
 | `postgres-test` | 5433 | `bizzi_test` | test runs (no persistent volume — safe to reset) |
 
-Both have a `pg_isready` healthcheck. Nothing in the app connects to these
-yet (that's step 4/5) — this step only proves the database layer boots and
-is reachable, per `docs/planning/PRE-CODING-BRIEF.md` Section 3's dependency
-chain (Postgres blocks tasks/decisions/audit, but nothing blocks Postgres
-existing on its own first).
+Both have a `pg_isready` healthcheck.
+
+## Migrations (step 5)
+
+```sh
+cd backend
+uv run alembic upgrade head
+```
+
+- `app/db/base.py`: empty `Base` (`DeclarativeBase`) — no ORM models yet,
+  Gate C's concern, not this pass's. It exists now so `alembic/env.py` has
+  a stable `target_metadata` to import, instead of being retrofitted later.
+- `app/db/session.py`: sync SQLAlchemy engine + `SessionLocal` +
+  `get_db()` dependency generator. Not imported by `app/main.py` yet — no
+  route touches the database in Gate B, this only proves the migration
+  path works.
+- `alembic/env.py` reads `DATABASE_URL` from `get_settings()` (single
+  source of truth) rather than duplicating it in `alembic.ini`.
+- `alembic/versions/e0aa881262f5_baseline.py`: an intentionally empty
+  baseline migration — its only job is to prove `alembic upgrade head`
+  succeeds against a clean database, per the stop condition in `CLAUDE.md`
+  ("A migration fails against a clean database").
+
+Verified: started the sandbox's native PostgreSQL 16 (same substitution
+noted in step 3 and `docs/planning/TECH_STACK.md` — the actual
+`postgres:18.4-alpine` container needs a Docker daemon this sandbox
+doesn't have), created a fresh `bizzi_dev` database, ran
+`alembic upgrade head`, confirmed the `alembic_version` table exists and
+contains the baseline revision, then `alembic current` reported it as
+`(head)`. Database and role dropped afterward, cluster stopped.
