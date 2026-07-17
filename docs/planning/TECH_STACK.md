@@ -70,24 +70,29 @@ cannot fetch the pinned 3.13.14 build.
   `python3.13` (3.13.12, two patches behind) via `uv sync --python 3.13.12`
   / `uv run --python 3.13.12 ...`. Same 3.13.x minor line, functionally
   equivalent for everything exercised in Gate B so far.
-- **CI is where 3.13.14 itself actually gets proven**: GitHub Actions
-  runners are not behind this sandbox's proxy, so `astral-sh/setup-uv`
-  with `python-version: '3.13.14'` (Gate B step 6,
-  `.github/workflows/backend-ci.yml`) genuinely installs and runs the exact
-  pinned patch. Anyone running this locally outside this sandbox should hit
-  no such restriction either.
+- **Confirmed**: `.github/workflows/backend-ci.yml` run
+  [29603566268](https://github.com/ArtheosClub/Bizzi_Project/actions/runs/29603566268)
+  (commit `eb760fa`, Gate B step 6) completed with `conclusion: success` —
+  `astral-sh/setup-uv` installed the real 3.13.14 on an unrestricted
+  GitHub Actions runner, and the Postgres-service-container +
+  `alembic upgrade head` + pytest steps all ran against actual
+  `postgres:18.4-alpine`, not the sandbox's native-Postgres-16 substitute.
+  This is no longer a "should work" claim — it's proven.
 - Same pattern as the Docker-daemon and Postgres-version caveats already
   noted in the Gate B step 3 commit: substitute the closest available
   real thing locally, verify against it honestly, rely on CI/a real machine
   for the final proof against the actual pin.
 
-## Docker Compose service inventory (current, updated through step 3; step 7 adds `api`)
+## Docker Compose service inventory (final for Gate B)
 
 | Service | Image/build | Purpose | Port | Persistent volume |
 |---|---|---|---|---|
 | `postgres` | `postgres:18.4-alpine` | Dev database | 5432 | yes (`bizzi_postgres_dev`) |
 | `postgres-test` | `postgres:18.4-alpine` | Test database | 5433 | no (ephemeral by design) |
-| `api` *(step 7, not yet added)* | built from `backend/Dockerfile`, `python:3.13.14-slim-bookworm` base | the FastAPI app | 8000 | n/a |
+| `api` | built from `backend/Dockerfile`, `python:3.13.14-slim-bookworm` base, `uv==0.11.29` installed via pip | the FastAPI app; entrypoint runs `alembic upgrade head` then `uvicorn` | 8000 | n/a |
+
+No Redis service — see "Explicitly not included" above; nothing in Gate B
+demonstrated a need for one.
 
 `.env`/`.env.example` map straight into `docker-compose.yml` via Compose's
 `${VAR:-default}` interpolation — `POSTGRES_USER`, `POSTGRES_PASSWORD`,

@@ -29,5 +29,30 @@ services:
       timeout: 5s
       retries: 10
 
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      # Deliberately not read from .env's DATABASE_URL: that value points
+      # at localhost:5432 for the `uv run uvicorn` (host-machine) workflow
+      # in README.md. Inside the Compose network the DB is reachable at
+      # the `postgres` service name, not localhost, so it's reconstructed
+      # here from the same POSTGRES_* pieces instead.
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-bizzi}:${POSTGRES_PASSWORD:-bizzi}@postgres:5432/${POSTGRES_DB:-bizzi_dev}
+      ENV: ${ENV:-development}
+      PORT: 8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      # No curl in the slim base image — urllib is stdlib, zero extra deps.
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
 volumes:
   bizzi_postgres_dev:

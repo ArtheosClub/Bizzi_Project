@@ -10,10 +10,17 @@ finished runbook yet.
 
 ## Status
 
-Gate B in progress. Currently: FastAPI skeleton with a health endpoint, a
-Postgres dev/test Docker Compose setup, typed startup configuration,
-Alembic migrations, and a CI workflow enforcing all of the above. No route
-touches the database yet — nothing in Gate B needs that (Gate C's concern).
+Gate B (Engineering Foundation) is code-complete: FastAPI skeleton with a
+health endpoint, Postgres dev/test via Docker Compose, typed startup
+configuration, Alembic migrations, a CI workflow (confirmed green against
+real Postgres/Python — see step 6 below), and a Dockerfile +
+`docker compose up` path for the `api` service. No route touches the
+database yet — nothing in Gate B needs that (Gate C's concern).
+
+**One open item before Gate B can be called fully proven**: the `docker
+compose up --build` command itself (step 7) has not been run anywhere yet —
+this development sandbox has no Docker daemon. See "One command, fresh
+clone to running backend" below for exactly what is and isn't verified.
 
 ## Requirements (so far)
 
@@ -128,13 +135,14 @@ from this session to cross-check via a different method, but `git
 ls-remote` talks to the same repositories directly over git's protocol, so
 it's an equally direct source, not a fallback guess).
 
-**This is the step where "it actually works" stops being a locally-verified
-claim and becomes something CI proves independently**: GitHub Actions
+**Confirmed, not just expected**: workflow run
+[29603566268](https://github.com/ArtheosClub/Bizzi_Project/actions/runs/29603566268)
+(commit `eb760fa`) completed with `conclusion: success`. GitHub Actions
 runners have a working Docker daemon, unlike this sandbox, so the
-Postgres-service-container + migration + test steps above will run for
-real, against the exact pinned versions, the first time this workflow
-executes — not against the native-Postgres-16 substitute used for local
-verification in steps 3 and 5.
+Postgres-service-container + migration + test steps ran for real, against
+the exact pinned versions (real `postgres:18.4-alpine`, real Python
+3.13.14) — not the native-Postgres-16/Python-3.13.12 substitutes used for
+local verification in steps 3-6.
 
 Added `backend/tests/test_health.py` (`fastapi.testclient.TestClient` +
 `httpx`) as the first real test, and switched `app/main.py` from
@@ -142,3 +150,54 @@ Added `backend/tests/test_health.py` (`fastapi.testclient.TestClient` +
 context manager — found via the deprecation warning pytest surfaced when
 this step ran the test locally for the first time, fixed immediately rather
 than shipped as a known warning.
+
+## One command, fresh clone to running backend (step 7)
+
+```sh
+cd backend
+cp .env.example .env
+docker compose up --build
+```
+
+This is the exit criterion from `docs/planning/PRE-CODING-BRIEF.md` Section
+6: a runnable backend, Postgres with migrations, Docker Compose, a health
+endpoint, and structured logging, brought up by one command. `api`'s
+`entrypoint.sh` runs `alembic upgrade head` before starting `uvicorn`, so a
+fresh clone ends up migrated, not just running. Then
+`curl http://127.0.0.1:8000/health` should return `{"status":"ok"}`.
+
+- `backend/Dockerfile`: `python:3.13.14-slim-bookworm` base (matches the
+  pinned language version exactly), `uv==0.11.29` installed via `pip`
+  (PyPI-hosted — deliberately not `COPY --from=ghcr.io/astral-sh/uv`, to
+  keep the build to one verifiable source instead of an external registry
+  image this sandbox has no way to check the tag of), `uv sync --locked
+  --no-dev` (runtime deps only — ruff/mypy/pytest/httpx stay dev-only).
+- `backend/entrypoint.sh`: `alembic upgrade head` then
+  `exec uv run uvicorn ...` — migrate-then-serve, one process.
+- `docker-compose.yml`'s `api` service: builds from the Dockerfile,
+  `depends_on: postgres: condition: service_healthy` (won't start against
+  an unready database), its own `DATABASE_URL` pointing at the `postgres`
+  service name rather than `localhost` (the Compose-network address, not
+  the host-machine address `.env`'s `DATABASE_URL` uses for the plain
+  `uv run uvicorn` workflow above), and a `urllib`-based healthcheck (no
+  `curl` in the slim base image).
+
+**What's verified versus what isn't, precisely:**
+- `docker compose config` resolves the full merged config cleanly,
+  including the `api` service's build block, env-var interpolation
+  (confirmed `DATABASE_URL` resolves to the `postgres`-hostname form, not
+  `.env`'s `localhost` form), healthcheck, and `depends_on` condition.
+- `entrypoint.sh` passed a shell syntax check (`sh -n`), and every file it
+  and the Dockerfile reference (`pyproject.toml`, `uv.lock`, `app/`,
+  `alembic/`, `alembic.ini`) was confirmed to exist.
+- The individual pieces this depends on — `alembic upgrade head`,
+  `uvicorn` serving `/health`, ruff/mypy/pytest — are proven, either
+  locally (steps 2-5) or in real CI against real Postgres/Python (step 6,
+  run [29603566268](https://github.com/ArtheosClub/Bizzi_Project/actions/runs/29603566268)).
+- **Not verified**: the actual `docker build` and `docker compose up
+  --build` commands themselves have not been run anywhere in this change —
+  this sandbox has no Docker daemon (`dockerd` fails on a `ulimit`
+  permission restriction), and CI's Postgres-service-container approach
+  doesn't build this Dockerfile or exercise `docker-compose.yml` at all.
+  **This needs a real run — in CI (a follow-up workflow step, or manually)
+  or on your machine — before Gate B step 7 can be called fully proven.**
