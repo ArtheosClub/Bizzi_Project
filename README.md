@@ -78,6 +78,24 @@ Art of Business — архитектурная спецификация пред
 неудачи быстрее конкурентов (Adaptive Learning). Количество наращивается
 вслед за качеством, а не вместо него.
 
+## Инженерные процессы (Bizzi Platform backend)
+
+Разработка самого бэкенда (MVP "Workspace Execution Loop") ведётся отдельно
+от архитектурной спецификации, по английским инженерным артефактам:
+
+| Артефакт | Расположение |
+|---|---|
+| План разработки и Work Packages | `docs/planning/DEVELOPMENT_PLAN.md`, `docs/planning/WORK_PACKAGES.md` |
+| Architecture Decision Records | `docs/adr/` |
+| C4-диаграммы архитектуры | `docs/c4/` |
+| Обязательные проверки перед кодингом/мёрджем | `CLAUDE.md`, `.claude/skills/bizzi-*` |
+
+См. `docs/adr/0002-bizzi-mvp-backend-stack-scope.md` — там зафиксировано,
+что бэкенд-реализация (TypeScript/NestJS/PostgreSQL) сознательно отделена
+от долгосрочного платформенного стека Art of Business
+(`10_IMPLEMENTATION/TARGET_TECH_STACK.md`, Python/Kubernetes) до отдельного
+решения об их сведении.
+
 ## Contributing
 
 Проект находится в приватной разработке ArtheosClub. Изменения в

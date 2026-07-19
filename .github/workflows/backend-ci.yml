@@ -1,0 +1,102 @@
+name: Backend CI
+
+on:
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      postgres:
+        image: postgres:18.4-alpine
+        env:
+          POSTGRES_USER: bizzi
+          POSTGRES_PASSWORD: bizzi
+          POSTGRES_DB: bizzi_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U bizzi -d bizzi_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql+psycopg://bizzi:bizzi@localhost:5432/bizzi_test
+
+    steps:
+      - uses: actions/checkout@v7.0.0
+
+      # Verified current (git ls-remote --tags, 2026-07-17):
+      # actions/checkout v7.0.0, astral-sh/setup-uv v8.3.2. uv/Python
+      # versions below match docs/planning/TECH_STACK.md exactly.
+      - name: Install uv + Python
+        uses: astral-sh/setup-uv@v8.3.2
+        with:
+          version: "0.11.29"
+          python-version: "3.13.14"
+
+      - name: Install dependencies (fails if uv.lock is stale)
+        run: uv sync --locked --all-groups
+
+      - name: Lint (ruff)
+        run: uv run ruff check .
+
+      - name: Type check (mypy)
+        run: uv run mypy app
+
+      - name: Run migrations against a clean database
+        run: uv run alembic upgrade head
+
+      - name: Test (pytest)
+        run: uv run pytest -v
+
+  compose-e2e:
+    name: docker compose up (Gate B step 7 end-to-end)
+    runs-on: ubuntu-latest
+    needs: backend
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v7.0.0
+
+      - name: Prepare .env (mirrors the documented fresh-clone flow)
+        run: cp .env.example .env
+
+      # --wait blocks until every service's healthcheck passes (postgres,
+      # postgres-test, api) and fails the step non-zero if any service
+      # becomes unhealthy or exits within --wait-timeout. This is the real
+      # proof for Gate B step 7: image build, container startup, Postgres
+      # connectivity, and the entrypoint's `alembic upgrade head` all have
+      # to succeed for api's own healthcheck to ever go green.
+      # Flags verified against this repo's own `docker compose up --help`
+      # before use (v5.1.1 locally) rather than assumed from memory.
+      - name: docker compose up --build (fails loudly on build or health failure)
+        run: docker compose up --build -d --wait --wait-timeout 180
+
+      - name: Assert /health responds 200 from outside the container
+        run: |
+          curl -fsS http://localhost:8000/health | tee /tmp/health.json
+          grep -q '"status":"ok"' /tmp/health.json
+
+      - name: Dump container logs (always, for debuggability)
+        if: always()
+        run: docker compose logs
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v

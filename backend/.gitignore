@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+
+# Env files (never commit real secrets)
+.env
+.env.*
+!.env.example
+!.env.test
+!.env.prod.example
+# .env.prod itself stays ignored — it would hold real production secrets
+# if it ever exists locally. .env.prod.example is the committed template.
+
+# Tooling caches (introduced in later Gate B steps)
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+htmlcov/
+.coverage
