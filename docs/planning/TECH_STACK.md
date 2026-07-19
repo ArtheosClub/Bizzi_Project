@@ -97,5 +97,57 @@ demonstrated a need for one.
 `.env`/`.env.example` map straight into `docker-compose.yml` via Compose's
 `${VAR:-default}` interpolation — `POSTGRES_USER`, `POSTGRES_PASSWORD`,
 `POSTGRES_DB`, `POSTGRES_TEST_DB` today; `DATABASE_URL` is read by the app
-itself (not by Compose) once step 4/5 wire up configuration and the DB
-session.
+itself (not by Compose). See "Environment files" below for the full set of
+dotenv files and where each is actually loaded.
+
+## Environment files
+
+Four dotenv-shaped files exist, each with a different commit/load story —
+don't assume they're interchangeable:
+
+| File | Committed? | Contains real secrets? | Loaded by | Purpose |
+|---|---|---|---|---|
+| `.env.example` | yes | no (dev-only fixed defaults) | nothing automatically — copy to `.env` | Template for local dev. Steps 3-4's original file. |
+| `.env` | **no** (gitignored) | only ever locally, never pushed | `docker compose up` (via Compose's own `.env` auto-read) and whatever you export manually for `uv run uvicorn` | Your real local dev values — usually just a copy of `.env.example` unchanged. |
+| `.env.test` | yes | no (fixed, non-sensitive, matches `postgres-test`) | `backend/tests/conftest.py` via `python-dotenv`'s `load_dotenv()`, explicitly, at test-session start | Test suite defaults. In CI, the job's own `env:` block sets `DATABASE_URL` first, and `load_dotenv()` never overrides an already-set variable — so in CI this file is present but a no-op; it only takes effect for a genuinely local `pytest` run. |
+| `.env.prod.example` | yes | no (placeholders only, e.g. `POSTGRES_PASSWORD=`) | nothing automatically | Documents which variables production needs, mirroring `.env.example`'s role. |
+| `.env.prod` | **no** (gitignored) | would if it existed — never commit it | nothing automatically | Not part of the normal deploy path. Production should get real secrets from the deployment platform's own secret injection (Docker/Kubernetes secrets, a managed secrets store), not a checked-in file. This file is only a local convenience if you're testing a prod-shaped container by hand. |
+
+`app/core/config.py`'s `Settings` itself always points at `env_file=".env"`
+(pydantic-settings) — it does **not** branch on an `ENV` value to pick a
+different filename. Which file actually supplies values is decided by
+*what loads it*, not by `Settings`: `docker compose up` / manual `uv run`
+use `.env`, `pytest` explicitly loads `.env.test` in `conftest.py`, and
+production is expected to get real environment variables directly rather
+than any file. Real environment variables always win over anything a
+dotenv file sets, in every case above.
+
+## Dependency groups
+
+`backend/pyproject.toml` uses standard `[dependency-groups]` (PEP 735) —
+confirmed current for uv 0.11.29 via `uv sync --help` before use, not
+`[tool.uv.dev-dependencies]` (the older, pre-PEP-735 uv-specific syntax).
+
+| Group | Contents | Auto-included by plain `uv sync`? |
+|---|---|---|
+| *(unnamed)* `[project.dependencies]` | fastapi, uvicorn, sqlalchemy, alembic, psycopg, pydantic-settings | always — this is the actual production dependency set |
+| `test` | pytest, httpx, python-dotenv | only via `dev` (below), or explicit `--group test` |
+| `lint` | ruff | only via `dev`, or explicit `--group lint` |
+| `typecheck` | mypy | only via `dev`, or explicit `--group typecheck` |
+| `dev` | `{include-group = "test"}` + `{include-group = "lint"}` + `{include-group = "typecheck"}` | **yes, automatically** — uv treats a group literally named `dev` as a default group; confirmed via `uv sync --help`: `--no-dev  Disable the development dependency group` |
+
+Exact commands, each verified locally before being written here
+(`uv pip list` diffed after each):
+
+| Context | Command | Result |
+|---|---|---|
+| Local contributor setup | `uv sync` | prod deps + `dev` (→ test + lint + typecheck) — everything |
+| Production build (`backend/Dockerfile`, unchanged) | `uv sync --locked --no-dev` | prod deps only — confirmed pytest/ruff/mypy/httpx all absent |
+| CI (`.github/workflows/backend-ci.yml`, unchanged) | `uv sync --locked --all-groups` | prod deps + every group, regardless of the `test`/`lint`/`typecheck` split — confirmed identical package set to plain `uv sync` |
+| Test-only install (e.g. testing a prod-shaped image with tests added) | `uv sync --no-default-groups --group test` | prod deps + pytest/httpx/python-dotenv, **no** ruff/mypy |
+
+The test-only row matters more than it looks: `--group test` **alone**
+(without `--no-default-groups`) still pulls in `dev` because `--group` is
+additive on top of default groups, not a replacement for them — verified
+locally (`uv sync --group test` alone installed ruff/mypy anyway). This is
+the one place a plausible-looking command silently does the wrong thing.

@@ -151,6 +151,33 @@ context manager — found via the deprecation warning pytest surfaced when
 this step ran the test locally for the first time, fixed immediately rather
 than shipped as a known warning.
 
+## Environment files & dependency groups (dev/test/prod separation)
+
+Full detail and verified command table:
+`docs/planning/TECH_STACK.md` §"Environment files" / §"Dependency groups".
+Short version:
+
+```sh
+# Local dev (everything, including lint/typecheck/test tools)
+uv sync
+
+# Production-shaped install (matches backend/Dockerfile exactly)
+uv sync --locked --no-dev
+
+# Test-only install, no lint/typecheck — note --no-default-groups is
+# required, or the default "dev" group sneaks ruff/mypy back in
+uv sync --no-default-groups --group test
+```
+
+Four dotenv files, not one:
+- `.env.example` → copy to `.env` for local dev (unchanged from step 3-4).
+- `.env.test` — committed, safe (fixed non-secret values matching
+  `postgres-test`), loaded explicitly by `backend/tests/conftest.py`.
+- `.env.prod.example` — committed template of what production needs; not
+  loaded by anything automatically.
+- `.env.prod` — gitignored, never committed. Production is expected to get
+  real secrets from the deployment platform, not a checked-in file.
+
 ## One command, fresh clone to running backend (step 7)
 
 ```sh

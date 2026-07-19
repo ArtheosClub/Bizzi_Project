@@ -16,11 +16,31 @@ dependencies = [
 package = false
 
 [dependency-groups]
-dev = [
+# Split by concern so each installs independently (see
+# docs/planning/TECH_STACK.md "Dependency groups"):
+#   test      — needed to actually run the test suite
+#   lint      — ruff only, never needed to run tests
+#   typecheck — mypy only, never needed to run tests
+#   dev       — umbrella of all three; the literal name "dev" is what makes
+#               uv include it automatically on a plain `uv sync` (confirmed
+#               via `uv sync --help`: "--no-dev  Disable the development
+#               dependency group") — production installs pass --no-dev to
+#               exclude it and get [project.dependencies] only.
+test = [
     "httpx==0.28.1",
-    "mypy==2.3.0",
     "pytest==9.1.1",
+    "python-dotenv==1.2.2",
+]
+lint = [
     "ruff==0.15.22",
+]
+typecheck = [
+    "mypy==2.3.0",
+]
+dev = [
+    {include-group = "test"},
+    {include-group = "lint"},
+    {include-group = "typecheck"},
 ]
 
 [tool.ruff]
