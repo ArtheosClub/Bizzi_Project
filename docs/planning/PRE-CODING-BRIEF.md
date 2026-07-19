@@ -236,6 +236,10 @@ Restructure/interpret the WP plan as five gates, not a flat 0–93 sequence:
 **Gate C — Platform Backbone** (WP13–WP22)
 - `EnterpriseObject`, `AgentDefinition`, `Task`, `Event`, `Auth`, `Audit`, `API`, `RuntimeSession`, `ContextPackage`
 - Agent identity model (`AgentDefinition`/`AgentInstance`/`Provider`/`Model`/`RuntimeSession`), context-survives-session-death behavior, and provider-neutral context/result envelopes: see §5.1–5.3.
+- Multi-tenancy (ADR-0004): every entity above carries `workspace_id`,
+  except Auth/identity, where the workspace relationship lives on a
+  `WorkspaceMembership` join entity rather than a flat field on `User` —
+  confirmed shape in `docs/c4/C3_COMPONENT.md` "Multi-tenancy" section.
 
 **Gate D — First Vertical Slice** (WP23–WP32)
 - Create request → create task → assign one agent → build context → execute → return result → human approve/reject → store decision → emit event → display result

@@ -5,6 +5,12 @@
 - Deciders: Engineering
 - Governance level: L2
 
+> **Terminology note (post-ADR-0007):** this ADR predates the Python/FastAPI
+> stack decision and was written against NestJS. Per `PRE-CODING-BRIEF.md`
+> §9, the decision carries over unchanged for FastAPI — everywhere
+> "Controller" appears below, read it as "Router/Endpoint" (a FastAPI path
+> operation function). Nothing else about the layering rule changes.
+
 ## Context
 
 `29_BACKEND_SERVICE_DESIGN/01_BACKEND_ARCHITECTURE_PRINCIPLES.md` (Principles
