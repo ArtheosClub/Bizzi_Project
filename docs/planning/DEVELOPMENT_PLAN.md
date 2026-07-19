@@ -59,6 +59,7 @@ authority (see §7).
 | Governance / escalation | `01_GOVERNANCE/GOVERNANCE_MODEL.md`, `01_GOVERNANCE/AUTHORITY_MATRIX.md` |
 | Domain entities | `26_DOMAIN_MODEL/01_ENTITY_CATALOG.md` |
 | API conventions | `28_API_CONTRACTS/01_API_DESIGN_PRINCIPLES.md` |
+| Agent identity / runtime model (Gate C) | `docs/planning/PRE-CODING-BRIEF.md` §5.1–5.3 |
 
 ## 4. Phasing
 
@@ -151,3 +152,22 @@ not cover the frontend, deployment automation beyond CI quality gates
 (Phase 2–5 in `11_CI_CD_READINESS_PLAN.md` are explicitly staged, only
 Phase 1 CI is in scope here), or the platform-wide "Art of Business"
 Python/Kubernetes stack (see §2).
+
+## 12. Gate C addendum — agent identity, session, and context model
+
+This document still reflects the pre-Gate-A–E Phase 0-3 structure (§4) and
+has **not** been reconciled with `docs/planning/PRE-CODING-BRIEF.md`'s
+five-gate restructuring — that reconciliation is a separate, not-yet-done
+task, not something this addendum silently resolves.
+
+What this addendum does record: the agent identity/session/context model
+refined in `PRE-CODING-BRIEF.md` §5.1–5.3 (itself adapted from
+`50_IMPLEMENTATION/GATE_C_AGENT_CONTEXT_AND_HUMAN_INTERACTION_PLAN.md`
+§02.6/§04/§06) governs Gate C's Platform Backbone work — `AgentDefinition`/
+`AgentInstance`/`Provider`/`Model`/`RuntimeSession` identity, context
+surviving session termination, and provider-neutral context/result
+envelopes. As with §5.1–5.3 in the brief, this does **not** pull in that
+source document's broader agent roster (Enterprise Architect, Memory
+Manager, Legal and Regulatory Agent Group) or its legal-source-governance
+subsystem — both remain out of scope pending a role beyond the five in
+`PRE-CODING-BRIEF.md` §4 being approved.
