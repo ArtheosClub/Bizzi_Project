@@ -11,6 +11,8 @@ Blocks: WP05
 
 This document defines the product-level PASS/FAIL contract for the first Bizzi MVP scenario. It does not replace implementation-level acceptance criteria in Gates B–E.
 
+**Relationship to Gate D/E exit criteria:** the criteria in Section 3 are the Gate A-level statement of the same exit condition that `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` §08 (MVP Exit Criteria) and WP32 (Internal End-to-End Demo, Gate D) implement in engineering terms. Gate A defines *what* must be true of the scenario for it to count as delivered; WP32/§08 are where that same condition is actually built and demonstrated. They are restatements of one contract at two altitudes, not two independent criteria sets.
+
 ## 2. Gate A Acceptance Checklist
 
 Gate A is ready for approval when all items below are true:
