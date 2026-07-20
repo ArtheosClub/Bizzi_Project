@@ -100,10 +100,10 @@ A PASS must not be recorded merely because this file exists. It requires an expl
 
 ## 8. Project Owner Decision
 
-Decision: **PENDING**  
-Decider: Project Owner / ArtheosClub  
-Decision Date: —  
-Approved Commit or PR: —
+Decision: **PASS**  
+Decider: Andrew (Project Owner)  
+Decision Date: 2026-07-20  
+Approved Commit or PR: PR #3 (`agent/gate-a-product-definition`), commit `4166910` (includes the WP02 PB032 citation and the WP04 §08/WP32 citation added ahead of this decision)
 
 Available decisions:
 
@@ -114,8 +114,11 @@ Available decisions:
 ### Owner Decision Record
 
 ```text
-Decision: PENDING
-Reason: Awaiting explicit review and approval by the project owner.
+Decision: PASS
+Reason: WP00-WP04 product-definition package and this review record
+reviewed in full by the project owner and found complete, consistent
+with the accepted stack (ADR-0007) and Pre-Coding Brief, and free of
+blocking findings. Gate B remains valid and is not reopened.
 ```
 
 ## 9. Actions After PASS
