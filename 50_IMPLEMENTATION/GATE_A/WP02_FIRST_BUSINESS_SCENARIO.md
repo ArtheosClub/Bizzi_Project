@@ -11,6 +11,12 @@ Blocks: WP03
 
 Business Process Problem Analysis and Improvement Recommendation.
 
+**Playbook reference:** this scenario is the concrete instantiation of the
+first business scenario named in `docs/planning/PRE-CODING-BRIEF.md` §7
+("analyze a described business process, identify a problem, propose an
+improvement, and pass the recommendation to the owner for approval"),
+which maps to **PB032**.
+
 ## 2. Scenario Goal
 
 Prove that Bizzi can transform an unstructured operational concern into a governed, traceable recommendation and human decision without requiring the full future agent ecosystem.
