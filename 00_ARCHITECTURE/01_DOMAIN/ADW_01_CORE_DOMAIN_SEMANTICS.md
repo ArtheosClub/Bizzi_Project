@@ -1,8 +1,8 @@
 # ADW-01 — Core Domain Semantics
 
 **Document ID:** ARCH-DOMAIN-001  
-**Version:** 0.1-draft  
-**Status:** Workshop in progress  
+**Version:** 0.2-draft  
+**Status:** Workshop in progress — D07 active  
 **Architecture Gate:** Gate C v1.1  
 **Owner:** Project Owner  
 **Decision authority:** Project Owner  
@@ -15,13 +15,15 @@
 
 ADW-01 defines the stable semantic foundation required for Bizzi to represent, govern, coordinate, execute, and evaluate enterprise activity.
 
-The workshop is concerned with domain meaning rather than implementation structure. Its conclusions must remain valid independently of programming language, application framework, database, AI provider, interface, infrastructure, or deployment topology.
+The workshop is concerned with domain meaning rather than implementation structure. Its conclusions remain valid independently of programming language, application framework, database, AI provider, interface, infrastructure, or deployment topology.
+
+`Core Domain Semantics` is the sole approved name of ADW-01. The former term `Domain Core` is retired from the active architecture vocabulary.
 
 ---
 
 ## 2. Governing Question
 
-> What are the smallest stable concepts and ownership rules required to describe how an enterprise operates in Bizzi?
+> What are the smallest stable concepts, ownership rules, state semantics, and relationships required to describe how an enterprise operates in Bizzi?
 
 ---
 
@@ -39,8 +41,6 @@ Workspace
   ├── Decision
   └── Business Operation
 ```
-
-They answer different questions:
 
 | Concept | Governing question |
 |---|---|
@@ -68,7 +68,7 @@ Decision is the governance center of enterprise activity.
 
 Business Operation is the operational center of enterprise activity.
 
-Work Items organize work required by operations. Runtime Sessions represent execution contexts or attempts. Actions record performed operations. Results record produced outputs. Domain aggregates validate and own authoritative state. Domain Events record significant facts that have occurred.
+Work Items organize work required by operations. Runtime Sessions represent execution contexts or attempts. Actions record what was performed. Results record what execution produced. Domain aggregates validate and own authoritative state. Domain Events record significant facts that occurred.
 
 ---
 
@@ -93,7 +93,24 @@ This chain is semantic rather than a mandatory synchronous workflow. Low-risk or
 
 ---
 
-## 6. Approved Decisions
+## 6. Decision Status
+
+| Decision | Subject | Status |
+|---|---|---|
+| D01 | Primary Boundary | APPROVED |
+| D02 | Core Business Abstraction | APPROVED |
+| D03 | Work Model | APPROVED |
+| D04 | Task versus Execution | APPROVED |
+| D05 | Actor Model | APPROVED |
+| D06 | Decision and Business Operation Semantics | APPROVED — CLOSED |
+| D07 | State Semantics | IN WORKSHOP |
+| D08 | Aggregate Strategy | APPROVED |
+| D09 | Relationship Model | OPEN |
+| D10 | Deletion and Supersession | OPEN |
+
+---
+
+## 7. Approved Decisions Summary
 
 ### D01 — Primary Boundary
 
@@ -117,19 +134,20 @@ Actor is the stable operational identity of a human, agent, service, or external
 
 ### D06 — Decision and Business Operation Semantics
 
-**Status:** `APPROVED`  
+**Status:** `APPROVED — CLOSED`  
 **Approved by:** Project Owner  
-**Approval date:** 2026-07-21
+**Approval date:** 2026-07-21  
+**Closure date:** 2026-07-21
 
-> Decision and Business Operation are separate, first-class domain concepts within Bizzi.
+> Decision and Business Operation are separate, first-class Workspace-scoped domain concepts within Bizzi.
 >
-> Decision is the stable and auditable representation of a governed determination about what should or should not occur within an explicit Workspace, subject, context, authority, and set of conditions.
+> Decision is the stable and auditable representation of a governed determination about what should or should not occur within an explicit subject, context, authority, and set of conditions.
 >
 > Business Operation is the stable and traceable representation of a significant governed business action from intent and authorization through execution, validation, outcome evaluation, and closure.
 >
-> Decision defines an authoritative determination. Business Operation coordinates the realization of an intent or Decision. Work Item organizes required work. Runtime Session represents an execution attempt. Action records what was performed. Result records what execution produced. State Transition modifies authoritative aggregate state after domain validation. Domain Event records a significant fact that has occurred.
+> Decision defines an authoritative determination. Business Operation coordinates the realization of an intent or Decision. Work Item organizes required work. Runtime Session represents an execution attempt. Action records what was performed. Result records what execution produced. State Transition modifies authoritative aggregate state after domain validation. Domain Event records a significant fact that occurred.
 >
-> Business Operation is distinct from Decision, Work Item, Workflow, Runtime Session, Action, Result, and Domain Event.
+> Business Operation is distinct from Decision, Work Item, Workflow, Runtime Session, Action, Result, State Transition, and Domain Event.
 >
 > One Decision may govern zero, one, or multiple Business Operations. One Business Operation may depend on multiple Decisions.
 >
@@ -139,18 +157,15 @@ Actor is the stable operational identity of a human, agent, service, or external
 >
 > Compensation or reversal is represented as a new governed Business Operation linked to the original operation and does not erase or rewrite history.
 
-#### D06 consequences
+#### D06 closure conditions satisfied
 
-1. Decision and Business Operation become separate first-class Workspace-scoped domain concepts.
-2. Decision state, execution state, operational state, and business outcome state remain semantically distinct.
-3. Business Operation may coordinate multiple Work Items, Runtime Sessions, Actions, Results, Actors, Decisions, Evidence items, and Enterprise Objects through stable typed references.
-4. Technical success does not automatically establish business success.
-5. Only the owning aggregate or authorized domain process may commit authoritative state.
-6. AI recommendations are not authoritative Decisions unless accepted by an authorized Actor or permitted by explicit scoped delegation.
-7. Failed, partial, cancelled, suspended, reversed, compensated, and unknown outcomes must remain distinguishable.
-8. Concrete Business Operation types retain specialized schemas, lifecycle rules, authority requirements, and invariants.
-9. A universal unvalidated JSON operation model is prohibited as the authoritative domain representation.
-10. Detailed authority evaluation remains assigned to ADW-03; detailed runtime and tool semantics remain assigned to ADW-05; detailed operational lifecycle normalization remains coordinated with D07.
+1. `Decision + Business Operation` is recorded in the Domain Foundation.
+2. Decision and Business Operation are separately defined and separately owned.
+3. Their relationship to Work Item, Runtime Session, Action, Result, State Transition, and Domain Event is explicit.
+4. Technical success is separated from business success.
+5. History, reversal, and compensation principles are preserved.
+6. Later details are explicitly routed to D07, D09, D10, ADW-03, ADW-05, and ADW-07.
+7. The Decision Register and root Architecture Specification are synchronized.
 
 ### D08 — Aggregate Strategy
 
@@ -158,21 +173,114 @@ Work Item is a shared domain contract and coordination abstraction, not one univ
 
 ---
 
-## 7. Pending Decisions
+## 8. D07 — State Semantics
 
-| Decision | Subject | Status |
-|---|---|---|
-| D07 | Operational State | PENDING |
-| D09 | Relationship Model | OPEN |
-| D10 | Deletion and Supersession | OPEN |
+**Status:** `IN WORKSHOP`  
+**Opened by:** Project Owner  
+**Opening date:** 2026-07-21  
+**Decision class:** Class A — Constitutional
 
-D09 must now include typed relationships among Decision, Business Operation, Work Item, Enterprise Object, Actor, Runtime Session, Result, Evidence, and Domain Event.
+### 8.1 Problem
 
-D10 must preserve Decision and Business Operation history and define explicit cancellation, expiration, revocation, supersession, reversal, and compensation semantics.
+Bizzi now distinguishes Decision, Business Operation, Work Item, Runtime Session, Action, Result, State Transition, and Domain Event. The architecture must define which state is authoritative, who owns it, how transitions are validated, and how derived state differs from domain truth.
+
+Without D07, runtime success, operation progress, work completion, projections, and business-object state may be incorrectly collapsed into one status model.
+
+### 8.2 Governing question
+
+> How does Bizzi represent, own, validate, transition, observe, and reconstruct authoritative and derived state without allowing runtime, workflow, events, projections, or AI outputs to become an accidental source of truth?
+
+### 8.3 State domains to distinguish
+
+```text
+Authoritative Business Object State
+Decision State
+Business Operation State
+Work Item State
+Runtime Session State
+Action / Tool Invocation State
+Result Validation State
+Business Outcome State
+Projection / Read Model State
+Event Delivery State
+```
+
+These state domains may correlate, but no state transition in one domain automatically determines a transition in another unless an explicit domain rule authorizes it.
+
+### 8.4 Preliminary invariants
+
+1. Every authoritative state belongs to exactly one owning aggregate or explicitly defined domain authority.
+2. Only the owner or an authorized domain process may commit a state transition.
+3. A Command requests change; it does not prove change occurred.
+4. A Result reports output; it does not itself mutate authoritative state.
+5. Validation determines whether a Result may support a State Transition.
+6. A Domain Event records a committed significant fact; it is not a command or independent authority basis.
+7. A Projection, index, cache, search model, dashboard, or report is derived and rebuildable.
+8. Runtime Session state is not authoritative Work Item, Business Operation, Decision, or Enterprise Object state.
+9. Technical success does not imply accepted result, completed work, successful operation, or achieved business outcome.
+10. Transitions require an expected version or equivalent concurrency protection where competing changes are possible.
+11. Transition history and superseded state must remain auditable.
+12. Cross-aggregate consistency must use explicit application or domain coordination; hidden distributed mutation is prohibited.
+
+### 8.5 Candidate transition contract
+
+```text
+StateTransition {
+  transition_id
+  workspace_id
+  subject_reference
+  subject_type
+  from_state
+  to_state
+  requested_by_actor
+  effective_actor
+  authority_basis
+  reason
+  command_reference
+  decision_references
+  operation_reference
+  result_references
+  evidence_references
+  expected_version
+  committed_version
+  validation_outcome
+  committed_at
+  correlation_id
+  causation_id
+  idempotency_key
+}
+```
+
+This is a semantic contract, not a mandatory universal persistence table.
+
+### 8.6 Questions D07 must resolve
+
+1. Is `State Transition` a first-class domain record, an aggregate-owned value, or both depending on risk and type?
+2. What normalized top-level phases may be shared across Decision, Business Operation, Work Item, and Runtime Session without flattening specialized lifecycles?
+3. How are `status`, `phase`, `outcome`, `health`, and `progress` distinguished?
+4. Which transitions require Decision or approval, and which may follow policy authority?
+5. What consistency boundary governs aggregate state, audit, and event publication?
+6. How are optimistic concurrency, idempotency, retries, and duplicate transition requests handled?
+7. How are partial, suspended, expired, failed, cancelled, compensated, and unknown states represented?
+8. When may derived state be stale, and how is staleness made explicit?
+9. How is state reconstructed when events, audit, and current snapshots disagree?
+10. Which details belong to D10, ADW-05, ADW-07, and ADW-08 rather than D07?
+
+### 8.7 Recommended direction for workshop consideration
+
+- Aggregate-owned authoritative state.
+- Explicit transition requests and validated transition commits.
+- Separate `phase`, `status`, `outcome`, and `progress` semantics.
+- Append-oriented transition history for significant transitions.
+- Derived projections marked with source version and observation time.
+- Atomic persistence of aggregate mutation and outbox/audit intent within the selected consistency boundary.
+- No universal state machine for all domain types; shared normalized phases may coexist with specialized lifecycles.
+
+D07 is not yet approved. The next workshop step is to decide the authoritative-state model and the distinction between `phase`, `status`, `outcome`, and `progress`.
 
 ---
 
-## 8. Domain Ownership Rules
+## 9. Domain Ownership Rules
 
 - Enterprise Object owns specialized business state and invariants.
 - Actor owns operational identity and historical attribution.
@@ -181,12 +289,21 @@ D10 must preserve Decision and Business Operation history and define explicit ca
 - Business Operation owns operational objective, coordination history, execution trace, validation progress, completion criteria, and business outcome.
 - Runtime Session owns execution-attempt state and technical execution history.
 - Domain Event records a fact and is not the source of authoritative operational state.
+- Projection represents derived observation and is never the silent owner of domain truth.
 
 Business Operation coordinates but does not absorb foreign aggregates.
 
 ---
 
-## 9. Workshop Completion Criteria
+## 10. Remaining Decisions
+
+D09 must define typed relationships among Decision, Business Operation, Work Item, Enterprise Object, Actor, Runtime Session, Result, Evidence, State Transition, and Domain Event.
+
+D10 must preserve Decision and Business Operation history and define explicit cancellation, expiration, revocation, supersession, reversal, compensation, archival, and deletion semantics.
+
+---
+
+## 11. Workshop Completion Criteria
 
 ADW-01 is complete when:
 
@@ -195,12 +312,27 @@ ADW-01 is complete when:
 3. the root Architecture Specification references the final semantic model;
 4. the domain vocabulary contains no unresolved collisions;
 5. aggregate ownership and typed relationship rules are explicit;
-6. operational state, deletion, supersession, reversal, and compensation semantics are resolved;
+6. state, deletion, supersession, reversal, and compensation semantics are resolved;
 7. follow-up responsibilities are assigned to later ADWs without semantic gaps.
 
 ---
 
-## 10. Current Progress
+## 12. Architecture Stabilization Record
+
+The 2026-07-21 stabilization performed the following actions:
+
+- retired the active term `Domain Core`;
+- established `Core Domain Semantics` as the sole ADW-01 vocabulary;
+- designated `DOMAIN_FOUNDATION.md` as the constitutional semantic baseline;
+- designated this document as the sole ADW-01 workshop chapter;
+- designated `ADW_01_DECISION_REGISTER.md` as the authoritative workshop decision log;
+- closed D06 after synchronized recording;
+- opened D07 — State Semantics;
+- removed the competing `DOMAIN_CORE.md` document.
+
+---
+
+## 13. Current Progress
 
 ```text
 D01: APPROVED
@@ -208,8 +340,8 @@ D02: APPROVED
 D03: APPROVED
 D04: APPROVED
 D05: APPROVED
-D06: APPROVED
-D07: PENDING
+D06: APPROVED — CLOSED
+D07: IN WORKSHOP
 D08: APPROVED
 D09: OPEN
 D10: OPEN
