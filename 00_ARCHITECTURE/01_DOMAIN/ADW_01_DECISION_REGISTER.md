@@ -1,7 +1,7 @@
 # ADW-01 — Decision Register
 
 **Document ID:** ARCH-DOMAIN-DECISIONS-001  
-**Version:** 0.3-draft  
+**Version:** 0.4-draft  
 **Status:** Workshop in progress  
 **Architecture Gate:** Gate C v1.1  
 **Workshop:** ADW-01 — Domain Core  
@@ -29,7 +29,7 @@ Each decision is recorded independently so the workshop history remains explicit
 | D05 | Actor Model | PENDING |
 | D06 | Decision Semantics | PENDING |
 | D07 | Operational State | PENDING |
-| D08 | Aggregate Strategy | OPEN |
+| D08 | Aggregate Strategy | APPROVED |
 | D09 | Relationship Model | OPEN |
 | D10 | Deletion and Supersession | OPEN |
 
@@ -165,7 +165,43 @@ D04 may be changed only by an explicit architecture decision defining migration 
 
 ---
 
-## 7. Workshop Progress
+## 7. D08 — Aggregate Strategy
+
+**Status:** `APPROVED`  
+**Approved by:** Project Owner  
+**Approval date:** 2026-07-21
+
+### Decision
+
+> Work Item is a shared domain contract and coordination abstraction, not one universal aggregate root.
+>
+> Task, Case, and Project are separate aggregate roots because they own materially different lifecycle rules, invariants, state, and outcomes.
+>
+> Each concrete Work Item aggregate must implement the common Work Item contract for identity, Workspace ownership, objective, status, ownership, priority, lifecycle metadata, relationships, and common coordination operations.
+>
+> Common orchestration mechanisms may operate through typed Work Item references and shared application services.
+>
+> No Work Item aggregate may directly own another complete Work Item aggregate. Relationships across Work Items use stable typed references.
+>
+> A shared Work Item index or read model may be used for search, coordination, and reporting, but it is not the authoritative source of specialized aggregate state.
+
+### Consequences
+
+1. Task, Case, and Project retain independent aggregate boundaries and authoritative state.
+2. The common Work Item contract does not require ORM inheritance, a universal database table, or a universal persistence schema.
+3. Specialized invariants remain inside the concrete aggregate that owns them.
+4. Project and Case aggregates reference related Work Items by stable typed identifiers rather than embedding complete foreign aggregates.
+5. Common assignment, prioritization, escalation, search, reporting, and orchestration services may operate through typed Work Item references.
+6. A common Work Item index is a projection and may be rebuilt from authoritative aggregate state.
+7. New Work Item types may be added by implementing the common contract without modifying existing specialized aggregates.
+
+### Supersession rule
+
+D08 may be changed only by an explicit architecture decision defining aggregate ownership, lifecycle migration, reference compatibility, persistence impact, and authoritative-state transitions.
+
+---
+
+## 8. Workshop Progress
 
 ```text
 D01: APPROVED
@@ -173,6 +209,7 @@ D02: APPROVED
 D03: APPROVED
 D04: APPROVED
 D05-D07: PENDING
-D08-D10: OPEN
+D08: APPROVED
+D09-D10: OPEN
 ADW-01: IN PROGRESS
 ```
