@@ -1,7 +1,7 @@
 # ADW-01 — Decision Register
 
 **Document ID:** ARCH-DOMAIN-DECISIONS-001  
-**Version:** 0.4-draft  
+**Version:** 0.5-draft  
 **Status:** Workshop in progress  
 **Architecture Gate:** Gate C v1.1  
 **Workshop:** ADW-01 — Domain Core  
@@ -26,7 +26,7 @@ Each decision is recorded independently so the workshop history remains explicit
 | D02 | Core Business Abstraction | APPROVED |
 | D03 | Work Model | APPROVED |
 | D04 | Task versus Execution | APPROVED |
-| D05 | Actor Model | PENDING |
+| D05 | Actor Model | APPROVED |
 | D06 | Decision Semantics | PENDING |
 | D07 | Operational State | PENDING |
 | D08 | Aggregate Strategy | APPROVED |
@@ -165,7 +165,52 @@ D04 may be changed only by an explicit architecture decision defining migration 
 
 ---
 
-## 7. D08 — Aggregate Strategy
+## 7. D05 — Actor Model
+
+**Status:** `APPROVED`  
+**Approved by:** Project Owner  
+**Approval date:** 2026-07-21
+
+### Decision
+
+> Actor is the stable identity of a human, agent, service, or external participant capable of initiating, performing, approving, observing, or being accountable for governed actions in the Bizzi Platform.
+>
+> Human Actor, Agent Actor, Service Actor, and External Actor are explicit Actor types. Actor type must not be inferred only from credentials, roles, or display names.
+>
+> Actor is distinct from User Account, Role, Agent Definition, and Runtime Session.
+>
+> Roles and capabilities are assigned to Actors within an explicit Workspace and scope. An Actor may hold multiple contextual roles.
+>
+> Every governed action must identify the effective Actor and, where different, the initiating, delegating, approving, and technical Actors.
+>
+> Delegation must be explicit, scoped, time-bounded where appropriate, revocable, auditable, and incapable of granting authority exceeding the delegator's effective authority.
+>
+> Agent and Service Actors must use distinct identities. Shared generic system identities are prohibited for authoritative business actions.
+>
+> Actor suspension, retirement, revocation, or compromise must not erase historical attribution or audit records.
+
+### Consequences
+
+1. Human, agent, service, and external participants use one shared Actor abstraction while retaining explicit Actor types.
+2. Authentication identity, operational identity, assigned role, agent definition, and execution session remain separate concepts.
+3. A User Account authenticates access but is not itself the authoritative business Actor.
+4. An Agent Definition may be instantiated as different Agent Actors in different Workspaces without merging their identity, authority, memory, or audit history.
+5. Every governed action records the effective Actor and preserves the relevant initiation, delegation, approval, and technical-execution chain.
+6. Role and capability assignments are contextual and must include Workspace and scope rather than becoming unrestricted global authority.
+7. Delegated authority must be a subset of the delegator's effective authority and must be constrained by purpose, scope, validity, policy, and revocation state.
+8. Execution responsibility, decision accountability, and business ownership may belong to different Actors and must not be collapsed into one attribution field.
+9. Suspended, retired, revoked, or compromised Actors remain addressable for historical and audit purposes.
+10. Generic identities such as `system` must not be used as the authoritative Actor for independent agents, services, connectors, or automations.
+11. Detailed authentication, membership, role-assignment, capability-evaluation, and authorization semantics remain assigned to ADW-02 and ADW-03.
+12. Detailed runtime actor participation, coordinated execution, and tool-use semantics remain assigned to ADW-05.
+
+### Supersession rule
+
+D05 may be changed only by an explicit architecture decision defining identity migration, attribution compatibility, delegation impact, authorization consequences, audit preservation, and active-credential revocation.
+
+---
+
+## 8. D08 — Aggregate Strategy
 
 **Status:** `APPROVED`  
 **Approved by:** Project Owner  
@@ -201,14 +246,15 @@ D08 may be changed only by an explicit architecture decision defining aggregate 
 
 ---
 
-## 8. Workshop Progress
+## 9. Workshop Progress
 
 ```text
 D01: APPROVED
 D02: APPROVED
 D03: APPROVED
 D04: APPROVED
-D05-D07: PENDING
+D05: APPROVED
+D06-D07: PENDING
 D08: APPROVED
 D09-D10: OPEN
 ADW-01: IN PROGRESS
