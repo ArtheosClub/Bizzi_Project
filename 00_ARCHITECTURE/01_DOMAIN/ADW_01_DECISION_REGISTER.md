@@ -1,7 +1,7 @@
 # ADW-01 — Decision Register
 
 **Document ID:** ARCH-DOMAIN-DECISIONS-001  
-**Version:** 0.1-draft  
+**Version:** 0.2-draft  
 **Status:** Workshop in progress  
 **Architecture Gate:** Gate C v1.1  
 **Workshop:** ADW-01 — Domain Core  
@@ -23,8 +23,8 @@ Each decision is recorded independently so the workshop history remains explicit
 | Decision | Subject | Status |
 |---|---|---|
 | D01 | Primary Boundary | APPROVED |
-| D02 | Core Business Abstraction | PENDING |
-| D03 | Work Model | PENDING |
+| D02 | Core Business Abstraction | APPROVED |
+| D03 | Work Model | APPROVED |
 | D04 | Task versus Execution | PENDING |
 | D05 | Actor Model | PENDING |
 | D06 | Decision Semantics | PENDING |
@@ -67,11 +67,74 @@ D01 may be changed only by an explicit architecture decision approved by the Pro
 
 ---
 
-## 4. Workshop Progress
+## 4. D02 — Core Business Abstraction
+
+**Status:** `APPROVED`  
+**Approved by:** Project Owner  
+**Approval date:** 2026-07-21
+
+### Decision
+
+> Enterprise Object is the stable platform abstraction for a durable, workspace-owned, business-relevant thing with identity, lifecycle, ownership, relationships, and governance requirements.
+>
+> Enterprise Object defines a shared minimum contract but does not replace specialized domain entities, aggregates, schemas, or invariants.
+>
+> Concrete Enterprise Object types must retain explicit typed contracts.
+>
+> A universal unvalidated JSON-based Enterprise Object model is prohibited as the authoritative domain representation.
+
+### Consequences
+
+1. Durable business entities share a minimum platform contract for identity, Workspace ownership, lifecycle, ownership metadata, versioning, classification, and relationships.
+2. Customer, Supplier, Contract, Invoice, Shipment, Asset, and other concrete types retain their own schemas, behavior, and invariants.
+3. Work Items, Decisions, Evidence, Runtime Sessions, events, and audit records may reference Enterprise Objects through stable typed references.
+4. Enterprise Object is not required to be implemented as one universal table or one generic aggregate.
+5. New Enterprise Object types may be introduced without changing core coordination mechanisms, provided they satisfy the shared contract.
+6. Task, Decision, Evidence, Runtime Session, Domain Event, and Audit Record are not automatically classified as Enterprise Objects.
+
+### Supersession rule
+
+D02 may be changed only by an explicit architecture decision that defines compatibility, data migration, validation, and API impact.
+
+---
+
+## 5. D03 — Work Model
+
+**Status:** `APPROVED`  
+**Approved by:** Project Owner  
+**Approval date:** 2026-07-21
+
+### Decision
+
+> Work Item is the abstract representation of governed business work.
+>
+> Task, Case, and Project are specialized Work Item types that share the common operational contract while retaining their own lifecycle rules and business invariants.
+>
+> Orchestration, assignment, prioritization, approval, escalation, observation, and execution mechanisms operate against the Work Item abstraction where the shared contract is sufficient.
+
+### Consequences
+
+1. Every Work Item has a common minimum contract including identity, Workspace ownership, type, objective, status, ownership, priority, lifecycle metadata, and relationships.
+2. Task, Case, and Project are not reduced to one identical behavior model.
+3. New Work Item types may be added without redesigning common orchestration mechanisms.
+4. A Work Item may reference one or more Enterprise Objects through explicit typed relationships.
+5. An Enterprise Object may participate in multiple concurrent Work Items, subject to domain policies and authorization.
+6. Specialized lifecycle behavior must not be hidden inside unvalidated generic fields.
+7. Whether Task, Case, and Project are one aggregate hierarchy or separate aggregate roots remains a separate D08 decision.
+
+### Supersession rule
+
+D03 may be changed only by an explicit architecture decision defining migration of work types, lifecycle behavior, references, authorization, and orchestration contracts.
+
+---
+
+## 6. Workshop Progress
 
 ```text
 D01: APPROVED
-D02-D07: PENDING
+D02: APPROVED
+D03: APPROVED
+D04-D07: PENDING
 D08-D10: OPEN
 ADW-01: IN PROGRESS
 ```
