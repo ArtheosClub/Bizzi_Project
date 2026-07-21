@@ -1,7 +1,7 @@
 # ADW-01 — Decision Register
 
 **Document ID:** ARCH-DOMAIN-DECISIONS-001  
-**Version:** 0.2-draft  
+**Version:** 0.3-draft  
 **Status:** Workshop in progress  
 **Architecture Gate:** Gate C v1.1  
 **Workshop:** ADW-01 — Domain Core  
@@ -25,7 +25,7 @@ Each decision is recorded independently so the workshop history remains explicit
 | D01 | Primary Boundary | APPROVED |
 | D02 | Core Business Abstraction | APPROVED |
 | D03 | Work Model | APPROVED |
-| D04 | Task versus Execution | PENDING |
+| D04 | Task versus Execution | APPROVED |
 | D05 | Actor Model | PENDING |
 | D06 | Decision Semantics | PENDING |
 | D07 | Operational State | PENDING |
@@ -128,13 +128,51 @@ D03 may be changed only by an explicit architecture decision defining migration 
 
 ---
 
-## 6. Workshop Progress
+## 6. D04 — Task versus Execution
+
+**Status:** `APPROVED`  
+**Approved by:** Project Owner  
+**Approval date:** 2026-07-21
+
+### Decision
+
+> Task represents governed business work and owns its business lifecycle, assignment, objective, completion criteria, and accepted outcome.
+>
+> Runtime Session represents one governed execution context or attempt performed by one Actor or a coordinated set of Actors.
+>
+> Task and Runtime Session are separate aggregates with independent identities and lifecycle state.
+>
+> One Task may have zero, one, or multiple Runtime Sessions.
+>
+> A successful Runtime Session does not automatically complete a Task. It produces or proposes Results that the Task domain process evaluates against completion, approval, policy, and authority requirements.
+>
+> Runtime Session state is never the authoritative source of Task state.
+
+### Consequences
+
+1. A Task may be completed manually without creating a Runtime Session.
+2. Multiple execution attempts may be associated with one Task without overwriting business-work history.
+3. Runtime failures, retries, timeouts, cancellations, and tool errors do not directly determine the business status of the Task.
+4. A successful Runtime Session may move a Task to review rather than completion when approval or acceptance is required.
+5. Runtime Session owns execution-specific state, including initiating and effective Actors, actions, tool invocations, attempts, failures, and output references.
+6. Task owns objective, assignment, deadline, completion criteria, accepted Result, and authoritative business status.
+7. Runtime Sessions may serve a Task or another explicitly authorized execution context; detailed cardinality and standalone-operation rules are deferred to ADW-05.
+8. Retry, fallback, model routing, human intervention, and execution recovery must be designed around Runtime Session rather than Task state.
+
+### Supersession rule
+
+D04 may be changed only by an explicit architecture decision defining migration of Task state, execution history, result acceptance, retry behavior, and audit semantics.
+
+---
+
+## 7. Workshop Progress
 
 ```text
 D01: APPROVED
 D02: APPROVED
 D03: APPROVED
-D04-D07: PENDING
+D04: APPROVED
+D05-D07: PENDING
 D08-D10: OPEN
 ADW-01: IN PROGRESS
 ```
