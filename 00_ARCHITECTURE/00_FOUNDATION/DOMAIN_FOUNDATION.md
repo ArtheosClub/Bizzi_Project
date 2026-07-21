@@ -1,22 +1,23 @@
 # Bizzi Domain Foundation
 
 **Document ID:** ARCH-FOUNDATION-DOMAIN-001  
-**Version:** 0.1-draft  
-**Status:** Foundation draft  
+**Version:** 0.2-draft  
+**Status:** Stabilized foundation baseline  
 **Architecture Gate:** Gate C v1.1  
 **Owner:** Project Owner  
 **Decision authority:** Project Owner  
-**Related workshop:** ADW-01 — Core Domain Semantics
+**Related workshop:** `ADW-01 — Core Domain Semantics`  
+**Authoritative workshop path:** `00_ARCHITECTURE/01_DOMAIN/ADW_01_CORE_DOMAIN_SEMANTICS.md`
 
 ---
 
 ## 1. Purpose
 
-This document defines the stable conceptual foundation of the Bizzi Platform before the detailed Architecture Decision Workshops continue.
+This document defines the stable conceptual foundation of the Bizzi Platform.
 
 Bizzi is an enterprise operating platform designed to model, govern, execute, observe, and improve business activity performed by human, agent, service, and external Actors under explicit organizational authority.
 
-This foundation is semantic rather than technological. It must remain valid independently of programming language, framework, database, AI provider, interface, deployment topology, or integration mechanism.
+This foundation is semantic rather than technological. It remains valid independently of programming language, framework, database, AI provider, interface, deployment topology, or integration mechanism.
 
 ---
 
@@ -42,23 +43,23 @@ Enterprise may group multiple Workspaces, but it is not required as the MVP oper
 
 Within a Workspace, Bizzi recognizes five fundamental domain concepts.
 
+| Concept | Governing question | Authoritative concern |
+|---|---|---|
+| Enterprise Object | What does the enterprise manage? | Specialized business state and invariants |
+| Actor | Who participates or acts? | Operational identity and attribution |
+| Work Item | What work must be organized? | Work coordination and accepted work outcome |
+| Decision | What has been authoritatively determined? | Governance determination and authority basis |
+| Business Operation | How is an authorized intent realized? | End-to-end operational objective and business outcome |
+
 ### 4.1 Enterprise Object
 
-Enterprise Object represents a durable business-relevant thing with identity, lifecycle, ownership, relationships, state, and governance requirements.
+Enterprise Object is the shared platform abstraction for a durable business-relevant thing with identity, lifecycle, ownership, relationships, state, and governance requirements.
 
-It answers:
-
-> What does the enterprise manage?
-
-Enterprise Object is a shared platform contract, not one universal table, generic JSON document, or replacement for specialized domain aggregates.
+It is not one universal table, generic JSON document, or replacement for specialized domain aggregates.
 
 ### 4.2 Actor
 
 Actor is the stable identity of a human, agent, service, or external participant capable of initiating, performing, approving, observing, or being accountable for governed activity.
-
-It answers:
-
-> Who participates or acts?
 
 Actor is distinct from User Account, Role, Agent Definition, credential, and Runtime Session.
 
@@ -66,19 +67,11 @@ Actor is distinct from User Account, Role, Agent Definition, credential, and Run
 
 Work Item is the shared representation of governed business work requiring organization, coordination, observation, or completion.
 
-It answers:
-
-> What work must be organized?
-
 Task, Case, and Project are specialized Work Item types and retain their own aggregate boundaries, lifecycle rules, and invariants.
 
 ### 4.4 Decision
 
 Decision is the stable and auditable representation of a governed determination about what should or should not occur within an explicit Workspace, subject, context, authority, and set of conditions.
-
-It answers:
-
-> What has been authoritatively determined?
 
 Decision is distinct from recommendation, command, execution, action, result, state transition, and event.
 
@@ -86,15 +79,11 @@ Decision is distinct from recommendation, command, execution, action, result, st
 
 Business Operation is the stable and traceable representation of a significant governed business action from intent and authorization through execution, validation, outcome evaluation, and closure.
 
-It answers:
-
-> How does the enterprise realize an authorized intent or Decision?
-
-Business Operation is distinct from Decision, Work Item, Workflow, Runtime Session, Action, Result, and Domain Event.
+Business Operation is distinct from Decision, Work Item, Workflow, Runtime Session, Action, Result, State Transition, and Domain Event.
 
 ---
 
-## 5. Core Construction
+## 5. Primary Construction
 
 Bizzi adopts the following primary construction:
 
@@ -108,7 +97,7 @@ Decision is the governance center: it defines what should or should not occur.
 
 Business Operation is the operational center: it coordinates the realization of an authorized intent or Decision and preserves the end-to-end business history.
 
-Work Item is the work-coordination mechanism. Runtime Session is an execution context or attempt. Neither replaces Decision or Business Operation.
+Work Item organizes work. Runtime Session represents an execution context or attempt. Neither replaces Decision or Business Operation.
 
 ---
 
@@ -124,49 +113,19 @@ Intent
   -> Actions
   -> Results
   -> Domain Validation
-  -> State Transitions
-  -> Domain Events
+  -> State Transition
+  -> Domain Event
   -> Business Outcome Evaluation
   -> Learning
 ```
 
-Not every low-risk technical action requires a separately persisted Decision. Every governed action must nevertheless have an explicit and auditable authority basis derived from a Decision, policy, role, capability, delegation, or approved governance rule.
+This chain is semantic rather than a mandatory synchronous workflow.
+
+Not every low-risk action requires a separately persisted Decision. Every governed action must nevertheless have an explicit and auditable authority basis derived from a Decision, policy, role, capability, delegation, or approved governance rule.
 
 ---
 
-## 7. Relationship Model
-
-```text
-Actor
-  makes, authorizes, executes, approves, or observes
-Decision and Business Operation
-
-Decision
-  governs, authorizes, rejects, redirects, suspends, or accepts
-Business Operation
-
-Business Operation
-  coordinates
-Actors, Decisions, Work Items, Runtime Sessions, Actions, Results, and Evidence
-
-Business Operation
-  references and affects
-Enterprise Objects
-
-Domain Aggregate
-  owns and validates
-Authoritative State
-```
-
-One Decision may govern zero, one, or multiple Business Operations. One Business Operation may depend on multiple Decisions.
-
-One Business Operation may coordinate multiple Work Items and Runtime Sessions. One Work Item may support multiple Business Operations where the domain permits it.
-
-All cross-aggregate relationships use stable typed references unless an explicit aggregate design decision establishes ownership.
-
----
-
-## 8. Domain Ownership
+## 7. Domain Ownership
 
 Each domain concept owns only its authoritative truth.
 
@@ -177,74 +136,45 @@ Each domain concept owns only its authoritative truth.
 - Business Operation owns operational objective, coordination history, execution trace, validation progress, and business outcome.
 - Runtime Session owns execution-attempt state and technical execution history.
 
-Business Operation is not a universal super-aggregate. It coordinates other concepts through contracts and references but does not absorb their authoritative state.
+Business Operation is not a universal super-aggregate. It coordinates other concepts through contracts and stable typed references but does not absorb their authoritative state.
 
-Only the owning aggregate or authorized domain process may commit an authoritative state transition.
+Only the owning aggregate or an explicitly authorized domain process may commit an authoritative state transition.
+
+---
+
+## 8. State Foundation
+
+State semantics are governed by the following preliminary rules pending completion of D07:
+
+1. Authoritative State belongs to exactly one owning aggregate or explicitly defined domain authority.
+2. Execution State, Work State, Decision State, Operation State, and Business Object State are distinct state domains.
+3. A Result is not itself an authoritative State Transition.
+4. A Domain Event records that a significant fact occurred; it is not a command and does not independently authorize mutation.
+5. A Projection or read model is derived and rebuildable; it is not the authoritative source of specialized aggregate state.
+6. State transitions must be validated against ownership, invariants, authority, expected version, and applicable policy.
+7. Technical success does not imply business-state success.
+
+D07 — State Semantics will finalize the state model, transition contract, consistency boundaries, projections, concurrency, and terminal-state rules.
 
 ---
 
 ## 9. Architectural Laws
 
-### Law 1 — Authority Basis
-
-No significant Business Operation exists without an explicit and auditable authority basis.
-
-### Law 2 — State Ownership
-
-Only the owning aggregate or authorized domain process may change authoritative state.
-
-### Law 3 — Governance and Execution Are Separate
-
-Decision establishes what should occur. Execution attempts to realize it. Neither may be inferred solely from the other.
-
-### Law 4 — Work Coordination Is Not Governance
-
-A Task, Case, Project, Workflow, or Runtime Session does not replace Decision or authority evaluation.
-
-### Law 5 — Technical Success Is Not Business Success
-
-A successful Action or Runtime Session does not automatically establish completion, acceptance, or the intended business outcome.
-
-### Law 6 — Historical Truth Is Preserved
-
-Decisions, Business Operations, attribution, outcomes, failures, reversals, and compensation history are not erased or rewritten.
-
-### Law 7 — Compensation Is Explicit
-
-Compensation or reversal is represented as a new governed Business Operation linked to the original operation.
-
-### Law 8 — Typed Contracts
-
-Fundamental abstractions may share platform contracts, but specialized domain types retain explicit schemas, lifecycle rules, authority requirements, and invariants.
-
-### Law 9 — Observable Operations
-
-Significant Business Operations must be traceable from intent and authority through execution, validation, state effects, and outcome.
-
-### Law 10 — AI Does Not Imply Authority
-
-AI-generated recommendations are not authoritative Decisions unless accepted by an authorized Actor or permitted by an explicit scoped delegation.
+1. **Authority Basis:** No significant Business Operation exists without an explicit and auditable authority basis.
+2. **State Ownership:** Only the owning aggregate or authorized domain process may change authoritative state.
+3. **Governance and Execution Are Separate:** Decision establishes what should occur; execution attempts to realize it.
+4. **Work Coordination Is Not Governance:** Task, Case, Project, Workflow, and Runtime Session do not replace Decision.
+5. **Technical Success Is Not Business Success:** Successful execution does not automatically establish completion or outcome.
+6. **Historical Truth Is Preserved:** Decisions, Operations, attribution, outcomes, failures, reversals, and compensation history are not erased.
+7. **Compensation Is Explicit:** Compensation or reversal is a new governed Business Operation linked to the original.
+8. **Typed Contracts:** Shared abstractions do not eliminate specialized schemas, lifecycle rules, authority requirements, or invariants.
+9. **Observable Operations:** Significant Business Operations are traceable from intent and authority through execution, validation, state effects, and outcome.
+10. **AI Does Not Imply Authority:** AI recommendations become authoritative only through explicit authority or scoped delegation.
+11. **Derived State Is Not Authoritative State:** Projections, indexes, caches, and search models never silently become the owner of domain truth.
 
 ---
 
-## 10. What Bizzi Is Not
-
-Bizzi is not defined as any one of the following:
-
-- a task manager;
-- a workflow engine;
-- a BPM suite;
-- an ERP or CRM;
-- a document management system;
-- an AI chat interface;
-- an agent framework;
-- an event store.
-
-Bizzi may contain, integrate, or expose these capabilities, but none of them alone defines the platform.
-
----
-
-## 11. Architectural Layers
+## 10. Architectural Layers
 
 ```text
 Enterprise Strategy and Objectives
@@ -256,7 +186,15 @@ Enterprise Strategy and Objectives
   -> Infrastructure
 ```
 
-Knowledge, Evidence, Audit, Provenance, Risk, Compliance, and Eventing operate across these layers while respecting Workspace boundaries and domain ownership.
+Knowledge, Evidence, Audit, Provenance, Risk, Compliance, State Management, and Eventing operate across these layers while respecting Workspace boundaries and domain ownership.
+
+---
+
+## 11. What Bizzi Is Not
+
+Bizzi is not defined as a task manager, workflow engine, BPM suite, ERP, CRM, document management system, AI chat interface, agent framework, or event store.
+
+Bizzi may contain, integrate, or expose these capabilities, but none of them alone defines the platform.
 
 ---
 
@@ -264,4 +202,14 @@ Knowledge, Evidence, Audit, Provenance, Risk, Compliance, and Eventing operate a
 
 This foundation may be changed only through an explicit architecture decision approved by the Project Owner.
 
-Any change must describe semantic compatibility, affected ADW decisions, aggregate ownership, authority implications, data and history migration, API impact, event compatibility, and audit preservation.
+Any change must describe semantic compatibility, affected ADW decisions, aggregate ownership, authority implications, state and history migration, API impact, event compatibility, and audit preservation.
+
+---
+
+## 13. Stabilization Record
+
+| Date | Decision | Result |
+|---|---|---|
+| 2026-07-21 | Architecture Stabilization | `Domain Core` terminology retired; `Core Domain Semantics` established as the single ADW-01 vocabulary. |
+| 2026-07-21 | D06 closure | `Decision + Business Operation` approved as the primary construction. |
+| 2026-07-21 | D07 initiation | `State Semantics` opened as the final major foundational decision before ADW-02. |
