@@ -1,8 +1,8 @@
 # Bizzi Platform Architecture Specification
 
 **Document ID:** ARCH-SPEC-001  
-**Version:** 0.2-draft  
-**Status:** Architecture Decision Workshop baseline — ADW-01 in progress  
+**Version:** 0.3-draft  
+**Status:** Architecture Decision Workshop baseline — ADW-01 in progress; D07 closed  
 **Architecture Gate:** Gate C v1.1  
 **Owner:** Project Owner  
 **Maintainers:** Chief Architect, Architecture Decision Workshop participants  
@@ -56,19 +56,18 @@ When architecture artifacts conflict, the following order applies:
 3. `00_ARCHITECTURE/00_FOUNDATION/DOMAIN_FOUNDATION.md` for constitutional domain semantics;
 4. approved Architecture Decision Records;
 5. approved ADW chapter specifications;
-6. ADW Decision Registers for the exact recorded workshop decisions;
+6. ADW Decision Registers for exact recorded workshop decisions;
 7. security, domain, runtime, persistence, and platform contracts derived from the specification;
 8. C4 diagrams and other architecture views;
 9. implementation plans and work packages;
 10. code comments, examples, drafts, and historical documents.
-
-A lower-level artifact must not silently override a higher-level artifact. Conflicts must be recorded and resolved through the architecture decision process.
 
 For ADW-01 specifically:
 
 ```text
 DOMAIN_FOUNDATION.md
   -> ADW_01_CORE_DOMAIN_SEMANTICS.md
+  -> D07_STATE_SEMANTICS.md and other approved constitutional decisions
   -> ADW_01_DECISION_REGISTER.md
   -> downstream contracts and implementation
 ```
@@ -108,59 +107,54 @@ Business Operation coordinates but does not become a universal super-aggregate.
 ## 5. Architecture Principles
 
 ### AP-01. Governed Outcomes First
-
 Business objectives, Decisions, Business Operations, and validated outcomes are primary. Workflows, agents, tools, and infrastructure support them.
 
 ### AP-02. Explicit Ownership
-
 Every mutable authoritative state has one owning aggregate or explicitly defined domain authority.
 
 ### AP-03. Workspace Isolation by Default
-
 Cross-workspace access is explicit, authorized, auditable, and exceptional.
 
 ### AP-04. Actor Context Is Authoritative
-
 Identity, Workspace, role, delegation, and execution origin are resolved from trusted context rather than untrusted identifiers.
 
 ### AP-05. Governance and Execution Are Separate
-
 Decision establishes what should occur. Business Operation coordinates realization. Runtime performs attempts. None may be inferred solely from another.
 
 ### AP-06. Technical Success Is Not Business Success
-
 Successful execution does not automatically establish accepted Result, completed Work Item, completed Business Operation, or achieved business outcome.
 
 ### AP-07. State Ownership
-
 Only the owning aggregate or explicitly authorized domain process may commit authoritative State Transitions.
 
 ### AP-08. Derived State Is Not Domain Truth
+Projections, indexes, caches, dashboards, search models, events, audit records, analytics, and AI interpretations do not silently become authoritative state.
 
-Projections, indexes, caches, dashboards, search models, events, and audit records do not silently become the authoritative owner of specialized state.
+### AP-09. Orthogonal State Dimensions
+Phase, Status, Outcome, Progress, and Health represent separate semantic dimensions and must not be collapsed into one universal authoritative field.
 
-### AP-09. Auditable by Design
+### AP-10. Versioned and Idempotent Change
+Competing state changes require expected-version or equivalent conflict protection. Repeated requests must produce at most one authoritative business effect.
 
+### AP-11. Reliable Side Effects
+Aggregate mutation and durable audit/publication intent use an explicit consistency boundary. Loss of accountability-critical effects is prohibited.
+
+### AP-12. Events Follow Commit
+Domain Events record committed significant facts. They do not independently authorize or mutate authoritative state.
+
+### AP-13. Reconstructable Truth
+Recovery and reconstruction prefer owning aggregate state and committed transition history over events, projections, reports, caches, analytics, or AI interpretations.
+
+### AP-14. Auditable by Design
 Significant Decisions, Business Operations, State Transitions, policy outcomes, attribution, and external effects are reconstructable.
 
-### AP-10. Provider Independence
-
+### AP-15. Provider Independence
 Domain contracts remain independent of specific AI providers, models, databases, frameworks, or integrations unless an approved ADR permits coupling.
 
-### AP-11. Versioned Behaviour
+### AP-16. Historical Truth Preservation
+Cancellation, reversal, compensation, supersession, and correction preserve prior Decisions, Operations, attribution, state versions, and outcomes.
 
-Agent definitions, policies, prompts, schemas, APIs, Decisions, transition contracts, and other behaviour-affecting artifacts are versioned.
-
-### AP-12. Reliable Side Effects
-
-Aggregate mutation, audit intent, and event publication use an explicit consistency model. Loss of accountability-critical effects is prohibited.
-
-### AP-13. Historical Truth Preservation
-
-Cancellation, reversal, compensation, supersession, and correction preserve prior Decisions, Operations, attribution, and outcomes.
-
-### AP-14. Evolution Through Decisions
-
+### AP-17. Evolution Through Decisions
 Material changes require impact analysis, explicit approval, and synchronized updates to affected sources of truth.
 
 ---
@@ -179,6 +173,7 @@ Application Layer
   - Business Operation orchestration
   - Work coordination
   - Human approval coordination
+  - Explicit cross-aggregate transition coordination
 
 Domain Layer
   - Enterprise Objects
@@ -186,7 +181,7 @@ Domain Layer
   - Work Items
   - Decisions
   - Business Operations
-  - State ownership and invariants
+  - State ownership, dimensions, invariants, and transitions
 
 Platform Services
   - Identity and ActorContext
@@ -200,6 +195,7 @@ Persistence and Infrastructure
   - Repository implementations
   - Transactions and outbox
   - Databases, queues, storage, caches
+  - Projection rebuild and recovery mechanisms
   - Observability and operational controls
 ```
 
@@ -234,40 +230,65 @@ Outer layers depend on stable inner contracts. Domain logic remains independent 
 | D04 | Task versus Execution | APPROVED |
 | D05 | Actor Model | APPROVED |
 | D06 | Decision and Business Operation Semantics | APPROVED — CLOSED |
-| D07 | State Semantics | IN WORKSHOP |
+| D07 | State Semantics | APPROVED — CLOSED |
 | D08 | Aggregate Strategy | APPROVED |
-| D09 | Relationship Model | OPEN |
+| D09 | Relationship Model | OPEN — NEXT |
 | D10 | Deletion and Supersession | OPEN |
 
 D06 establishes `Decision + Business Operation` as the primary domain construction.
 
-D07 is the final major foundational decision before ADW-02. It must define authoritative state, transition semantics, state-domain separation, projection status, concurrency, and consistency boundaries without creating one universal state machine.
+D07 establishes the binding Bizzi State Constitution. Its canonical specification is `00_ARCHITECTURE/01_DOMAIN/D07_STATE_SEMANTICS.md`.
+
+D09 is the next ADW-01 decision and must define typed relationships without violating D07 ownership, transition, consistency, or reconstruction rules.
 
 ---
 
-## 9. Architecture Invariants
+## 9. Binding D07 State Constitution
+
+The following rules are binding for all downstream architecture:
+
+1. Authoritative state belongs to exactly one owning aggregate or explicitly defined domain authority.
+2. Execution, workflow, events, projections, reports, caches, analytics, and AI outputs do not own business truth.
+3. State Transition is an aggregate-owned, validated, and committed change from one authoritative state version to another.
+4. Significant transitions additionally produce durable immutable transition records.
+5. Phase, Status, Outcome, Progress, and Health are separate semantic dimensions.
+6. Authority to request, approve, validate, and commit change are distinct powers.
+7. Competing mutations require expected-version or equivalent conflict protection.
+8. Repeated requests must produce at most one authoritative business effect.
+9. Aggregate mutation and durable audit/publication intent share an explicit consistency boundary.
+10. Domain Events record committed facts and do not independently mutate authoritative state.
+11. Projections are derived, rebuildable, version-aware, and may be stale.
+12. Reconstruction follows owning aggregate state and committed transition history.
+
+---
+
+## 10. Architecture Invariants
 
 1. Every workspace-scoped business object belongs to exactly one Workspace unless an approved model defines otherwise.
 2. Workspace scope is derived from trusted execution context.
 3. Every governed action has an attributable effective Actor and authority basis.
 4. Decision, Business Operation, Work Item, Runtime Session, Result, State Transition, and Domain Event remain distinct concepts.
 5. Only the owning aggregate or authorized domain process commits authoritative state.
-6. Command requests change; Result reports output; Domain Event records a fact.
+6. Command requests change; Result reports output; Domain Event records a committed fact.
 7. Runtime state does not automatically determine Work Item, Business Operation, Decision, or Enterprise Object state.
-8. Projections and read models are derived, rebuildable, and explicitly allowed to be stale.
-9. Significant transitions use concurrency protection and retain attribution and reason.
-10. Repositories enforce Workspace visibility; services enforce business rules; authorization components evaluate policy.
-11. Domain services do not depend directly on FastAPI, database drivers, provider SDKs, or transport objects.
-12. AI-generated output is not authoritative merely because it was generated by an agent.
-13. Audit records are append-oriented and are not the operational source of truth.
-14. Aggregate mutation, audit intent, and event publication use an explicitly documented consistency boundary.
-15. External side effects support idempotency or equivalent duplicate control where retries are possible.
-16. Compensation and reversal are new governed Operations rather than deletion of history.
-17. Gate C approval requires explicit review and cannot be inferred from implementation progress.
+8. Phase, Status, Outcome, Progress, and Health remain separate dimensions.
+9. Projections and read models are derived, rebuildable, source-version-aware, and explicitly allowed to be stale.
+10. Significant transitions retain attribution, authority basis, reason, causation, and version history.
+11. Competing mutations use expected-version or equivalent concurrency protection.
+12. Retries and duplicate delivery produce at most one authoritative business effect.
+13. Aggregate mutation and required durable audit/publication intent use an explicitly documented consistency boundary.
+14. Publication failure after commit does not erase authoritative business truth.
+15. Cross-aggregate consistency uses explicit coordination; hidden distributed mutation is prohibited.
+16. Domain services do not depend directly on FastAPI, database drivers, provider SDKs, or transport objects.
+17. AI-generated output is not authoritative merely because it was generated by an agent.
+18. Audit records are append-oriented and are not the operational source of truth.
+19. Compensation and reversal are new governed Operations rather than deletion of history.
+20. Recovery prefers owning aggregate state and committed transition history over events and projections.
+21. Gate C approval requires explicit review and cannot be inferred from implementation progress.
 
 ---
 
-## 10. Required Output of Each ADW Session
+## 11. Required Output of Each ADW Session
 
 Each session must produce:
 
@@ -286,7 +307,7 @@ A session is complete only when its decision artifacts are recorded and internal
 
 ---
 
-## 11. Change Control
+## 12. Change Control
 
 Architecture changes follow this sequence:
 
@@ -302,68 +323,28 @@ Silent architecture drift is prohibited.
 
 ---
 
-## 12. Planned Repository Structure
-
-```text
-00_ARCHITECTURE/
-├── ARCHITECTURE_SPECIFICATION.md
-├── 00_FOUNDATION/
-│   └── DOMAIN_FOUNDATION.md
-├── 01_DOMAIN/
-│   ├── ADW_01_CORE_DOMAIN_SEMANTICS.md
-│   └── ADW_01_DECISION_REGISTER.md
-├── 02_IDENTITY/
-│   └── IDENTITY_AND_WORKSPACE.md
-├── 03_SECURITY/
-│   └── AUTHORIZATION_AND_POLICY.md
-├── 04_ENTERPRISE_MODEL/
-│   └── ENTERPRISE_OBJECT_MODEL.md
-├── 05_RUNTIME/
-│   └── AGENT_RUNTIME.md
-├── 06_KNOWLEDGE/
-│   └── KNOWLEDGE_AND_MEMORY.md
-├── 07_AUDIT/
-│   └── EVENTS_AUDIT_AND_PROVENANCE.md
-├── 08_PERSISTENCE/
-│   └── REPOSITORY_AND_PERSISTENCE.md
-├── 09_PLATFORM/
-│   └── PLATFORM_EXTENSION_MODEL.md
-└── 10_GOVERNANCE/
-    └── ARCHITECTURE_FREEZE.md
-```
-
----
-
 ## 13. Gate C v1.1 Completion Criteria
 
 Gate C is ready for final approval only when:
 
 - all ten ADW chapters are approved or ready for approval;
 - all material Decisions are closed or explicitly deferred outside the implementation boundary;
-- terminology is synchronized across foundation, chapters, registers, ADRs, diagrams, plans, and code boundaries;
-- Workspace, Actor, authorization, state, runtime, audit, event, persistence, idempotency, retention, and extension rules are testable;
-- Gate A and Gate B dependencies have been checked for contradiction;
-- `GATE_C_REVIEW_AND_APPROVAL.md` records an explicit Project Owner PASS.
+- terminology is synchronized across foundation, chapters, registers, ADRs, diagrams, plans, and contracts;
+- state ownership, authority, consistency, audit, eventing, persistence, security, and runtime boundaries are explicit;
+- D09 and D10 are resolved and ADW-01 is closed;
+- architecture risks and implementation consequences are recorded;
+- Project Owner explicitly approves Gate C.
 
 ---
 
-## 14. Current Baseline Statement
+## 14. Current Architecture Status
 
 ```text
-Architecture Specification: STABILIZED BASELINE v0.2
-Domain Foundation: STABILIZED BASELINE
+Gate C v1.1: IN PROGRESS
 ADW-01: IN PROGRESS
 D06: APPROVED — CLOSED
-D07: IN WORKSHOP
-Gate C v1.1: IN PREPARATION
-Gate C decision: PENDING
+D07: APPROVED — CLOSED
+D09: OPEN — NEXT
+D10: OPEN
+Next constitutional step: D09 — Relationship Model
 ```
-
----
-
-## 15. Revision History
-
-| Version | Date | Status | Change |
-|---|---|---|---|
-| 0.1-draft | 2026-07-21 | Workshop baseline | Created root specification, chapter map, hierarchy, principles, and Gate C criteria. |
-| 0.2-draft | 2026-07-21 | Architecture stabilization | Retired `Domain Core`; synchronized Domain Foundation, ADW-01, Decision Register, and root specification; closed D06; opened D07 State Semantics. |
