@@ -7,8 +7,8 @@
 | Document ID | ABR-01 |
 | Title | Architecture Baseline Resolution |
 | Version | 1.0 |
-| Status | **DRAFT — Awaiting Project Owner Signature** |
-| Effective Date | Not yet effective — becomes effective upon Project Owner signature (§09) |
+| Status | **ACTIVE** |
+| Effective Date | 2026-07-23 |
 | Repository | ArtheosClub/Bizzi_Project |
 | Authority | Project Owner (Tier 0, per `DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md` §1) |
 | Owner | Project Owner |
@@ -140,10 +140,10 @@ the following is in force. Upon Project Owner signature (§09):
 
 | Field | Value |
 |---|---|
-| Approved by | _________________________ |
+| Approved by | Project Owner |
 | Title | Project Owner |
-| Signature | _________________________ |
-| Date | _________________________ |
+| Signature | APPROVED |
+| Date | 2026-07-23 |
 
 This Resolution is effective upon signature.
 
