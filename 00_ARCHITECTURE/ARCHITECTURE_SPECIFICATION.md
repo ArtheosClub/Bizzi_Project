@@ -49,18 +49,20 @@ AI is a platform capability, not an authority source or sole system boundary. Bu
 
 ## 3. Source-of-Truth Hierarchy
 
-When architecture artifacts conflict, the following order applies:
+There is exactly one architectural authority: the Project Owner, exercised through the tier structure below — not any single document. This hierarchy was formally approved as DECISION_0002 (Authority Hierarchy and Vocabulary Baseline, `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md`) and is recorded here, not created here.
 
-1. explicit approved Project Owner and Gate decisions;
-2. this Architecture Specification;
-3. `00_ARCHITECTURE/00_FOUNDATION/DOMAIN_FOUNDATION.md` for constitutional domain semantics;
-4. approved Architecture Decision Records;
-5. approved ADW chapter specifications;
-6. ADW Decision Registers for exact recorded workshop decisions;
-7. security, domain, runtime, persistence, and platform contracts derived from the specification;
-8. C4 diagrams and other architecture views;
-9. implementation plans and work packages;
-10. code comments, examples, drafts, and historical documents.
+| Tier | Document(s) | Authoritative for |
+|---|---|---|
+| 0 | Any explicit Project Owner decision record | The specific thing it decided |
+| 1 | Decision 0001 (MVP First & Architecture Freeze) | What may and may not be built/decided during the MVP phase |
+| 2 | `00_ARCHITECTURE/` (this specification, `DOMAIN_FOUNDATION.md`, D01–D10, the Decision Register) | Domain semantics — what concepts exist, what they mean, how they relate, how they end |
+| 3 | `docs/adr/*` | Implementation-pattern and technology decisions — coordinate with Tier 2, not subordinate to it; where a specific point genuinely overlaps, Tier 2's domain-semantic ruling governs that point, triggering the ADR's own normal supersession process |
+| 4 | `docs/planning/` + `50_IMPLEMENTATION/` | Sequencing and MVP scope, deriving vocabulary from Tier 2 and technology assumptions from Tier 3 |
+| 5 | `docs/c4/*` | Illustration of Tiers 2–4; not independently authoritative |
+| 6 | `backend/` (code) | Nothing architectural; must conform to all above |
+| — | `01_GOVERNANCE/GOVERNANCE_MODEL.md`, `AUTHORITY_MATRIX.md` | The platform-wide "Art of Business" vision — a different, broader system; source vocabulary that `CLAUDE.md`/`DEVELOPMENT_PLAN.md` §7 adapt in simplified form for the MVP backend build, not directly binding on it except through that adaptation |
+| — | `CLAUDE.md` | The process layer — states how the tiers above relate and change; not itself a competing content authority |
+| — | Historical records (superseded ADR-0002, `docs/planning/WORK_PACKAGES.md`, original Phase 0–3 `DEVELOPMENT_PLAN.md` text) | Nothing — record only |
 
 For ADW-01 specifically:
 
