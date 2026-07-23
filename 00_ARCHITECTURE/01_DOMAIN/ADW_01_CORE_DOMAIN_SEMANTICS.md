@@ -1,14 +1,17 @@
 # ADW-01 — Core Domain Semantics
 
 **Document ID:** ARCH-DOMAIN-001  
-**Version:** 0.3-draft  
-**Status:** Workshop in progress — D07 closed; D09 next  
+**Version:** 1.0  
+**Status:** ADW-01 decision set complete — D01–D10 all APPROVED (D06/D07/D09/D10 CLOSED)  
 **Architecture Gate:** Gate C v1.1  
 **Owner:** Project Owner  
 **Decision authority:** Project Owner  
 **Foundation:** `00_ARCHITECTURE/00_FOUNDATION/DOMAIN_FOUNDATION.md`  
 **Decision register:** `00_ARCHITECTURE/01_DOMAIN/ADW_01_DECISION_REGISTER.md`  
-**State constitution:** `00_ARCHITECTURE/01_DOMAIN/D07_STATE_SEMANTICS.md`
+**State constitution:** `00_ARCHITECTURE/01_DOMAIN/D07_STATE_SEMANTICS.md`  
+**Relationship constitution:** `00_ARCHITECTURE/01_DOMAIN/D09_RELATIONSHIP_MODEL.md`  
+**Historical integrity constitution:** `00_ARCHITECTURE/01_DOMAIN/D10_DELETION_AND_SUPERSESSION.md`  
+**Authority Hierarchy and Vocabulary Baseline:** `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md`
 
 ---
 
@@ -102,8 +105,8 @@ This chain is semantic rather than a mandatory synchronous workflow. No governed
 | D06 | Decision and Business Operation Semantics | APPROVED — CLOSED |
 | D07 | State Semantics | APPROVED — CLOSED |
 | D08 | Aggregate Strategy | APPROVED |
-| D09 | Relationship Model | OPEN — NEXT |
-| D10 | Deletion and Supersession | OPEN |
+| D09 | Relationship Model | APPROVED — CLOSED |
+| D10 | Deletion and Supersession | APPROVED — CLOSED |
 
 ---
 
@@ -165,6 +168,28 @@ D07 routes detailed authorization to ADW-03, runtime state to ADW-05, audit and 
 
 Work Item is a shared domain contract and coordination abstraction, not one universal aggregate root. Task, Case, and Project are separate aggregate roots.
 
+### D09 — Relationship Model
+
+**Status:** `APPROVED — CLOSED`  
+**Approved by:** Project Owner  
+**Approval date:** 2026-07-23  
+**Closure date:** 2026-07-23  
+**Canonical decision:** `D09_RELATIONSHIP_MODEL.md`
+
+D09 establishes the Bizzi Relationship Constitution: eleven canonical relationships among Enterprise Object, Actor, Work Item, Decision, Business Operation, and Runtime Session, each with an explicit category, ownership assignment, reference direction, cardinality, and mutation authority. No relationship among these six concepts transfers ownership, grants cross-aggregate mutation authority, or creates a universal super-aggregate. The inverse view of every relationship is a derived projection of one authoritative forward assertion, never an independent fact.
+
+### D10 — Deletion and Supersession
+
+**Status:** `APPROVED — CLOSED`  
+**Approved by:** Project Owner  
+**Approval date:** 2026-07-23  
+**Closure date:** 2026-07-23  
+**Canonical decision:** `D10_DELETION_AND_SUPERSESSION.md`
+
+D10 establishes the Bizzi Historical Integrity Constitution: Physical Deletion is constitutionally available only to a subject with zero committed relationships, transitions, or attributions referencing it — the narrow exception, never the default. No lifecycle transition ever deletes, rewrites, or retroactively judges a subject's own already-committed history. Supersession creates a new identity rather than mutating an old one. Runtime Session remains freely deletable throughout, because it never owns authoritative state belonging to any other concept.
+
+**ADW-01's decision set is complete: D01–D10 constitute the full Core Domain Semantics baseline.**
+
 ---
 
 ## 8. Domain Ownership Rules
@@ -201,15 +226,18 @@ The following D07 rules are binding for all downstream ADWs:
 
 ---
 
-## 10. Remaining Decisions
+## 10. Decision Set Status
 
-### D09 — Relationship Model
+No decisions remain open within ADW-01. D01–D10 are all approved; D09 and D10's canonical decisions are summarized in §7 above.
 
-D09 must define typed relationships among Decision, Business Operation, Work Item, Enterprise Object, Actor, Runtime Session, Action, Result, Evidence, State Transition, and Domain Event.
+Responsibilities each explicitly and correctly deferred beyond ADW-01's own scope, per D07's, D09's, and D10's own deferred-responsibilities records:
 
-### D10 — Deletion and Supersession
-
-D10 must define cancellation, expiration, revocation, supersession, reversal, compensation, archival, deletion, retention, and historical-preservation semantics.
+- ADW-02 (Identity and Workspace Boundary): identity, membership, and Actor's relationship to User Account/credential mechanics.
+- ADW-03 (Authorization and Policy): authorization policy evaluation, roles, delegation.
+- ADW-05 (Agent Runtime): Runtime Session's internal execution-attempt state machine.
+- ADW-07 (Events, Audit, and Provenance): the durable audit/event record schema.
+- ADW-08 (Repository and Persistence): physical persistence, transactions, and projection mechanics.
+- A future business/compliance decision, outside any ADW chapter: retention duration for preserved historical records (D10 §9).
 
 ---
 
@@ -238,7 +266,16 @@ D05: APPROVED
 D06: APPROVED — CLOSED
 D07: APPROVED — CLOSED
 D08: APPROVED
-D09: OPEN — NEXT
-D10: OPEN
-ADW-01: IN PROGRESS
+D09: APPROVED — CLOSED
+D10: APPROVED — CLOSED
+
+ADW-01 decision-level status: COMPLETE.
+
+Governance-level baseline activation (Authority Hierarchy and Vocabulary
+Baseline approved per DECISION_0002; repository synchronization across
+ARCHITECTURE_SPECIFICATION.md, CLAUDE.md, Gate A, GATE_C_ARCHITECTURE_
+DECISION_PROPOSALS.md, and DOMAIN_FOUNDATION.md; and the Architecture
+Baseline Resolution signature) remains in progress per the Architecture
+Baseline Resolution Package. ADW-01 is not yet the activated official
+baseline.
 ```
