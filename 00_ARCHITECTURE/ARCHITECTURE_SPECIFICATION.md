@@ -1,8 +1,8 @@
 # Bizzi Platform Architecture Specification
 
 **Document ID:** ARCH-SPEC-001  
-**Version:** 0.4-draft  
-**Status:** Architecture Decision Workshop baseline — ADW-01 in progress; D09 closed  
+**Version:** 0.5-draft  
+**Status:** Architecture Decision Workshop baseline — ADW-01 decision set complete (D01–D10 all APPROVED); Architecture Baseline governance activation in progress  
 **Architecture Gate:** Gate C v1.1  
 **Owner:** Project Owner  
 **Maintainers:** Chief Architect, Architecture Decision Workshop participants  
@@ -235,7 +235,7 @@ Outer layers depend on stable inner contracts. Domain logic remains independent 
 | D07 | State Semantics | APPROVED — CLOSED |
 | D08 | Aggregate Strategy | APPROVED |
 | D09 | Relationship Model | APPROVED — CLOSED |
-| D10 | Deletion and Supersession | OPEN — NEXT |
+| D10 | Deletion and Supersession | APPROVED — CLOSED |
 
 D06 establishes `Decision + Business Operation` as the primary domain construction.
 
@@ -243,7 +243,7 @@ D07 establishes the binding Bizzi State Constitution. Its canonical specificatio
 
 D09 establishes the binding Bizzi Relationship Constitution. Its canonical specification is `00_ARCHITECTURE/01_DOMAIN/D09_RELATIONSHIP_MODEL.md`.
 
-D10 is the next ADW-01 decision and must define deletion, archival, revocation, reversal, compensation, and retention semantics without violating D07's state-ownership rules or D09's relationship and Historical-classification rules.
+D10 establishes the binding Bizzi Historical Integrity Constitution. Its canonical specification is `00_ARCHITECTURE/01_DOMAIN/D10_DELETION_AND_SUPERSESSION.md`. ADW-01's decision set (D01–D10) is complete.
 
 ---
 
@@ -345,11 +345,22 @@ Gate C is ready for final approval only when:
 
 ```text
 Gate C v1.1: IN PROGRESS
-ADW-01: IN PROGRESS
+ADW-01 decision-level status: COMPLETE (D01-D10 all APPROVED)
 D06: APPROVED — CLOSED
 D07: APPROVED — CLOSED
 D08: APPROVED
 D09: APPROVED — CLOSED
-D10: OPEN — NEXT
-Next constitutional step: D10 — Deletion and Supersession
+D10: APPROVED — CLOSED
+
+Architecture Baseline governance activation: IN PROGRESS, per the
+Architecture Baseline Resolution Package. Authority Hierarchy and
+Vocabulary Baseline approved (DECISION_0002). Repository synchronization
+across ARCHITECTURE_SPECIFICATION.md, DOMAIN_FOUNDATION.md, and
+ADW_01_CORE_DOMAIN_SEMANTICS.md complete; CLAUDE.md, Gate A, and
+GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md remain pending. Architecture
+Baseline Resolution signature remains pending.
+
+Next constitutional step: ADW-02 — Identity and Workspace Boundary, per
+the workshop structure in Section 7, once Architecture Baseline
+activation completes.
 ```
