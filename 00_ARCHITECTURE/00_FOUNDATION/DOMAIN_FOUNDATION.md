@@ -1,13 +1,14 @@
 # Bizzi Domain Foundation
 
 **Document ID:** ARCH-FOUNDATION-DOMAIN-001  
-**Version:** 0.2-draft  
-**Status:** Stabilized foundation baseline  
+**Version:** 0.3-draft  
+**Status:** Stabilized foundation baseline — ADW-01 decision set complete (D01–D10 all APPROVED)  
 **Architecture Gate:** Gate C v1.1  
 **Owner:** Project Owner  
 **Decision authority:** Project Owner  
 **Related workshop:** `ADW-01 — Core Domain Semantics`  
-**Authoritative workshop path:** `00_ARCHITECTURE/01_DOMAIN/ADW_01_CORE_DOMAIN_SEMANTICS.md`
+**Authoritative workshop path:** `00_ARCHITECTURE/01_DOMAIN/ADW_01_CORE_DOMAIN_SEMANTICS.md`  
+**Authority Hierarchy and Vocabulary Baseline:** `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md`
 
 ---
 
@@ -144,7 +145,7 @@ Only the owning aggregate or an explicitly authorized domain process may commit 
 
 ## 8. State Foundation
 
-State semantics are governed by the following preliminary rules pending completion of D07:
+The following rules were the preliminary state-semantics position prior to D07's closure. D07 — State Semantics is now `APPROVED — CLOSED`; `D07_STATE_SEMANTICS.md` is the canonical and binding state constitution. Where the two differ, D07 governs.
 
 1. Authoritative State belongs to exactly one owning aggregate or explicitly defined domain authority.
 2. Execution State, Work State, Decision State, Operation State, and Business Object State are distinct state domains.
@@ -153,8 +154,6 @@ State semantics are governed by the following preliminary rules pending completi
 5. A Projection or read model is derived and rebuildable; it is not the authoritative source of specialized aggregate state.
 6. State transitions must be validated against ownership, invariants, authority, expected version, and applicable policy.
 7. Technical success does not imply business-state success.
-
-D07 — State Semantics will finalize the state model, transition contract, consistency boundaries, projections, concurrency, and terminal-state rules.
 
 ---
 
@@ -213,4 +212,8 @@ Any change must describe semantic compatibility, affected ADW decisions, aggrega
 | 2026-07-21 | Architecture Stabilization | `Domain Core` terminology retired; `Core Domain Semantics` established as the single ADW-01 vocabulary. |
 | 2026-07-21 | D06 closure | `Decision + Business Operation` approved as the primary construction. |
 | 2026-07-21 | D07 initiation | `State Semantics` opened as the final major foundational decision before ADW-02. |
+| 2026-07-21 | D08 approval | `Aggregate Strategy` approved: Work Item is a shared domain contract and coordination abstraction, not one universal aggregate root; Task, Case, and Project are separate aggregate roots. |
+| 2026-07-22 | D07 closure | `State Semantics` approved and closed: the Bizzi State Constitution, canonical at `D07_STATE_SEMANTICS.md`. |
 | 2026-07-23 | D09 closure | `Relationship Model` approved: eleven canonical relationships among Enterprise Object, Actor, Work Item, Decision, Business Operation, and Runtime Session; no relationship transfers ownership or creates a universal super-aggregate. |
+| 2026-07-23 | D10 closure | `Deletion and Supersession` approved and closed: the Bizzi Historical Integrity Constitution, canonical at `D10_DELETION_AND_SUPERSESSION.md`. ADW-01's decision set (D01–D10) is complete. |
+| 2026-07-23 | DECISION_0002 approval | Authority Hierarchy and Vocabulary Baseline formally approved, per `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md`. |
