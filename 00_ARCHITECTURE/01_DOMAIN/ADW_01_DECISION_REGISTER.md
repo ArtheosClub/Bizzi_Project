@@ -1,8 +1,8 @@
 # ADW-01 — Decision Register
 
 **Document ID:** ARCH-DOMAIN-DECISIONS-001  
-**Version:** 0.8-draft  
-**Status:** Workshop in progress — D07 closed; D09 next  
+**Version:** 0.9-draft  
+**Status:** Workshop in progress — D09 closed; D10 next  
 **Architecture Gate:** Gate C v1.1  
 **Workshop:** ADW-01 — Core Domain Semantics  
 **Decision authority:** Project Owner  
@@ -34,8 +34,8 @@ The former active term `Domain Core` and the former parent path `DOMAIN_CORE.md`
 | D06 | Decision and Business Operation Semantics | APPROVED — CLOSED |
 | D07 | State Semantics | APPROVED — CLOSED |
 | D08 | Aggregate Strategy | APPROVED |
-| D09 | Relationship Model | OPEN — NEXT |
-| D10 | Deletion and Supersession | OPEN |
+| D09 | Relationship Model | APPROVED — CLOSED |
+| D10 | Deletion and Supersession | OPEN — NEXT |
 
 ---
 
@@ -202,23 +202,73 @@ D07 may be changed only by an explicit Class A architecture decision that preser
 
 ---
 
-## 11. Remaining Decisions
+## 11. D09 — Relationship Model
 
-### D09 — Relationship Model
+**Status:** `APPROVED — CLOSED`  
+**Approved by:** Project Owner  
+**Approval date:** 2026-07-23  
+**Closure date:** 2026-07-23  
+**Decision class:** Class A — Constitutional  
+**Canonical decision:** `00_ARCHITECTURE/01_DOMAIN/D09_RELATIONSHIP_MODEL.md`
 
-**Status:** `OPEN — NEXT`
+### Decision
 
-Must define typed relationships among Decision, Business Operation, Work Item, Enterprise Object, Actor, Runtime Session, Action, Result, Evidence, State Transition, and Domain Event.
+> Bizzi defines exactly eleven canonical relationships among Enterprise Object, Actor, Work Item, Decision, Business Operation, and Runtime Session, each with an explicit category, ownership assignment, reference direction, cardinality, and mutation authority.
+>
+> No relationship among these six concepts transfers ownership, grants cross-aggregate mutation authority, or creates a universal super-aggregate. Business Operation coordinates and references; it does not own. Decision governs; it does not execute. Runtime Session executes; it never becomes the authoritative source of another concept's state. Work Item coordinates Task/Case/Project by type-membership, not by ownership. Actor is attributed to governed actions via Provenance; its identity is owned only by itself.
+>
+> The inverse view of every relationship is a derived projection of one authoritative forward assertion, never an independent fact. Enterprise Object must never carry an authoritative back-reference collection of everything that references it.
+>
+> Ten relationship shapes are constitutionally prohibited, each a direct consequence of an already-approved D01–D08 decision. Consistency is enforced at creation time through endpoint and authority-basis validation, never through retroactive rewriting of historical record.
 
-### D10 — Deletion and Supersession
+### Approved sub-decisions
 
-**Status:** `OPEN`
+| Sub-decision | Subject | Status |
+|---|---|---|
+| D09.1 | Nature of Relationship | APPROVED |
+| D09.2 | Relationship Taxonomy | APPROVED |
+| D09.3 | Roles, Direction, and Cardinality | APPROVED |
+| D09.4 | Ownership, Authority, and Validation | APPROVED |
+| D09.5 | Lifecycle and Temporal Semantics | APPROVED |
+| D09.6 | Consistency, Traversal, and Graph Views | APPROVED |
+| D09.7 | Constitutional Review and Closure | APPROVED — CLOSED |
 
-Must define cancellation, expiration, revocation, supersession, reversal, compensation, archival, deletion, retention, and historical-preservation semantics.
+### Binding consequences
+
+1. Gate C's Enterprise Object, Task (as a Work Item specialization), Decision, and Runtime Session schema work may proceed using the D09 relationship shapes without re-litigating direction, cardinality, or ownership per entity.
+2. Enterprise Object's schema must not include an authoritative field or table holding "all referencing Operations/Decisions/Work Items" — any such view is a read model built outside its own aggregate boundary.
+3. Any repository or service method allowing Runtime Session to write directly to Enterprise Object, Decision, or Business Operation state is a Gate C implementation defect, not a valid interpretation of this model.
+4. D10 inherits D09's Historical classification as a starting constraint: nothing D09 classifies Historical may be physically deleted by whatever D10 ultimately decides — only superseded, compensated, or archived.
+
+### Deferred responsibilities
+
+- D10: physical deletion, archival, revocation, reversal, compensation, and retention semantics for relationships D09 classifies Historical.
+- ADW-03: authorization policy evaluation governing who may create a given relationship instance.
+- ADW-05: Runtime Session's internal execution-attempt state machine.
+- ADW-07: the event/audit contract for relationship creation and change.
+- ADW-08: any persistence representation of these relationships (explicitly out of D09's scope — no schema, no foreign keys, no ORM).
+
+### Closure record
+
+D09 is officially closed because relationship identity, categories, roles, direction, cardinality, ownership, mutation authority, prohibited shapes, lifecycle classification, and consistency rules for all six domain-owning concepts are explicitly defined and approved by the Project Owner.
+
+### Supersession rule
+
+D09 may be changed only by an explicit Class A architecture decision that preserves the ownership assignments in D01–D08, the Historical/append-only guarantees D09 establishes, and the prohibition against any of the six concepts becoming a universal super-aggregate.
 
 ---
 
-## 12. Current Workshop State
+## 12. Remaining Decisions
+
+### D10 — Deletion and Supersession
+
+**Status:** `OPEN — NEXT`
+
+Must define cancellation, expiration, revocation, supersession, reversal, compensation, archival, deletion, retention, and historical-preservation semantics — inheriting D09's Historical classification as a starting constraint.
+
+---
+
+## 13. Current Workshop State
 
 ```text
 D01: APPROVED
@@ -229,7 +279,7 @@ D05: APPROVED
 D06: APPROVED — CLOSED
 D07: APPROVED — CLOSED
 D08: APPROVED
-D09: OPEN — NEXT
-D10: OPEN
+D09: APPROVED — CLOSED
+D10: OPEN — NEXT
 ADW-01: IN PROGRESS
 ```

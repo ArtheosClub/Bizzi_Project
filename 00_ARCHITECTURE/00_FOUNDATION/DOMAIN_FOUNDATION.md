@@ -213,3 +213,4 @@ Any change must describe semantic compatibility, affected ADW decisions, aggrega
 | 2026-07-21 | Architecture Stabilization | `Domain Core` terminology retired; `Core Domain Semantics` established as the single ADW-01 vocabulary. |
 | 2026-07-21 | D06 closure | `Decision + Business Operation` approved as the primary construction. |
 | 2026-07-21 | D07 initiation | `State Semantics` opened as the final major foundational decision before ADW-02. |
+| 2026-07-23 | D09 closure | `Relationship Model` approved: eleven canonical relationships among Enterprise Object, Actor, Work Item, Decision, Business Operation, and Runtime Session; no relationship transfers ownership or creates a universal super-aggregate. |

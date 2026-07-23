@@ -2,14 +2,17 @@
 
 **Subtitle:** The Bizzi Relationship Constitution
 **Document ID:** ARCH-DOMAIN-D09
-**Version:** 1.0-draft
-**Status:** PROPOSED — READY FOR PROJECT OWNER APPROVAL
+**Version:** 1.0
+**Status:** APPROVED — CLOSED
 **Decision class:** Class A — Constitutional
 **Workshop:** ADW-01 — Core Domain Semantics
 **Owner:** Project Owner
 **Decision authority:** Project Owner
+**Approved by:** Project Owner
+**Approval date:** 2026-07-23
+**Closure date:** 2026-07-23
 **Opened:** 2026-07-22
-**Last updated:** 2026-07-22
+**Last updated:** 2026-07-23
 **Builds on:** D01 (Primary Boundary), D02 (Core Business Abstraction), D03 (Work Model), D04 (Task versus Execution), D05 (Actor Model), D06 (Decision and Business Operation Semantics), D07 (State Semantics), D08 (Aggregate Strategy) — all **APPROVED**, none modified by this document.
 
 ---
@@ -120,7 +123,10 @@ The following must never exist among the six concepts. Each restates an already-
 
 ### D09 — Relationship Model (consolidating D09.4 Ownership/Authority/Validation, D09.5 Lifecycle/Temporal Semantics, D09.6 Consistency/Traversal, and D09.7 Constitutional Review)
 
-**Status:** PROPOSED — awaiting explicit Project Owner approval to close, per this document's own governance rule (AP-17) and the pattern established by D01–D08's closure records.
+**Status:** APPROVED — CLOSED
+**Approved by:** Project Owner
+**Approval date:** 2026-07-23
+**Closure date:** 2026-07-23
 
 > Bizzi defines exactly eleven canonical relationships among Enterprise Object, Actor, Work Item, Decision, Business Operation, and Runtime Session (§4, R1–R11), each with an explicit category (§ Iteration 0.2), ownership assignment, reference direction, cardinality, and mutation authority.
 >
@@ -132,17 +138,17 @@ The following must never exist among the six concepts. Each restates an already-
 >
 > Consistency across these relationships (§7) is enforced at creation time through endpoint and authority-basis validation, never through retroactive rewriting of historical record — historical truth is preserved even when the authority that once justified a relationship later changes.
 
-### Approved sub-decisions (proposed, pending Project Owner action)
+### Approved sub-decisions
 
 | Sub-decision | Subject | Status |
 |---|---|---|
-| D09.1 | Nature of Relationship | PROPOSED (Iteration 0.1) |
-| D09.2 | Relationship Taxonomy | PROPOSED (Iteration 0.2) |
-| D09.3 | Roles, Direction, and Cardinality | PROPOSED (Iteration 0.3) |
-| D09.4 | Ownership, Authority, and Validation | PROPOSED (this chapter, §4 and §6) |
-| D09.5 | Lifecycle and Temporal Semantics | PROPOSED (this chapter, §5) |
-| D09.6 | Consistency, Traversal, and Graph Views | PROPOSED (this chapter, §7) |
-| D09.7 | Constitutional Review and Closure | PROPOSED (this chapter, §9–§11) |
+| D09.1 | Nature of Relationship | APPROVED (Iteration 0.1) |
+| D09.2 | Relationship Taxonomy | APPROVED (Iteration 0.2) |
+| D09.3 | Roles, Direction, and Cardinality | APPROVED (Iteration 0.3) |
+| D09.4 | Ownership, Authority, and Validation | APPROVED (this chapter, §4 and §6) |
+| D09.5 | Lifecycle and Temporal Semantics | APPROVED (this chapter, §5) |
+| D09.6 | Consistency, Traversal, and Graph Views | APPROVED (this chapter, §7) |
+| D09.7 | Constitutional Review and Closure | APPROVED — CLOSED (this chapter, §9–§11) |
 
 ### Binding consequences (upon approval)
 
@@ -161,7 +167,7 @@ The following must never exist among the six concepts. Each restates an already-
 
 ### Closure record
 
-Not yet closed. This document is ready for Project Owner review. Per this project's own established practice for Gate A's PASS decision — an explicit decision, not an inferred one — D09 should record `Status: APPROVED — CLOSED`, an approval date, and a closure date only after the Project Owner has reviewed §2–§9 and explicitly confirms.
+D09 is closed. The Project Owner reviewed §2–§9 and explicitly approved this document on 2026-07-23. D09 is officially closed because relationship identity, categories, roles, direction, cardinality, ownership, mutation authority, prohibited shapes, lifecycle classification, and consistency rules for all six domain-owning concepts are explicitly defined and approved, consistent with the closure standard D07 already established.
 
 ### Supersession rule
 
@@ -169,15 +175,13 @@ D09 may be changed only by an explicit Class A architecture decision that preser
 
 ---
 
-## 9. Synchronization Requirements (pending approval)
+## 9. Synchronization Requirements
 
-Upon Project Owner approval, the following must be updated in the same stabilization set (per `ARCHITECTURE_SPECIFICATION.md` §12 Change Control):
+Updated in the same stabilization set as this closure (per `ARCHITECTURE_SPECIFICATION.md` §12 Change Control):
 
-1. `ADW_01_DECISION_REGISTER.md` — add the D09 register entry mirroring D07's closure format (§2 status table row, full decision text, sub-decision table, binding consequences, deferred responsibilities, closure record, supersession rule).
-2. `ARCHITECTURE_SPECIFICATION.md` §8 (ADW-01 Decision State table) — D09 row: `OPEN — NEXT` → `APPROVED — CLOSED`. §14 (Current Architecture Status) — update `D09` and `Next constitutional step` to reflect `D10 — Deletion and Supersession` as next.
-3. `DOMAIN_FOUNDATION.md` §13 (Stabilization Record) — add a D09 closure entry, consistent with the existing D06/D07 entries.
-
-This document does not perform that synchronization itself — it is listed here as the required next step, not executed, since D09 is not yet approved.
+1. `ADW_01_DECISION_REGISTER.md` — D09 register entry added, mirroring D07's closure format (§2 status table row, full decision text, sub-decision table, binding consequences, deferred responsibilities, closure record, supersession rule).
+2. `ARCHITECTURE_SPECIFICATION.md` §8 (ADW-01 Decision State table) — D09 row updated: `OPEN — NEXT` → `APPROVED — CLOSED`. §14 (Current Architecture Status) — `D09` and `Next constitutional step` updated to reflect `D10 — Deletion and Supersession` as next.
+3. `DOMAIN_FOUNDATION.md` §13 (Stabilization Record) — D09 closure entry added, consistent with the existing D06/D07 entries. Note: that table was already missing entries for D07's closure and D08's approval before this change; this closure adds only the D09 row and does not backfill those pre-existing gaps.
 
 ---
 
@@ -215,13 +219,13 @@ Sections §6.7 and §6.9 above cite this corrected numbering (`LAW-D09-11`/origi
 ## 12. Current Workshop Status
 
 ```text
-D09.1 Nature of Relationship: PROPOSED
-D09.2 Relationship Taxonomy: PROPOSED
-D09.3 Roles, Direction, and Cardinality: PROPOSED
-D09.4 Ownership, Authority, and Validation: PROPOSED
-D09.5 Lifecycle and Temporal Semantics: PROPOSED
-D09.6 Consistency, Traversal, and Graph Views: PROPOSED
-D09.7 Constitutional Review and Closure: PROPOSED — awaiting Project Owner approval
+D09.1 Nature of Relationship: APPROVED
+D09.2 Relationship Taxonomy: APPROVED
+D09.3 Roles, Direction, and Cardinality: APPROVED
+D09.4 Ownership, Authority, and Validation: APPROVED
+D09.5 Lifecycle and Temporal Semantics: APPROVED
+D09.6 Consistency, Traversal, and Graph Views: APPROVED
+D09.7 Constitutional Review and Closure: APPROVED — CLOSED
 
-D09 overall status: READY FOR PROJECT OWNER APPROVAL
+D09 overall status: APPROVED — CLOSED
 ```
