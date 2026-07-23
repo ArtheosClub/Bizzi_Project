@@ -22,10 +22,9 @@
 This Resolution formally establishes the Architecture Baseline for the
 Bizzi Platform MVP backend build. It records, and does not create, the
 constitutional facts established through the completed governance process
-identified in §02 and §03. Upon Project Owner signature (§09), this
-Resolution brings the Architecture Baseline and the Architecture Freeze
-into constitutional force for this repository, under the Authority
-Hierarchy established by DECISION_0002.
+identified in §02 and §03, under the Authority Hierarchy established by
+DECISION_0002. The activation and effective state of the Architecture
+Baseline are addressed in §04 and §07.
 
 ---
 
@@ -67,8 +66,8 @@ Therefore, the Project Owner resolves that:
 5. The Authority Hierarchy established by DECISION_0002 §1 becomes binding.
 6. The Canonical Vocabulary Baseline established by DECISION_0002 §3 becomes binding.
 7. The Architecture Freeze established by Decision 0001 enters into force.
-8. Engineering documents derive their authority from the Architecture Baseline.
-9. Planning documents derive their authority from the Architecture Baseline.
+8. Engineering documents shall conform to the Architecture Baseline.
+9. Planning documents shall conform to the Architecture Baseline.
 10. Future semantic changes to Core Domain Semantics require Architecture Governance, exercised through the Project Owner under the Authority Hierarchy.
 11. Historical documents remain evidentiary but never override a higher-authority document.
 12. Deferred work, including the matters listed in §06, remains deferred.
@@ -78,17 +77,19 @@ Therefore, the Project Owner resolves that:
 
 ## 05. Authority Consequences
 
-The following is a summary view of the Authority Hierarchy. It does not
-redefine the hierarchy; the binding definition, including each tier's
-full "Authoritative for" scope, is DECISION_0002 §1.
+The following is an informative restatement of the Authority Hierarchy
+and is not itself authoritative. The binding definition, including each
+tier's full "Authoritative for" scope, is DECISION_0002 §1.
 
-- **Tier 0** — Any explicit Project Owner decision record.
+- **Tier 0** — Project Owner decision records.
 - **Tier 1** — Decision 0001.
-- **Tier 2** — `00_ARCHITECTURE/` (`ARCHITECTURE_SPECIFICATION.md`, `DOMAIN_FOUNDATION.md`, D01–D10, the Decision Register).
+- **Tier 2** — `00_ARCHITECTURE/` (Core Domain Semantics).
 - **Tier 3** — `docs/adr/*`.
-- **Informational documents** — `docs/planning/`, `50_IMPLEMENTATION/`, `docs/c4/*`, `01_GOVERNANCE/GOVERNANCE_MODEL.md`, `AUTHORITY_MATRIX.md`, `CLAUDE.md`.
+- **Informational documents** — `docs/planning/`, `50_IMPLEMENTATION/`, `docs/c4/*`, and related non-binding references.
 - **Engineering documents** — `backend/` (code).
-- **Historical records** — superseded ADR-0002, `docs/planning/WORK_PACKAGES.md`, original Phase 0–3 `DEVELOPMENT_PLAN.md` text.
+- **Historical records** — superseded material, retained as evidentiary only.
+
+See DECISION_0002 §1 for the complete tier definitions.
 
 ---
 
@@ -131,7 +132,7 @@ the following is in force. Upon Project Owner signature (§09):
 | AGR | AGR-01 (Architecture Governance Reconciliation) | Governance Execution Plan produced |
 | Execution | Governance Execution Steps 1–8 (`agent/architecture-specification-v1-1`) | Repository synchronized |
 | ARC | ARC-01 (Architecture Readiness Certification) | Repository CERTIFIED READY for Architecture Baseline Resolution |
-| ABR | This Resolution (ABR-01) | Architecture Baseline established, subject to §09 |
+| ABR | This Resolution (ABR-01) | Architecture Baseline becomes formally established upon Project Owner approval (§09) |
 
 ---
 
@@ -145,3 +146,13 @@ the following is in force. Upon Project Owner signature (§09):
 | Date | _________________________ |
 
 This Resolution is effective upon signature.
+
+---
+
+## 10. Interpretation
+
+If any conflict exists between this Resolution and a higher-authority
+governance document, the higher-authority document prevails, per the
+Authority Hierarchy established by DECISION_0002 §1. This section
+introduces no additional rule; it reinforces constitutional precedence
+already established there.
