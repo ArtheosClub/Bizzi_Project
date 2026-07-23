@@ -2,12 +2,15 @@
 
 **Subtitle:** The Bizzi Historical Integrity Constitution
 **Document ID:** ARCH-DOMAIN-D10
-**Version:** 1.0-draft
-**Status:** PROPOSED — READY FOR PROJECT OWNER APPROVAL
+**Version:** 1.0
+**Status:** APPROVED — CLOSED
 **Decision class:** Class A — Constitutional
 **Workshop:** ADW-01 — Core Domain Semantics
 **Owner:** Project Owner
 **Decision authority:** Project Owner
+**Approved by:** Project Owner
+**Approval date:** 2026-07-23
+**Closure date:** 2026-07-23
 **Opened:** 2026-07-23
 **Last updated:** 2026-07-23
 **Builds on:** D01–D09 — all **APPROVED — CLOSED**, none modified by this document.
@@ -180,7 +183,10 @@ A subject's identity — what it fundamentally *is*, distinct from its current l
 
 ### D10 — Deletion and Supersession
 
-**Status:** PROPOSED — awaiting explicit Project Owner approval to close, per the pattern established by D07 and D09's closure records.
+**Status:** APPROVED — CLOSED
+**Approved by:** Project Owner
+**Approval date:** 2026-07-23
+**Closure date:** 2026-07-23
 
 > Bizzi distinguishes nine lifecycle-ending concepts — Deletion, Archive, Replacement, Supersession, Cancellation, Invalidation, Expiration, Deprecation, and Historical Preservation (§5) — and five operations commonly conflated with deletion — Physical Deletion, Logical Deletion, Semantic Replacement, Historical Record, and Projection Cleanup (§7).
 >
@@ -194,13 +200,13 @@ A subject's identity — what it fundamentally *is*, distinct from its current l
 
 | Sub-decision | Subject | Status |
 |---|---|---|
-| D10.1 | Semantic Definitions (Deletion, Archive, Replacement, Supersession, Cancellation, Invalidation, Expiration, Deprecation, Historical Preservation) | PROPOSED (§5) |
-| D10.2 | Per-Concept Lifecycle Capability | PROPOSED (§6) |
-| D10.3 | Physical vs. Logical Deletion, Semantic Replacement, Historical Record, Projection Cleanup | PROPOSED (§7) |
-| D10.4 | Mandatory Invariants | PROPOSED (§8) |
-| D10.5 | Inheritance of Historical Responsibility | PROPOSED (§9) |
-| D10.6 | Preservation Rules | PROPOSED (§10) |
-| D10.7 | Semantic Identity Continuity and Constitutional Review | PROPOSED (§11, this section) |
+| D10.1 | Semantic Definitions (Deletion, Archive, Replacement, Supersession, Cancellation, Invalidation, Expiration, Deprecation, Historical Preservation) | APPROVED (§5) |
+| D10.2 | Per-Concept Lifecycle Capability | APPROVED (§6) |
+| D10.3 | Physical vs. Logical Deletion, Semantic Replacement, Historical Record, Projection Cleanup | APPROVED (§7) |
+| D10.4 | Mandatory Invariants | APPROVED (§8) |
+| D10.5 | Inheritance of Historical Responsibility | APPROVED (§9) |
+| D10.6 | Preservation Rules | APPROVED (§10) |
+| D10.7 | Semantic Identity Continuity and Constitutional Review | APPROVED — CLOSED (§11, this section) |
 
 ### Binding consequences (upon approval)
 
@@ -221,7 +227,7 @@ A subject's identity — what it fundamentally *is*, distinct from its current l
 
 ### Closure record
 
-Not yet closed. This document is ready for Project Owner review. Consistent with D07's and D09's own closure practice, D10 will record `Status: APPROVED — CLOSED`, an approval date, and a closure date only after the Project Owner has reviewed §2–§12 and explicitly confirms.
+D10 is closed. The Project Owner reviewed §2–§12 and explicitly approved this document on 2026-07-23, after re-confirming: D10 is complete and internally consistent; introduces no unresolved architectural questions within its own scope (the four items in §14 are explicitly-scoped deferrals to ADW-02/ADW-05 or an out-of-architecture business decision, matching the pattern D07 and D09 also closed against); requires no further semantic changes; is compatible with Decision 0001 (no new entities, no architecture expansion beyond what §5–§11 already scoped); and satisfies the same closure criteria D07 and D09 met (sub-decisions D10.1–D10.7 all complete, binding consequences stated, deferred responsibilities named, supersession rule stated). **ADW-01 is complete: D01–D10 constitute the full Core Domain Semantics baseline**, per Binding Consequence 5 above.
 
 ### Supersession rule
 
@@ -229,15 +235,13 @@ D10 may be changed only by an explicit Class A architecture decision that preser
 
 ---
 
-## 13. Synchronization Requirements (pending approval)
+## 13. Synchronization Requirements
 
-Upon Project Owner approval, the following must be updated in the same stabilization set (per `ARCHITECTURE_SPECIFICATION.md` §12 Change Control):
+D10 is now approved and closed (§12). The following remain to be executed as separate, later steps of the Architecture Baseline governance execution sequence — not performed by this document, and not yet done as of this closure:
 
-1. `ADW_01_DECISION_REGISTER.md` — add the D10 register entry mirroring D07's and D09's closure format; update §2 status table (D10: `OPEN — NEXT` → `APPROVED — CLOSED`); update the Current Workshop State block; note ADW-01 itself as complete (D01–D10 all approved).
-2. `ARCHITECTURE_SPECIFICATION.md` §8 (ADW-01 Decision State table) — D10 row: `OPEN — NEXT` → `APPROVED — CLOSED`. §14 (Current Architecture Status) — update `D10` and note ADW-01 complete; `Next constitutional step` becomes ADW-02 (Identity and Workspace Boundary) per the workshop structure in §7, not another ADW-01 decision.
-3. `DOMAIN_FOUNDATION.md` §13 (Stabilization Record) — add a D10 closure entry, consistent with the existing D06/D09 entries.
-
-This document does not perform that synchronization itself — it is listed here as the required next step, not executed, since D10 is not yet approved.
+1. `ADW_01_DECISION_REGISTER.md` — add the D10 register entry mirroring D07's and D09's closure format; update §2 status table (D10: `OPEN — NEXT` → `APPROVED — CLOSED`); update the Current Workshop State block; note ADW-01 itself as complete (D01–D10 all approved). *(Executed alongside this closure — see the Decision Register directly.)*
+2. `ARCHITECTURE_SPECIFICATION.md` §8 (ADW-01 Decision State table) — D10 row: `OPEN — NEXT` → `APPROVED — CLOSED`. §14 (Current Architecture Status) — update `D10` and note ADW-01 complete; `Next constitutional step` becomes ADW-02 (Identity and Workspace Boundary) per the workshop structure in §7, not another ADW-01 decision. *(Not yet done — scheduled as a later step, contingent on the Authority Hierarchy approval per the Architecture Baseline Resolution Package.)*
+3. `DOMAIN_FOUNDATION.md` §13 (Stabilization Record) — add a D10 closure entry, consistent with the existing D06/D09 entries. *(Not yet done — scheduled as a later step.)*
 
 ---
 
@@ -253,14 +257,17 @@ This document does not perform that synchronization itself — it is listed here
 ## 15. Current Workshop Status
 
 ```text
-D10.1 Semantic Definitions: PROPOSED
-D10.2 Per-Concept Lifecycle Capability: PROPOSED
-D10.3 Deletion/Replacement/Record/Cleanup Differentiation: PROPOSED
-D10.4 Mandatory Invariants: PROPOSED
-D10.5 Inheritance of Historical Responsibility: PROPOSED
-D10.6 Preservation Rules: PROPOSED
-D10.7 Semantic Identity Continuity and Constitutional Review: PROPOSED — awaiting Project Owner approval
+D10.1 Semantic Definitions: APPROVED
+D10.2 Per-Concept Lifecycle Capability: APPROVED
+D10.3 Deletion/Replacement/Record/Cleanup Differentiation: APPROVED
+D10.4 Mandatory Invariants: APPROVED
+D10.5 Inheritance of Historical Responsibility: APPROVED
+D10.6 Preservation Rules: APPROVED
+D10.7 Semantic Identity Continuity and Constitutional Review: APPROVED — CLOSED
 
-D10 overall status: READY FOR PROJECT OWNER APPROVAL
-ADW-01 overall status: D01-D09 APPROVED — CLOSED; D10 pending this approval to complete the workshop
+D10 overall status: APPROVED — CLOSED
+ADW-01 overall status: D01-D10 APPROVED — CLOSED. Decision-level closure of ADW-01 is complete.
+Governance-level baseline activation (Authority Hierarchy approval, repository
+synchronization, Architecture Baseline Resolution signature) remains pending
+per the Architecture Baseline Resolution Package, Execution Order steps 2-9.
 ```
