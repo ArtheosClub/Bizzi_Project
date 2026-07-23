@@ -1,6 +1,6 @@
 # Gate C — Architecture Decision Proposals
 
-Version: 1.0
+Version: 1.1
 Status: **Draft — Architecture Analysis Only. No decision below is Approved.**
 Implementation Track: 50_IMPLEMENTATION
 Scope: Gate C / WP13–WP22, responding to §11 (Open Questions) of
@@ -197,6 +197,21 @@ repository/service invariant plus tests (default), and stronger composite
 critical relationships if SQLAlchemy/Alembic complexity remains
 manageable," without naming a final, approved scope.
 
+**Governance synchronization note (2026-07-23):** the domain-semantic
+question of what these relationships *are* — `AuditRecord`→aggregate,
+`ContextPackage`→`Task`, `RuntimeSession`→`Task`, `Event`→`Task`/source —
+is governed by `00_ARCHITECTURE/01_DOMAIN/D09_RELATIONSHIP_MODEL.md`
+(APPROVED — CLOSED), not by this proposal. This proposal addresses only
+the persistence-layer enforcement mechanism for relationships D09 already
+defines. Per
+`00_ARCHITECTURE/00_GOVERNANCE/DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md`'s
+Vocabulary Baseline, audit/event relationship semantics specifically are,
+as a future concept, provisionally governed by this proposal (GC-002)
+pending ADW-07 (Events, Audit, and Provenance), which has not yet been
+written. This note does not change the alternatives, recommendation, or
+any other content below — see `00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md`
+§3 for the full Authority Hierarchy.
+
 ### Problem Statement
 
 For each Gate C relationship between workspace-scoped entities, decide
@@ -297,6 +312,11 @@ entities the Review calls Critical risk unprotected at the database layer.
 - Requires GC-DB-04 and GC-TEST-01 as hard implementation dependencies.
 - Requires `Task`/`EnterpriseObject` repositories to expose the
   `(workspace_id, id)` unique constraint other Gate C entities reference.
+- Subject to `00_ARCHITECTURE/01_DOMAIN/D09_RELATIONSHIP_MODEL.md` for
+  relationship semantics, and provisionally governs audit/event
+  relationship semantics pending ADW-07 per
+  `DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md` (see
+  Context, above).
 
 ### Risks
 
@@ -1235,6 +1255,16 @@ judgment call remains beyond the architectural recommendation itself (see
 each proposal's "Questions Requiring Owner Approval"), not a difference in
 confidence in the recommendation.
 
+**Governance cross-reference (2026-07-23):** GC-002's persistence-enforcement
+scope is distinct from, and subordinate to, D09 (Relationship Model,
+`00_ARCHITECTURE/01_DOMAIN/D09_RELATIONSHIP_MODEL.md`, APPROVED — CLOSED)
+for what these relationships mean; GC-002 itself provisionally governs
+audit/event relationship semantics pending ADW-07, per
+`DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md`. This does
+not change GC-002's Status (`Proposed`) or recommended option above — the
+underlying Gate C persistence-layer decision remains open for
+project-owner approval independent of this cross-reference.
+
 ## What happens after this package is reviewed
 
 Per the Architecture Review's own §12 Approval Rule, none of the
@@ -1255,3 +1285,4 @@ following begins until every decision above is approved or amended:
 | Version | Date | Change |
 |---|---|---|
 | 1.0 | 2026-07-19 | Initial Architecture Decision Package — GC-001 through GC-010, responding to the Architecture Review's §11 Open Questions |
+| 1.1 | 2026-07-23 | Governance Execution Step 8: added D09/DECISION_0002 cross-references to GC-002 (Context, Dependencies) and the Decision Register, so this document no longer discusses AuditRecord/ContextPackage/RuntimeSession/Event relationship enforcement without acknowledging D09 (Relationship Model) as the now-approved domain-semantics authority. No GC-001–GC-010 recommendation, alternative, or status changed. |
