@@ -7,8 +7,8 @@
 | Document ID | EGC-01 |
 | Title | Engineering Governance Charter |
 | Version | 1.0 |
-| Status | **DRAFT** |
-| Effective Date | Not yet effective |
+| Status | **ACTIVE** |
+| Effective Date | 2026-07-24 |
 | Repository | ArtheosClub/Bizzi_Project |
 | Authority | Project Owner (Tier 0, per `DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md` §1) |
 | Owner | Project Owner |
@@ -165,9 +165,9 @@ introduces no authority capable of overriding any of the three.
 
 | Field | Value |
 |---|---|
-| Approved by | _________________________ |
+| Approved by | Project Owner |
 | Title | Project Owner |
-| Signature | _________________________ |
-| Date | _________________________ |
+| Signature | APPROVED |
+| Date | 2026-07-24 |
 
-Status: **DRAFT**. Not activated. Not signed.
+Status: **ACTIVE**. Activated and signed 2026-07-24.
