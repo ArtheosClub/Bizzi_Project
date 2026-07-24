@@ -237,7 +237,7 @@ semantics. No resolution below is executed.
 | **Duplicate root: `CAPABILITY_MAP_v1.0.md`** | A 236-line root-level file and a 545-line `02_CAPABILITY_MAP/CAPABILITY_MAP.md` file, same pattern as above — shorter root copy, longer numbered-directory copy. | Platform Vision |
 | **Namespace fragmentation: Playbooks** | 102 `PB0*.md` files exist loose at repository root; the canonical `06_PLAYBOOKS/` directory contains only `.gitkeep` — the directory that names itself as the playbook home holds none of them. | Platform Vision |
 | **Namespace collision risk: `06_PLAYBOOKS` vs `06_REFERENCE`** | Two root directories currently share the `06_` number (`06_PLAYBOOKS`, and `06_REFERENCE`, created for RKM-01 and this document). Flagged previously at RKM-01's creation. | Reference / Platform Vision |
-| **Temporary/historical artifacts at root** | `TEST_WRITE.md` ("Repository Write Capability Test... Created for GitHub Capability Audit") and `CONNECTOR_TEST.md` ("GitHub Connector Test") are operational test artifacts, not specification content, sitting alongside constitutional and platform-vision documents at the same root level. | None — these are not classifiable into any RKM-01 domain; they are infrastructure test residue. |
+| **Temporary/historical artifacts at root (deleted)** | `TEST_WRITE.md` ("Repository Write Capability Test... Created for GitHub Capability Audit") and `CONNECTOR_TEST.md` ("GitHub Connector Test") were operational test artifacts, not specification content. Both were deleted under Repository Cleanup Operation RTC-01 after validation confirmed no operational dependency (README, index, workflow, script, or CI/CD) referenced either file — see the historical audit record below. | None — never classifiable into any RKM-01 domain; infrastructure test residue, now removed. |
 | **Granularity difference, not a collision: `AGENT_REGISTRY.md` vs `04_AGENT_LIBRARY/`** | Root `AGENT_REGISTRY.md` is a single registry document; `04_AGENT_LIBRARY/` holds 23 individual per-agent files. Complementary, not duplicate — recorded here only because it was checked, not because it is a defect. | Platform Vision |
 | **131 loose root-level `.md` files in total** | Includes `CORE_*.md` (14 files), milestone documents, `README.md`, `Vision.md`, `CLAUDE.md`, `PLAYBOOK_ROADMAP.md`, `PLAYBOOK_TEMPLATE.md`, `MASTER_INDEX_FULL.md`, in addition to the items above. Not all are collisions or legacy placements; several (`README.md`, `CLAUDE.md`) are conventionally root-level by nature and would remain so under most repository conventions. | Mixed — requires per-file classification (RKM-01 §07.1) before any recommendation, which RSM-01 does not perform in this revision. |
 
@@ -256,9 +256,22 @@ semantics. No resolution below is executed.
 - `06_PLAYBOOKS` vs `06_REFERENCE`: resolved automatically once
   Repository Numbering (§07) is adopted and both are renumbered into
   their correct ranges; no manual renumbering recommended before then.
-- `TEST_WRITE.md` / `CONNECTOR_TEST.md`: candidates for archival or
-  deletion as operational residue; RSM-01 does not recommend which,
-  since disposal is outside a structure model's authority.
+- `TEST_WRITE.md` / `CONNECTOR_TEST.md`: deleted under Repository
+  Cleanup Operation RTC-01 — see §08a for the historical audit record.
+
+### §08a Historical Audit Record — Repository Cleanup Operation RTC-01
+
+| Artifact | Disposition | Reason | Operation | Validation |
+|---|---|---|---|---|
+| `TEST_WRITE.md` | Deleted | Temporary repository write-capability verification artifact; no knowledge, operational, or historical value; no operational dependency found. | Repository Cleanup Operation RTC-01 | No Category A (operational) reference found; RSM-01 itself was the only Category B (documentary) reference, updated in this same commit. |
+| `CONNECTOR_TEST.md` | Deleted | Temporary GitHub connector verification artifact; no knowledge, operational, or historical value; no operational dependency found. | Repository Cleanup Operation RTC-01 | Same as above. |
+
+This record is retained per RTC-01's instruction to convert documentary
+references into historical audit records rather than silently removing
+them. The commit that performed this deletion and this update is
+identifiable via `git log`/`git blame` on this file and on the two
+removed paths; no SHA is embedded here to avoid a self-referential value
+that would require amending this same commit to fill in.
 
 ---
 
@@ -312,7 +325,7 @@ action set only; none is executed.
 | `backend/` | Codebase | `Codebase/` | REVIEW | Code repositories conventionally resist semantic renumbering (build tooling, CI paths, import roots depend on the literal path) — moving it has a different risk profile than documentation | Requires an engineering-track decision under EGC-01 §06, not just RKM-01/RSM-01 | High — the only Root Domain whose current path is likely load-bearing outside the documentation system itself |
 | `CLAUDE.md`, `README.md` | Reference (process-layer, self-describing) | Root-level exception — remains outside all Root Domains | KEEP | Both are conventionally expected at repository root by tooling and human readers regardless of internal semantic model | None | Low |
 | `GOVERNANCE_MODEL.md` (root copy), `CAPABILITY_MAP_v1.0.md` (root copy) | Platform Vision | `Platform/` | UNRESOLVED | Cannot assign a single target until the content divergence identified in §08 is resolved — moving either copy now would silently pick a winner | §08 content-divergence resolution (out of RSM-01 scope) | Medium — risk is in the content decision, not the move itself |
-| `TEST_WRITE.md`, `CONNECTOR_TEST.md` | None (not classifiable) | N/A | ARCHIVE or UNRESOLVED | Operational test residue, not specification content; RSM-01 cannot assign a Root Domain to an artifact RKM-01's domain model was never meant to cover | Disposal decision outside RSM-01's authority | Low |
+| `TEST_WRITE.md`, `CONNECTOR_TEST.md` | None (not classifiable) | N/A | DELETED (RTC-01) | Operational test residue, not specification content; deleted per Repository Cleanup Operation RTC-01 after validation found no operational dependency — see §08a historical audit record | None — action completed | None — historical |
 | `.github/`, `.claude/` | Codebase-adjacent (tooling) | N/A — outside RKM-01's nine domains | REVIEW | RKM-01 does not currently classify CI/agent-tooling configuration; a tenth domain or an explicit "tooling is Codebase-adjacent" ruling is needed before these can be mapped | RKM-01 amendment (out of RSM-01 scope — RSM-01 may not create new domains, §03 rule 2) | Low |
 
 ---
@@ -327,7 +340,7 @@ action set only; none is executed.
 | Every generated artifact has a destination | PASS — all twelve RKM-01 §10 artifacts resolve to `Reference/Generated/` (§04.4) |
 | No duplicate namespaces exist | FAIL — §08 identifies two content-divergent filename duplicates (`GOVERNANCE_MODEL.md`, `CAPABILITY_MAP_v1.0.md`) and one number collision (`06_`) |
 | No structural ambiguity exists | FAIL — `01_GOVERNANCE/` mixes two Semantic Domains under one root (§10); `.github/`, `.claude/` are unclassifiable under the current nine-domain model |
-| No orphan structural nodes exist | FAIL — `06_PLAYBOOKS/` is an intended-but-unpopulated node (§08); `TEST_WRITE.md`/`CONNECTOR_TEST.md` are unclassifiable orphans |
+| No orphan structural nodes exist | FAIL — `06_PLAYBOOKS/` is an intended-but-unpopulated node (§08). (`TEST_WRITE.md`/`CONNECTOR_TEST.md` were the other orphans identified here; both were deleted under Repository Cleanup Operation RTC-01 and no longer contribute to this finding — see §08a.) |
 
 Structural Validation as a whole: **NOT CLEAN**. This is an expected
 outcome of a first structural pass against an organically-grown
