@@ -116,9 +116,24 @@ authority. Human approval, exercised through the Project Owner under the
 Authority Hierarchy, is the sole source of constitutional authority for
 any engineering output, whether AI-generated or not.
 
-AI shall not modify a constitutional document. AI shall not redefine
-architecture. AI shall not bypass this Charter, ABR-01, Decision 0001, or
-DECISION_0002 under any operational justification.
+AI shall not:
+
+- originate a constitutional decision;
+- approve a constitutional document;
+- activate a constitutional document;
+- independently modify a constitutional document;
+- exercise constitutional authority.
+
+AI may record, implement, or mechanically apply an already-authorized
+constitutional decision, but only under explicit instruction from the
+Project Owner or another constitutionally authorized authority. Such
+recording or implementation does not constitute constitutional authority
+and shall not be interpreted as independent constitutional
+decision-making.
+
+AI shall not redefine architecture. AI shall not bypass this Charter,
+ABR-01, Decision 0001, or DECISION_0002 under any operational
+justification.
 
 ---
 
