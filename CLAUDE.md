@@ -10,11 +10,22 @@ Two things live here at different altitudes:
    system. Treat this as read-mostly reference material. Changes to
    `CAPABILITY_MAP`, `GOVERNANCE_MODEL`, or `AGENT_REGISTRY` require the
    project owner's explicit sign-off (see root `README.md`, "Contributing").
-2. **The Bizzi Platform MVP backend build** — the actual TypeScript/NestJS
-   service this repo is being coded toward, planned in
-   `docs/planning/`, decided in `docs/adr/`, and diagrammed in `docs/c4/`.
-   As of this writing **no backend source code exists yet** — this is a
-   from-scratch build following `docs/planning/WORK_PACKAGES.md`.
+2. **The Bizzi Platform MVP backend build** — the actual Python/FastAPI
+   service this repo is being coded toward (ADR-0007; supersedes the
+   original NestJS/TypeScript scope in ADR-0002), planned in
+   `docs/planning/` and `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md`,
+   decided in `docs/adr/`, and diagrammed in `docs/c4/`. **Gate B
+   (Engineering Foundation) is done and merged to `main`** — see
+   `backend/`. **Gate C (Platform Backbone) is next** — see
+   `docs/planning/PRE-CODING-BRIEF.md` §8 and
+   `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` (WP13–WP22) for scope.
+   Domain semantics for Gate C — what a concept means, who owns it, how
+   it relates to others, how it ends — are governed by `00_ARCHITECTURE/`
+   (the Architecture Decision Workshop, ADW-01, decisions D01–D10). This
+   file does not restate that hierarchy; see
+   `00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md` §3 for the full,
+   approved authority hierarchy governing which document wins when
+   artifacts conflict.
 
 If a task is ambiguous about which of the two it concerns, ask before
 proceeding — editing spec prose and writing service code are governed by
@@ -23,9 +34,15 @@ different rules (below).
 ## Mandatory: before writing or editing any backend service code
 
 Invoke the `bizzi-consult-before-coding` skill (or read, at minimum,
-`docs/planning/DEVELOPMENT_PLAN.md` §6-§7, `docs/adr/0002-*.md`,
-`docs/adr/0003-*.md`, `30_BACKEND_IMPLEMENTATION_PLAN/13_BACKEND_CODING_STANDARDS.md`,
-and `docs/c4/C4_DYNAMIC_CANONICAL_FLOW.md`). This is not optional
+`docs/planning/DEVELOPMENT_PLAN.md` §6-§7, `docs/adr/0007-*.md`
+(Python/FastAPI stack — supersedes `docs/adr/0002-*.md`, kept only as
+historical record), `docs/adr/0003-*.md`,
+`30_BACKEND_IMPLEMENTATION_PLAN/13_BACKEND_CODING_STANDARDS.md` (principles
+apply stack-agnostically per ADR-0003; literal NestJS syntax in that doc
+does not), `docs/c4/C4_DYNAMIC_CANONICAL_FLOW.md`, and — for Gate C work
+specifically — `00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md` and the
+approved ADW-01 decisions (D01–D10) for the governing domain semantics.
+This is not optional
 housekeeping — `30_BACKEND_IMPLEMENTATION_PLAN/12_IMPLEMENTATION_RISK_REGISTER.md`
 names R-AI-001 ("AI-generated code bypasses architecture") as a Critical
 risk specifically because AI coding agents skip exactly this step under
@@ -69,7 +86,8 @@ show up, per `30_BACKEND_IMPLEMENTATION_PLAN/14_IMPLEMENTATION_CHECKLIST.md` §2
 
 | Need | Read |
 |---|---|
-| What to build next | `docs/planning/DEVELOPMENT_PLAN.md`, `docs/planning/WORK_PACKAGES.md` |
+| What to build next | `docs/planning/PRE-CODING-BRIEF.md` (Gate structure), `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` (WP-level detail, current — `docs/planning/WORK_PACKAGES.md` is superseded), `docs/planning/DEVELOPMENT_PLAN.md` (governance gates) |
+| What a domain concept means (Gate C v1.1) | `00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md` (authority hierarchy), `00_ARCHITECTURE/01_DOMAIN/ADW_01_DECISION_REGISTER.md` (D01–D10, the approved decisions) |
 | Why something was built a certain way | `docs/adr/` |
 | How the system fits together | `docs/c4/` |
 | Exact coding rules | `30_BACKEND_IMPLEMENTATION_PLAN/13_BACKEND_CODING_STANDARDS.md` |
