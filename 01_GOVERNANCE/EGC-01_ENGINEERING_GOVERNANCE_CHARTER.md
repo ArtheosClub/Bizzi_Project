@@ -13,7 +13,7 @@
 | Authority | Project Owner (Tier 0, per `DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md` §1) |
 | Owner | Project Owner |
 | Supersedes | None |
-| Related Documents | `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0001_MVP_FIRST.md`; `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md`; `00_ARCHITECTURE/00_GOVERNANCE/ABR-01_ARCHITECTURE_BASELINE_RESOLUTION.md` |
+| Related Documents | `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0001_MVP_FIRST.md`; `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md`; `00_ARCHITECTURE/00_GOVERNANCE/ABR-01_ARCHITECTURE_BASELINE_RESOLUTION.md`; `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0003_IMPLEMENTATION_BASELINE.md` |
 
 ---
 
@@ -171,3 +171,13 @@ introduces no authority capable of overriding any of the three.
 | Date | 2026-07-24 |
 
 Status: **ACTIVE**. Activated and signed 2026-07-24.
+
+---
+
+## 12. Implementation Baseline Reference
+
+Engineering Governance under this Charter becomes fully operational from
+the Implementation Baseline established by
+`00_ARCHITECTURE/00_GOVERNANCE/DECISION_0003_IMPLEMENTATION_BASELINE.md`.
+This reference does not alter this Charter's scope, principles,
+authority, or any other section above.

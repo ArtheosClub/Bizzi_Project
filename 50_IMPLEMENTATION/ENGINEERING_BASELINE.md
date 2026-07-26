@@ -4,12 +4,19 @@ Version: 1.0
 Status: Active
 Repository: ArtheosClub/Bizzi_Project
 Baseline branch: `agent/architecture-specification-v1-1`
+Constitutional ratification: `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0003_IMPLEMENTATION_BASELINE.md`
 
 This document freezes the exact repository state from which
 implementation begins. It verifies, summarizes, and normalizes what
 already exists; it invents nothing, redesigns nothing, and modifies no
 approved document. Everything after this baseline belongs to
 implementation, not architecture.
+
+DECISION_0003 formally declares this document's baseline branch and
+commit (§4) as the official Implementation Baseline. This document's own
+content, conclusions, and open items (§7, §9) are unchanged by that
+Decision — DECISION_0003 activates the baseline described here; it does
+not restate or revise it.
 
 ---
 

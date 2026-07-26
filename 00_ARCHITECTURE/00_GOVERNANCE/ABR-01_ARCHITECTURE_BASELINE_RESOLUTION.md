@@ -13,7 +13,7 @@
 | Authority | Project Owner (Tier 0, per `DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md` §1) |
 | Owner | Project Owner |
 | Supersedes | None |
-| Related Documents | `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0001_MVP_FIRST.md`; `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md`; `00_ARCHITECTURE/01_DOMAIN/ADW_01_DECISION_REGISTER.md`; `00_ARCHITECTURE/01_DOMAIN/ADW_01_CORE_DOMAIN_SEMANTICS.md`; `00_ARCHITECTURE/00_FOUNDATION/DOMAIN_FOUNDATION.md`; `00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md`; `CLAUDE.md`; `50_IMPLEMENTATION/GATE_A/WP02_FIRST_BUSINESS_SCENARIO.md`; `50_IMPLEMENTATION/GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md` |
+| Related Documents | `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0001_MVP_FIRST.md`; `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md`; `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0003_IMPLEMENTATION_BASELINE.md`; `00_ARCHITECTURE/01_DOMAIN/ADW_01_DECISION_REGISTER.md`; `00_ARCHITECTURE/01_DOMAIN/ADW_01_CORE_DOMAIN_SEMANTICS.md`; `00_ARCHITECTURE/00_FOUNDATION/DOMAIN_FOUNDATION.md`; `00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md`; `CLAUDE.md`; `50_IMPLEMENTATION/GATE_A/WP02_FIRST_BUSINESS_SCENARIO.md`; `50_IMPLEMENTATION/GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md` |
 
 ---
 
@@ -156,3 +156,15 @@ governance document, the higher-authority document prevails, per the
 Authority Hierarchy established by DECISION_0002 §1. This section
 introduces no additional rule; it reinforces constitutional precedence
 already established there.
+
+---
+
+## 11. Implementation Baseline Transition
+
+The Architecture Baseline this Resolution establishes has transitioned
+into the official Implementation Baseline, per
+`00_ARCHITECTURE/00_GOVERNANCE/DECISION_0003_IMPLEMENTATION_BASELINE.md`.
+DECISION_0003 activates this Resolution's Baseline for implementation;
+it does not amend, reinterpret, or supersede any conclusion in §01–§10
+above. This Resolution's constitutional findings, resolutions, and
+effective state remain exactly as adopted.
