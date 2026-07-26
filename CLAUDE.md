@@ -87,8 +87,8 @@ show up, per `30_BACKEND_IMPLEMENTATION_PLAN/14_IMPLEMENTATION_CHECKLIST.md` §2
 The repository is in the Implementation Phase, per
 `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0003_IMPLEMENTATION_BASELINE.md`.
 
-- **Current baseline branch**: `agent/architecture-specification-v1-1`.
-- **Current baseline commit**: `63552c3560bc4d2aa012be942bf1cda6d1c694f2`.
+- **Current baseline branch**: `main`.
+- **Current baseline commit**: `576465f15d8e35656ad8ff3f6ed5e954ebb74fe8`.
 - **Architecture is frozen.** Architecture, vocabulary, the domain model,
   repository structure, technology stack, engineering methodology,
   layering, the Authority Hierarchy, and governance are all frozen per

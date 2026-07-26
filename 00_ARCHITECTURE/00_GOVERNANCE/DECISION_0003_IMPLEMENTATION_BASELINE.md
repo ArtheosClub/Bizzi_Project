@@ -31,16 +31,30 @@ transition from having an architecture to building against one.
 
 ## 3. Baseline Branch
 
-`agent/architecture-specification-v1-1` is declared the official
-Implementation Baseline Branch. It represents the complete architectural
-state described in §1 — every document in the scope defined by §6 exists
-on this branch in the state recorded by the Baseline Commit (§4).
+`main` is declared the official Implementation Baseline Branch. It
+represents the complete architectural state described in §1 — every
+document in the scope defined by §6 exists on `main` as of the Baseline
+Commit (§4).
+
+`agent/architecture-specification-v1-1` was the Implementation Baseline
+Branch prior to the release merge described below; it is now historical
+— see §5.
 
 ## 4. Baseline Commit
 
-The Baseline Commit is the HEAD of `agent/architecture-specification-v1-1`
-immediately prior to this Decision, determined directly from the
-repository:
+The Baseline Commit is the merge commit produced by merging
+`agent/architecture-specification-v1-1` into `main`, without squash,
+read directly from the merge result:
+
+```text
+576465f15d8e35656ad8ff3f6ed5e954ebb74fe8
+"Merge agent/architecture-specification-v1-1: Implementation Baseline
+established (DECISION_0003)"
+```
+
+The branch HEAD immediately prior to this Decision, and the commit that
+`main` was fast-forward-eligible from before the merge, remains on
+record as historical evidence:
 
 ```text
 63552c3560bc4d2aa012be942bf1cda6d1c694f2
@@ -49,19 +63,21 @@ repository:
 
 ## 5. Merge Policy
 
-When `agent/architecture-specification-v1-1` is merged into `main`, it
-**shall be merged without squash**. Its full commit history — every
-governance, architecture, and implementation-planning commit that
-produced the Baseline Commit — shall remain intact in `main`'s history.
-The resulting merge commit becomes the official Implementation Baseline
-Commit on `main`.
+`agent/architecture-specification-v1-1` **was merged into `main` without
+squash**, per pull request #4, as merge commit
+`576465f15d8e35656ad8ff3f6ed5e954ebb74fe8` (§4). Its full commit history
+— all 56 governance, architecture, and implementation-planning commits
+that produced the Baseline Commit — remains intact in `main`'s history;
+no commit was rewritten, rebased, or dropped. This satisfied the
+branch-location precondition for Sprint 0 that
+`50_IMPLEMENTATION/ENGINEERING_BASELINE.md` §9 identified.
 
-This Decision declares the policy; **it does not itself perform the
-merge.** Executing the merge is a separate, explicitly authorized act —
-`50_IMPLEMENTATION/ENGINEERING_BASELINE.md` §9 already recorded that the
-branch-location decision (merge to `main`, or an explicit interim
-alternative) is a precondition for Sprint 0, not something this Decision
-resolves unilaterally.
+Note recorded during this release: pull request #2
+(`claude/gate-c-platform-backbone`) is **not** superseded by this merge.
+Verified directly — only `CLAUDE.md` and
+`GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md` of its ten changed files were
+present on the merged branch; the other seven remain exclusively on PR
+#2 and require their own, separate resolution.
 
 ## 6. Scope
 
@@ -109,15 +125,16 @@ Recorded, not redesigned:
 
 ## 9. Branch Policy
 
-`main` becomes the Official Implementation Branch, effective upon the
-merge described in §5. No direct commits to `main`. All implementation
-work must originate from short-lived feature branches merged via pull
-request. Architecture work requires dedicated architecture branches,
-kept separate from implementation feature branches.
+`main` **is** the Official Implementation Branch, effective from the
+merge in §5. No direct commits to `main`. All implementation work must
+originate from short-lived feature branches merged via pull request.
+Architecture work requires dedicated architecture branches, kept
+separate from implementation feature branches.
 
-Until the §5 merge occurs, `main` does not yet contain this baseline —
-this policy governs `main`'s use from the point the baseline reaches it,
-not before.
+This update to §3, §4, §5, and this section is itself recorded as an
+exception: it completes the release-transition operation this Decision
+authorized, rather than being ordinary implementation or architecture
+work subject to the policy it establishes.
 
 ## 10. Development Policy
 
