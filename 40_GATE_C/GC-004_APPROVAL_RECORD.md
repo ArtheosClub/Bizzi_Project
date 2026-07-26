@@ -108,7 +108,7 @@ records the following decisions, and only the following decisions:
   (`45_GATE_C_TRANSITION/OUTSTANDING_ITEMS.md`) has been reviewed in
   full.
 - **Residual Risks Accepted** — the residual risks identified in GC-003
-  and recorded in the Outstanding Items Register are accepted, per §5
+  and recorded in the Outstanding Items Register are accepted, per §6
   below.
 
 This Approval Record does not authorize implementation. This Approval
@@ -116,7 +116,40 @@ Record does not close Gate C.
 
 ---
 
-## 5. Residual Risk Acceptance
+## 5. Approval Effect
+
+This section SHALL define the governance effect produced by execution
+of this Approval Record. It introduces no new approval and no new
+decision beyond those already recorded in §4. It SHALL NOT authorize
+implementation activities.
+
+Upon execution of this Approval Record:
+
+- The Gate C Certification Assessment SHALL be formally accepted.
+- The Gate C Certification Package (GC-001, GC-002, GC-003) SHALL become
+  the approved governance baseline for Gate C.
+- The Certification Findings documented in GC-003 SHALL remain
+  unchanged.
+- The Outstanding Items Register (`45_GATE_C_TRANSITION/OUTSTANDING_ITEMS.md`)
+  SHALL remain the authoritative governance register for all unresolved
+  findings.
+- Outstanding Items SHALL continue to be governed through the lifecycle
+  defined in `OUTSTANDING_ITEMS.md` §7 (Outstanding Item Lifecycle) and
+  §10 (Exit Mechanisms).
+- The approved repository baseline (§2) SHALL be preserved.
+- No Gate C Certification finding SHALL be modified by this Approval
+  Record.
+- No Outstanding Item SHALL be closed by this Approval Record.
+- Final Gate C Closure SHALL remain governed exclusively by
+  `GC-005_GATE_C_CLOSURE_DECISION.md`, which does not exist as of this
+  document.
+
+This Approval Record SHALL NOT authorize implementation activities. This
+Approval Record SHALL NOT close Gate C.
+
+---
+
+## 6. Residual Risk Acceptance
 
 The residual risks identified in GC-003 §5, §6, and §7, and recorded as
 Outstanding Items OI-001 through OI-012 in
@@ -137,7 +170,7 @@ Items Register.
 
 ---
 
-## 6. Governance Statement
+## 7. Governance Statement
 
 This Approval Record:
 
@@ -154,7 +187,7 @@ This Approval Record:
 
 ---
 
-## 7. Approval Record
+## 8. Approval Record
 
 | Field | Value |
 |---|---|
@@ -172,7 +205,7 @@ This Approval Record:
 
 ---
 
-## 8. Approval Conditions
+## 9. Approval Conditions
 
 GC-003 §9 issued a certification outcome of **CONDITIONAL PASS**, with
 five explicit conditions. The governance authority accepts this
@@ -183,7 +216,7 @@ authoritative source for the certification outcome and its conditions.
 
 ---
 
-## 9. Repository Integrity
+## 10. Repository Integrity
 
 GC-001, GC-002, GC-003, and the Outstanding Items Register
 (`45_GATE_C_TRANSITION/OUTSTANDING_ITEMS.md`) remain unchanged by this
