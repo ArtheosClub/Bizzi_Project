@@ -16,6 +16,28 @@ template conformance before proceeding to Review and Approval.
 
 ---
 
+## Module Metadata
+
+| Field | Value |
+|---|---|
+| Module ID | MOD-011 |
+| Specification ID | MS-011 |
+| Version | 1.0 |
+| Status | Draft |
+| Owner | |
+| Review Status | Not Started |
+| Approval Status | Pending |
+| Implementation Status | Not Started |
+| Verification Status | Not Started |
+| Gate D Status | Pending |
+
+`MOD-011` SHALL become the permanent engineering identifier for this
+module. Future ADRs, Issues, Pull Requests, and Tests MAY reference this
+Module ID. The Specification ID `MS-011` continues to identify this
+document; both identifiers SHALL coexist.
+
+---
+
 ## 1. Purpose
 
 Administration SHALL provide operational configuration, monitoring, and
@@ -107,3 +129,20 @@ Architecture Baseline.
 Administration's specification SHALL be considered acceptable when every
 operational configuration change takes effect only within the
 configuring module's own defined surface.
+
+---
+
+## 15. Future Engineering Artifacts
+
+This section is a reserved placeholder only. It lists engineering
+artifacts that MAY later exist for this module, once it proceeds beyond
+Approval in the lifecycle defined in the top-level `README.md` §7. None
+of the following documents currently exist, and none is created or
+populated by this specification:
+
+- `DATA_MODEL.md`
+- `API_CONTRACT.md`
+- `EVENTS.md`
+- `TEST_SPECIFICATION.md`
+- `IMPLEMENTATION_NOTES.md`
+- `CHANGELOG.md`

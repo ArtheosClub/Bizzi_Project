@@ -81,3 +81,74 @@ architecture-level status; they do not yet address every section listed
 above. Each SHALL be extended to full conformance with this template
 before proceeding to Review and Approval under the lifecycle defined in
 `README.md` §7.
+
+---
+
+## Mandatory Metadata Section
+
+Every Module Specification SHALL, in addition to the Required Sections
+above, carry a Module Metadata section recording the following fields:
+
+- **Module ID** — the module's permanent engineering identifier (e.g.
+  `MOD-001`). Future ADRs, Issues, Pull Requests, and Tests MAY reference
+  this identifier.
+- **Specification ID** — the module's Specification identifier (e.g.
+  `MS-001`). The Module ID and the Specification ID SHALL coexist; the
+  introduction of one SHALL NOT remove the other.
+- **Specification Version** — the version of the Module Specification
+  document itself.
+- **Status** — the module specification's own lifecycle status.
+- **Owner** — the individual or role accountable for the module
+  specification, where assigned.
+- **Review Status** — the module's status against the Architecture
+  Review stage of the lifecycle defined in `README.md` §7.
+- **Approval Status** — the module's status against the Approval stage
+  of that lifecycle.
+- **Implementation Status** — the module's status against the
+  Implementation stage of that lifecycle.
+- **Verification Status** — the module's status against the
+  Verification stage of that lifecycle.
+- **Gate D Status** — the module's status against the Gate D
+  Certification stage of that lifecycle.
+
+---
+
+## Mandatory Lifecycle Status Fields
+
+Every Module Specification's Review Status, Approval Status,
+Implementation Status, and Verification Status SHALL be maintained
+consistently with the module's actual position in the lifecycle defined
+in `README.md` §7. No lifecycle status field SHALL be advanced ahead of
+the stage the module has actually reached. A module's Gate D Status
+SHALL NOT be advanced beyond `Pending` until Gate D Certification —
+itself a future certification checkpoint, not yet established — actually
+occurs.
+
+---
+
+## Revision History
+
+Every Module Specification SHALL maintain a Revision History recording
+every version of the document, the date of each revision, and a summary
+of what changed. A Module Specification SHALL NOT silently overwrite a
+prior version's recorded content without a corresponding Revision
+History entry.
+
+---
+
+## Review History
+
+Every Module Specification SHALL maintain a Review History recording
+every Architecture Review the specification has undergone: the date, the
+reviewing authority, and the review's outcome. A Module Specification
+that has not undergone Architecture Review SHALL carry an empty Review
+History.
+
+---
+
+## Approval History
+
+Every Module Specification SHALL maintain an Approval History recording
+every Approval decision made regarding the specification: the date, the
+approving authority, and the decision. A Module Specification that has
+not been approved SHALL carry an empty Approval History.

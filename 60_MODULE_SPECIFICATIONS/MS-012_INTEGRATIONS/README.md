@@ -16,6 +16,28 @@ template conformance before proceeding to Review and Approval.
 
 ---
 
+## Module Metadata
+
+| Field | Value |
+|---|---|
+| Module ID | MOD-012 |
+| Specification ID | MS-012 |
+| Version | 1.0 |
+| Status | Draft |
+| Owner | |
+| Review Status | Not Started |
+| Approval Status | Pending |
+| Implementation Status | Not Started |
+| Verification Status | Not Started |
+| Gate D Status | Pending |
+
+`MOD-012` SHALL become the permanent engineering identifier for this
+module. Future ADRs, Issues, Pull Requests, and Tests MAY reference this
+Module ID. The Specification ID `MS-012` continues to identify this
+document; both identifiers SHALL coexist.
+
+---
+
 ## 1. Purpose
 
 Integrations SHALL connect the platform to external systems and
@@ -106,3 +128,20 @@ Architecture Baseline.
 
 Integrations' specification SHALL be considered acceptable when every
 external interoperation proceeds exclusively through API.
+
+---
+
+## 15. Future Engineering Artifacts
+
+This section is a reserved placeholder only. It lists engineering
+artifacts that MAY later exist for this module, once it proceeds beyond
+Approval in the lifecycle defined in the top-level `README.md` §7. None
+of the following documents currently exist, and none is created or
+populated by this specification:
+
+- `DATA_MODEL.md`
+- `API_CONTRACT.md`
+- `EVENTS.md`
+- `TEST_SPECIFICATION.md`
+- `IMPLEMENTATION_NOTES.md`
+- `CHANGELOG.md`

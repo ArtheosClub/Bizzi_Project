@@ -80,7 +80,7 @@ Every module SHALL proceed through the following lifecycle, in order:
 Module Specification
         |
         v
-     Review
+Architecture Review
         |
         v
     Approval
@@ -92,14 +92,15 @@ Module Specification
    Verification
         |
         v
-     Gate D
+Gate D Certification
 ```
 
-No stage SHALL be entered before the preceding stage is complete. A
-Module Specification that has not been reviewed SHALL NOT be treated as
+No stage SHALL be entered before the preceding stage is complete.
+Implementation SHALL NOT begin until Approval. A Module Specification
+that has not undergone Architecture Review SHALL NOT be treated as
 approved. A module that has not been approved SHALL NOT enter
 implementation. A module whose implementation has not been verified
-SHALL NOT be presented to Gate D.
+SHALL NOT be presented to Gate D Certification.
 
 ---
 
@@ -120,9 +121,13 @@ source is introduced.
   Specification SHALL follow.
 - `MODULE_INDEX.md` — the catalog of all Module Specifications and their
   status.
-- `MS-001_FOUNDATION.md` through `MS-012_INTEGRATIONS.md` — the initial,
-  architecture-level Module Specifications.
+- `MS-001_FOUNDATION/` through `MS-012_INTEGRATIONS/` — one directory per
+  module, each containing that module's `README.md` specification and,
+  in future, the engineering artifacts listed under that specification's
+  own Future Engineering Artifacts section.
 
-No additional file SHALL be added to this directory except a future
-Module Specification following `MS_TEMPLATE.md`, or a governance
+No additional file SHALL be added to this directory, or to any
+module-specific subdirectory, except a future Module Specification
+following `MS_TEMPLATE.md`, a future engineering artifact reserved under
+a module's own Future Engineering Artifacts section, or a governance
 amendment to this framework itself.
