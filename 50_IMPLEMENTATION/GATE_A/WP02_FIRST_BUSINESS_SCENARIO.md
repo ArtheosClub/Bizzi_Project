@@ -17,6 +17,15 @@ first business scenario named in `docs/planning/PRE-CODING-BRIEF.md` §7
 improvement, and pass the recommendation to the owner for approval"),
 which maps to **PB032**.
 
+**Business Operation correspondence:** per D06
+(`00_ARCHITECTURE/01_DOMAIN/ADW_01_DECISION_REGISTER.md` §8), this
+scenario's end-to-end flow — from problem submission through approved
+recommendation — constitutes one Business Operation, coordinating the
+single Work Item (Task) in scope for this scenario. See
+`00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md` §3 for the authoritative
+domain-semantics source; this document does not restate Business
+Operation's approved definition.
+
 ## 2. Scenario Goal
 
 Prove that Bizzi can transform an unstructured operational concern into a governed, traceable recommendation and human decision without requiring the full future agent ecosystem.
