@@ -1,21 +1,25 @@
 # C2 — Container Diagram
 
 Scope: containers inside and immediately around the Bizzi Platform Backend
-system boundary. Solid = MVP (Phase 0/1). Dashed = planned (Phase 2+ or
-external, per ADR-0002).
+system boundary. Solid = built (Gate B, merged to `main`). Dashed = planned
+(Gate C+, or external per ADR-0007).
+
+Stack: Python + FastAPI + PostgreSQL, per ADR-0007 (supersedes the original
+NestJS/TypeScript/Prisma scope this diagram used to describe — see
+`docs/planning/TECH_STACK.md` for exact pinned versions).
 
 ```mermaid
 flowchart TB
     owner(["Business Owner / User"])
 
     subgraph BIZZI["Bizzi Platform (system boundary)"]
-        api["Backend API<br/>NestJS / TypeScript<br/>REST JSON /api/v1"]
-        db[("PostgreSQL 15+<br/>Prisma-managed migrations<br/>workspace-scoped tables")]
-        jobs[["Job Queue — planned<br/>BullMQ / Redis<br/>deferred until async jobs needed"]]
+        api["Backend API<br/>Python / FastAPI<br/>REST JSON /api/v1<br/>built: backend/Dockerfile, python:3.13.14-slim-bookworm"]
+        db[("PostgreSQL 18.4<br/>Alembic-managed migrations<br/>dev :5432 / test :5433 instances<br/>no domain tables yet — Gate C")]
+        jobs[["Job Queue — planned<br/>deferred until async jobs needed<br/>(TECH_STACK.md 'Explicitly not included')"]]
         spa[["Frontend — planned<br/>not built yet, out of this plan's scope"]]
     end
 
-    subgraph PLATFORM["Art of Business Platform Services — future, external (ADR-0002)"]
+    subgraph PLATFORM["Art of Business Platform Services — future, external (ADR-0007)"]
         agentRegistry[["Agent Registry Service"]]
         knowledgeGraph[["Knowledge Graph Service"]]
         memorySvc[["Memory Service (platform)"]]
@@ -27,7 +31,7 @@ flowchart TB
     end
 
     owner -->|"HTTPS/JSON"| api
-    api -->|"Prisma Client,<br/>workspace-scoped queries"| db
+    api -->|"SQLAlchemy + psycopg v3,<br/>Alembic-managed migrations"| db
     api -.->|"future: enqueue jobs"| jobs
     spa -.->|"future"| api
     api -.->|"future: may federate auth"| identitySvc
@@ -47,20 +51,20 @@ flowchart TB
     style identitySvc fill:#4a5568,color:#fff,stroke-dasharray: 5 5
 ```
 
-## Containers in MVP scope
+## Containers in MVP scope (built, Gate B)
 
 | Container | Technology | Responsibility |
 |---|---|---|
-| Backend API | NestJS / TypeScript | All MVP modules (Workspace, Authorization, Validation, Audit, Event, Task, Decision, Memory, Dashboard, Health) — see C3 |
-| PostgreSQL | PostgreSQL 15+, Prisma | Workspace-scoped relational store; schema changes only via committed Prisma migrations |
+| Backend API | Python 3.13.14, FastAPI 0.139.2, Uvicorn | `/health` endpoint only so far; Gate C adds EnterpriseObject/AgentDefinition/Task/Auth/Event/AuditRecord/ContextPackage/RuntimeSession routers — see C3 |
+| PostgreSQL | PostgreSQL 18.4-alpine, SQLAlchemy 2.0 + Alembic 1.18 | Workspace-scoped relational store once Gate C lands (ADR-0004); currently holds only Alembic's own `alembic_version` table (baseline migration, no domain tables yet). Schema changes only via committed Alembic migrations. |
 
 ## Containers explicitly deferred (named, not built)
 
 | Container | Status | Trigger to build |
 |---|---|---|
-| Job Queue (BullMQ/Redis) | Deferred | First real need for async/background work — `01_TECH_STACK_DECISION.md` |
+| Job Queue | Deferred | First real, demonstrated need for async/background work — `docs/planning/TECH_STACK.md` "Explicitly not included" |
 | Frontend SPA | Not started | Separate plan, out of this document's scope |
-| Identity Access Service (federated) | Dev stub only (WP-04) | Real provider selection (Auth0/Clerk/Supabase) |
+| Identity Access Service (federated) | Not started | Gate C, WP16 "Minimal Identity and Authentication" (`50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md`) |
 
 ## Containers that belong to the platform-wide vision, not this system
 
@@ -70,5 +74,6 @@ Identity Access — full list and one-liners in
 `11_PLATFORM_SERVICES/PLATFORM_SERVICE_ARCHITECTURE.md`) are part of the
 platform-wide "Art of Business" architecture, not containers this backend
 build produces. They're shown here only to make the system boundary honest
-about what's outside it. Per ADR-0002, integrating with them is a future,
-separately-ADR'd decision.
+about what's outside it. Per ADR-0007, integrating with them is a future,
+separately-ADR'd decision — including how they'd relate to the
+provider-neutral agent context model in `PRE-CODING-BRIEF.md` §5.3.
