@@ -1,7 +1,8 @@
 # Architecture Decision Records (ADR)
 
 This directory records architecture decisions for **service coding** on the
-Bizzi Platform backend — the actual TypeScript/NestJS implementation, not the
+Bizzi Platform backend — the actual Python/FastAPI implementation (ADR-0007;
+supersedes the original TypeScript/NestJS scope in ADR-0002), not the
 enterprise-wide specification corpus (`00_RELEASE` … `50_IMPLEMENTATION`).
 Those numbered directories describe *what the system should be*; ADRs record
 *why we built it a specific way*, tied to git history.
@@ -43,8 +44,9 @@ one decision per file. Template: `0000-adr-template.md`.
 | ADR | Title | Status |
 |---|---|---|
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions | Accepted |
-| [0002](0002-bizzi-mvp-backend-stack-scope.md) | Scope the Bizzi Platform MVP backend to TypeScript/NestJS/PostgreSQL/Prisma | Accepted |
+| [0002](0002-bizzi-mvp-backend-stack-scope.md) | Scope the Bizzi Platform MVP backend to TypeScript/NestJS/PostgreSQL/Prisma | **Superseded by ADR-0007** |
 | [0003](0003-controller-service-repository-layering.md) | Controller-Service-Repository layering enforced by import boundaries | Accepted |
 | [0004](0004-workspace-scoped-multi-tenancy.md) | Workspace as root aggregate / mandatory multi-tenant scoping | Accepted |
 | [0005](0005-audit-first-mutations.md) | Audit-first mutations via AuditService + RuntimeEventService | Accepted |
 | [0006](0006-authorization-model-mvp.md) | Owner-only authorization for MVP, RBAC-ready extension path | Accepted |
+| [0007](0007-bizzi-mvp-backend-stack-python-fastapi.md) | Bizzi MVP backend stack is Python + FastAPI, not TypeScript/NestJS | Accepted |
