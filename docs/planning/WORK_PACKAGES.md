@@ -1,5 +1,14 @@
 # Bizzi Platform Backend — Work Package Register
 
+> **Superseded by `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md`.** This
+> register was written for the original TypeScript/NestJS/Prisma scope
+> (`docs/adr/0002-*.md`), which ADR-0007 reversed in favor of Python +
+> FastAPI. It does not match what Gate B actually built (see
+> `backend/README.md`) or the current Gate A-G structure
+> (`docs/planning/PRE-CODING-BRIEF.md` §8). Kept only as a historical
+> record — do not use it to plan new work; use
+> `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` instead.
+
 Companion to `DEVELOPMENT_PLAN.md`. WP IDs for Phase 0, 1, and 3 mirror the
 step numbers in `30_BACKEND_IMPLEMENTATION_PLAN/06_MODULE_IMPLEMENTATION_SEQUENCE.md`
 1:1. Phase 2 WPs (90s) are cross-cutting quality gates with no module-sequence

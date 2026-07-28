@@ -53,6 +53,14 @@ Language runtime and Package manager rows above exactly, with no separate
   violate that.
 - **Kubernetes** — deferred per ADR-0007 / Brief §1 ("Kubernetes-ready, but
   not Kubernetes-dependent"). MVP deployment is Docker Compose only.
+- **An LLM/agent provider SDK** — no provider or model is pinned yet, and
+  Gate C hasn't started. When one is added, it must sit behind the
+  provider-adapter boundary in `PRE-CODING-BRIEF.md` §5.3 (canonical
+  context/result envelope → provider adapter → provider-specific request),
+  not be called directly from business logic — that's what makes the
+  provider/model swap in §5.1 possible later without an application-code
+  rewrite. Recorded here now so whoever adds the first provider dependency
+  sees the constraint before pinning anything.
 
 ## Known local-environment caveat (sandbox-specific, not a repo decision)
 
