@@ -1,3 +1,27 @@
+> ## ⚠️ Prologue — added 2026-07-29
+>
+> **An audit is a snapshot of repository state at a specific point in
+> time. It is not a living document. It is never edited to reflect later
+> changes — later developments are recorded in a prologue like this one,
+> and the findings below stand exactly as originally written, including
+> any that subsequent events have overtaken or disproved.**
+>
+> This prologue is additive. Not one word of the audit body below has
+> been altered.
+>
+> **Subsequent developments affecting this audit's findings:**
+>
+> - **PR #2 has since been merged** (merge commit `dfb8804`). Findings
+>   below that describe it as open, 59 commits behind `main`, or
+>   `mergeable_state: dirty` were accurate on 2026-07-26 and are no
+>   longer current.
+> - **§2.1's statement that the C1/C2/C3 stale-stack fix "already exists
+>   on PR #2" was later found to be only partially correct.** PR #2
+>   contained fixes for `C2_CONTAINER.md` and `C3_COMPONENT.md` only;
+>   `C1_CONTEXT.md`, `docs/c4/README.md`, and `docs/adr/README.md` were
+>   never part of it. See branch `agent/fix-stale-stack-docs` / PR #5 for
+>   the corrected breakdown and the remaining fix.
+
 # Two-Week Repository Audit — 2026-07-26
 
 Audit Date: 2026-07-26
