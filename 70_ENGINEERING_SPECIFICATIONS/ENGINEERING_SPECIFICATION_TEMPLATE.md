@@ -3,7 +3,7 @@
 Document ID: ESF-TEMPLATE
 Title: Engineering Specification Template
 Version: 1.0
-Status: ACTIVE
+Status: **DEFERRED — post-MVP** (see `README.md`)
 Document Type: Governance Template
 Part of: Engineering Specification Framework
 Repository: ArtheosClub/Bizzi_Project

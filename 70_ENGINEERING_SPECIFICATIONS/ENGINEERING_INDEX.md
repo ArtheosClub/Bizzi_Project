@@ -3,7 +3,7 @@
 Document ID: ESF-INDEX
 Title: Engineering Specification Index
 Version: 1.0
-Status: ACTIVE
+Status: **DEFERRED — post-MVP** (see `README.md`)
 Document Type: Governance Catalog
 Part of: Engineering Specification Framework
 Repository: ArtheosClub/Bizzi_Project

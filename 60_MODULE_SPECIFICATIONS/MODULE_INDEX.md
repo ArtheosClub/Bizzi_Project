@@ -25,7 +25,7 @@ its content. This document records status only.
 | MS-004 | MOD-004 | Workspace | Provide the bounded working context and navigation for users. | Organization | 1.0 | Draft | Not Started | Pending | Not Started | Not Started | Pending |
 | MS-005 | MOD-005 | Documents | Manage document and file storage, versioning, and metadata. | Workspace | 1.0 | Draft | Not Started | Pending | Not Started | Not Started | Pending |
 | MS-006 | MOD-006 | Workflow | Model and execute business processes and state transitions. | Documents | 1.0 | Draft | Not Started | Pending | Not Started | Not Started | Pending |
-| MS-007 | MOD-007 | AI | Orchestrate AI-assisted capability atop platform processes. | Workflow | 1.0 | Draft | Not Started | Pending | Not Started | Not Started | Pending |
+| MS-007 | MOD-007 | AI | Orchestrate AI-assisted capability atop platform processes. | Workflow | 1.0 | **Deferred — post-MVP** | Not Started | Pending | Not Started | Not Started | Pending |
 | MS-008 | MOD-008 | Notification | Deliver information across communication channels. | Workflow; AI | 1.0 | Draft | Not Started | Pending | Not Started | Not Started | Pending |
 | MS-009 | MOD-009 | API | Expose module capability through public interfaces. | Identity; Organization; Workspace; Documents; Workflow; AI; Notification; Administration | 1.0 | Draft | Not Started | Pending | Not Started | Not Started | Pending |
 | MS-010 | MOD-010 | Frontend | Present platform capability to human users. | API | 1.0 | Draft | Not Started | Pending | Not Started | Not Started | Pending |
@@ -45,6 +45,20 @@ Every module carries two identifiers, which SHALL coexist permanently:
   ID.
 
 Neither identifier SHALL be removed in favor of the other.
+
+---
+
+## MVP Scope Note
+
+**MS-007 (AI) is deferred out of MVP scope** by Project Owner decision
+(2026-07-28), pending resolution of Outstanding Item OI-001 (the
+unapproved Provider/Model catalog-scope proposal and the unwritten
+ADW-05 domain workshop). It is deferred, not cancelled — its
+specification is retained in full. No other module's MVP delivery SHALL
+be made dependent on it. See `MS-007_AI/README.md` for the full
+rationale.
+
+The remaining eleven modules are unaffected by that deferral.
 
 ---
 

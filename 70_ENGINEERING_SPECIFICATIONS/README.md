@@ -3,12 +3,39 @@
 Document ID: ESF-README
 Title: Engineering Specification Framework — Introduction
 Version: 1.0
-Status: ACTIVE
+Status: **DEFERRED — post-MVP**
 Document Type: Governance Introduction
 Part of: Engineering Specification Framework
 (`ENGINEERING_SPECIFICATION_TEMPLATE.md`, `ENGINEERING_INDEX.md`, and
 this document)
 Repository: ArtheosClub/Bizzi_Project
+
+---
+
+> **DEFERRED — POST-MVP.** This entire framework is deferred out of MVP
+> scope by Project Owner decision (2026-07-28). It is **deferred, not
+> cancelled**: every document in this directory is retained unmodified,
+> and the framework re-enters scope after MVP delivery.
+>
+> **Why**: this layer requires a 29-section implementation contract to be
+> written and approved for a module *before* that module may be coded.
+> Across twelve modules that is a large document set standing between the
+> project and its first working vertical slice, at a point where the
+> repository holds 283 lines of shipped Python. The
+> documentation-outpacing-code finding in
+> `docs/planning/AUDIT_2026-07-26_TWO_WEEK_REVIEW.md` §7 and
+> `docs/planning/RKM_AUDIT_2026-07-26.md` §6 applies directly here.
+>
+> **Effect during MVP**: an approved **Module Specification**
+> (`60_MODULE_SPECIFICATIONS/`) plus the applicable ADR is the sufficient
+> implementation contract. No Engineering Specification SHALL be required
+> before MVP implementation begins, and the "implementation SHALL NOT
+> begin without an approved Engineering Specification" rule in §5 and §8
+> below is **suspended for MVP scope only**. It resumes in full when this
+> deferral is lifted.
+>
+> Nothing else in this framework changes. The template, index, and
+> lifecycle remain valid and ready for use post-MVP.
 
 ---
 

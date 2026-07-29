@@ -14,6 +14,24 @@ design implementation, define an API in detail, or specify code. Per
 `MS_TEMPLATE.md`'s Conformance Note, it SHALL be extended to full
 template conformance before proceeding to Review and Approval.
 
+> **DEFERRED — POST-MVP.** This module is deferred out of MVP scope by
+> Project Owner decision (2026-07-28). It is **deferred, not cancelled**:
+> this specification is retained in full and unmodified below, and the
+> module re-enters scope when the blocking conditions clear.
+>
+> **Why**: MS-007 is blocked by Outstanding Item **OI-001** — the
+> Provider/Model catalog-scope proposal (`GC-001` in
+> `50_IMPLEMENTATION/GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md`) remains
+> unapproved, and **ADW-05** (Agent/Provider/Model domain semantics)
+> remains unwritten. Together these block `AgentDefinition` and
+> `RuntimeSession`, and neither can be specified in detail until they
+> resolve (see §13, §14 below, which already recorded this).
+>
+> **Effect**: no implementation of this module SHALL commence, and no
+> other module's MVP delivery SHALL be made dependent on it. Resolving
+> OI-001 is the precondition for lifting this deferral — it is not lifted
+> by the passage of time or by this document alone.
+
 ---
 
 ## Module Metadata
@@ -23,7 +41,7 @@ template conformance before proceeding to Review and Approval.
 | Module ID | MOD-007 |
 | Specification ID | MS-007 |
 | Version | 1.0 |
-| Status | Draft |
+| Status | **Deferred — post-MVP** |
 | Owner | |
 | Review Status | Not Started |
 | Approval Status | Pending |
