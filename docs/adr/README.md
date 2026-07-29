@@ -50,3 +50,4 @@ one decision per file. Template: `0000-adr-template.md`.
 | [0005](0005-audit-first-mutations.md) | Audit-first mutations via AuditService + RuntimeEventService | Accepted |
 | [0006](0006-authorization-model-mvp.md) | Owner-only authorization for MVP, RBAC-ready extension path | Accepted |
 | [0007](0007-bizzi-mvp-backend-stack-python-fastapi.md) | Bizzi MVP backend stack is Python + FastAPI, not TypeScript/NestJS | Accepted |
+| [0008](0008-document-status-vocabulary.md) | One document-status vocabulary — Draft / Active / Deferred / Superseded / Historical | Accepted |
