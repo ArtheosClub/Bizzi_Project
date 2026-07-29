@@ -31,6 +31,36 @@ If a task is ambiguous about which of the two it concerns, ask before
 proceeding — editing spec prose and writing service code are governed by
 different rules (below).
 
+## Mandatory: before any repository-wide analysis, triage, or merge decision
+
+**Repository Synchronization Rule.** Before any of the following, the agent
+SHALL synchronize with current remote state:
+
+- repository-wide analysis or audit;
+- branch planning or triage;
+- conflict analysis;
+- a merge or close recommendation for any pull request or branch.
+
+"Synchronize" means, at minimum: run `git fetch --all`; re-check the actual
+current status of every pull request and branch named in the plan (open /
+closed / merged, and its commits-ahead/behind count); and treat any earlier
+snapshot — **including this session's own prior messages, prior audits, and
+prior tool output** — as potentially stale rather than as current truth.
+
+This rule exists because repository state changes outside the agent's
+session: the project owner or another session may merge, close, or push
+directly at any time. It is not a style preference. On 2026-07-27, pull
+request #2 was merged by the project owner; a later step in the same agent
+session treated it as still open, and opened two pull requests against a
+stale `main`. One of them (#6) would have reverted that merge — restoring
+two superseded NestJS-era C4 diagrams and deleting
+`docs/planning/GATE_A_PRODUCT_DEFINITION.md` — had it been merged rather
+than caught.
+
+Stale-state analysis is a Stop Condition in its own right: if a plan's
+premises cannot be re-verified against current remote state, halt and
+re-derive them rather than proceeding on the earlier snapshot.
+
 ## Mandatory: before writing or editing any backend service code
 
 Invoke the `bizzi-consult-before-coding` skill (or read, at minimum,
