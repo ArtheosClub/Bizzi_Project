@@ -27,9 +27,9 @@ call.
 
 ## 2. Coding standards (`30_BACKEND_IMPLEMENTATION_PLAN/13_BACKEND_CODING_STANDARDS.md` §27)
 
-- [ ] Controllers contain no Prisma calls, no repository calls, no business
+- [ ] Routers/endpoints contain no ORM calls, no repository calls, no business
       rules, no direct audit/event emission (ADR-0003).
-- [ ] Services never return raw Prisma records or bypass `workspace_id`.
+- [ ] Services never return raw ORM records or bypass `workspace_id`.
 - [ ] Repositories never authorize, never own lifecycle rules, never emit
       events, never return DTOs.
 - [ ] No bare `findById`/`updateById` without workspace scoping exists
@@ -54,10 +54,10 @@ call.
 
 - [ ] If this change made an architectural decision, an ADR exists for it
       (`bizzi-write-adr` skill) and is linked from the PR.
-- [ ] If this change adds/removes a container or NestJS module, or changes
+- [ ] If this change adds/removes a container or Python package/router, or changes
       which services call which, the relevant `docs/c4/` diagram is updated
       in the same change.
-- [ ] If this change affects a WP's scope, `docs/planning/WORK_PACKAGES.md`
+- [ ] If this change affects a WP's scope, `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md`
       is updated (status, acceptance criteria, or a note).
 
 ## 5. Scope discipline

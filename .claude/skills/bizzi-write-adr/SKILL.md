@@ -45,7 +45,7 @@ engineer from a diff later.
    Decision/Consequences after the fact. History stays honest that way.
 6. **Update the index** in `docs/adr/README.md` with the new row.
 7. **Link it** from wherever it matters: the WP in
-   `docs/planning/WORK_PACKAGES.md`, the C4 diagram it affects, or the PR
+   `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md`, the C4 diagram it affects, or the PR
    description.
 
 ## Format reminder

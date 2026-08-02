@@ -1,6 +1,6 @@
 ---
 name: bizzi-consult-before-coding
-description: Mandatory pre-flight check before writing or editing any Bizzi Platform backend service code in this repository. Surfaces the governing tech-stack ADR, layering rules, coding standards, module-sequence position, and the governance/escalation gate that decides whether to proceed or stop and ask the project owner first. Use before starting any implementation task under backend/ or docs/planning/WORK_PACKAGES.md, and before creating a new module, table, or endpoint.
+description: Mandatory pre-flight check before writing or editing any Bizzi Platform backend service code in this repository. Surfaces the governing tech-stack ADR, layering rules, coding standards, module-sequence position, and the governance/escalation gate that decides whether to proceed or stop and ask the project owner first. Use before starting any implementation task under backend/ or 50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md, and before creating a new module, table, or endpoint.
 ---
 
 # Consult before coding — Bizzi Platform backend
@@ -12,26 +12,33 @@ service code.
 ## 1. Identify what you're about to build
 
 - Find the Work Package this task belongs to in
-  `docs/planning/WORK_PACKAGES.md`. If it doesn't map to an existing WP,
+  `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` (the current register —
+  `docs/planning/WORK_PACKAGES.md` is superseded), and its expanded entry in
+  `50_IMPLEMENTATION/IMPLEMENTATION_BACKLOG.md`. If it doesn't map to an existing WP,
   that's already a signal — see step 3.
 - Read the WP's listed source docs and acceptance criteria before touching
   code.
 
 ## 2. Read the four documents that govern all backend code
 
-1. `docs/adr/0002-bizzi-mvp-backend-stack-scope.md` — this is TypeScript /
-   NestJS / PostgreSQL / Prisma, not the platform-wide Python stack. If a
-   task description implies otherwise, stop and confirm scope first.
-2. `docs/adr/0003-controller-service-repository-layering.md` — Controller
-   does DTO validation + delegation only. Service owns authorization,
+1. `docs/adr/0007-bizzi-mvp-backend-stack-python-fastapi.md` — this is
+   Python / FastAPI / PostgreSQL / SQLAlchemy + Alembic. It supersedes
+   ADR-0002 (TypeScript/NestJS/Prisma), which is retained only as a
+   historical record. If a task description implies the NestJS stack, stop
+   and confirm scope first.
+2. `docs/adr/0003-controller-service-repository-layering.md` — read
+   "Controller" as "Router/Endpoint" for FastAPI, per that ADR's own
+   terminology note. The Router/Endpoint does DTO validation + delegation only. Service owns authorization,
    validation, transaction, audit, event emission. Repository is
    workspace-scoped persistence only. One-directional dependency.
 3. `30_BACKEND_IMPLEMENTATION_PLAN/13_BACKEND_CODING_STANDARDS.md` — naming
    conventions, forbidden patterns (`any`, `@ts-ignore` without
-   justification, raw Prisma records leaving a service, manual audit
-   writes), and the §27 code-review checklist you will be held to.
+   justification, raw ORM records leaving a service, manual audit
+   writes), and the §27 code-review checklist you will be held to. Its
+   principles apply stack-agnostically per ADR-0003; its literal NestJS
+   syntax does not.
 4. `docs/c4/C4_DYNAMIC_CANONICAL_FLOW.md` — the exact call sequence
-   (Controller→Service→Authorization→Validation→Transaction→Repository→Audit→Event→Response)
+   (Router/Endpoint→Service→Authorization→Validation→Transaction→Repository→Audit→Event→Response)
    every state-changing endpoint must follow.
 
 ## 3. Run the governance gate
@@ -55,7 +62,7 @@ are true:
   bypass), R-TEST-001 (happy-path-only testing), R-AI-001 (AI code bypasses
   architecture), R-SCOPE-001 (scope creep).
 - The task is part of Phase 3 / WP-19 (Agent module) — this is flagged in
-  `docs/planning/WORK_PACKAGES.md` as needing a governance review before
+  `50_IMPLEMENTATION/IMPLEMENTATION_BACKLOG.md` as needing a governance review before
   scoping even begins, because it introduces AI agents acting under
   delegated authority (`01_GOVERNANCE/AUTHORITY_MATRIX.md`, A0-A7).
 
