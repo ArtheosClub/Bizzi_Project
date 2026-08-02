@@ -2,6 +2,12 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
 
+# `app.models` must be imported for its side effect: defining a model class
+# is what registers its table on Base.metadata. Without this import,
+# metadata is empty and autogenerate reads existing tables as ones that
+# should not exist — emitting DROP TABLE for real data. Import it before
+# Base so the ordering reads as intentional.
+import app.models  # noqa: F401
 from alembic import context
 from app.core.config import get_settings
 from app.db.base import Base
@@ -19,9 +25,8 @@ if config.config_file_name is not None:
 # hardcoded or separately-duplicated value in alembic.ini.
 config.set_main_option("sqlalchemy.url", get_settings().database_url)
 
-# Base.metadata is currently empty (no models yet — Gate C), but env.py is
-# wired to it now so autogenerate works the moment the first model lands,
-# instead of needing this file touched again.
+# Populated via the `app.models` import above — every model registered
+# there is visible to autogenerate through this metadata object.
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
