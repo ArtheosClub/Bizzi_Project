@@ -53,6 +53,45 @@ names five sibling concepts, and "no concept replaces another."
 
 ---
 
+## 1a. Point of creation
+
+**Creation is not a State Transition.** D07 §4.4 defines a State Transition as
+a change "from one authoritative state version to another." Creation has no
+prior version, so it falls outside that definition — it is the governed act
+that produces the first authoritative version, which subsequent transitions
+then change. D10 §9 states the same thing from the other side: a subject's
+"own history begins at its own creation."
+
+**Nothing else has to exist first.** This follows from D09's cardinalities
+rather than from any convenience argument. R7 (Business Operation `targets`),
+R8 (Decision `concerns`), and R9 (Work Item `relates_to`) all point *toward*
+Enterprise Object, and each is created by the *other* side's owner — never by
+Enterprise Object. From Enterprise Object's side all three are optional, and
+D10 §8 Invariant 5 confirms it directly: an Enterprise Object referenced by no
+committed Business Operation, Decision, or Work Item is physically deletable,
+which is only meaningful if such an object can exist at all.
+
+So an EnterpriseObject is brought into existence by an authorized act within a
+Workspace (D01), independently of any Decision, Business Operation, or Work
+Item. It may later be referenced by all three, or by none.
+
+**It is created directly `active`, and this is forced rather than chosen.**
+`draft` is unavailable (§2). The other two phases are each *defined relative to
+a prior active condition*: D10 §5.2 defines Archive as "no longer operationally
+active," and §5.4 defines Supersession as a successor to "an existing one."
+Neither is coherent as an initial phase. `active` is the only admissible one.
+
+**On attribution.** D02 gives Enterprise Object ownership, so the owning Actor
+is part of its state. But note that D09 R10 attributes an Actor to
+{Decision, Business Operation, Work Item, Runtime Session} — the set
+deliberately **excludes** Enterprise Object; Actor's link to it is R11, a
+non-attribution business association. The creating act is therefore made
+auditable through the audit record (ADW-07, unwritten — deferred per ADW-01
+§10), not through a D09 relationship. WP13 records ownership; it does not
+model creation attribution, and should not invent a relationship to carry it.
+
+---
+
 ## 2. States it passes through by its nature
 
 D10 §6's Per-Concept Lifecycle Capability table (`APPROVED — CLOSED`) already
@@ -137,6 +176,53 @@ The point of this section is to find conflicts now rather than at WP15.
 The two conflicts are both cases where an entity must *not* inherit the shared
 lifecycle. Neither blocks WP13; both are recorded here so WP18/WP19/WP21 do
 not copy the EnterpriseObject model by reflex.
+
+---
+
+## 4a. Boundaries with Task, Decision, and Knowledge
+
+§4 established that the lifecycle is not universal. This section states where
+the *authority* boundaries fall, because that is where Phase and Outcome will
+be tempted to merge.
+
+**The general rule is already approved.** D07 §5: "A transition in one domain
+does not automatically determine a transition in another domain unless an
+explicit domain rule authorizes that dependency." No such rule exists for any
+of the three below.
+
+**Task (WP15).** Related by D09 R9 — Work Item `relates_to` Enterprise Object,
+Reference category, "neither owns the other," the reference created and
+maintained by the Work Item's own owner. A Task carries Progress (D07 §6.4)
+and reaches `completed` or `cancelled` in its own Phase (D10 §8 Invariant 6).
+**Completing a Task does not transition the EnterpriseObject it relates to.**
+The two are separate state domains under D07 §5, and D09 gives the reference no
+mutation authority in either direction.
+
+**Decision (WP30).** Related by D09 R8 — Decision `concerns` Enterprise Object,
+Reference, created by the Decision's own owner. A Decision produces an Outcome
+(D07 §6.3, "what business result was authoritatively determined"), owned by the
+Decision aggregate. **`approved` and `rejected` are Decision Outcome values.
+They are not EnterpriseObject phases**, and a Decision reaching either does not
+move the EnterpriseObject it concerns. D09 Prohibition 4 already forbids the
+converse direction — a Decision's status may not be mutated by anything else —
+and Prohibition 5 forbids EnterpriseObject from holding an authoritative
+collection of what references it, so it cannot even accumulate its Decisions as
+owned state.
+
+**Knowledge.** Not a domain concept. `DOMAIN_FOUNDATION.md` §10 places
+Knowledge among the capabilities that "operate across these layers" —
+alongside Evidence, Audit, Provenance, Risk, and Compliance — rather than among
+ADW-01 §3's five concepts. It has no aggregate, no lifecycle, and no row in
+D10 §6. Knowledge derived from EnterpriseObjects is Derived State (D07 §4.3),
+which "must never silently replace the authoritative source from which it was
+derived" (also Architectural Law 11). **An EnterpriseObject is therefore never
+a knowledge artifact, and no knowledge process may write its phase.**
+`60_MODULE_SPECIFICATIONS/` contains no Knowledge module, consistent with this.
+
+**The resulting rule for WP13**, stated once so ADR-0009 can cite rather than
+restate it: EnterpriseObject's `phase` is written by exactly one authority —
+the specialized Enterprise Object aggregate that owns it (D07 §7). Not by a
+Task, not by a Decision, not by a knowledge or projection process.
 
 ---
 
