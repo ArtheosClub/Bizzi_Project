@@ -1,8 +1,12 @@
 # C1 — System Context
 
 Scope: Bizzi Platform Backend (MVP). See `docs/c4/README.md` for the
-solid = in-scope / dashed = future convention, and ADR-0002 for why the
+solid = in-scope / dashed = future convention, and ADR-0007 for why the
 platform-wide "Art of Business" system is drawn as external/future.
+
+Stack: Python + FastAPI + PostgreSQL, per ADR-0007 (supersedes the
+original NestJS/TypeScript scope this diagram used to describe — see
+`docs/planning/TECH_STACK.md` for exact pinned versions).
 
 ```mermaid
 flowchart TB
@@ -10,16 +14,16 @@ flowchart TB
     agent(["AI Agent — future<br/>not wired to real agents in MVP"])
 
     subgraph SYS["Bizzi Platform Backend (this system)"]
-        bizzi["Bizzi Platform Backend<br/>NestJS / TypeScript API<br/>Workspace Execution Loop v0.1"]
+        bizzi["Bizzi Platform Backend<br/>Python / FastAPI API<br/>Workspace Execution Loop v0.1"]
     end
 
-    aob[["Art of Business Platform — future<br/>Python / FastAPI / LangGraph<br/>multi-agent enterprise OS (ADR-0002)"]]
+    aob[["Art of Business Platform — future<br/>LangGraph multi-agent enterprise OS<br/>separate system (ADR-0007)"]]
     mcp[["MCP Gateway / Tool Ecosystem — future"]]
     exportc[["Export / Reporting consumers — future"]]
 
     owner -->|"HTTPS/JSON, /api/v1"| bizzi
     agent -.->|"planned: authority-scoped API calls (A0-A7)"| bizzi
-    bizzi -.->|"possible future integration — not implemented, see ADR-0002"| aob
+    bizzi -.->|"possible future integration — not implemented, see ADR-0007"| aob
     bizzi -.->|"future: via Execution Service, never bypassed"| mcp
     bizzi -.->|"future: export jobs"| exportc
 
@@ -43,10 +47,11 @@ flowchart TB
 
 ## External systems (all future)
 
-- **Art of Business Platform** — the platform-wide Python/FastAPI/LangGraph
-  multi-agent OS described in `10_IMPLEMENTATION/TARGET_TECH_STACK.md`. Per
-  ADR-0002, this backend is scoped independently; any integration is a
-  future decision requiring its own ADR.
+- **Art of Business Platform** — the platform-wide LangGraph multi-agent OS
+  described in `10_IMPLEMENTATION/TARGET_TECH_STACK.md`. Per ADR-0007, this
+  backend is scoped independently; any integration is a future decision
+  requiring its own ADR. (The MVP backend now shares that stack's Python/
+  FastAPI foundation, but remains a separate system with its own scope.)
 - **MCP Gateway / Tool Ecosystem** — governed external-tool access
   (`09_MCP_INFRASTRUCTURE`). Per `12_APPLICATION_SERVICES/APPLICATION_SERVICE_ARCHITECTURE.md`,
   application-level services must never call MCP directly — only through an
