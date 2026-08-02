@@ -1,0 +1,183 @@
+# Domain Review — EnterpriseObject
+
+**Status:** Proposed — awaiting Project Owner approval
+**Purpose:** Define EnterpriseObject's domain role and lifecycle independently
+of any scenario, so ADR-0009 derives the lifecycle field from the domain
+rather than from Gate A's flow.
+**Governs:** ADR-0009 (not yet written), WP13.
+**Not an ADR.** It makes no decision; it establishes what the approved domain
+already determines, and isolates the one thing it does not.
+
+This review supersedes an earlier verbal proposal of `draft / active /
+archived / superseded`, which was derived from WP02's scenario. Working from
+the domain instead produces a different and smaller answer, and rules `draft`
+out. The objection that prompted this review was correct.
+
+---
+
+## 1. What an EnterpriseObject is
+
+D02 (`APPROVED`) already defines it:
+
+> Enterprise Object is the stable platform abstraction for a durable,
+> workspace-owned, business-relevant thing with identity, lifecycle,
+> ownership, relationships, state, and governance requirements.
+
+Two qualifiers in the approved set matter more than the definition sentence,
+because both constrain what WP13 may build:
+
+- **It is an abstraction, not an aggregate.** D02 continues: "while
+  specialized types retain explicit contracts and invariants." D07 §7 assigns
+  the state owner as the *"Specialized Enterprise Object aggregate"* — not the
+  shared abstraction. WP13's table is therefore the shared contract; it is not
+  the owner of any specialized type's authoritative state.
+- **It is referenced, never owner-of.** D09 R7/R8/R9 give Business Operation,
+  Decision, and Work Item each a `Reference` relationship *to* Enterprise
+  Object, with "neither owns the other." D09 §Prohibition 5 forbids
+  EnterpriseObject from holding an authoritative collection of what references
+  it.
+
+**The distinguishing test** — what makes something an EnterpriseObject rather
+than not — follows from D02's five requirements read as conjunctive:
+
+| Test | Excludes |
+|---|---|
+| Durable — outlives the operation that created it | RuntimeSession (execution-attempt state only, D04) |
+| Workspace-owned — a Workspace is its isolation boundary (D01) | Nothing in Gate C |
+| Business-relevant — the enterprise manages it (ADW-01 §3) | Event, AuditRecord (records *about* management) |
+| Has governed state it authoritatively owns | Event, AuditRecord (immutable on write) |
+| Not already one of the other four concepts | Actor, Work Item, Decision, Business Operation |
+
+The fifth row is why EnterpriseObject is not a universal base class: ADW-01 §3
+names five sibling concepts, and "no concept replaces another."
+
+---
+
+## 2. States it passes through by its nature
+
+D10 §6's Per-Concept Lifecycle Capability table (`APPROVED — CLOSED`) already
+answers this scenario-independently, for the concept rather than for any
+instance of it. Enterprise Object's row grants exactly: archivable, supersedable,
+can become obsolete, can become immutable, physically deletable only under
+§8 Invariant 5.
+
+Read against D10 §5's nine definitions, that yields **three** Phase values:
+
+| Phase | Approved basis | Meaning |
+|---|---|---|
+| `active` | The default condition the other two are defined against (D10 §5.2, §5.4) | Current, operationally relevant, authoritative for its own state |
+| `archived` | D10 §5.2 | No longer operationally active; identity, state, and history remain fully resolvable |
+| `superseded` | D10 §5.4, §8 Invariant 9 | A successor with its own identity has formally taken over its role; its historical validity for the period it was current is intact |
+
+Three things are deliberately **not** Phase values:
+
+- **`draft` is not one.** No approved source gives Enterprise Object a
+  pre-active phase. D10 §5 has no such term, and ADW-01 §5's behaviour chain
+  begins at Intent → Decision, not at a draft object. Introducing it would
+  introduce a new domain concept — Architecture Review Checklist question 2,
+  answered YES, which is a stop. This is exactly the failure the review was
+  called to prevent.
+- **`deprecated` is not one.** D10 §6 grants Enterprise Object "can become
+  obsolete," but §5.8 defines Deprecation as forward-looking guidance that
+  "never invalidates existing instances" — a deprecated object is still
+  active. It is orthogonal to Phase, and folding it in would collapse two
+  dimensions in violation of D07 §6 / LAW-D07-15.
+- **`cancelled`, `invalidated`, `expired` are not.** D10 §6 does not grant
+  these to Enterprise Object; §8 Invariant 6 assigns cancellation to Work
+  Item, and §5.7 assigns expiration to time-bounded subjects. Borrowing them
+  would import another concept's lifecycle.
+
+The field is named **`phase`**, not `status`. D07 §6.1 defines Phase as "where
+is the subject in its governed lifecycle" — precisely these three — and D07 §6
+prohibits one universal authoritative `status` field. WP13's acceptance
+criteria name a `status` column; that wording predates D07's closure and
+cannot be implemented literally.
+
+---
+
+## 3. Terminal vs. non-terminal
+
+D07 §6 requires this to stay explicit.
+
+| Phase | Terminal? | Why |
+|---|---|---|
+| `active` | No | — |
+| `archived` | **No** | D10 §5.2: "Archive is reversible in principle (a subject may be unarchived) unless a concept-specific rule forbids it." No such rule exists for Enterprise Object. |
+| `superseded` | **Yes** | D10 §5.4 ends the predecessor's currency at a defined point; §8 Invariant 9 forbids overwriting it to look like the successor. There is no transition out. |
+
+Physical deletion is not a phase. Per D10 §8 Invariant 5 an Enterprise Object
+referenced by any committed Business Operation, Decision, or Work Item cannot
+be physically deleted at all, and per D10 §12 (Binding consequence 3) a
+generic `is_deleted` boolean is a defect, not a shortcut.
+
+**Not a new vocabulary.** ADR-0008 settled *document* status — Draft / Active
+/ Deferred / Superseded / Historical — for repository artifacts. `phase` here
+governs a domain entity, is derived from D10 §5's approved lifecycle
+definitions rather than invented, and shares two words with ADR-0008 by
+coincidence of English, not by borrowing. The two never apply to the same
+subject: no document has a `phase`, and no EnterpriseObject has a document
+status.
+
+---
+
+## 4. Validation against the other Gate C entities
+
+The point of this section is to find conflicts now rather than at WP15.
+**Two conflicts and one gap were found.**
+
+| Entity | WP | ADW-01 concept | Does the three-phase set apply? |
+|---|---|---|---|
+| Task | WP15 | Work Item specialization (D03, D08) | **Superset.** D10 §6 grants Work Item archivable and supersedable, so all three carry over — but §8 Invariant 6 adds `cancelled` and `completed`. Compatible; Task extends rather than contradicts. |
+| Event | WP18 | Not an aggregate — a state domain (D07 §5) | **No.** D10 §6's closing note: Domain Event is Historical Record by construction, never subject to Physical Deletion once committed. Immutable on write; it has no lifecycle to model. A phase column here would be a defect. |
+| AuditRecord | WP19 | Same as Event | **No.** Same basis. |
+| RuntimeSession | WP21 | Runtime Session (D04) | **Conflicts.** D10 §6 states Runtime Session is explicitly **not** supersedable — a retry is a new session related only by a Temporal "follows" relationship (D09 §13) — and is **freely** physically deletable. Applying `superseded` to it would breach D10 directly. |
+| AgentDefinition | WP14 | **Unclassified** | Undetermined — see §5. |
+| ContextPackage | WP20 | **Unclassified** | Undetermined — see §5. |
+
+The two conflicts are both cases where an entity must *not* inherit the shared
+lifecycle. Neither blocks WP13; both are recorded here so WP18/WP19/WP21 do
+not copy the EnterpriseObject model by reflex.
+
+---
+
+## 5. The one open question
+
+D05 states that Actor "is distinct from User Account, Role, **Agent
+Definition**, and Runtime Session" — it says what AgentDefinition is *not*,
+and no approved source says what it *is*. ContextPackage appears in no ADW-01
+decision at all, and WP20 gives it an expiry, which is D10 §5.7 Expiration —
+a capability Enterprise Object's §6 row does not grant.
+
+So D10 §6 has no row for either, and the three-phase set can be neither
+applied nor excluded for them.
+
+> **Question for the Project Owner:** Are AgentDefinition and ContextPackage
+> Enterprise Objects — in which case they inherit the §2 lifecycle and any
+> addition (such as ContextPackage's expiry) needs its own basis — or are they
+> concepts outside ADW-01's five, in which case their lifecycles are
+> undetermined and WP14/WP20 cannot proceed on this review?
+
+This blocks WP14 and WP20. It does **not** block WP13.
+
+---
+
+## 6. What follows
+
+1. This review is approved (or corrected).
+2. ADR-0009 records the decision: field named `phase`, three values, terminal
+   semantics per §3, with §2's exclusions stated so they are not re-litigated.
+3. WP13 implements it, with the four Architecture Review Checklist answers
+   written into its plan.
+
+WP14 and WP20 wait on §5.
+
+---
+
+**Sources.** D01, D02, D03, D04, D05 (`APPROVED`); D07, D09, D10
+(`APPROVED — CLOSED`) — `00_ARCHITECTURE/01_DOMAIN/`. Concept model:
+`ADW_01_CORE_DOMAIN_SEMANTICS.md` §3, §5, §8. WP definitions:
+`50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md`. Authority hierarchy:
+`00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md` §3. No approved source outside
+these was found to define EnterpriseObject's lifecycle: the Gate C
+Certification Package, `60_MODULE_SPECIFICATIONS/`, and WP02's scenario were
+each checked and none does.
