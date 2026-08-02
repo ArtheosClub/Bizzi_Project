@@ -246,7 +246,7 @@ Default status for all packages in this version: `Planned`.
 
 | ID | Title | Priority | Depends On | Blocks | Deliverable / Acceptance Criteria |
 |---|---|---:|---|---|---|
-| WP13 | EnterpriseObject Model | P0 | WP06, WP08 | WP14, WP23 | CRUD model with canonical ID, type, status, owner, timestamps |
+| WP13 | EnterpriseObject Model | P0 | WP06, WP08 | WP14, WP23 | CRUD model with canonical ID, type, `phase`, owner, timestamps — see Amendment A-01 |
 | WP14 | AgentDefinition Model | P0 | WP13 | WP24, WP27 | Configurable agent definition with capabilities and permissions |
 | WP15 | Task Model and Lifecycle | P0 | WP13 | WP23–WP32 | Task states, owner, priority, source object, timestamps implemented |
 | WP16 | Minimal Identity and Authentication | P0 | WP09 | WP17, WP23, WP29 | One authenticated human user and service/agent identities supported |
@@ -256,6 +256,36 @@ Default status for all packages in this version: `Planned`.
 | WP20 | ContextPackage Model | P0 | WP13, WP15 | WP25, WP27 | Context package stores sources, constraints, confidence, expiry |
 | WP21 | RuntimeSession Model | P1 | WP14, WP15, WP18 | WP27, WP31 | Session lifecycle and links to task, agent, context implemented |
 | WP22 | API Error and Response Standard | P1 | WP06, WP10 | WP23–WP39 | Consistent errors, validation responses, request IDs, pagination rules |
+
+### Amendments
+
+Amendments are recorded rather than applied silently: the original wording is
+preserved here so the change and its reason remain auditable. Each requires
+Project Owner approval before the amended criteria are binding.
+
+| ID | WP | Date | Status | Change |
+|---|---|---|---|---|
+| A-01 | WP13 | 2026-08-02 | **Pending Project Owner approval** | Acceptance criteria field `status` → `phase`. Original wording: *"CRUD model with canonical ID, type, status, owner, timestamps."* |
+
+**A-01 rationale.** WP13's original criteria were written before D07
+(`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
+defines Phase, Status, Outcome, Progress, and Health as orthogonal dimensions
+and LAW-D07-15 prohibits collapsing them into "one universal authoritative
+`status` field" — so a `status` column carrying lifecycle values cannot be
+implemented as literally specified. D07 §6.1 defines Phase as "where is the
+subject in its governed lifecycle," which is the dimension WP13 actually
+needs.
+
+Under the Authority Hierarchy (`00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md`
+§3), D07 is a Tier 2 constitutional decision and this plan is Tier 4, so the
+plan is what gives way. The amendment applies an approved decision; it does
+not make a new one, and requires no Architecture Change Request under
+DECISION_0003 §11.
+
+Governed by `docs/adr/0009-enterprise-object-phase-lifecycle.md`, which fixes
+the three permitted values (`active`, `archived`, `superseded`), the permitted
+transitions, and the entities that do **not** inherit this lifecycle. Derived
+in `docs/adr/DOMAIN_REVIEW_ENTERPRISE_OBJECT.md`.
 
 ## Gate D — First Vertical Slice
 
