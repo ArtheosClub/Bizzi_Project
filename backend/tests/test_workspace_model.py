@@ -108,12 +108,15 @@ def test_migration_is_wired_into_the_revision_chain() -> None:
 
     Resolved through Alembic's own ScriptDirectory rather than by importing
     the migration module — that is how Alembic itself walks the chain, so
-    a chain Alembic cannot resolve fails here too. It also catches a second
-    head appearing, which would make `upgrade head` ambiguous.
+    a chain Alembic cannot resolve fails here too.
+
+    This no longer asserts that WP12a's revision is the chain's head: WP13
+    now follows it. The single-head assertion lives with whichever migration
+    is currently last, in `test_enterprise_object_model.py`, so exactly one
+    test owns it rather than every migration test needing an edit each time
+    the head moves.
     """
     script = ScriptDirectory.from_config(Config(str(ALEMBIC_INI)))
-
-    assert script.get_heads() == [WORKSPACE_REVISION]
 
     revision = script.get_revision(WORKSPACE_REVISION)
     assert revision.down_revision == BASELINE_REVISION

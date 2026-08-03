@@ -15,6 +15,7 @@ So: when you add a model, add it here in the same commit. The `__all__`
 entry is what keeps the import from being removed as unused by a linter.
 """
 
+from app.models.enterprise_object import EnterpriseObject
 from app.models.workspace import Workspace
 
-__all__ = ["Workspace"]
+__all__ = ["EnterpriseObject", "Workspace"]

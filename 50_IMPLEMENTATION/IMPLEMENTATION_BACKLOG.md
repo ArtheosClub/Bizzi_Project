@@ -40,9 +40,18 @@ item), 🟢 Unblocked.
 
 ## WP13 — EnterpriseObject Model 🟢
 
-- **Goal**: canonical object model — ID, type, status, owner, timestamps.
+- **Goal**: canonical object model — ID, type, `phase`, owner, timestamps.
+  *(Amendment A-01, `MVP_WORK_PACKAGE_PLAN.md` § Gate C — Amendments;
+  approved 2026-08-03 by Project Owner, PR #13. Original wording: "ID,
+  type, status, owner, timestamps." `status` → `phase` per D07 §6 /
+  LAW-D07-15, governed by ADR-0009.)*
 - **Dependencies**: WP06, WP08, **WP12a**.
-- **Deliverables**: `EnterpriseObject` model/repository/service, migration.
+- **Deliverables**: `EnterpriseObject` model, migration. *(Amendment A-02,
+  `MVP_WORK_PACKAGE_PLAN.md` § Gate C — Amendments; approved 2026-08-03 by
+  Project Owner, PR #13. Original wording: "EnterpriseObject
+  model/repository/service, migration." Repository and service deferred
+  to WP19 — ADR-0005 requires audit-inside-transaction, and
+  `AuditService` does not exist yet.)*
 - **Definition of Done**: `workspace_id` required and indexed (ADR-0004);
   every repository method scoped by `workspace_id`.
 - **Acceptance Criteria**: CRUD works; a request for another workspace's
