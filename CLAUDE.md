@@ -1,5 +1,10 @@
 # Bizzi Project — instructions for Claude Code
 
+For fast navigation by task ("I'm implementing a WP", "I'm making an
+architectural decision", "I'm creating a module", "I'm auditing") see
+`PROJECT_MAP.md` at the repo root. It is pure navigation — this file
+remains the actual authority when the two differ.
+
 ## What this repository is
 
 Two things live here at different altitudes:
@@ -100,6 +105,38 @@ flags as architecture drift (R-ARCH-001/002). See `docs/adr/README.md` for
 the full trigger list. Never silently make an architectural call and move
 on — write it down first.
 
+## Mandatory: before introducing a new architectural abstraction
+
+**Abstraction Justification Rule.** A new architectural abstraction must
+either solve an existing, demonstrated problem, or be a necessary
+precondition for implementing the next Work Packages. Anticipated future
+need is not sufficient justification.
+
+This is a stop condition, not advice — same register as the Repository
+Synchronization Rule above. It would have caught the Epoch IV package and
+the `70_` Engineering Specification layer before they were written (see
+the RKM audit's Step 5, finding #4). A backend-code-specific counterpart
+to this rule already exists: the `bizzi-consult-before-coding` skill's
+Architecture Review Checklist, §3 — this rule is the repo-wide version,
+not limited to backend code.
+
+Anticipated-future-need ideas are not simply dropped: record them in
+`docs/planning/DEFERRED_ARCHITECTURE_INITIATIVES.md` with a concrete
+reopen condition instead of building them now.
+
+### Convention: Purpose header for new architectural documents
+
+New architectural documents (not code, not every markdown file) open
+with:
+
+```
+Purpose · Why this exists · What it changes ·
+Affected modules · Affected Work Packages · Affected code
+```
+
+Applies to documents created or substantially edited from now on. No
+retrofit pass across the existing corpus.
+
 ## Non-negotiable stop conditions
 
 Halt immediately (don't push through for delivery speed) if any of these
@@ -135,7 +172,7 @@ The repository is in the Implementation Phase, per
 
 | Need | Read |
 |---|---|
-| What to build next | `docs/planning/PRE-CODING-BRIEF.md` (Gate structure), `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` (WP-level detail, current — `docs/planning/WORK_PACKAGES.md` is superseded), `docs/planning/DEVELOPMENT_PLAN.md` (governance gates) |
+| What to build next | `docs/planning/PRE-CODING-BRIEF.md` (Gate structure), `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` (WP-level detail — **use this one**), `docs/planning/DEVELOPMENT_PLAN.md` (governance gates). **`docs/planning/WORK_PACKAGES.md` is SUPERSEDED — do not use it; it carries stale WP definitions.** |
 | What a domain concept means (Gate C v1.1) | `00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md` (authority hierarchy), `00_ARCHITECTURE/01_DOMAIN/ADW_01_DECISION_REGISTER.md` (D01–D10, the approved decisions) |
 | Why something was built a certain way | `docs/adr/` |
 | How the system fits together | `docs/c4/` |
