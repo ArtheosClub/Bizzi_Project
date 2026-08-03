@@ -1,6 +1,6 @@
 ---
 name: bizzi-pre-merge-check
-description: Mandatory checklist to run before merging or pushing any Bizzi Platform backend code to a shared git branch. Verifies coding-standards compliance, test coverage, workspace scoping, audit/event wiring, ADR bookkeeping, and that no Stop Condition is active. Use immediately before every `git merge`, `git push` to a shared branch, or PR merge that touches backend/ or docs/adr, docs/c4, docs/planning.
+description: Mandatory checklist to run before merging or pushing any Bizzi Platform backend code to a shared git branch, and before deleting any merged branch. Verifies coding-standards compliance, test coverage, workspace scoping, audit/event wiring, ADR bookkeeping, that no Stop Condition is active, and that a branch's content is provably on main before it is deleted. Use immediately before every `git merge`, `git push` to a shared branch, PR merge that touches backend/ or docs/adr, docs/c4, docs/planning, or branch cleanup.
 ---
 
 # Pre-merge check — Bizzi Platform backend
@@ -18,7 +18,9 @@ speed."
 - [ ] No state-changing action is missing its `AuditService.record(...)` call.
 - [ ] No raw secret, token, or password appears in logs, events, or
       responses.
-- [ ] Migrations apply cleanly to a fresh database (`prisma migrate deploy`).
+- [ ] Migrations apply cleanly to a fresh database (`uv run alembic upgrade
+      head`; `uv run alembic upgrade --sql head` validates the chain with no
+      database available).
 - [ ] CI is green, not "green after a retry that masked a flake."
 - [ ] No test was skipped or weakened to make this change pass.
 
@@ -27,9 +29,9 @@ call.
 
 ## 2. Coding standards (`30_BACKEND_IMPLEMENTATION_PLAN/13_BACKEND_CODING_STANDARDS.md` §27)
 
-- [ ] Controllers contain no Prisma calls, no repository calls, no business
+- [ ] Routers/endpoints contain no ORM calls, no repository calls, no business
       rules, no direct audit/event emission (ADR-0003).
-- [ ] Services never return raw Prisma records or bypass `workspace_id`.
+- [ ] Services never return raw ORM records or bypass `workspace_id`.
 - [ ] Repositories never authorize, never own lifecycle rules, never emit
       events, never return DTOs.
 - [ ] No bare `findById`/`updateById` without workspace scoping exists
@@ -54,10 +56,10 @@ call.
 
 - [ ] If this change made an architectural decision, an ADR exists for it
       (`bizzi-write-adr` skill) and is linked from the PR.
-- [ ] If this change adds/removes a container or NestJS module, or changes
+- [ ] If this change adds/removes a container or Python package/router, or changes
       which services call which, the relevant `docs/c4/` diagram is updated
       in the same change.
-- [ ] If this change affects a WP's scope, `docs/planning/WORK_PACKAGES.md`
+- [ ] If this change affects a WP's scope, `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md`
       is updated (status, acceptance criteria, or a note).
 
 ## 5. Scope discipline
@@ -70,3 +72,35 @@ call.
       etc.) has been quietly implemented ahead of its Phase 3 WP.
 
 Only after every relevant box above is checked: merge.
+
+## 6. After merging — verify before deleting the branch
+
+Do not delete a branch on the strength of GitHub's "merged" label or a
+recollection that it was merged. Verify against current remote state, per
+the Repository Synchronization Rule in `CLAUDE.md`:
+
+```
+git fetch --all --prune
+git merge-base --is-ancestor origin/<branch> origin/main
+```
+
+**If it exits 0** — every commit on the branch is reachable from `main`.
+Delete it, no further questions.
+
+**If it exits 1** — the branch's commits are not ancestors of `main`. This
+does *not* mean the work is missing, and it is *not* a block on deletion.
+A rebased or squashed branch has different SHAs on `main` carrying the same
+content, so it can never satisfy the check no matter how long it is kept.
+Before deleting, state explicitly **where the content landed** — the PR
+number or the commit on `main` that carries it — and record that statement
+wherever the deletion is being tracked (PR comment, cleanup list, or the
+session's report to the project owner).
+
+If you cannot identify where the content landed, that is the one case to
+stop and ask. An unexplained non-ancestor branch is the only kind whose
+deletion actually loses something.
+
+This exists because "merged" is a label and ancestry is a fact, and because
+the seven branches consolidated into PR #8 were rebased — their original
+SHAs are not on `main` even though all of their content is. A one-stage
+check would have refused to ever clear them.
