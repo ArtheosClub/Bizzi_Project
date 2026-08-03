@@ -115,10 +115,10 @@ need is not sufficient justification.
 This is a stop condition, not advice — same register as the Repository
 Synchronization Rule above. It would have caught the Epoch IV package and
 the `70_` Engineering Specification layer before they were written (see
-the RKM audit's Step 5, finding #4). A rule like this exists in the
-`bizzi-consult-before-coding` skill's Architecture Review Checklist too
-(pending, PR #11) — this is the repo-wide version, not specific to
-backend code.
+the RKM audit's Step 5, finding #4). A backend-code-specific counterpart
+to this rule already exists: the `bizzi-consult-before-coding` skill's
+Architecture Review Checklist, §3 — this rule is the repo-wide version,
+not limited to backend code.
 
 Anticipated-future-need ideas are not simply dropped: record them in
 `docs/planning/DEFERRED_ARCHITECTURE_INITIATIVES.md` with a concrete
