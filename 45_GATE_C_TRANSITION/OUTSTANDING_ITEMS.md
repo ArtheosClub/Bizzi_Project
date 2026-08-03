@@ -6,12 +6,12 @@
 |---|---|
 | Document ID | OIR-01 |
 | Title | Gate C Outstanding Items Register |
-| Version | 1.1 |
+| Version | 1.2 |
 | Status | **OPEN REGISTER** (permanent governance record; not a certification instrument) |
 | Document Type | Lifecycle-Managed Governance Register |
 | Part of | Gate C Transition Record (companion to the Gate C Certification Package — GC-001 Certification Checklist, GC-002 Evidence Register, GC-003 Certification Assessment Report) |
 | Repository | ArtheosClub/Bizzi_Project |
-| Supersedes | OIR-01 v1.0 (findings and classifications unchanged; refined for lifecycle governance) |
+| Supersedes | OIR-01 v1.1 (findings and classifications unchanged; OI-004 closed) |
 
 **Version History**
 
@@ -19,6 +19,7 @@
 |---|---|---|
 | 1.0 | Initial register: twelve Outstanding Items captured from GC-003 §5 | OI-001–OI-012 (created) |
 | 1.1 | Refined into a lifecycle-managed governance register: terminology, lifecycle columns, expanded Decision values, Outstanding Item Lifecycle section, Acceptance of Residual Risk section, expanded Governance Rules, expanded Exit Mechanisms, Validation Rules, Repository Integrity (permanence) section | None (no finding added, removed, reclassified, or reweighed) |
+| 1.2 | OI-004 closed — PR #2 merged (`dfb8804`, 2026-07-27), resolving the underlying repository condition. Closed directly by Project Owner authorization, 2026-08-03, under OIR-01 §10 Exit Mechanism 3 (Repository Change) | OI-004 (closed) |
 
 This register is not a corrective action plan. This register is not a
 backlog. This register is not an implementation roadmap. It exists
@@ -138,22 +139,25 @@ added, removed, or reclassified since v1.0.
 
 **Current Status values** (exactly five, no others): `Open` / `Accepted`
 / `Deferred` / `In Review` / `Closed`. Default: `Open`. All twelve items
-below remain `Open` as of this revision — no item has been resolved,
-accepted, deferred, placed in review, or closed since v1.0.
+were `Open` as of v1.1. **As of 2026-08-03, OI-004 is `Closed`** (see §3
+and §7/§10) — the Project Owner authorized closure directly, under
+OIR-01 §10 Exit Mechanism 3 (Repository Change), Branch Management being
+a category the Project Owner may close per §7. The remaining eleven
+items are unchanged since v1.1.
 
 **Decision values** (exactly nine, no others): `Accept` / `Resolve Later`
 / `Architectural Review Required` / `Governance Review Required` /
 `Repository Cleanup` / `Reserved` / `Closed by ADR` / `Closed by
 Decision` / `Closed by Repository Change`. The three `Closed by *` values
-are reserved for future use — none applies to any item in this revision,
-since no item has been closed.
+were reserved for future use as of v1.1; `Closed by Repository Change`
+now applies to OI-004 (§3).
 
 | Item ID | Origin | Finding | Category | Audit Classification | Current Status | Decision | Disposition Rationale | Closure Reference | Date Opened | Date Closed | Verification Authority | Verification Status | Target Epoch | Owner | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | OI-001 | GC-003 §5 (Major #1); GC-002 EV-D-03, EV-A-09; GC-001 GC-A-09, GC-D-03 | The Provider/Model catalog-scope proposal (`GC-001` in `GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md`) remains unapproved, and ADW-05 (Agent/Provider/Model domain semantics) remains unwritten. Together these block `AgentDefinition`, `RuntimeSession`, and nine of Gate D's ten work packages. | Architecture | Major | Open | Architectural Review Required | Requires an Architecture Change Request (DECISION_0003 §11) to approve the catalog-scope proposal and commission ADW-05; not a repository-mechanical fix. | (none — not closed) | 2026-07-26 | | Project Owner (Architecture Change Process, DECISION_0003 §11) | Pending | Epoch IV | Project Owner | Already disclosed and accepted as a condition in `ENGINEERING_BASELINE.md` §9's Conditional Go and in GC-003 §9 Condition 1. Not a newly discovered gap. |
 | OI-002 | GC-003 §5 (Major #2); GC-002 EV-C-08 | Seven Document IDs (ARR-01, AGR-01, ARC-01, CR-01, CR-02, EAR-01, GMR-01), cited within `ABR-01_ARCHITECTURE_BASELINE_RESOLUTION.md` and `EGC-01_ENGINEERING_GOVERNANCE_CHARTER.md`, correspond to no committed file in the repository. | Repository | Major | Open | Resolve Later | Resolution requires a governance determination of whether the missing review artifacts should be reconstructed, formally noted as historical-only, or the citations otherwise reconciled — not a mechanical cleanup by itself. | (none — not closed) | 2026-07-26 | | Repository Maintainer (GC-001 §8 signature role) | Pending | Epoch IV | Project Owner | Limits independent auditability of the historical governance record (GC-003 §4.3, R-2). GC-003 §9 Condition 2 records this as an accepted, disclosed traceability gap. |
 | OI-003 | GC-003 §5 (Major #3); GC-002 EV-B-08; GC-001 GC-B-08, §8 note | Three of GC-001 §8's five requested certification signature roles ("Architecture Review Board," "Chief Architect," "Chief Orchestrator") are Art-of-Business roles (`01_GOVERNANCE/GOVERNANCE_MODEL.md`) with no defined equivalent in the Bizzi Platform MVP's own governance model. | Governance | Major | Open | Governance Review Required | Requires a Project Owner governance determination mapping (or formally declining to map) each Art-of-Business signature role to an MVP-track authority. | (none — not closed) | 2026-07-26 | | Project Owner (Tier 0, DECISION_0002 §1) | Pending | Epoch IV | Project Owner | GC-001 §8 already identifies de facto substitute authorities (Project Owner; Engineering Governance/EGC-01) without inventing a new role. GC-003 §9 Condition 3: must be resolved before GC-001 §8 is actually executed for a signature cycle. |
-| OI-004 | GC-003 §5 (Major #4); GC-003 §4.6; `REPOSITORY_RELEASE_REPORT.md` (PR Review) | Pull Request #2 (`claude/gate-c-platform-backbone`) remains open; five of its files (real, non-conflicting documentation reconciliation) are not yet merged into `main`. | Branch Management | Major | Open | Repository Cleanup | Resolvable by merging the remaining reconciliation files via an approved pull request; no architectural or governance decision is required. | (none — not closed) | 2026-07-26 | | Repository Maintainer (GC-001 §8 signature role) | Pending | Epoch IV | Project Owner | File-by-file resolution already identified in `REPOSITORY_RELEASE_REPORT.md`. GC-003 §9 Condition 4. |
+| OI-004 | GC-003 §5 (Major #4); GC-003 §4.6; `REPOSITORY_RELEASE_REPORT.md` (PR Review) | Pull Request #2 (`claude/gate-c-platform-backbone`) remains open; five of its files (real, non-conflicting documentation reconciliation) are not yet merged into `main`. | Branch Management | Major | Closed | Closed by Repository Change | Resolvable by merging the remaining reconciliation files via an approved pull request; no architectural or governance decision is required. | Merge Commit `dfb8804` (PR #2, `claude/gate-c-platform-backbone`, merged 2026-07-27) — Exit Mechanism 3 (Repository Change), §10 | 2026-07-26 | 2026-08-03 | Project Owner (Andrew) | Confirmed | Epoch IV | Project Owner | File-by-file resolution already identified in `REPOSITORY_RELEASE_REPORT.md`. GC-003 §9 Condition 4. |
 | OI-005 | GC-003 §5 (Minor #1); GC-002 EV-C-05b, EV-F-07b; GC-001 GC-C-05, GC-F-07 | `docs/planning/WORK_PACKAGES.md` lacks a physical supersession banner at the file level, despite `CLAUDE.md`'s Key Entry Points table already asserting that status. | Repository Hygiene | Minor | Open | Repository Cleanup | A direct file edit applying the banner closes this item; no decision or review is required beyond the edit itself. | (none — not closed) | 2026-07-26 | | Repository Maintainer (GC-001 §8 signature role) | Pending | Epoch IV | Project Owner | Also recorded as a Repository Risk in `REPOSITORY_RELEASE_REPORT.md`. GC-003 §9 Condition 5. |
 | OI-006 | GC-003 §5 (Minor #2); GC-002 EV-A-08, EV-C-04, EV-F-03, EV-F-04; GC-001 GC-A-08, GC-C-04, GC-F-03, GC-F-04 | No dedicated cross-reference/link-validation artifact exists in the repository. Four separate GC-001 requirements share this one underlying gap. No specific broken reference has been demonstrated by any evidence reviewed. | Process | Minor | Open | Resolve Later | Resolution requires deciding what form a cross-reference validation artifact should take before one can be produced; a process design question, not a single mechanical fix. | (none — not closed) | 2026-07-26 | | Engineering Governance (EGC-01) | Pending | Epoch IV | Project Owner | GC-002 §6 records this as one gap recorded once, applying to all four requirement IDs, rather than four independent gaps. |
 | OI-007 | GC-003 §5 (Minor #3); GC-002 EV-A-10; GC-001 GC-A-10 | `Aggregate` (D08, Aggregate Strategy) has no standalone formal definition within `ADW_01_CORE_DOMAIN_SEMANTICS.md`. | Architecture | Minor | Open | Architectural Review Required | Adding a formal domain-term definition is an architecture-governed change to a frozen area (Domain Model, DECISION_0003 §7) and requires the Architecture Change Process. | (none — not closed) | 2026-07-26 | | Project Owner (Architecture Change Process, DECISION_0003 §11) | Pending | Epoch IV | Project Owner | Per GC-003 §4.1, does not block currently-unblocked work packages. |
