@@ -1,3 +1,28 @@
+> ## ⚠️ Prologue — added 2026-08-03
+>
+> **This document is a snapshot of repository state at a specific point in
+> time. It is not a living document. It is never edited to reflect later
+> changes — later developments are recorded in a prologue like this one,
+> and the findings below stand exactly as originally written, including
+> any that subsequent events have overtaken or disproved.**
+>
+> This prologue is additive. Not one word of the document body below has
+> been altered.
+>
+> **Subsequent developments affecting this document's findings:**
+>
+> - **`agent/architecture-specification-v1-1` merged to `main` via PR #4
+>   on 2026-07-26.** §7's Operational Gaps entry — **"`agent/architecture-specification-v1-1`
+>   is not merged to `main`. Every constitutional, domain, and
+>   implementation-planning document in §3 exists only on this branch."**
+>   — and §9's Go/No-Go condition 1 ("Branch location must be resolved
+>   first") are both resolved and no longer current. Every document this
+>   baseline describes as branch-only is on `main` today.
+> - This does not resolve every gap §7 records (e.g. `Aggregate` (D08)
+>   remaining formally undefined, the root-level `GOVERNANCE_MODEL.md` /
+>   `CAPABILITY_MAP_v1.0.md` duplicates) — only the branch-merge condition
+>   specifically. The rest of §7 stands as originally written.
+
 # Engineering Baseline — Bizzi Platform
 
 Version: 1.0

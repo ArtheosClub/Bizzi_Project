@@ -1,3 +1,31 @@
+> ## ⚠️ Prologue — added 2026-08-03
+>
+> **This report is a snapshot of repository state at a specific point in
+> time. It is not a living document. It is never edited to reflect later
+> changes — later developments are recorded in a prologue like this one,
+> and the findings below stand exactly as originally written, including
+> any that subsequent events have overtaken or disproved.**
+>
+> This prologue is additive. Not one word of the report body below has
+> been altered.
+>
+> **Subsequent developments affecting this report's findings:**
+>
+> - **PR #2 has since been merged** (merge commit `dfb8804`, 2026-07-27).
+>   Step 3's Branch Review recommendation for `claude/gate-c-platform-backbone`
+>   — **"Do not delete... 5 files still exclusively here"** — is overtaken:
+>   with PR #2 merged, `claude/gate-c-platform-backbone` has zero
+>   divergence from `main` and is provably safe to delete. Following the
+>   original recommendation today would preserve a branch that no longer
+>   carries any unique content.
+> - Step 2's characterization of PR #2 as not-yet-merged is likewise
+>   historical as of 2026-07-27 — recorded here rather than re-litigated.
+> - Step 4's release-tag push failure is **not** resolved by this
+>   prologue: verified fresh (`git ls-remote --tags origin`, 2026-08-03)
+>   that no tag exists on the remote. `implementation-baseline-v1.0`
+>   remains a local-only object, still at risk per OI-009. Out of scope
+>   for this correction pass — flagged, not fixed.
+
 # Repository Release Report — Architecture Epoch III Closure
 
 Version: 1.0
