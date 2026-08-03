@@ -6,12 +6,12 @@
 |---|---|
 | Document ID | OIR-01 |
 | Title | Gate C Outstanding Items Register |
-| Version | 1.2 |
+| Version | 1.3 |
 | Status | **OPEN REGISTER** (permanent governance record; not a certification instrument) |
 | Document Type | Lifecycle-Managed Governance Register |
 | Part of | Gate C Transition Record (companion to the Gate C Certification Package — GC-001 Certification Checklist, GC-002 Evidence Register, GC-003 Certification Assessment Report) |
 | Repository | ArtheosClub/Bizzi_Project |
-| Supersedes | OIR-01 v1.1 (findings and classifications unchanged; OI-004 closed) |
+| Supersedes | OIR-01 v1.2 (findings and classifications unchanged; OI-009 closed) |
 
 **Version History**
 
@@ -20,6 +20,7 @@
 | 1.0 | Initial register: twelve Outstanding Items captured from GC-003 §5 | OI-001–OI-012 (created) |
 | 1.1 | Refined into a lifecycle-managed governance register: terminology, lifecycle columns, expanded Decision values, Outstanding Item Lifecycle section, Acceptance of Residual Risk section, expanded Governance Rules, expanded Exit Mechanisms, Validation Rules, Repository Integrity (permanence) section | None (no finding added, removed, reclassified, or reweighed) |
 | 1.2 | OI-004 closed — PR #2 merged (`dfb8804`, 2026-07-27), resolving the underlying repository condition. Closed directly by Project Owner authorization, 2026-08-03, under OIR-01 §10 Exit Mechanism 3 (Repository Change) | OI-004 (closed) |
+| 1.3 | OI-009 closed — `implementation-baseline-v1.0` tag pushed to the remote, resolving the underlying repository condition. Closed directly by Project Owner authorization, 2026-08-03, under OIR-01 §10 Exit Mechanism 3 (Repository Change) | OI-009 (closed) |
 
 This register is not a corrective action plan. This register is not a
 backlog. This register is not an implementation roadmap. It exists
@@ -139,18 +140,19 @@ added, removed, or reclassified since v1.0.
 
 **Current Status values** (exactly five, no others): `Open` / `Accepted`
 / `Deferred` / `In Review` / `Closed`. Default: `Open`. All twelve items
-were `Open` as of v1.1. **As of 2026-08-03, OI-004 is `Closed`** (see §3
-and §7/§10) — the Project Owner authorized closure directly, under
-OIR-01 §10 Exit Mechanism 3 (Repository Change), Branch Management being
-a category the Project Owner may close per §7. The remaining eleven
-items are unchanged since v1.1.
+were `Open` as of v1.1. **As of 2026-08-03, OI-004 and OI-009 are both
+`Closed`** (see §3 and §7/§10) — both authorized directly by the Project
+Owner, under OIR-01 §10 Exit Mechanism 3 (Repository Change); Branch
+Management (OI-004) and Repository Hygiene (OI-009) are both categories
+the Project Owner may close per §7. The remaining ten items are
+unchanged since v1.1.
 
 **Decision values** (exactly nine, no others): `Accept` / `Resolve Later`
 / `Architectural Review Required` / `Governance Review Required` /
 `Repository Cleanup` / `Reserved` / `Closed by ADR` / `Closed by
 Decision` / `Closed by Repository Change`. The three `Closed by *` values
 were reserved for future use as of v1.1; `Closed by Repository Change`
-now applies to OI-004 (§3).
+now applies to OI-004 and OI-009 (§3).
 
 | Item ID | Origin | Finding | Category | Audit Classification | Current Status | Decision | Disposition Rationale | Closure Reference | Date Opened | Date Closed | Verification Authority | Verification Status | Target Epoch | Owner | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -162,7 +164,7 @@ now applies to OI-004 (§3).
 | OI-006 | GC-003 §5 (Minor #2); GC-002 EV-A-08, EV-C-04, EV-F-03, EV-F-04; GC-001 GC-A-08, GC-C-04, GC-F-03, GC-F-04 | No dedicated cross-reference/link-validation artifact exists in the repository. Four separate GC-001 requirements share this one underlying gap. No specific broken reference has been demonstrated by any evidence reviewed. | Process | Minor | Open | Resolve Later | Resolution requires deciding what form a cross-reference validation artifact should take before one can be produced; a process design question, not a single mechanical fix. | (none — not closed) | 2026-07-26 | | Engineering Governance (EGC-01) | Pending | Epoch IV | Project Owner | GC-002 §6 records this as one gap recorded once, applying to all four requirement IDs, rather than four independent gaps. |
 | OI-007 | GC-003 §5 (Minor #3); GC-002 EV-A-10; GC-001 GC-A-10 | `Aggregate` (D08, Aggregate Strategy) has no standalone formal definition within `ADW_01_CORE_DOMAIN_SEMANTICS.md`. | Architecture | Minor | Open | Architectural Review Required | Adding a formal domain-term definition is an architecture-governed change to a frozen area (Domain Model, DECISION_0003 §7) and requires the Architecture Change Process. | (none — not closed) | 2026-07-26 | | Project Owner (Architecture Change Process, DECISION_0003 §11) | Pending | Epoch IV | Project Owner | Per GC-003 §4.1, does not block currently-unblocked work packages. |
 | OI-008 | GC-003 §5 (Minor #4); GC-002 §0 (Naming note), EV-C-02 (Comments) | This Gate C Certification Package's own document ID, `GC-002`, collides in form with the pre-existing, unrelated, unapproved `GC-002` Architecture Decision Proposal ("Composite Foreign Keys") in `GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md`. | Naming | Minor | Open | Reserved | GC-002's own header states resolving the collision is outside that document's scope; this register does not reopen that scope determination. | (none — not closed) | 2026-07-26 | | Repository Maintainer (GC-001 §8 signature role) | Pending | Not applicable | Project Owner | GC-002's own header states resolving the collision is outside that document's scope. This register does not resolve it either. |
-| OI-009 | GC-003 §5 (Minor #5); GC-003 §4.6; `REPOSITORY_RELEASE_REPORT.md` (tag-push attempt) | The `implementation-baseline-v1.0` release tag exists as a local annotated tag object but was not successfully pushed to the remote (outbound proxy returned `HTTP 403` on every attempt). | Repository Hygiene | Minor | Open | Repository Cleanup | Resolvable by a successful tag push once the underlying access constraint clears; no decision or review is required. | (none — not closed) | 2026-07-26 | | Repository Maintainer (GC-001 §8 signature role) | Pending | Epoch IV | Project Owner | Local tag object correctly points at merge commit `576465f15d8e35656ad8ff3f6ed5e954ebb74fe8`; ready to push once the underlying access constraint is resolved. |
+| OI-009 | GC-003 §5 (Minor #5); GC-003 §4.6; `REPOSITORY_RELEASE_REPORT.md` (tag-push attempt) | The `implementation-baseline-v1.0` release tag exists as a local annotated tag object but was not successfully pushed to the remote (outbound proxy returned `HTTP 403` on every attempt). | Repository Hygiene | Minor | Closed | Closed by Repository Change | Resolvable by a successful tag push once the underlying access constraint clears; no decision or review is required. | Tag `implementation-baseline-v1.0` pushed to `origin` (2026-08-03), pointing at merge commit `576465f15d8e35656ad8ff3f6ed5e954ebb74fe8` — Exit Mechanism 3 (Repository Change), §10 | 2026-07-26 | 2026-08-03 | Project Owner (Andrew) | Confirmed | Epoch IV | Project Owner | Local tag object correctly points at merge commit `576465f15d8e35656ad8ff3f6ed5e954ebb74fe8`; ready to push once the underlying access constraint is resolved. |
 | OI-010 | GC-003 §5 (Observation #1); RSM-01 §08 (Namespace Analysis); GC-002 EV-C-03 | Root-level `GOVERNANCE_MODEL.md` and `CAPABILITY_MAP_v1.0.md` exist as content-divergent duplicates. | Repository | Observation | Open | Reserved | Art-of-Business track; explicitly outside Gate C Certification scope per DECISION_0002 §1 and GC-003 §2; not reopened by this register. | (none — not closed) | 2026-07-26 | | Repository Maintainer (GC-001 §8 signature role) | Pending | Not applicable | Project Owner | Art-of-Business track; explicitly outside Gate C Certification scope per DECISION_0002 §1 and GC-003 §2. |
 | OI-011 | GC-003 §5 (Observation #2); RSM-01 §08 | `06_PLAYBOOKS/` remains empty while 102 `PB0*.md` files sit at repository root. | Repository | Observation | Open | Reserved | Art-of-Business track; explicitly outside Gate C Certification scope, same basis as OI-010. | (none — not closed) | 2026-07-26 | | Repository Maintainer (GC-001 §8 signature role) | Pending | Not applicable | Project Owner | Art-of-Business track; explicitly outside Gate C Certification scope, same basis as OI-010. |
 | OI-012 | GC-003 §5 (Observation #3); GC-002 EV-A-09; DECISION_0003 §8 | ADW-07 (Events, Audit, and Provenance domain semantics) remains unwritten. | Architecture | Observation | Open | Resolve Later | Not currently blocking any Gate C work package; awaits its own domain workshop rather than an immediate architectural or repository action. | (none — not closed) | 2026-07-26 | | Project Owner (Architecture Change Process, DECISION_0003 §11) | Pending | Epoch IV | Project Owner | Per GC-003 §5 Observation #3, not currently blocking any Gate C work package; DECISION_0002's Vocabulary Baseline provisionally governs the affected relationships. Also recorded as a Remaining Open Area in DECISION_0003 §8. |

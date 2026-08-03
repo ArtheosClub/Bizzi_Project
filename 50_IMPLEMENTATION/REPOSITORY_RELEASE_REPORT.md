@@ -25,6 +25,15 @@
 >   that no tag exists on the remote. `implementation-baseline-v1.0`
 >   remains a local-only object, still at risk per OI-009. Out of scope
 >   for this correction pass — flagged, not fixed.
+>
+> **Update — added 2026-08-03 (same day, after the above):** the
+> `implementation-baseline-v1.0` tag has since been pushed to `origin`,
+> on merge commit `576465f15d8e35656ad8ff3f6ed5e954ebb74fe8` — the same
+> commit Step 4 originally targeted. OI-009 is closed
+> (`45_GATE_C_TRANSITION/OUTSTANDING_ITEMS.md` v1.3). This prologue is
+> itself a point-in-time record, per the rule stated at its own top — the
+> line above is left as originally written; this line records what
+> changed after it.
 
 # Repository Release Report — Architecture Epoch III Closure
 
