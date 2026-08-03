@@ -100,7 +100,9 @@ item), 🟢 Unblocked.
 - **Dependencies**: WP09.
 - **Deliverables**: `User` model, `WorkspaceMembership` join entity (shape
   already resolved per `docs/c4/C3_COMPONENT.md`), auth middleware,
-  `ActorContext` resolution.
+  `ActorContext` resolution. `WorkspaceMembership.role` scope (column
+  ships, `CHECK`-constrained to `owner` only; no `WorkspaceInvitation`)
+  governed by ADR-0010.
 - **Definition of Done**: login works; `ActorContext` resolves a role via
   `(user_id, workspace_id)` lookup, never via a flat field on `User`.
 - **Acceptance Criteria**: an authenticated request resolves the correct
@@ -113,20 +115,26 @@ item), 🟢 Unblocked.
 
 - **Goal**: basic RBAC for user, agent, reviewer, approver.
 - **Dependencies**: WP14 (🔴), WP16.
-- **Deliverables**: role/permission check middleware; depends on GC-003
-  (invitation model), GC-004 (role model — low-risk, already matches
-  ADR-0006's existing posture), GC-008 (permission templates — low-risk,
-  only one architecturally valid alternative per the proposal's own §02.3
-  analysis).
+- **Deliverables**: role/permission check middleware. GC-003 (invitation
+  model) is resolved by ADR-0010 as deferred/not-applicable to the MVP —
+  no longer a blocker. GC-004 (role model) is *not* approved by ADR-0010;
+  ADR-0010 ships the `role` column CHECK-constrained to `owner` only and
+  explicitly defers the scalar-vs-join question until a second role
+  exists — WP17 introducing a second role (reviewer, approver) is exactly
+  the trigger that reopens GC-004, and must resolve it, not assume
+  scalar. GC-008 (permission templates — low-risk, only one
+  architecturally valid alternative per the proposal's own §02.3
+  analysis) remains open.
 - **Definition of Done**: membership and role checks enforced on every
   protected endpoint.
 - **Acceptance Criteria**: an unauthorized actor is rejected; an
   authorized one proceeds.
 - **Estimated Complexity**: M.
 - **Risk**: Medium — transitively blocked by WP14 for the agent-role
-  half; the human-role half (GC-003/004/008) is low-risk and can proceed
-  once approved.
-- **Owner**: Engineering (Project Owner sign-off on GC-003/004/008).
+  half; the human-role half now requires resolving GC-004 for real (a
+  second role forces the scalar-vs-join question ADR-0010 deferred), plus
+  GC-008.
+- **Owner**: Engineering (Project Owner sign-off on GC-004, GC-008).
 
 ## WP18 — Event Model and Persistence 🟢
 
