@@ -22,7 +22,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
-from app.models import EnterpriseObject, Workspace
+from app.models import EnterpriseObject, User, Workspace
 
 
 @pytest.fixture(scope="module")
@@ -55,9 +55,18 @@ def session(engine):  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def workspace(session):  # type: ignore[no-untyped-def]
+def user(session):  # type: ignore[no-untyped-def]
+    """A real parent row — WP16's owner_id FK backfill requires one to exist."""
+    user = User()
+    session.add(user)
+    session.flush()
+    return user
+
+
+@pytest.fixture()
+def workspace(session, user):  # type: ignore[no-untyped-def]
     """A real parent row — the FK under test requires one to exist."""
-    workspace = Workspace(name="Test Workspace", owner_id=uuid.uuid4())
+    workspace = Workspace(name="Test Workspace", owner_id=user.id)
     session.add(workspace)
     session.flush()
     return workspace
@@ -83,7 +92,7 @@ def test_migration_applied_the_naming_convention(engine) -> None:  # type: ignor
     assert "fk_enterprise_objects_workspace_id_workspaces" in fk_names
 
 
-def test_round_trip_defaults_phase_to_active(session, workspace) -> None:  # type: ignore[no-untyped-def]
+def test_round_trip_defaults_phase_to_active(session, workspace, user) -> None:  # type: ignore[no-untyped-def]
     """Domain Review §1a: an EnterpriseObject comes into being `active`.
 
     The server default is what is under test — `phase` is not passed.
@@ -91,7 +100,7 @@ def test_round_trip_defaults_phase_to_active(session, workspace) -> None:  # typ
     obj = EnterpriseObject(
         workspace_id=workspace.id,
         type="business_request",
-        owner_id=uuid.uuid4(),
+        owner_id=user.id,
     )
     session.add(obj)
     session.flush()
@@ -104,12 +113,12 @@ def test_round_trip_defaults_phase_to_active(session, workspace) -> None:  # typ
 
 
 @pytest.mark.parametrize("phase", ["active", "archived", "superseded"])
-def test_database_accepts_every_permitted_phase(session, workspace, phase) -> None:  # type: ignore[no-untyped-def]
+def test_database_accepts_every_permitted_phase(session, workspace, user, phase) -> None:  # type: ignore[no-untyped-def]
     """ADR-0009 §2 — all three, enforced by the real CHECK constraint."""
     obj = EnterpriseObject(
         workspace_id=workspace.id,
         type="business_request",
-        owner_id=uuid.uuid4(),
+        owner_id=user.id,
         phase=phase,
     )
     session.add(obj)
@@ -120,7 +129,7 @@ def test_database_accepts_every_permitted_phase(session, workspace, phase) -> No
 
 @pytest.mark.parametrize("phase", ["draft", "deprecated", "deleted", "approved", ""])
 def test_database_rejects_a_phase_outside_the_permitted_set(  # type: ignore[no-untyped-def]
-    session, workspace, phase
+    session, workspace, user, phase
 ) -> None:
     """The CHECK constraint must be enforced by Postgres, not just declared.
 
@@ -132,7 +141,7 @@ def test_database_rejects_a_phase_outside_the_permitted_set(  # type: ignore[no-
     obj = EnterpriseObject(
         workspace_id=workspace.id,
         type="business_request",
-        owner_id=uuid.uuid4(),
+        owner_id=user.id,
         phase=phase,
     )
     session.add(obj)
@@ -141,10 +150,31 @@ def test_database_rejects_a_phase_outside_the_permitted_set(  # type: ignore[no-
         session.flush()
 
 
-def test_database_rejects_an_unknown_workspace(session) -> None:  # type: ignore[no-untyped-def]
-    """ADR-0004 / D01, enforced by the foreign key rather than by convention."""
+def test_database_rejects_an_unknown_workspace(session, user) -> None:  # type: ignore[no-untyped-def]
+    """ADR-0004 / D01, enforced by the foreign key rather than by convention.
+
+    `owner_id` is a real user here so the only violated constraint is the
+    `workspace_id` FK under test — otherwise this would pass for an
+    ambiguous reason now that `owner_id` is also foreign-keyed.
+    """
     obj = EnterpriseObject(
         workspace_id=uuid.uuid4(),
+        type="business_request",
+        owner_id=user.id,
+    )
+    session.add(obj)
+
+    with pytest.raises(IntegrityError):
+        session.flush()
+
+
+def test_database_rejects_an_unknown_owner(session, workspace) -> None:  # type: ignore[no-untyped-def]
+    """WP16's `owner_id` FK backfill, enforced by the database.
+
+    `workspace_id` is real here for the same isolation reason as above.
+    """
+    obj = EnterpriseObject(
+        workspace_id=workspace.id,
         type="business_request",
         owner_id=uuid.uuid4(),
     )
@@ -154,7 +184,7 @@ def test_database_rejects_an_unknown_workspace(session) -> None:  # type: ignore
         session.flush()
 
 
-def test_database_accepts_any_type_string(session, workspace) -> None:  # type: ignore[no-untyped-def]
+def test_database_accepts_any_type_string(session, workspace, user) -> None:  # type: ignore[no-untyped-def]
     """No approved source enumerates the specializations, so none is enforced.
 
     Deliberately uses a value no scenario mentions: if someone later adds a
@@ -165,7 +195,7 @@ def test_database_accepts_any_type_string(session, workspace) -> None:  # type: 
     obj = EnterpriseObject(
         workspace_id=workspace.id,
         type="a_type_no_approved_document_names",
-        owner_id=uuid.uuid4(),
+        owner_id=user.id,
     )
     session.add(obj)
     session.flush()
@@ -174,11 +204,11 @@ def test_database_accepts_any_type_string(session, workspace) -> None:  # type: 
 
 
 @pytest.mark.parametrize("missing", ["workspace_id", "type", "owner_id"])
-def test_required_columns_are_rejected_when_null(session, workspace, missing) -> None:  # type: ignore[no-untyped-def]
+def test_required_columns_are_rejected_when_null(session, workspace, user, missing) -> None:  # type: ignore[no-untyped-def]
     values = {
         "workspace_id": workspace.id,
         "type": "business_request",
-        "owner_id": uuid.uuid4(),
+        "owner_id": user.id,
     }
     values[missing] = None
 

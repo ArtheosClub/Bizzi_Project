@@ -249,7 +249,7 @@ Default status for all packages in this version: `Planned`.
 | WP13 | EnterpriseObject Model | P0 | WP06, WP08 | WP14, WP23 | CRUD model with canonical ID, type, `phase`, owner, timestamps — see Amendment A-01 |
 | WP14 | AgentDefinition Model | P0 | WP13 | WP24, WP27 | Configurable agent definition with capabilities and permissions |
 | WP15 | Task Model and Lifecycle | P0 | WP13 | WP23–WP32 | Task states, owner, priority, source object, timestamps implemented |
-| WP16 | Minimal Identity and Authentication | P0 | WP09 | WP17, WP23, WP29 | One authenticated human user and service/agent identities supported |
+| WP16 | Minimal Identity and Authentication | P0 | WP09 | WP17, WP23, WP29 | One authenticated human user and service/agent identities supported — see Amendment A-03 |
 | WP17 | Role and Permission Checks | P1 | WP14, WP16 | WP27, WP29 | Basic RBAC for user, agent, reviewer, approver |
 | WP18 | Event Model and Persistence | P0 | WP08, WP13 | WP21, WP30, WP34 | Events stored with trace ID, correlation ID, type, source, timestamp |
 | WP19 | AuditRecord Model | P0 | WP13, WP16 | WP30, WP36 | High-impact actions create immutable audit records |
@@ -267,6 +267,7 @@ Project Owner approval before the amended criteria are binding.
 |---|---|---|---|---|
 | A-01 | WP13 | 2026-08-02 | **Approved** | Acceptance criteria field `status` → `phase`. Original wording: *"CRUD model with canonical ID, type, status, owner, timestamps."* |
 | A-02 | WP13 | 2026-08-03 | **Approved** | Deliverables field `EnterpriseObject model/repository/service, migration` → `EnterpriseObject model, migration`. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"EnterpriseObject model/repository/service, migration."* |
+| A-03 | WP16 | 2026-08-03 | **Approved** | Splits WP16 into a schema foundation (this PR: `User`, `WorkspaceMembership`, migration, tests, plus the `owner_id` FK backfills on `Workspace`/`EnterpriseObject` both prior migrations promised) and a deferred remainder (login, auth middleware, `ActorContext` resolution — blocked on ADW-02 and on ADR-0005/WP19). Original wording: *"One authenticated human user and service/agent identities supported"* stated as a single undivided deliverable. |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -300,13 +301,40 @@ and migration only, no repository or service, matching WP12a's precedent —
 this amendment brings the written Deliverables field into agreement with
 what was built and with ADR-0005.
 
-### Amendment Approval Record
+### Amendment Approval Record (A-01, A-02)
 
 ```text
 Decision: Approved (A-01, A-02)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-03
 Approved Commit or PR: PR #13 (`docs/domain-review-enterprise-object`)
+```
+
+**A-03 rationale.** WP16's Deliverables were written as one undivided
+line before two of its prerequisites were confirmed unresolved: ADR-0010
+(this session) scopes `WorkspaceMembership` but explicitly does not
+approve GC-004 itself, and `User`'s field shape has no approved source at
+all — ADW-02 (Identity and Workspace Boundary), the domain workshop that
+owns identity and credential mechanics, is unwritten
+(`ADW_01_CORE_DOMAIN_SEMANTICS.md` §10 lists it as deferred beyond
+ADW-01). Shipping `User` with credential fields now would settle ADW-02's
+scope by migration rather than by decision — the same irreversibility
+Architecture Review Checklist question 4 exists to catch, and the same
+treatment `EnterpriseObject.type` already got for its own unenumerated
+values. The schema foundation (bare `User` identity, the already-scoped
+`WorkspaceMembership`, and the two FK backfills two earlier migrations
+already promised) has no such gap and proceeds; login, auth middleware,
+and `ActorContext` resolution do not, until ADW-02 exists for the
+credential model and `AuditService` (WP19) exists for anything
+state-changing (ADR-0005).
+
+### Amendment Approval Record (A-03)
+
+```text
+Decision: Approved (A-03)
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-03
+Approved Commit or PR: PR #19 (`feat/wp16-user-workspace-membership`)
 ```
 
 ## Gate D — First Vertical Slice
