@@ -1,6 +1,6 @@
 # Domain Review — EnterpriseObject
 
-**Status:** Proposed — awaiting Project Owner approval
+**Status:** Approved
 **Purpose:** Define EnterpriseObject's domain role and lifecycle independently
 of any scenario, so ADR-0009 derives the lifecycle field from the domain
 rather than from Gate A's flow.
@@ -256,6 +256,25 @@ This blocks WP14 and WP20. It does **not** block WP13.
    written into its plan.
 
 WP14 and WP20 wait on §5.
+
+---
+
+## 7. Project Owner Decision
+
+Decision: **Approved**
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-03
+Approved Commit or PR: PR #13 (`docs/domain-review-enterprise-object`)
+
+### Owner Decision Record
+
+```text
+Decision: Approved
+Reason: EnterpriseObject's domain role and lifecycle, derived
+independently of any single scenario from D01-D10, reviewed in full and
+found correct. Supersedes the earlier scenario-derived
+draft/active/archived/superseded proposal. Governs ADR-0009 and WP13.
+```
 
 ---
 

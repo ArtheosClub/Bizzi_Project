@@ -1,8 +1,11 @@
 # ADR-0009: EnterpriseObject carries a three-value `phase`, not a universal `status`
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-08-02
-- Deciders: Project Owner (pending) — derived from `docs/adr/DOMAIN_REVIEW_ENTERPRISE_OBJECT.md`
+- Decided: 2026-08-03
+- Deciders: Andrew (Project Owner) — decision recorded 2026-08-03, PR #13
+  (`docs/domain-review-enterprise-object`); derived from
+  `docs/adr/DOMAIN_REVIEW_ENTERPRISE_OBJECT.md`
 - Governance level: L3 (cross-module domain contract; every Gate C entity either inherits this lifecycle or is explicitly excluded from it). Applies approved decisions D01–D10 to the schema; it does **not** change them, so no Architecture Change Request under DECISION_0003 §11 is required.
 
 ## Context

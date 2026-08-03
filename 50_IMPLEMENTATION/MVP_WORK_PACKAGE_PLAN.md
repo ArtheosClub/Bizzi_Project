@@ -265,7 +265,8 @@ Project Owner approval before the amended criteria are binding.
 
 | ID | WP | Date | Status | Change |
 |---|---|---|---|---|
-| A-01 | WP13 | 2026-08-02 | **Pending Project Owner approval** | Acceptance criteria field `status` → `phase`. Original wording: *"CRUD model with canonical ID, type, status, owner, timestamps."* |
+| A-01 | WP13 | 2026-08-02 | **Approved** | Acceptance criteria field `status` → `phase`. Original wording: *"CRUD model with canonical ID, type, status, owner, timestamps."* |
+| A-02 | WP13 | 2026-08-03 | **Approved** | Deliverables field `EnterpriseObject model/repository/service, migration` → `EnterpriseObject model, migration`. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"EnterpriseObject model/repository/service, migration."* |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -286,6 +287,27 @@ Governed by `docs/adr/0009-enterprise-object-phase-lifecycle.md`, which fixes
 the three permitted values (`active`, `archived`, `superseded`), the permitted
 transitions, and the entities that do **not** inherit this lifecycle. Derived
 in `docs/adr/DOMAIN_REVIEW_ENTERPRISE_OBJECT.md`.
+
+**A-02 rationale.** `IMPLEMENTATION_BACKLOG.md`'s WP13 Deliverables field, as
+originally written, instructs a future reader to build a repository and
+service layer for `EnterpriseObject`. ADR-0005 requires audit-inside-transaction
+for every state-changing service method, and `AuditService` does not exist
+until WP19 — writing the service now would either violate ADR-0005 or
+silently pull WP19's dependency forward. This is the same failure mode A-01
+corrected for `status`: a live planning document instructing a breach of an
+accepted ADR. WP13's actual implementation already scopes correctly — model
+and migration only, no repository or service, matching WP12a's precedent —
+this amendment brings the written Deliverables field into agreement with
+what was built and with ADR-0005.
+
+### Amendment Approval Record
+
+```text
+Decision: Approved (A-01, A-02)
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-03
+Approved Commit or PR: PR #13 (`docs/domain-review-enterprise-object`)
+```
 
 ## Gate D — First Vertical Slice
 

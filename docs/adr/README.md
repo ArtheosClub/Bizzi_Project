@@ -51,4 +51,4 @@ one decision per file. Template: `0000-adr-template.md`.
 | [0006](0006-authorization-model-mvp.md) | Owner-only authorization for MVP, RBAC-ready extension path | Accepted |
 | [0007](0007-bizzi-mvp-backend-stack-python-fastapi.md) | Bizzi MVP backend stack is Python + FastAPI, not TypeScript/NestJS | Accepted |
 | [0008](0008-document-status-vocabulary.md) | One document-status vocabulary — Draft / Active / Deferred / Superseded / Historical | Accepted |
-| [0009](0009-enterprise-object-phase-lifecycle.md) | EnterpriseObject carries a three-value `phase`, not a universal `status` | **Proposed** |
+| [0009](0009-enterprise-object-phase-lifecycle.md) | EnterpriseObject carries a three-value `phase`, not a universal `status` | Accepted |
