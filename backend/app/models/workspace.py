@@ -21,7 +21,7 @@ outside the Architecture Freeze (DECISION_0003 §7).
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, String, func
+from sqlalchemy import DateTime, ForeignKey, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -39,14 +39,13 @@ class Workspace(Base):
 
     name: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    # Indexed but deliberately *not* a ForeignKey: the `users` table does
-    # not exist until WP16 (Minimal Identity and Authentication). The
-    # constraint is added by WP16's own migration, not fabricated here
-    # against a table that isn't there. Indexed now because owner lookup
-    # is the expected access path and adding the index later would mean a
-    # second migration over a populated table.
+    # WP16 backfills this as a real ForeignKey now that `users` exists —
+    # this comment previously explained why it was deliberately absent;
+    # that reason no longer applies. Still indexed: owner lookup is the
+    # expected access path.
     owner_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("users.id"),
         nullable=False,
         index=True,
     )

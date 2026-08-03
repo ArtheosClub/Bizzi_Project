@@ -94,27 +94,52 @@ item), 🟢 Unblocked.
   overlooked edge case, not an undefined rule.
 - **Owner**: Engineering.
 
-## WP16 — Minimal Identity and Authentication 🟢
+## WP16 — Minimal Identity and Authentication 🟡
+
+Split by Amendment A-03 (`MVP_WORK_PACKAGE_PLAN.md` § Gate C —
+Amendments; approved 2026-08-03 by Project Owner) into a schema
+foundation and a deferred remainder — not fully unblocked, despite the
+shape question being resolved.
 
 - **Goal**: one authenticated human user, plus service/agent identities.
-- **Dependencies**: WP09.
-- **Deliverables**: `User` model, `WorkspaceMembership` join entity (shape
-  already resolved per `docs/c4/C3_COMPONENT.md`), auth middleware,
-  `ActorContext` resolution. `WorkspaceMembership.role` scope (column
-  ships, `CHECK`-constrained to `owner` only; no `WorkspaceInvitation`)
-  governed by ADR-0010.
-- **Definition of Done**: login works; `ActorContext` resolves a role via
-  `(user_id, workspace_id)` lookup, never via a flat field on `User`.
-- **Acceptance Criteria**: an authenticated request resolves the correct
-  workspace-scoped role.
-- **Estimated Complexity**: M.
-- **Risk**: Low — the shape question is already resolved, not open.
-- **Owner**: Engineering.
+- **Dependencies**: WP09 (schema foundation); **ADW-02 (Identity and
+  Workspace Boundary — not yet written)** for the deferred remainder,
+  same phrasing as WP14's ADW-05 dependency.
+- **Deliverables — schema foundation (unblocked, this PR)**: `User`
+  model (`id`, `created_at`, `updated_at` only — no credential fields;
+  ADW-02 owns those and doesn't exist yet), `WorkspaceMembership` join
+  entity (shape already resolved per `docs/c4/C3_COMPONENT.md`;
+  `role` column ships `CHECK`-constrained to `owner` only, no
+  `WorkspaceInvitation`, per ADR-0010), plus the `owner_id` FK backfills
+  on `Workspace`/`EnterpriseObject` that both prior migrations
+  explicitly promised ("WP16's own migration adds it").
+- **Deliverables — deferred (blocked)**: auth middleware, `ActorContext`
+  resolution, login. Blocked on ADW-02 for `User`'s credential model, and
+  on ADR-0005/WP19 (`AuditService` doesn't exist yet) for anything
+  service-shaped — same class of gap A-02 already recorded for WP13.
+- **Definition of Done**: schema foundation — the two new tables exist,
+  migrated, tested, and the two FK backfills apply cleanly. Deferred
+  remainder's Definition of Done ("login works; `ActorContext` resolves a
+  role via `(user_id, workspace_id)` lookup") does not close in this PR.
+- **Acceptance Criteria**: schema foundation only — CRUD-level model
+  correctness, asserted by tests. The full WP's acceptance criteria ("an
+  authenticated request resolves the correct workspace-scoped role")
+  waits on the deferred remainder.
+- **Estimated Complexity**: M (schema foundation); not determinable for
+  the deferred remainder until ADW-02 exists.
+- **Risk**: Low for the schema foundation — the shape question is already
+  resolved. Medium for the deferred remainder — genuinely blocked, not
+  merely unscheduled.
+- **Owner**: Engineering (schema foundation); Project Owner (ADW-02),
+  then Engineering (deferred remainder).
 
 ## WP17 — Role and Permission Checks 🟡
 
 - **Goal**: basic RBAC for user, agent, reviewer, approver.
-- **Dependencies**: WP14 (🔴), WP16.
+- **Dependencies**: WP14 (🔴), WP16 (🟡 — specifically WP16's deferred
+  `ActorContext` remainder, not just its schema foundation; permission
+  checks need a resolved actor/role at request time, which the schema
+  alone doesn't provide).
 - **Deliverables**: role/permission check middleware. GC-003 (invitation
   model) is resolved by ADR-0010 as deferred/not-applicable to the MVP —
   no longer a blocker. GC-004 (role model) is *not* approved by ADR-0010;

@@ -15,11 +15,11 @@ import uuid
 
 import pytest
 from sqlalchemy import create_engine, inspect, text
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
-from app.models import Workspace
+from app.models import User, Workspace
 
 
 @pytest.fixture(scope="module")
@@ -51,6 +51,15 @@ def session(engine):  # type: ignore[no-untyped-def]
         connection.close()
 
 
+@pytest.fixture()
+def user(session):  # type: ignore[no-untyped-def]
+    """A real parent row — WP16's owner_id FK backfill requires one to exist."""
+    user = User()
+    session.add(user)
+    session.flush()
+    return user
+
+
 def test_migration_created_the_table(engine) -> None:  # type: ignore[no-untyped-def]
     """Proves `alembic upgrade head` actually ran and created the table."""
     assert "workspaces" in inspect(engine).get_table_names()
@@ -64,10 +73,9 @@ def test_migration_applied_the_naming_convention(engine) -> None:  # type: ignor
     assert "ix_workspaces_owner_id" in index_names
 
 
-def test_workspace_round_trip(session: Session) -> None:
+def test_workspace_round_trip(session: Session, user: User) -> None:  # type: ignore[no-untyped-def]
     """Create, flush, read back — the WP12a acceptance criterion."""
-    owner_id = uuid.uuid4()
-    workspace = Workspace(name="Acme Consulting", owner_id=owner_id)
+    workspace = Workspace(name="Acme Consulting", owner_id=user.id)
 
     session.add(workspace)
     session.flush()
@@ -79,14 +87,22 @@ def test_workspace_round_trip(session: Session) -> None:
     fetched = session.get(Workspace, workspace.id)
     assert fetched is not None
     assert fetched.name == "Acme Consulting"
-    assert fetched.owner_id == owner_id
+    assert fetched.owner_id == user.id
 
 
-def test_name_is_required(session: Session) -> None:
+def test_name_is_required(session: Session, user: User) -> None:  # type: ignore[no-untyped-def]
     """Negative case — NOT NULL is enforced by the database, not just Python."""
-    session.add(Workspace(owner_id=uuid.uuid4()))
+    session.add(Workspace(owner_id=user.id))
 
     with pytest.raises(SQLAlchemyError):
+        session.flush()
+
+
+def test_owner_id_is_rejected_when_unknown(session: Session) -> None:
+    """WP16's FK backfill, enforced by the database, not just declared."""
+    session.add(Workspace(name="Orphan Owner", owner_id=uuid.uuid4()))
+
+    with pytest.raises(IntegrityError):
         session.flush()
 
 

@@ -64,15 +64,10 @@ def test_timestamps_have_server_defaults() -> None:
         assert Workspace.__table__.columns[name].server_default is not None
 
 
-def test_owner_id_is_indexed_but_has_no_foreign_key() -> None:
-    """Deliberate until WP16 creates the `users` table.
-
-    Adding the FK before `users` exists breaks the migration against a
-    clean database. This pins the current, intentional state so the
-    absence reads as a decision rather than an omission.
-    """
+def test_owner_id_is_indexed_and_has_a_foreign_key_to_users() -> None:
+    """WP16 backfills this now that `users` exists."""
     owner_id = Workspace.__table__.columns["owner_id"]
-    assert owner_id.foreign_keys == set()
+    assert {fk.target_fullname for fk in owner_id.foreign_keys} == {"users.id"}
     assert any(
         list(index.columns) == [owner_id] for index in Workspace.__table__.indexes
     )

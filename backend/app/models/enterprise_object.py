@@ -110,9 +110,8 @@ class EnterpriseObject(Base):
         server_default=PHASE_ACTIVE,
     )
 
-    # Indexed but deliberately not a ForeignKey — the `users` table does not
-    # exist until WP16. Same rationale as `Workspace.owner_id`; WP16's own
-    # migration adds the constraint.
+    # WP16 backfills this as a real ForeignKey now that `users` exists,
+    # same as `Workspace.owner_id`.
     #
     # Note this is ownership (D02), not attribution: D09 R10 attributes an
     # Actor to {Decision, Business Operation, Work Item, Runtime Session},
@@ -120,6 +119,7 @@ class EnterpriseObject(Base):
     # the audit record (ADW-07, deferred), not to a column here.
     owner_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("users.id"),
         nullable=False,
         index=True,
     )

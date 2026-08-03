@@ -173,11 +173,11 @@ def test_workspace_id_is_required_indexed_and_a_real_foreign_key() -> None:
     )
 
 
-def test_owner_id_is_indexed_but_has_no_foreign_key() -> None:
-    """Deliberate until WP16 creates the `users` table — same as WP12a."""
+def test_owner_id_is_indexed_and_has_a_foreign_key_to_users() -> None:
+    """WP16 backfills this now that `users` exists — same as Workspace."""
     owner_id = EnterpriseObject.__table__.columns["owner_id"]
 
-    assert owner_id.foreign_keys == set()
+    assert {fk.target_fullname for fk in owner_id.foreign_keys} == {"users.id"}
     assert any(
         list(index.columns) == [owner_id]
         for index in EnterpriseObject.__table__.indexes
@@ -220,16 +220,18 @@ def test_constraints_use_the_naming_convention() -> None:
 
 
 def test_migration_is_wired_into_the_revision_chain() -> None:
-    """This migration must follow WP12a's, and be the single head.
+    """This migration must follow WP12a's.
 
     Resolved through Alembic's own ScriptDirectory rather than by importing
     the migration module — that is how Alembic itself walks the chain, so a
-    chain Alembic cannot resolve fails here too. It also catches a second
-    head appearing, which would make `upgrade head` ambiguous.
+    chain Alembic cannot resolve fails here too.
+
+    This no longer asserts that WP13's revision is the chain's head: WP16
+    now follows it. The single-head assertion lives with whichever
+    migration is currently last, in `test_workspace_membership_model.py`,
+    same convention as the note this replaced.
     """
     script = ScriptDirectory.from_config(Config(str(ALEMBIC_INI)))
-
-    assert script.get_heads() == [ENTERPRISE_OBJECT_REVISION]
 
     revision = script.get_revision(ENTERPRISE_OBJECT_REVISION)
     assert revision.down_revision == WORKSPACE_REVISION
