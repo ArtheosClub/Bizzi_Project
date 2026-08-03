@@ -334,7 +334,7 @@ state-changing (ADR-0005).
 Decision: Approved (A-03)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-03
-Approved Commit or PR: (recorded on merge of this Work Package's PR)
+Approved Commit or PR: PR #19 (`feat/wp16-user-workspace-membership`)
 ```
 
 ## Gate D — First Vertical Slice
