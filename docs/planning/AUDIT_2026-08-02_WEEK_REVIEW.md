@@ -1,3 +1,34 @@
+> ## ⚠️ Prologue — added 2026-08-03
+>
+> **An audit is a snapshot of repository state at a specific point in
+> time. It is not a living document. It is never edited to reflect later
+> changes — later developments are recorded in a prologue like this one,
+> and the findings below stand exactly as originally written, including
+> any that subsequent events have overtaken or disproved.**
+>
+> This prologue is additive. Not one word of the audit body below has
+> been altered.
+>
+> **Subsequent developments affecting this audit's findings:**
+>
+> - **WP12a (Workspace model) and WP13 (EnterpriseObject model) have
+>   since shipped** — merged via PR #10 (2026-08-02) and PR #13
+>   (2026-08-03). §2.1's "Shipped code: zero," the "third consecutive
+>   week at zero" framing, and the 283-Python-LOC baseline throughout
+>   this audit were accurate for the window audited
+>   (2026-07-26 → 2026-08-02) and are no longer current — `backend/` now
+>   contains both models, their migrations, and their tests. This audit's
+>   own conclusion (§5, "the MVP is not blocked by missing decisions... it
+>   is blocked by the decision to keep making decisions") is the direct
+>   reason WP12a and WP13 got written; it is recorded here, not edited
+>   into the body, because that would erase the evidence of what actually
+>   changed the trajectory.
+> - **The four open PRs this audit describes (#5, #7, #8, #9) have since
+>   all merged** (2026-08-02), along with PR #10, PR #11 (skills), and
+>   PR #13. This audit itself — previously sitting on an orphaned branch
+>   with no PR — was landed via the same repository-hygiene pass that
+>   merged the above.
+
 # Week-in-Review Audit — 2026-08-02
 
 Audit Date: 2026-08-02
