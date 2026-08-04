@@ -248,7 +248,7 @@ Default status for all packages in this version: `Planned`.
 |---|---|---:|---|---|---|
 | WP13 | EnterpriseObject Model | P0 | WP06, WP08 | WP14, WP23 | CRUD model with canonical ID, type, `phase`, owner, timestamps — see Amendment A-01 |
 | WP14 | AgentDefinition Model | P0 | WP13 | WP24, WP27 | Configurable agent definition with capabilities and permissions |
-| WP15 | Task Model and Lifecycle | P0 | WP13 | WP23–WP32 | Task states, owner, priority, source object, timestamps implemented |
+| WP15 | Task Model and Lifecycle | P0 | WP13 | WP23–WP32 | Task states, owner, priority, source object, timestamps implemented — see Amendment A-04 |
 | WP16 | Minimal Identity and Authentication | P0 | WP09 | WP17, WP23, WP29 | One authenticated human user and service/agent identities supported — see Amendment A-03 |
 | WP17 | Role and Permission Checks | P1 | WP14, WP16 | WP27, WP29 | Basic RBAC for user, agent, reviewer, approver |
 | WP18 | Event Model and Persistence | P0 | WP08, WP13 | WP21, WP30, WP34 | Events stored with trace ID, correlation ID, type, source, timestamp |
@@ -268,6 +268,7 @@ Project Owner approval before the amended criteria are binding.
 | A-01 | WP13 | 2026-08-02 | **Approved** | Acceptance criteria field `status` → `phase`. Original wording: *"CRUD model with canonical ID, type, status, owner, timestamps."* |
 | A-02 | WP13 | 2026-08-03 | **Approved** | Deliverables field `EnterpriseObject model/repository/service, migration` → `EnterpriseObject model, migration`. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"EnterpriseObject model/repository/service, migration."* |
 | A-03 | WP16 | 2026-08-03 | **Approved** | Splits WP16 into a schema foundation (this PR: `User`, `WorkspaceMembership`, migration, tests, plus the `owner_id` FK backfills on `Workspace`/`EnterpriseObject` both prior migrations promised) and a deferred remainder (login, auth middleware, `ActorContext` resolution — blocked on ADW-02 and on ADR-0005/WP19). Original wording: *"One authenticated human user and service/agent identities supported"* stated as a single undivided deliverable. |
+| A-04 | WP15 | 2026-08-04 | **Approved** | Deliverables field narrowed to model/migration/tests only, and the field list fixed to `id`, `workspace_id`, `phase`, `source_object_id`, `created_at`, `updated_at`. Original wording: *"`Task` model/repository/service implementing D07's state constitution (transition rules, authority, concurrency)"* with acceptance criteria *"Task states, owner, priority, source object, timestamps."* |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -335,6 +336,58 @@ Decision: Approved (A-03)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-03
 Approved Commit or PR: PR #19 (`feat/wp16-user-workspace-membership`)
+```
+
+**A-04 rationale.** Two separate corrections converge on this amendment.
+
+First, the same failure mode A-02 already corrected for WP13:
+`IMPLEMENTATION_BACKLOG.md`'s WP15 entry specifies "`Task`
+model/repository/service implementing D07's state constitution
+(transition rules, authority, concurrency)" and "every D07-defined
+transition implemented; invalid transitions rejected at the service
+layer" — a service layer now, which ADR-0005 still forbids until
+`AuditService` exists at WP19.
+
+Second, `docs/adr/DOMAIN_REVIEW_TASK_LIFECYCLE.md` re-derived WP15's
+field list from D01–D10 and WP02 directly. Against the original stated
+criteria ("Task states, owner, priority, source object, timestamps"),
+by category:
+
+- **Excluded**, of the originally stated fields: `owner` (Domain Review
+  §6 — a column that can only reference `users` would be a false
+  contract, since WP02's actual assignee is an agent, not a human; also
+  no demonstrated need for a human-only target) and `priority` (§5 — no
+  approved source and no demonstrated need; WP02 is one task, nothing to
+  prioritize against).
+- **Replaced**: `states` becomes the precise `phase` — five values
+  derived from D10 §6/§8 Invariant 6 (§3), with its transition graph
+  fixed separately by `docs/adr/0011-task-phase-transition-graph.md`
+  (§3a identified the graph, not just the value list, as underdetermined
+  by the sources alone).
+- **Retained, in a limited form**: `source object` becomes
+  `source_object_id`, the N≤1 subset of D09 R9's approved 0..N
+  cardinality (§7) — a recorded simplification, not a domain limit.
+- **Retained as-is**: timestamps (`created_at`, `updated_at`).
+- **Additionally examined and not added** — none of these were in
+  WP15's original stated criteria, so their absence is a considered
+  exclusion, not a removal: `progress` (§4 — an approved D07 dimension
+  with no approved value shape), `title`, `description` (§8 — not
+  attested by WP02 or any approved source; the descriptive content
+  belongs to the `EnterpriseObject`/recommendation, not `Task`).
+
+Field list fixed to exactly `id`, `workspace_id`, `phase`,
+`source_object_id`, `created_at`, `updated_at` — six fields, all with a
+sourced basis (§10 of the Domain Review). Model, migration, and tests
+only; no repository, service, or API, matching WP12a/WP13/WP16's
+precedent.
+
+### Amendment Approval Record (A-04)
+
+```text
+Decision: Approved (A-04)
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-04
+Approved Commit or PR: PR #20 (`docs/task-lifecycle-domain-review`)
 ```
 
 ## Gate D — First Vertical Slice

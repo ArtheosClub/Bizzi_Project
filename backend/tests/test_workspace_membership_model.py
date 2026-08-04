@@ -69,7 +69,8 @@ def test_role_has_a_check_constraint_naming_that_value() -> None:
     assert len(checks) == 1
 
     condition = str(checks[0].sqltext)
-    assert "'owner'" in condition
+    for role in WORKSPACE_MEMBERSHIP_ROLES:
+        assert f"'{role}'" in condition
 
 
 def test_workspace_id_is_required_indexed_and_a_real_foreign_key() -> None:
@@ -142,15 +143,17 @@ def test_constraints_use_the_naming_convention() -> None:
 
 
 def test_migration_is_wired_into_the_revision_chain() -> None:
-    """This migration must follow WP13's, and be the single head.
+    """This migration must follow WP13's.
 
     Resolved through Alembic's own ScriptDirectory, same as every prior
-    migration test — a chain Alembic cannot resolve fails here too, and a
-    second head appearing (making `upgrade head` ambiguous) fails here.
+    migration test — a chain Alembic cannot resolve fails here too.
+
+    This no longer asserts that this revision is the chain's head: WP15
+    now follows it. The single-head assertion lives with whichever
+    migration is currently last, in `test_task_model.py`, same
+    convention as when the head moved from WP13's test to this one.
     """
     script = ScriptDirectory.from_config(Config(str(ALEMBIC_INI)))
-
-    assert script.get_heads() == [USER_AND_MEMBERSHIP_REVISION]
 
     revision = script.get_revision(USER_AND_MEMBERSHIP_REVISION)
     assert revision.down_revision == ENTERPRISE_OBJECT_REVISION
