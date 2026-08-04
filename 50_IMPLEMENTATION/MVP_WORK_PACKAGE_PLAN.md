@@ -387,9 +387,7 @@ precedent.
 Decision: Approved (A-04)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-04
-Approved Commit or PR: (to be filled in once WP15's implementation PR
-opens — not left as this placeholder past that point, per the
-correction already applied to A-03)
+Approved Commit or PR: PR #20 (`docs/task-lifecycle-domain-review`)
 ```
 
 ## Gate D — First Vertical Slice
