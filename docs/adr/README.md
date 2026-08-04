@@ -53,3 +53,4 @@ one decision per file. Template: `0000-adr-template.md`.
 | [0008](0008-document-status-vocabulary.md) | One document-status vocabulary — Draft / Active / Deferred / Superseded / Historical | Accepted |
 | [0009](0009-enterprise-object-phase-lifecycle.md) | EnterpriseObject carries a three-value `phase`, not a universal `status` | Accepted |
 | [0010](0010-workspace-membership-mvp-scope.md) | WorkspaceMembership MVP scope — no WorkspaceInvitation; `role` column ships, GC-004 stays unapproved | Accepted |
+| [0011](0011-task-phase-transition-graph.md) | Task phase transition graph — `archived` reachable only from `active` | Accepted |

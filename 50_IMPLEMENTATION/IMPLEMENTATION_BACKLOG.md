@@ -80,19 +80,65 @@ item), 🟢 Unblocked.
 
 ## WP15 — Task Model and Lifecycle 🟢
 
-- **Goal**: task states, owner, priority, source object, timestamps.
+Narrowed by Amendment A-04 (`MVP_WORK_PACKAGE_PLAN.md` § Gate C —
+Amendments; approved 2026-08-04 by Project Owner) after
+`docs/adr/DOMAIN_REVIEW_TASK_LIFECYCLE.md` and `docs/adr/0011-task-phase-transition-graph.md`.
+
+- **Goal**: `Task` as a Work Item specialization (D03/D08), workspace-scoped,
+  with a five-value governed `phase` and an optional reference to the
+  `EnterpriseObject` it's work on.
 - **Dependencies**: WP13.
-- **Deliverables**: `Task` model/repository/service implementing D07's
-  state constitution (transition rules, authority, concurrency).
-- **Definition of Done**: every D07-defined transition implemented;
-  invalid transitions rejected at the service layer.
-- **Acceptance Criteria**: a task's lifecycle transitions correctly end to
-  end; an invalid transition is rejected with a clear error.
-- **Estimated Complexity**: M–L (state-machine correctness is the risk
-  driver, not the CRUD shell).
-- **Risk**: Medium — D07 is precise but detailed; the risk is an
-  overlooked edge case, not an undefined rule.
+- **Deliverables**: `Task` model, migration, tests only. Fields: `id`,
+  `workspace_id`, `phase` (`active`/`archived`/`superseded`/`cancelled`/
+  `completed`, value-domain `CHECK`-constrained), `source_object_id`
+  (nullable FK to `enterprise_objects.id`, N≤1 simplification of D09
+  R9's approved 0..N — service code must not assume a Task can by
+  nature relate to only one EnterpriseObject), `created_at`,
+  `updated_at`. No `progress`, `priority`, `title`, `description`,
+  `assignee_id`, or `owner_id` — none has an approved source and a
+  demonstrated need together (Domain Review §4–§6).
+- **Definition of Done**:
+  - `Task.phase` is persisted as a constrained five-value field.
+  - The database `CHECK` rejects values outside `active`, `archived`,
+    `superseded`, `cancelled`, `completed`.
+  - Creation defaults to `active` (Python-level `default` and migration
+    `server_default` both set — only a direct-insert test proves the
+    latter).
+  - ADR-0011 is the normative source for the *transition graph*; WP15's
+    migration implements only the *value domain*, and those are not the
+    same thing — a `CHECK` sees a row's current value, not its prior
+    one, so it cannot and does not reject `completed → archived` or any
+    other disallowed transition. WP15 does not enforce transitions
+    between existing values.
+  - Transition validation, authority, concurrency, atomic audit
+    recording, and rejection of invalid transitions are all deferred to
+    the audited service layer, blocked on `AuditService` (WP19) — same
+    as WP13's, and for the same ADR-0005 reason. WP15 intentionally does
+    not introduce database-level transition enforcement — transition
+    authority belongs to the audited service layer, a scope boundary for
+    this WP, not a permanent prohibition on the database ever enforcing
+    it.
+- **Acceptance Criteria (schema-level)**: valid phase values are
+  accepted; unknown phase values are rejected; omitted phase resolves to
+  `active`; `workspace_id` and `source_object_id` constraints are
+  enforced; the exact approved column set is preserved. **Not included**:
+  transition execution, previous-state validation, transition authority,
+  atomic audit recording, concurrency control.
+- **Estimated Complexity**: M (schema only; state-machine *enforcement*
+  moves to whichever WP builds the service).
+- **Risk**: Low for the schema — the value domain is sourced (D10 §6/§8)
+  and the transition graph is normatively fixed (ADR-0011), even though
+  this WP doesn't enforce it. Medium, deferred, for the eventual
+  service — D07 is precise but detailed.
 - **Owner**: Engineering.
+- **Marker note**: stays 🟢, not 🟡 like WP16. The distinction is real,
+  not cosmetic: WP16's deferred half is blocked on ADW-02, an unwritten
+  domain workshop with no scheduled resolution. WP15's deferred half
+  (transition enforcement) is blocked on `AuditService`, a known,
+  already-scoped Work Package (WP19) — a sequencing fact, not an open
+  architectural question. 🟢 here means "nothing architecturally
+  undecided is blocking this WP's own scope," not "fully complete
+  end-to-end."
 
 ## WP16 — Minimal Identity and Authentication 🟡
 
@@ -188,7 +234,16 @@ shape question being resolved.
   high-impact) and GC-007 (snapshot vs. diff shape) are open but
   non-blocking for this WP specifically: use GC-006's own conservative
   Alternative B (treat every mutation as high-impact) and GC-007's
-  diff-only shape as the interim default.
+  diff-only shape as the interim default. **D09 R10 (Actor Attribution)
+  is unmodeled across all of Gate C** — found on `EnterpriseObject.owner_id`,
+  confirmed again on `Task.assignee_id` (`DOMAIN_REVIEW_TASK_LIFECYCLE.md`
+  §6) — and belongs here: R10's attribution records are described as
+  "Historical / immutable once recorded... mirrors D07's transition-record
+  and this project's audit-first principle," and ADW-07 (unwritten, same
+  workshop that governs this WP's own `AuditRecord` schema) is explicitly
+  named as owning provenance/attribution contracts. Not yet a blocker for
+  this WP's own conservative scope, same phrasing convention as ADW-02/
+  ADW-05 elsewhere in this document.
 - **Definition of Done**: business write + audit write share one
   transaction for every mutation (conservative default); audit content is
   a field-level diff, not a full snapshot.

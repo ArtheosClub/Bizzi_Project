@@ -20,6 +20,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.models import User, Workspace, WorkspaceMembership
+from app.models.workspace_membership import ROLE_OWNER
 
 
 @pytest.fixture(scope="module")
@@ -89,7 +90,7 @@ def test_round_trip(session, workspace, user) -> None:  # type: ignore[no-untype
     membership = WorkspaceMembership(
         workspace_id=workspace.id,
         user_id=user.id,
-        role="owner",
+        role=ROLE_OWNER,
     )
     session.add(membership)
     session.flush()
@@ -100,18 +101,18 @@ def test_round_trip(session, workspace, user) -> None:  # type: ignore[no-untype
 
     fetched = session.get(WorkspaceMembership, membership.id)
     assert fetched is not None
-    assert fetched.role == "owner"
+    assert fetched.role == ROLE_OWNER
 
 
 def test_database_accepts_the_owner_role(session, workspace, user) -> None:  # type: ignore[no-untyped-def]
     """ADR-0010's single authorized value, enforced by the real CHECK."""
     membership = WorkspaceMembership(
-        workspace_id=workspace.id, user_id=user.id, role="owner"
+        workspace_id=workspace.id, user_id=user.id, role=ROLE_OWNER
     )
     session.add(membership)
     session.flush()
 
-    assert membership.role == "owner"
+    assert membership.role == ROLE_OWNER
 
 
 @pytest.mark.parametrize("role", ["reviewer", "approver", "admin", ""])
@@ -130,7 +131,7 @@ def test_database_rejects_a_role_outside_the_permitted_set(  # type: ignore[no-u
 
 def test_database_rejects_an_unknown_workspace(session, user) -> None:  # type: ignore[no-untyped-def]
     membership = WorkspaceMembership(
-        workspace_id=uuid.uuid4(), user_id=user.id, role="owner"
+        workspace_id=uuid.uuid4(), user_id=user.id, role=ROLE_OWNER
     )
     session.add(membership)
 
@@ -140,7 +141,7 @@ def test_database_rejects_an_unknown_workspace(session, user) -> None:  # type: 
 
 def test_database_rejects_an_unknown_user(session, workspace) -> None:  # type: ignore[no-untyped-def]
     membership = WorkspaceMembership(
-        workspace_id=workspace.id, user_id=uuid.uuid4(), role="owner"
+        workspace_id=workspace.id, user_id=uuid.uuid4(), role=ROLE_OWNER
     )
     session.add(membership)
 
@@ -153,12 +154,12 @@ def test_database_rejects_a_duplicate_workspace_user_pair(  # type: ignore[no-un
 ) -> None:
     """UNIQUE(workspace_id, user_id) — one membership row per pair."""
     session.add(
-        WorkspaceMembership(workspace_id=workspace.id, user_id=user.id, role="owner")
+        WorkspaceMembership(workspace_id=workspace.id, user_id=user.id, role=ROLE_OWNER)
     )
     session.flush()
 
     session.add(
-        WorkspaceMembership(workspace_id=workspace.id, user_id=user.id, role="owner")
+        WorkspaceMembership(workspace_id=workspace.id, user_id=user.id, role=ROLE_OWNER)
     )
 
     with pytest.raises(IntegrityError):
@@ -172,7 +173,7 @@ def test_required_columns_are_rejected_when_null(  # type: ignore[no-untyped-def
     values = {
         "workspace_id": workspace.id,
         "user_id": user.id,
-        "role": "owner",
+        "role": ROLE_OWNER,
     }
     values[missing] = None
 
