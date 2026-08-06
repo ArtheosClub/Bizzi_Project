@@ -197,19 +197,24 @@ repository/service invariant plus tests (default), and stronger composite
 critical relationships if SQLAlchemy/Alembic complexity remains
 manageable," without naming a final, approved scope.
 
-**Governance synchronization note (2026-07-23):** the domain-semantic
-question of what these relationships *are* — `AuditRecord`→aggregate,
-`ContextPackage`→`Task`, `RuntimeSession`→`Task`, `Event`→`Task`/source —
+**Governance synchronization note (2026-07-23; corrected 2026-08-05):**
+the domain-semantic question of what these relationships *are* —
+`AuditRecord`→aggregate, `ContextPackage`→`Task`, `RuntimeSession`→`Task` —
 is governed by `00_ARCHITECTURE/01_DOMAIN/D09_RELATIONSHIP_MODEL.md`
-(APPROVED — CLOSED), not by this proposal. This proposal addresses only
-the persistence-layer enforcement mechanism for relationships D09 already
+(APPROVED — CLOSED), not by this proposal, to the extent each falls
+within D09's own six-concept scope (Enterprise Object, Actor, Work Item,
+Decision, Business Operation, Runtime Session). `Event`→`Task`/source is
+excluded from that attribution: D09 does not mention Event anywhere and
+does not govern it — the original 2026-07-23 note's citation of D09 for
+this relationship was incorrect. This proposal addresses only the
+persistence-layer enforcement mechanism for relationships D09 already
 defines. Per
 `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md`'s
-Vocabulary Baseline, audit/event relationship semantics specifically are,
-as a future concept, provisionally governed by this proposal (GC-002)
-pending ADW-07 (Events, Audit, and Provenance), which has not yet been
-written. This note does not change the alternatives, recommendation, or
-any other content below — see `00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md`
+Vocabulary Baseline, Event/Audit relationship semantics are, as a future
+concept, provisionally governed by this proposal (GC-002) pending ADW-07
+(Events, Audit, and Provenance), which has not yet been written. This
+note does not change the alternatives, recommendation, or any other
+content below — see `00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md`
 §3 for the full Authority Hierarchy.
 
 ### Problem Statement

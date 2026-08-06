@@ -269,6 +269,7 @@ Project Owner approval before the amended criteria are binding.
 | A-02 | WP13 | 2026-08-03 | **Approved** | Deliverables field `EnterpriseObject model/repository/service, migration` → `EnterpriseObject model, migration`. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"EnterpriseObject model/repository/service, migration."* |
 | A-03 | WP16 | 2026-08-03 | **Approved** | Splits WP16 into a schema foundation (this PR: `User`, `WorkspaceMembership`, migration, tests, plus the `owner_id` FK backfills on `Workspace`/`EnterpriseObject` both prior migrations promised) and a deferred remainder (login, auth middleware, `ActorContext` resolution — blocked on ADW-02 and on ADR-0005/WP19). Original wording: *"One authenticated human user and service/agent identities supported"* stated as a single undivided deliverable. |
 | A-04 | WP15 | 2026-08-04 | **Approved** | Deliverables field narrowed to model/migration/tests only, and the field list fixed to `id`, `workspace_id`, `phase`, `source_object_id`, `created_at`, `updated_at`. Original wording: *"`Task` model/repository/service implementing D07's state constitution (transition rules, authority, concurrency)"* with acceptance criteria *"Task states, owner, priority, source object, timestamps."* |
+| A-05 | WP18 | 2026-08-05 | **Approved** | Not a field-list narrowing (there is no approved field set to narrow to) — a readiness and scope correction: WP18 status `🟢` → `🔴`, blocked pending ADW-07. Deliverables field `Event model/repository/service` withdrawn; no model, migration, repository, service, API, or field list is authorized until ADW-07 defines event semantics, correlation, provenance, relationships, and sensitive-data rules. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Deliverables: `Event` model/repository/service"*, acceptance criteria *"trace ID, correlation ID, type, source, timestamp."* |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -388,6 +389,53 @@ Decision: Approved (A-04)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-04
 Approved Commit or PR: PR #20 (`docs/task-lifecycle-domain-review`)
+```
+
+**A-05 rationale.** WP18's stated criteria — "events stored with trace
+ID, correlation ID, type, source, timestamp" — were checked directly
+against every candidate source, the same standard A-04 applied to WP15,
+and none held up:
+
+- **D01–D10**: zero hits for "trace id" or "correlation id" anywhere in
+  `00_ARCHITECTURE/01_DOMAIN/`. `D07_STATE_SEMANTICS.md` mentions only
+  "Event Delivery State" as technical messaging infrastructure, unrelated
+  to this entity's persisted fields.
+- **`docs/c4/C3_COMPONENT.md`**: names the same five fields, but its own
+  Source column cites `MVP_WORK_PACKAGE_PLAN.md` for them — it quotes the
+  WP plan rather than grounding it, the same circularity the Task Domain
+  Review found for `priority`.
+- **ADW-07** (Events, Audit, and Provenance): `ARCHITECTURE_SPECIFICATION.md`
+  names it as owning "event semantics... correlation" — exactly what
+  WP18 needs — and it is unwritten. `00_ARCHITECTURE/07_AUDIT/` does not
+  exist as a directory.
+- **Relationship to Task/EnterpriseObject** (the `source` field's
+  implied semantics): GC-002 (`GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md`)
+  is unapproved and internally contradictory — its first governance
+  sentence attributes `Event`→`Task`/source relationship semantics to
+  `D09_RELATIONSHIP_MODEL.md`, but D09 scopes itself to six other
+  concepts (Enterprise Object, Actor, Work Item, Decision, Business
+  Operation, Runtime Session) and does not mention Event anywhere. GC-002's
+  own second sentence states the accurate position: Event/Audit
+  relationship semantics remain provisional under GC-002 itself, pending
+  ADW-07 — matching `DECISION_0002`'s Vocabulary Baseline. The D09
+  citation is a misattribution; corrected separately as a documentation
+  fix to GC-002, not as part of this amendment.
+
+Unlike A-02/A-04, this is not a narrowing to an approved subset — there
+is no approved subset to narrow to. The amendment records WP18 as
+blocked and withdraws the premature `Event` model/repository/service
+deliverable wording (the same over-scope pattern A-02 corrected for WP13
+and A-04 for WP15), pending ADW-07.
+
+### Amendment Approval Record (A-05)
+
+```text
+Decision: Approved (A-05)
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-05
+Approved Commit or PR: (to be filled in once this change's PR opens —
+not left as this placeholder past that point, per the correction already
+applied to A-03/A-04)
 ```
 
 ## Gate D — First Vertical Slice
