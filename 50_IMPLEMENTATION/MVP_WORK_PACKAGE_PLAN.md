@@ -433,9 +433,7 @@ and A-04 for WP15), pending ADW-07.
 Decision: Approved (A-05)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-05
-Approved Commit or PR: (to be filled in once this change's PR opens —
-not left as this placeholder past that point, per the correction already
-applied to A-03/A-04)
+Approved Commit or PR: PR #22 (`docs/wp18-adw07-readiness-correction`)
 ```
 
 ## Gate D — First Vertical Slice
