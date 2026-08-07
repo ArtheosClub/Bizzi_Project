@@ -197,23 +197,48 @@ repository/service invariant plus tests (default), and stronger composite
 critical relationships if SQLAlchemy/Alembic complexity remains
 manageable," without naming a final, approved scope.
 
-**Governance synchronization note (2026-07-23; corrected 2026-08-05):**
-the domain-semantic question of what these relationships *are* —
-`AuditRecord`→aggregate, `ContextPackage`→`Task`, `RuntimeSession`→`Task` —
-is governed by `00_ARCHITECTURE/01_DOMAIN/D09_RELATIONSHIP_MODEL.md`
-(APPROVED — CLOSED), not by this proposal, to the extent each falls
-within D09's own six-concept scope (Enterprise Object, Actor, Work Item,
-Decision, Business Operation, Runtime Session). `Event`→`Task`/source is
-excluded from that attribution: D09 does not mention Event anywhere and
-does not govern it — the original 2026-07-23 note's citation of D09 for
-this relationship was incorrect. This proposal addresses only the
-persistence-layer enforcement mechanism for relationships D09 already
-defines. Per
+**Governance synchronization note (2026-07-23; corrected 2026-08-05;
+corrected further 2026-08-06):** D09
+(`00_ARCHITECTURE/01_DOMAIN/D09_RELATIONSHIP_MODEL.md`, APPROVED —
+CLOSED) governs one of the four relationships Alternative B below lists,
+not all four. Verified directly against D09 §1 (its six declared
+concepts) and the complete §4 relationship matrix (R1–R11), not inferred
+from concept names:
+
+- ✓ **`RuntimeSession`→`Task`** — governed by D09: R5 (`Runtime Session
+  executes for Work Item`) + R4 (`Task` is a specialization of `Work
+  Item`). This proposal addresses only the persistence-layer enforcement
+  mechanism for this relationship; D09 already defines its domain
+  semantics.
+- ✗ **`Event`→`Task`/source** — not governed by D09. `Event` is not one
+  of D09's six declared concepts (Enterprise Object, Actor, Work Item,
+  Decision, Business Operation, Runtime Session) and does not appear in
+  R1–R11. (The original 2026-07-23 note's citation of D09 here was
+  incorrect; corrected 2026-08-05.)
+- ✗ **`AuditRecord`→aggregate** — not governed by D09, for the same
+  reason: absent from D09's six concepts and from R1–R11. (The original
+  note's inclusion of `AuditRecord` under the D09 citation was also
+  incorrect; corrected 2026-08-06.)
+- ✗ **`ContextPackage`→`Task`** — not governed by D09, for the same
+  reason: absent from D09's six concepts and from R1–R11. (The original
+  note's inclusion of `ContextPackage` under the D09 citation was also
+  incorrect; corrected 2026-08-06.)
+
+For the three relationships D09 does not govern, ownership is not
+settled by any approved source — it does not default to this proposal.
+Per
 `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md`'s
-Vocabulary Baseline, Event/Audit relationship semantics are, as a future
-concept, provisionally governed by this proposal (GC-002) pending ADW-07
-(Events, Audit, and Provenance), which has not yet been written. This
-note does not change the alternatives, recommendation, or any other
+Vocabulary Baseline, `Event` and `AuditRecord` relationship semantics are
+explicitly named there as a future concept, provisionally governed by
+this proposal (GC-002) pending ADW-07 (Events, Audit, and Provenance),
+which has not yet been written — an approved provisional position, not a
+claim that ownership is settled. `ContextPackage` is not named in
+DECISION_0002's Vocabulary Baseline at all: ADW-06 (Knowledge and
+Memory) is currently the best-supported candidate owner, inferred from
+its stated scope over context and retention; no approved source
+explicitly assigns `ContextPackage` or its field semantics to ADW-06.
+
+This note does not change the alternatives, recommendation, or any other
 content below — see `00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md`
 §3 for the full Authority Hierarchy.
 

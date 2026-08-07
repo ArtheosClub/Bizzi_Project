@@ -222,13 +222,25 @@ narrowing like A-02/A-04 — there is no approved field set to narrow to.
   own Source column cites `MVP_WORK_PACKAGE_PLAN.md` for this field
   list — it quotes the WP plan rather than grounding it, the same
   circularity the Task Domain Review found for `priority`. **This is one
-  of three confirmed instances of source-attribution drift found this
-  session** — `C3_COMPONENT.md` → `MVP_WORK_PACKAGE_PLAN.md` (this
-  entry), GC-002 → `D09_RELATIONSHIP_MODEL.md` (see Relationship note
-  below), and WP20's field list → `PRE-CODING-BRIEF.md` §5.2, which
-  doesn't actually contain it. Citations made by plausibility rather than
-  verification — worth checking whenever a WP's stated source is relied
-  on, not (yet) a claim about the documentation generally.
+  of five confirmed source-attribution failures identified as of
+  2026-08-06** — enumerated here so the count doesn't need re-deriving
+  and stays checkable rather than trusted:
+  1. `C3_COMPONENT.md` → `MVP_WORK_PACKAGE_PLAN.md` (this entry's Event
+     field list, circular).
+  2. GC-002 → `D09_RELATIONSHIP_MODEL.md`, for `Event`→`Task`/source
+     (corrected 2026-08-05).
+  3. WP20's field list → `PRE-CODING-BRIEF.md` §5.2, which doesn't
+     actually contain it.
+  4. GC-002 → `D09_RELATIONSHIP_MODEL.md`, for `AuditRecord`→aggregate
+     (corrected 2026-08-06).
+  5. GC-002 → `D09_RELATIONSHIP_MODEL.md`, for `ContextPackage`→`Task`
+     (corrected 2026-08-06).
+
+  Three of the five sit inside one paragraph of one document (GC-002's
+  governance note) — where the problem concentrated, not evidence the
+  documentation generally is unreliable. Citations made by plausibility
+  rather than verification; worth checking whenever a WP's stated source
+  is relied on.
 - **Dependencies**: WP08, WP13; **ADW-07 (Events, Audit, and Provenance —
   blocking dependency, not yet written)**. `00_ARCHITECTURE/07_AUDIT/`
   does not exist as a directory — ADW-07 is wholly undrafted, not
@@ -242,13 +254,15 @@ narrowing like A-02/A-04 — there is no approved field set to narrow to.
   not the point of this amendment.)
 - **Relationship to Task/EnterpriseObject**: not resolved by any approved
   source. GC-002 (`50_IMPLEMENTATION/GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md`)
-  is unapproved and internally contradictory: its first governance
-  sentence incorrectly attributes Event relationships to D09, while its
-  second sentence correctly states that Event/Audit relationships remain
-  provisional pending ADW-07. (D09 itself scopes to six other concepts —
-  Enterprise Object, Actor, Work Item, Decision, Business Operation,
-  Runtime Session — and does not mention Event.) The GC-002 text fix is a
-  separate documentation/governance change, not part of this amendment.
+  remains an unapproved proposal; its governance note was corrected
+  (2026-08-05, then 2026-08-06) to remove three false D09 citations —
+  `Event`→`Task`/source, `AuditRecord`→aggregate, and
+  `ContextPackage`→`Task` were each incorrectly attributed to D09, which
+  scopes to six other concepts (Enterprise Object, Actor, Work Item,
+  Decision, Business Operation, Runtime Session) and mentions none of the
+  three. Only `RuntimeSession`→`Task` is actually D09-governed (R4 + R5).
+  Fixing the citation did not resolve the underlying gap: `Event`'s
+  relationship to Task/source still has no approved source anywhere.
 - **Definition of Done for unblock**:
   - ADW-07 is completed and approved.
   - Event semantics and field shape have an approved source.
