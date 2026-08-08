@@ -508,9 +508,7 @@ established as that source.
 Decision: Approved (A-06)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-08
-Approved Commit or PR: (to be filled in once this change's PR opens —
-not left as this placeholder past that point, per the correction already
-applied to A-03/A-04)
+Approved Commit or PR: PR #23 (`docs/wp20-adw06-readiness-correction`)
 ```
 
 ## Gate D — First Vertical Slice
