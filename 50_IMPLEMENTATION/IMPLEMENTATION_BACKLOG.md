@@ -222,8 +222,8 @@ narrowing like A-02/A-04 — there is no approved field set to narrow to.
   own Source column cites `MVP_WORK_PACKAGE_PLAN.md` for this field
   list — it quotes the WP plan rather than grounding it, the same
   circularity the Task Domain Review found for `priority`. **This is one
-  of five confirmed source-attribution discrepancies identified as of
-  2026-08-06** — enumerated here so the count doesn't need re-deriving
+  of six confirmed source-attribution discrepancies identified as of
+  2026-08-08** — enumerated here so the count doesn't need re-deriving
   and stays checkable rather than trusted:
   1. `C3_COMPONENT.md` → `MVP_WORK_PACKAGE_PLAN.md` (this entry's Event
      field list, circular).
@@ -235,11 +235,37 @@ narrowing like A-02/A-04 — there is no approved field set to narrow to.
      (corrected 2026-08-06).
   5. GC-002 → `D09_RELATIONSHIP_MODEL.md`, for `ContextPackage`→`Task`
      (corrected 2026-08-06).
+  6. `DECISION_0002` → D09 §5.8, for a "Relationship Context"/
+     `ContextPackage` naming-coincidence finding: the cited §5.8 does
+     not exist in the current D09 or its available iteration drafts;
+     the historical finding may still be valid, but its cited basis is
+     unverifiable from the current repository corpus (found 2026-08-08
+     while drafting A-06).
 
-  Three of the five sit inside one paragraph of one document (GC-002's
+  Three of the six sit inside one paragraph of one document (GC-002's
   governance note), where the pattern concentrated. Citations made by
   plausibility rather than verification; worth checking whenever a WP's
   stated source is relied on.
+
+  Instance 6 is a different kind from the first five: the first five
+  involve circular grounding or attribution to an existing source that
+  does not support the stated claim. Instance 6 instead cites a section
+  that does not exist in the current architecture corpus —
+  `00_ARCHITECTURE/01_DOMAIN/D09_RELATIONSHIP_MODEL.md` has no numbered
+  subsections under §5 at all, and the only §5.8 anywhere in
+  `01_DOMAIN/` belongs to a different document,
+  `D10_DELETION_AND_SUPERSESSION.md` (§5.8, Deprecation — unrelated). An
+  adjacent, unverifiable citation sits next to it in the same source
+  document: D09 §5 itself cites "Iteration 0.1 §5.7," a document not
+  present anywhere in this repo, so its content cannot be checked either
+  way. Noted here alongside instance 6 rather than counted as a seventh,
+  since the absence of the cited document is absence of evidence, not
+  evidence of a further discrepancy.
+
+  Not corrected here or by A-06: `DECISION_0002` is a Tier 0 governance
+  document; the row may be historically accurate against a version of
+  D09 that no longer exists, and resolving that is outside this WP's and
+  this amendment's scope. Recorded as a finding, not applied as a fix.
 - **Dependencies**: WP08, WP13; **ADW-07 (Events, Audit, and Provenance —
   blocking dependency, not yet written)**. `00_ARCHITECTURE/07_AUDIT/`
   does not exist as a directory — ADW-07 is wholly undrafted, not
@@ -321,20 +347,87 @@ workshop draft.)
   that the diff-only default is only safe until then.
 - **Owner**: Engineering.
 
-## WP20 — ContextPackage Model 🟢
+## WP20 — ContextPackage Model 🔴
+
+Blocked by Amendment A-06 (`MVP_WORK_PACKAGE_PLAN.md` § Gate C —
+Amendments; approved 2026-08-08 by Project Owner). Not a field-list
+narrowing like A-02/A-04 — there is no approved field set to narrow to.
 
 - **Goal**: context package stores sources, constraints, confidence,
-  expiry.
-- **Dependencies**: WP13, WP15.
-- **Deliverables**: `ContextPackage` model/repository/service per
-  `docs/planning/PRE-CODING-BRIEF.md` §5.2. Same GC-002 non-blocking
-  posture as WP18.
-- **Definition of Done**: a context package survives session termination.
-- **Acceptance Criteria**: a context package created for a task remains
-  readable after the originating session ends.
-- **Estimated Complexity**: M.
-- **Risk**: Low.
-- **Owner**: Engineering.
+  expiry — **none of these four fields has an approved source.**
+  `docs/planning/PRE-CODING-BRIEF.md` §5.2 — this entry's own cited
+  source — describes a context snapshot surviving `RuntimeSession`
+  termination but never states this field list; `ContextPackage`
+  otherwise appears in that document only once, as a bare entity name in
+  the Architecture Traceability list. This is one of the six confirmed
+  source-attribution discrepancies identified as of 2026-08-08 (see
+  WP18's entry, #3: WP20's field list → `PRE-CODING-BRIEF.md` §5.2,
+  which doesn't actually contain it).
+- **Dependencies**: WP13, WP15; **blocked pending clarification of the
+  governing domain source (candidate governing workshop: ADW-06 —
+  Knowledge and Memory)**. `00_ARCHITECTURE/06_KNOWLEDGE/` does not
+  exist as a directory — the candidate workshop is wholly undrafted, not
+  partially.
+- **Deliverables**: **BLOCKED pending clarification of the governing
+  domain source.** No `ContextPackage` model, migration, repository,
+  service, API, or field list is authorized until the governing
+  workshop defines context/knowledge semantics, retention, and
+  relationships. (The prior wording's "model/repository/service"
+  deliverable was also premature scope of the kind A-02/A-04 already
+  corrected elsewhere — noted in passing; it is not the point of this
+  amendment.)
+- **Relationship to Task**: not resolved by any approved source. GC-002
+  (`50_IMPLEMENTATION/GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md`)
+  remains an unapproved proposal; its governance note (corrected
+  2026-08-06) removed the false attribution of `ContextPackage`→`Task`
+  to D09, which scopes to six other concepts (Enterprise Object, Actor,
+  Work Item, Decision, Business Operation, Runtime Session) and does not
+  mention ContextPackage. Fixing the citation did not resolve the
+  underlying gap: `ContextPackage`'s relationship to `Task` still has no
+  approved source anywhere.
+- **Important distinction from A-05**: Unlike WP18, no approved document
+  explicitly assigns `ContextPackage` to ADW-06. ADW-06 is identified
+  only as the best-supported candidate governing workshop, inferred from
+  its published scope overlapping "context" (and loosely "retention").
+  This amendment therefore records an inference rather than an
+  established authority attribution.
+- **Definition of Done for unblock**:
+  - The governing domain source is identified, completed, and approved
+    (candidate governing workshop currently: ADW-06).
+  - `ContextPackage` field shape and relationship semantics have an
+    approved source.
+  - WP20 receives a subsequent schema-scope amendment.
+  - Only then may model/migration/tests begin.
+- **Acceptance Criteria**: not determinable until the above unblock
+  sequence completes.
+- **Estimated Complexity**: M (pending re-estimate once the governing
+  workshop defines actual scope).
+- **Risk**: High — blocked pending an approved governing domain source;
+  the best-supported candidate governing workshop (ADW-06) is currently
+  unwritten.
+- **Owner**: Project Owner, then Engineering.
+- **Blocking prerequisite**: approved governing domain source (candidate
+  governing workshop currently: ADW-06).
+
+The candidate governing workshop (currently ADW-06) will need to define
+at least:
+- `ContextPackage` identity and its relationship to `Task` and
+  `RuntimeSession`
+- the field set — including whether sources, constraints, confidence,
+  and expiry are the right fields at all
+- retention and expiry semantics
+- how a context snapshot survives `RuntimeSession` termination (the
+  behavior `PRE-CODING-BRIEF.md` §5.2 already describes, without fixing
+  a schema for it)
+- immutability rules for a persisted context snapshot
+
+Unlike WP18, the blocking conclusion does not depend on ADW-06
+ultimately proving to be the governing workshop. Even if another
+workshop is later identified, the underlying problem is unchanged: the
+field set, relationship semantics, and persistence shape currently have
+no approved source. This amendment blocks implementation because the
+authoritative source is missing — not because ADW-06 has been
+established as that source.
 
 ## WP21 — RuntimeSession Model 🔴
 
