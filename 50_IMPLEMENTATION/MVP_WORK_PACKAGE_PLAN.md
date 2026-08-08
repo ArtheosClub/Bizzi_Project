@@ -253,7 +253,7 @@ Default status for all packages in this version: `Planned`.
 | WP17 | Role and Permission Checks | P1 | WP14, WP16 | WP27, WP29 | Basic RBAC for user, agent, reviewer, approver |
 | WP18 | Event Model and Persistence | P0 | WP08, WP13 | WP21, WP30, WP34 | Events stored with trace ID, correlation ID, type, source, timestamp |
 | WP19 | AuditRecord Model | P0 | WP13, WP16 | WP30, WP36 | High-impact actions create immutable audit records |
-| WP20 | ContextPackage Model | P0 | WP13, WP15 | WP25, WP27 | Context package stores sources, constraints, confidence, expiry |
+| WP20 | ContextPackage Model | P0 | WP13, WP15 | WP25, WP27 | Context package stores sources, constraints, confidence, expiry — see Amendment A-06 |
 | WP21 | RuntimeSession Model | P1 | WP14, WP15, WP18 | WP27, WP31 | Session lifecycle and links to task, agent, context implemented |
 | WP22 | API Error and Response Standard | P1 | WP06, WP10 | WP23–WP39 | Consistent errors, validation responses, request IDs, pagination rules |
 
@@ -275,6 +275,7 @@ expected to fall on the same calendar date.
 | A-03 | WP16 | 2026-08-03 | **Approved** | Splits WP16 into a schema foundation (this PR: `User`, `WorkspaceMembership`, migration, tests, plus the `owner_id` FK backfills on `Workspace`/`EnterpriseObject` both prior migrations promised) and a deferred remainder (login, auth middleware, `ActorContext` resolution — blocked on ADW-02 and on ADR-0005/WP19). Original wording: *"One authenticated human user and service/agent identities supported"* stated as a single undivided deliverable. |
 | A-04 | WP15 | 2026-08-04 | **Approved** | Deliverables field narrowed to model/migration/tests only, and the field list fixed to `id`, `workspace_id`, `phase`, `source_object_id`, `created_at`, `updated_at`. Original wording: *"`Task` model/repository/service implementing D07's state constitution (transition rules, authority, concurrency)"* with acceptance criteria *"Task states, owner, priority, source object, timestamps."* |
 | A-05 | WP18 | 2026-08-05 | **Approved** | Not a field-list narrowing (there is no approved field set to narrow to) — a readiness and scope correction: WP18 status `🟢` → `🔴`, blocked pending ADW-07. Deliverables field `Event model/repository/service` withdrawn; no model, migration, repository, service, API, or field list is authorized until ADW-07 defines event semantics, correlation, provenance, relationships, and sensitive-data rules. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Deliverables: `Event` model/repository/service"*, acceptance criteria *"trace ID, correlation ID, type, source, timestamp."* |
+| A-06 | WP20 | 2026-08-08 | **Approved** | Not a field-list narrowing (there is no approved field set to narrow to) — a readiness and scope correction: WP20 status `🟢` → `🔴`, blocked pending clarification of the governing domain source (candidate governing workshop: ADW-06). Deliverables field `ContextPackage model/repository/service` withdrawn; no model, migration, repository, service, API, or field list is authorized until the governing workshop defines context/knowledge semantics, retention, and relationships. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Deliverables: `ContextPackage` model/repository/service per `docs/planning/PRE-CODING-BRIEF.md` §5.2"*, acceptance criteria *"a context package created for a task remains readable after the originating session ends."* |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -438,6 +439,78 @@ Decision: Approved (A-05)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-05
 Approved Commit or PR: PR #22 (`docs/wp18-adw07-readiness-correction`)
+```
+
+**A-06 rationale.** WP20's stated criteria — "context package stores
+sources, constraints, confidence, expiry" — were checked directly
+against every candidate source, the same standard A-04/A-05 applied to
+WP15/WP18, and none held up:
+
+- **D01–D10**: `ContextPackage` is absent from D09's six declared
+  concepts (Enterprise Object, Actor, Work Item, Decision, Business
+  Operation, Runtime Session) and from its complete R1–R11 relationship
+  matrix.
+- **`docs/planning/PRE-CODING-BRIEF.md` §5.2**: this entry's own cited
+  source. §5.2 describes a context snapshot surviving `RuntimeSession`
+  termination, but never states the four-field list; `ContextPackage`
+  otherwise appears in the document only once, as a bare entity name in
+  the Architecture Traceability list.
+- **Relationship to Task**: GC-002 (`GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md`)
+  remains an unapproved proposal. Its governance note originally cited
+  `D09_RELATIONSHIP_MODEL.md` as governing `ContextPackage`→`Task`; D09
+  scopes itself to six other concepts and never mentions ContextPackage.
+  That citation was incorrect and has since been corrected in GC-002's
+  governance note (2026-08-06), alongside the same source-attribution
+  discrepancy found for `Event` and `AuditRecord` in the same paragraph.
+  Correcting the citation does not resolve the underlying domain gap:
+  `ContextPackage`'s relationship to `Task` still has no approved
+  source.
+- **No interim stand-in**: unlike WP19, which has GC-006/GC-007 as
+  named non-blocking interim defaults, WP20 has no equivalent — nothing
+  stands in for the missing field-set source.
+
+**Important distinction from A-05.** Unlike WP18, no approved document
+explicitly assigns `ContextPackage` to ADW-06. ADW-06 is identified only
+as the best-supported candidate governing workshop, inferred from its
+published scope (`ARCHITECTURE_SPECIFICATION.md`: "knowledge states,
+memory, context, validation, learning, retention, and retrieval")
+overlapping "context" (and loosely "retention"). This amendment
+therefore records an inference rather than an established authority
+attribution.
+
+A-05's ADW-07 dependency rests on a direct citation:
+`ARCHITECTURE_SPECIFICATION.md` names ADW-07 as owning "event
+semantics... correlation," a field-level match to WP18's correlation
+ID. A-06's ADW-06 dependency rests on inference alone: none of WP20's
+four stated fields appears in ADW-06's description, "ContextPackage"
+does not appear in `ARCHITECTURE_SPECIFICATION.md` at all, and the link
+is drawn from the shared word "context." "Retention" loosely maps to
+"expiry"; the other three fields have no match.
+
+Unlike A-02/A-04, this is not a narrowing to an approved subset — there
+is no approved subset to narrow to. The amendment records WP20 as
+blocked pending clarification of the governing domain source (candidate
+governing workshop: ADW-06) and withdraws the premature `ContextPackage`
+model/repository/service deliverable wording (the same over-scope
+pattern A-02 corrected for WP13 and A-04 for WP15).
+
+Unlike WP18, the blocking conclusion does not depend on ADW-06
+ultimately proving to be the governing workshop. Even if another
+workshop is later identified, the underlying problem is unchanged: the
+field set, relationship semantics, and persistence shape currently have
+no approved source. This amendment blocks implementation because the
+authoritative source is missing — not because ADW-06 has been
+established as that source.
+
+### Amendment Approval Record (A-06)
+
+```text
+Decision: Approved (A-06)
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-08
+Approved Commit or PR: (to be filled in once this change's PR opens —
+not left as this placeholder past that point, per the correction already
+applied to A-03/A-04)
 ```
 
 ## Gate D — First Vertical Slice
