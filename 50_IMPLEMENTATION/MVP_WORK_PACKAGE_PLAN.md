@@ -263,6 +263,11 @@ Amendments are recorded rather than applied silently: the original wording is
 preserved here so the change and its reason remain auditable. Each requires
 Project Owner approval before the amended criteria are binding.
 
+**Date convention:** each Approval Record's `Decision Date` records when
+the Project Owner decided; `Approved Commit or PR` records when that
+decision was committed — these are two distinct events and are not
+expected to fall on the same calendar date.
+
 | ID | WP | Date | Status | Change |
 |---|---|---|---|---|
 | A-01 | WP13 | 2026-08-02 | **Approved** | Acceptance criteria field `status` → `phase`. Original wording: *"CRUD model with canonical ID, type, status, owner, timestamps."* |
@@ -410,16 +415,15 @@ and none held up:
   exist as a directory.
 - **Relationship to Task/EnterpriseObject** (the `source` field's
   implied semantics): GC-002 (`GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md`)
-  is unapproved and internally contradictory — its first governance
-  sentence attributes `Event`→`Task`/source relationship semantics to
-  `D09_RELATIONSHIP_MODEL.md`, but D09 scopes itself to six other
-  concepts (Enterprise Object, Actor, Work Item, Decision, Business
-  Operation, Runtime Session) and does not mention Event anywhere. GC-002's
-  own second sentence states the accurate position: Event/Audit
-  relationship semantics remain provisional under GC-002 itself, pending
-  ADW-07 — matching `DECISION_0002`'s Vocabulary Baseline. The D09
-  citation is a misattribution; corrected separately as a documentation
-  fix to GC-002, not as part of this amendment.
+  remains an unapproved proposal. Its governance note originally cited
+  `D09_RELATIONSHIP_MODEL.md` as governing `Event`→`Task`/source; D09
+  scopes itself to six other concepts and never mentions Event. That
+  citation was incorrect and has since been corrected in GC-002's
+  governance note (2026-08-06), along with two further misattributions
+  found in the same paragraph (`AuditRecord`→aggregate,
+  `ContextPackage`→`Task`; see WP18's entry for the full enumeration).
+  Correcting the citation does not resolve the underlying domain gap:
+  `Event`'s relationship to `Task`/source still has no approved source.
 
 Unlike A-02/A-04, this is not a narrowing to an approved subset — there
 is no approved subset to narrow to. The amendment records WP18 as

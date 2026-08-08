@@ -222,7 +222,7 @@ narrowing like A-02/A-04 — there is no approved field set to narrow to.
   own Source column cites `MVP_WORK_PACKAGE_PLAN.md` for this field
   list — it quotes the WP plan rather than grounding it, the same
   circularity the Task Domain Review found for `priority`. **This is one
-  of five confirmed source-attribution failures identified as of
+  of five confirmed source-attribution discrepancies identified as of
   2026-08-06** — enumerated here so the count doesn't need re-deriving
   and stays checkable rather than trusted:
   1. `C3_COMPONENT.md` → `MVP_WORK_PACKAGE_PLAN.md` (this entry's Event
@@ -237,10 +237,9 @@ narrowing like A-02/A-04 — there is no approved field set to narrow to.
      (corrected 2026-08-06).
 
   Three of the five sit inside one paragraph of one document (GC-002's
-  governance note) — where the problem concentrated, not evidence the
-  documentation generally is unreliable. Citations made by plausibility
-  rather than verification; worth checking whenever a WP's stated source
-  is relied on.
+  governance note), where the pattern concentrated. Citations made by
+  plausibility rather than verification; worth checking whenever a WP's
+  stated source is relied on.
 - **Dependencies**: WP08, WP13; **ADW-07 (Events, Audit, and Provenance —
   blocking dependency, not yet written)**. `00_ARCHITECTURE/07_AUDIT/`
   does not exist as a directory — ADW-07 is wholly undrafted, not

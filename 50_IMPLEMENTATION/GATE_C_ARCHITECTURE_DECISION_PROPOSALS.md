@@ -234,8 +234,9 @@ this proposal (GC-002) pending ADW-07 (Events, Audit, and Provenance),
 which has not yet been written — an approved provisional position, not a
 claim that ownership is settled. `ContextPackage` is not named in
 DECISION_0002's Vocabulary Baseline at all: ADW-06 (Knowledge and
-Memory) is currently the best-supported candidate owner, inferred from
-its stated scope over context and retention; no approved source
+Memory) is currently the best-supported candidate governing workshop,
+inferred from its stated scope over context and retention; no approved
+source
 explicitly assigns `ContextPackage` or its field semantics to ADW-06.
 
 This note does not change the alternatives, recommendation, or any other
