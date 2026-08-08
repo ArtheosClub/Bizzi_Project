@@ -207,23 +207,87 @@ shape question being resolved.
   GC-008.
 - **Owner**: Engineering (Project Owner sign-off on GC-004, GC-008).
 
-## WP18 — Event Model and Persistence 🟢
+## WP18 — Event Model and Persistence 🔴
+
+Blocked by Amendment A-05 (`MVP_WORK_PACKAGE_PLAN.md` § Gate C —
+Amendments; approved 2026-08-05 by Project Owner). Not a field-list
+narrowing like A-02/A-04 — there is no approved field set to narrow to.
 
 - **Goal**: events stored with trace ID, correlation ID, type, source,
-  timestamp.
-- **Dependencies**: WP08, WP13.
-- **Deliverables**: `Event` model/repository/service. GC-002 (composite
-  FK to the source entity) is open but non-blocking — build against the
-  repository-invariant pattern (ADR-0004's default) now; add the
-  composite FK constraint later if GC-002 approves it, without a schema
-  rewrite.
-- **Definition of Done**: events persisted with `workspace_id` enforced by
-  invariant + negative tests.
-- **Acceptance Criteria**: an event cannot be created or read across a
-  workspace boundary.
-- **Estimated Complexity**: M.
-- **Risk**: Low–Medium.
-- **Owner**: Engineering.
+  timestamp — **none of these five fields has an approved source in
+  D01–D10 or any ADW.** `D07_STATE_SEMANTICS.md` mentions only "Event
+  Delivery State" as technical messaging infrastructure, unrelated to
+  this entity's persisted fields. `00_ARCHITECTURE/01_DOMAIN/` has zero
+  hits for "trace id" or "correlation id". `docs/c4/C3_COMPONENT.md`'s
+  own Source column cites `MVP_WORK_PACKAGE_PLAN.md` for this field
+  list — it quotes the WP plan rather than grounding it, the same
+  circularity the Task Domain Review found for `priority`. **This is one
+  of five confirmed source-attribution discrepancies identified as of
+  2026-08-06** — enumerated here so the count doesn't need re-deriving
+  and stays checkable rather than trusted:
+  1. `C3_COMPONENT.md` → `MVP_WORK_PACKAGE_PLAN.md` (this entry's Event
+     field list, circular).
+  2. GC-002 → `D09_RELATIONSHIP_MODEL.md`, for `Event`→`Task`/source
+     (corrected 2026-08-05).
+  3. WP20's field list → `PRE-CODING-BRIEF.md` §5.2, which doesn't
+     actually contain it.
+  4. GC-002 → `D09_RELATIONSHIP_MODEL.md`, for `AuditRecord`→aggregate
+     (corrected 2026-08-06).
+  5. GC-002 → `D09_RELATIONSHIP_MODEL.md`, for `ContextPackage`→`Task`
+     (corrected 2026-08-06).
+
+  Three of the five sit inside one paragraph of one document (GC-002's
+  governance note), where the pattern concentrated. Citations made by
+  plausibility rather than verification; worth checking whenever a WP's
+  stated source is relied on.
+- **Dependencies**: WP08, WP13; **ADW-07 (Events, Audit, and Provenance —
+  blocking dependency, not yet written)**. `00_ARCHITECTURE/07_AUDIT/`
+  does not exist as a directory — ADW-07 is wholly undrafted, not
+  partially.
+- **Deliverables**: **BLOCKED pending ADW-07.** No `Event` model,
+  migration, repository, service, API, or field list is authorized until
+  event semantics, correlation, provenance, relationships, and
+  sensitive-data rules are defined. (The prior wording's
+  "model/repository/service" deliverable was also premature scope of the
+  kind A-02/A-04 already corrected elsewhere — noted in passing; it is
+  not the point of this amendment.)
+- **Relationship to Task/EnterpriseObject**: not resolved by any approved
+  source. GC-002 (`50_IMPLEMENTATION/GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md`)
+  remains an unapproved proposal; its governance note was corrected
+  (2026-08-05, then 2026-08-06) to remove three false D09 citations —
+  `Event`→`Task`/source, `AuditRecord`→aggregate, and
+  `ContextPackage`→`Task` were each incorrectly attributed to D09, which
+  scopes to six other concepts (Enterprise Object, Actor, Work Item,
+  Decision, Business Operation, Runtime Session) and mentions none of the
+  three. Only `RuntimeSession`→`Task` is actually D09-governed (R4 + R5).
+  Fixing the citation did not resolve the underlying gap: `Event`'s
+  relationship to Task/source still has no approved source anywhere.
+- **Definition of Done for unblock**:
+  - ADW-07 is completed and approved.
+  - Event semantics and field shape have an approved source.
+  - WP18 receives a subsequent schema-scope amendment.
+  - Only then may model/migration/tests begin.
+- **Acceptance Criteria**: not determinable until the above unblock
+  sequence completes.
+- **Estimated Complexity**: M (pending re-estimate once ADW-07 defines
+  actual scope).
+- **Risk**: High — blocked on an unwritten domain workshop, same class as
+  WP14/ADW-05.
+- **Owner**: Project Owner (ADW-07), then Engineering.
+
+ADW-07 must define, at minimum:
+- Event identity and semantics
+- the distinction between Event, AuditRecord, and delivery state
+- correlation and causation semantics
+- source/provenance representation
+- Event relationships to Task, EnterpriseObject, Business Operation,
+  RuntimeSession, and Actor
+- occurred/recorded/published/delivered time semantics
+- immutability, retention, and sensitive-data rules
+
+(Detailed diagnostic questions for the ADW-07 working session are kept in
+`handover.md`, not here — this entry stays a scope record, not a
+workshop draft.)
 
 ## WP19 — AuditRecord Model 🟢
 

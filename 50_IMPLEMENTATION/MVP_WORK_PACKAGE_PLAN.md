@@ -263,12 +263,18 @@ Amendments are recorded rather than applied silently: the original wording is
 preserved here so the change and its reason remain auditable. Each requires
 Project Owner approval before the amended criteria are binding.
 
+**Date convention:** each Approval Record's `Decision Date` records when
+the Project Owner decided; `Approved Commit or PR` records when that
+decision was committed — these are two distinct events and are not
+expected to fall on the same calendar date.
+
 | ID | WP | Date | Status | Change |
 |---|---|---|---|---|
 | A-01 | WP13 | 2026-08-02 | **Approved** | Acceptance criteria field `status` → `phase`. Original wording: *"CRUD model with canonical ID, type, status, owner, timestamps."* |
 | A-02 | WP13 | 2026-08-03 | **Approved** | Deliverables field `EnterpriseObject model/repository/service, migration` → `EnterpriseObject model, migration`. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"EnterpriseObject model/repository/service, migration."* |
 | A-03 | WP16 | 2026-08-03 | **Approved** | Splits WP16 into a schema foundation (this PR: `User`, `WorkspaceMembership`, migration, tests, plus the `owner_id` FK backfills on `Workspace`/`EnterpriseObject` both prior migrations promised) and a deferred remainder (login, auth middleware, `ActorContext` resolution — blocked on ADW-02 and on ADR-0005/WP19). Original wording: *"One authenticated human user and service/agent identities supported"* stated as a single undivided deliverable. |
 | A-04 | WP15 | 2026-08-04 | **Approved** | Deliverables field narrowed to model/migration/tests only, and the field list fixed to `id`, `workspace_id`, `phase`, `source_object_id`, `created_at`, `updated_at`. Original wording: *"`Task` model/repository/service implementing D07's state constitution (transition rules, authority, concurrency)"* with acceptance criteria *"Task states, owner, priority, source object, timestamps."* |
+| A-05 | WP18 | 2026-08-05 | **Approved** | Not a field-list narrowing (there is no approved field set to narrow to) — a readiness and scope correction: WP18 status `🟢` → `🔴`, blocked pending ADW-07. Deliverables field `Event model/repository/service` withdrawn; no model, migration, repository, service, API, or field list is authorized until ADW-07 defines event semantics, correlation, provenance, relationships, and sensitive-data rules. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Deliverables: `Event` model/repository/service"*, acceptance criteria *"trace ID, correlation ID, type, source, timestamp."* |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -388,6 +394,50 @@ Decision: Approved (A-04)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-04
 Approved Commit or PR: PR #20 (`docs/task-lifecycle-domain-review`)
+```
+
+**A-05 rationale.** WP18's stated criteria — "events stored with trace
+ID, correlation ID, type, source, timestamp" — were checked directly
+against every candidate source, the same standard A-04 applied to WP15,
+and none held up:
+
+- **D01–D10**: zero hits for "trace id" or "correlation id" anywhere in
+  `00_ARCHITECTURE/01_DOMAIN/`. `D07_STATE_SEMANTICS.md` mentions only
+  "Event Delivery State" as technical messaging infrastructure, unrelated
+  to this entity's persisted fields.
+- **`docs/c4/C3_COMPONENT.md`**: names the same five fields, but its own
+  Source column cites `MVP_WORK_PACKAGE_PLAN.md` for them — it quotes the
+  WP plan rather than grounding it, the same circularity the Task Domain
+  Review found for `priority`.
+- **ADW-07** (Events, Audit, and Provenance): `ARCHITECTURE_SPECIFICATION.md`
+  names it as owning "event semantics... correlation" — exactly what
+  WP18 needs — and it is unwritten. `00_ARCHITECTURE/07_AUDIT/` does not
+  exist as a directory.
+- **Relationship to Task/EnterpriseObject** (the `source` field's
+  implied semantics): GC-002 (`GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md`)
+  remains an unapproved proposal. Its governance note originally cited
+  `D09_RELATIONSHIP_MODEL.md` as governing `Event`→`Task`/source; D09
+  scopes itself to six other concepts and never mentions Event. That
+  citation was incorrect and has since been corrected in GC-002's
+  governance note (2026-08-06), along with two further misattributions
+  found in the same paragraph (`AuditRecord`→aggregate,
+  `ContextPackage`→`Task`; see WP18's entry for the full enumeration).
+  Correcting the citation does not resolve the underlying domain gap:
+  `Event`'s relationship to `Task`/source still has no approved source.
+
+Unlike A-02/A-04, this is not a narrowing to an approved subset — there
+is no approved subset to narrow to. The amendment records WP18 as
+blocked and withdraws the premature `Event` model/repository/service
+deliverable wording (the same over-scope pattern A-02 corrected for WP13
+and A-04 for WP15), pending ADW-07.
+
+### Amendment Approval Record (A-05)
+
+```text
+Decision: Approved (A-05)
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-05
+Approved Commit or PR: PR #22 (`docs/wp18-adw07-readiness-correction`)
 ```
 
 ## Gate D — First Vertical Slice
