@@ -199,3 +199,122 @@ exactly the two new decisions listed above. It does not approve the
 three Open Questions, later ADW-07 subject matter, Event schema,
 Event relationships, WP18 implementation, or ADW-07 as a whole.
 ```
+
+---
+
+## Block 2: Event Persistence Timing
+
+**Document ID:** [not assigned — same numbering gap noted in Block 1]
+**Workshop:** ADW-07 — Events, Audit, and Provenance
+**Workshop Status:** OPEN
+**Block:** Block 2 — Event Persistence Timing
+**Block Status:** APPROVED
+**Owner:** Project Owner
+**Decision authority:** Project Owner
+**Decider:** Andrew (Project Owner)
+**Decision Date:** 2026-08-09
+**Remaining ADW-07 work:** OPEN / NOT YET DECIDED
+**Builds on:** Block 1 (Event Semantics — Core Definition), D07 (State Semantics), D10 (Deletion and Supersession) — all unmodified by this document.
+
+**Recording note:** this is the second Project Owner-authorized incremental recording within the still-OPEN ADW-07 workshop. Block 1 was the repository's first such recording; neither Block 1 nor this Block establishes a general cross-workshop recording rule.
+
+---
+
+### Scope
+
+This Block decides one question, in two clauses: whether a Domain Event's durable existence is contingent on downstream publication succeeding, and whether that existence is fixed at or before the publication attempt begins. It resolves Open Question 2 as recorded in Block 1, on the timing axis only. It does not decide the identity of Event relative to the Durable Audit / Outbox Intent artifact named in D07 §10, the persistence mechanism satisfying this requirement, or when D10's immutability trigger applies to Event specifically. All three remain open, named individually below.
+
+### Decision
+
+A Domain Event exists as a durable record before downstream publication is attempted. Its existence does not depend on publication succeeding.
+
+### Existing Authority
+
+**A. Sequence and downstream framing** (`D07_STATE_SEMANTICS.md` §10, D07.5) — the approved sequence is `Atomic Commit of New State Version → Durable Audit / Outbox Intent → Domain Event Publication → Projection Update`; publication and projection are downstream consequences of commit.
+
+**B. Publication-failure protection** (`ARCHITECTURE_SPECIFICATION.md` §10 Invariant 14) — publication failure after commit does not erase authoritative business truth.
+
+**C. Event's non-authoritative nature** (Block 1, Decision) — a Domain Event records occurrence; it does not itself hold or grant authority over authoritative state.
+
+**D. Durability and immutability** (`D10_DELETION_AND_SUPERSESSION.md` §7.4, §6) — "The durable, immutable trace — significant transition records, audit records, attribution records, Domain Events — that exists independently of its subject's current lifecycle state... removable only via Physical Deletion" (§7.4); Domain Event is "Historical Record by construction and... never subject to Physical Deletion once committed" (§6). Durability and immutability are already established here — not invented by this Block. What is *not* established is the timing of that durability relative to publication (this Block's decision) or the exact moment "committed" refers to for Event (Residual Question R3).
+
+None of A–D states Block 2's timing decision — that is the new content below.
+
+### New Decision Approved by Project Owner
+
+A Domain Event exists as a durable record before downstream publication is attempted; its existence does not depend on publication succeeding.
+
+No approved source states this. D07.5 and §10 establish that publication is a downstream consequence of commit and that its failure doesn't erase business truth; D10 establishes that Event, once it is a Historical Record, is durable and immutable. Neither states *when* Event's durable record comes to exist relative to a publication attempt. This decision closes that gap, as a single proposition in two clauses, without asserting anything about Event's identity relative to other named artifacts, the mechanism satisfying it, or when D10's immutability trigger fires.
+
+### Rationale
+
+Two readings were tested. Reading A: Event exists durably before publication. Reading B: publication is the act that materializes Event. Neither is excluded by citation — this decision does not rest on eliminating Reading B textually, because no source does that.
+
+Under Reading B, non-production could result from downstream infrastructure failure rather than from the deliberate semantic qualification rule established by Block 1 (Invariant 5: not every committed state mutation necessarily produces a Domain Event). The Project Owner prefers Reading A for that reason: once an occurrence qualifies for a Domain Event, its existence is not made contingent on downstream publication infrastructure succeeding.
+
+One citation was checked and is not used as support here: D10 §6 states significant facts are "committed... to the owning aggregate's own transition history and Domain Events (D07 §10)." Checked against §10's actual text, that compressed phrasing is not there — §10 has "Atomic Commit of New State Version" (aggregate-scoped) and, separately, "Domain Event Publication" as a later step. Noted in Source Notes as a citation-precision finding; not repaired; not used as support for this decision.
+
+### Invariants
+
+1. A Domain Event exists as a durable record before downstream publication is attempted. `[NEW DECISION — PROJECT OWNER APPROVED; CLAUSE 1 OF THE SINGLE BLOCK 2 DECISION]`
+2. A Domain Event's existence does not depend on downstream publication succeeding. `[NEW DECISION — PROJECT OWNER APPROVED; CLAUSE 2 OF THE SAME SINGLE BLOCK 2 DECISION]`
+
+### Block 2 Residual Questions
+
+**R1 — Event ↔ Audit/Outbox/Publication-Intent identity.** Whether Domain Event and the Durable Audit / Outbox Intent artifact named in D07 §10 are the same artifact, are distinct artifacts, one derives from the other, or whether that compound phrase identifies more than one artifact, is not determined by approved architecture. This Block's decision does not address it — it was written to avoid referencing that artifact's identity at all. This must be resolved before any later schema scope whose shape depends on Event/publication-intent artifact identity can be finalized.
+
+**R2 — Persistence / Transaction / Consistency Mechanism.** How the durability requirement in this Block's Decision is physically satisfied — persistence representation, transaction boundary, outbox pattern, or otherwise — is unresolved. `D07_STATE_SEMANTICS.md` §14 assigns physical persistence, transactions, outbox, indexing, and recovery mechanics to ADW-08, which does not yet exist (`00_ARCHITECTURE/08_PERSISTENCE/` is absent). This constrains later WP18 persistence/schema design; this Block does not establish ADW-08 as an additional formal WP18 governance dependency — A-05's existing unblock sequence remains authoritative and unchanged.
+
+**R3 — Event-specific "once committed" semantics.** D10 §6/§7.4/§8 Invariant 7 establish that Domain Event is immutable and never physically deleted once committed — that protection itself is not open. What is unresolved is the exact moment "committed" refers to for Domain Event specifically: D10 defines an analogous commit point only for state transitions (`D07_STATE_SEMANTICS.md` §4.6, "Transition Commit"), not for Event. This Block establishes when Event durably exists relative to publication; it does not assert that this is the same moment D10 means by "committed" for Event, nor that publication determines it. This affects exactly when D10's already-established immutability protection attaches to a given Event, and may affect future correction/supersession semantics for a durable-but-unpublished Event.
+
+### Non-Goals / Deferred Questions
+
+Not decided by this Block:
+
+- Event qualification/significance rule — Block 1 Open Question 1.
+- Event correction/supersession mechanism — Block 1 Open Question 3.
+- Strict Event/publication-intent identity — Block 2 R1.
+- Persistence/transaction/outbox mechanism — Block 2 R2 / ADW-08.
+- Event-specific "once committed" trigger — Block 2 R3.
+- Any Event/AuditRecord relationship.
+- Any retry, delivery, or idempotency implementation.
+- Any schema, table, or field shape.
+- Correlation, causation, provenance representation, timestamps.
+- Sensitive-data handling.
+- All other Block 1 Non-Goals, unchanged and not restated here.
+
+### Impact on Work Packages
+
+**WP18** remains BLOCKED under Amendment A-05. Block 2 removes one semantic uncertainty but does not satisfy A-05's Definition of Done and authorizes no model, migration, repository, service, API, or schema implementation.
+
+**WP19** remains unchanged. Not reopened or affected by this Block.
+
+### Source Notes / Traceability
+
+- `D07_STATE_SEMANTICS.md` §10, D07.5.
+- `ARCHITECTURE_SPECIFICATION.md` §10 Invariant 14.
+- `00_ARCHITECTURE/07_AUDIT/EVENTS_AUDIT_AND_PROVENANCE.md` (Block 1) — Decision, Invariant 5.
+- `D10_DELETION_AND_SUPERSESSION.md` §6, §7.4, §8 Invariant 7 — durability, immutability, non-deletion of Domain Event as Historical Record.
+- `D07_STATE_SEMANTICS.md` §14 — ADW-08's assignment of physical persistence, transactions, outbox, indexing, and recovery mechanics; `00_ARCHITECTURE/08_PERSISTENCE/` does not exist.
+- Citation-precision note, not corrected here: D10 §6's phrase "committed... to the owning aggregate's own transition history and Domain Events (D07 §10)" is not literally supported by §10's text — loose/imprecise citation, not broken. Not used as support for this Block's decision. Not counted as a new numbered discrepancy in this pass.
+
+### Approval Record
+
+```text
+Decision: Approved — ADW-07 Block 2. Exactly one new architectural
+decision, consisting of two clauses:
+  (1) A Domain Event exists as a durable record before downstream
+      publication is attempted.
+  (2) A Domain Event's existence does not depend on downstream
+      publication succeeding.
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-09
+Chapter Status: ADW-07 remains OPEN. Block 2 is APPROVED. Block 2
+Residual Questions R1 (Event/publication-intent identity), R2
+(persistence/transaction/consistency mechanism), and R3 (Event-specific
+"once committed" semantics) remain OPEN. Block 1's Open Question 1
+(qualification/significance) and Open Question 3 (correction/
+supersession) remain OPEN. This approval does not extend to later
+ADW-07 subject matter, Event schema, Event relationships, WP18
+implementation, or ADW-07 as a whole.
+```
