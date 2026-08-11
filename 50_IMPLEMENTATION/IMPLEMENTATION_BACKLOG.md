@@ -450,10 +450,15 @@ established as that source.
   pagination rules.
 - **Dependencies**: WP06, WP10.
 - **Deliverables**: shared error/response envelope, applied across every
-  WP13–WP21 endpoint. GC-005 (uniform 404 vs. membership-level 403) is
-  open but low-risk — the recommended alternative restates an existing
-  invariant (R-07) rather than introducing a new one; build against it
-  now.
+  WP13–WP21 endpoint; per-HTTP-request identifier generation and
+  propagation, transferred from WP10 by Amendment A-07 — this
+  identifies one HTTP request lifecycle only and does not define,
+  implement, alias, or constrain Domain Event correlation, causation,
+  provenance, distributed tracing, or cross-request workflow identity
+  (ADW-07/ADW-08 territory, undecided). GC-005 (uniform 404 vs.
+  membership-level 403) is open but low-risk — the recommended
+  alternative restates an existing invariant (R-07) rather than
+  introducing a new one; build against it now.
 - **Definition of Done**: every endpoint returns the standard envelope
   shape.
 - **Acceptance Criteria**: a client can rely on one error shape across the
