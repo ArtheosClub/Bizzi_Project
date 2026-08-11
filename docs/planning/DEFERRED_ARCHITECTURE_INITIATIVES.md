@@ -70,3 +70,40 @@ traversal twice.
 - **Any repository-wide retrofit pass** — applying the Purpose-header
   convention, or any other new convention, to the existing corpus. New
   and substantially-edited documents only, going forward.
+
+---
+
+## Paused Investigations (not Deferred Architecture Initiatives)
+
+Entries in this section are **not** `Deferred` under ADR-0008
+(`docs/adr/0008-document-status-vocabulary.md`). `Deferred` is a
+document-status value that requires an explicit decision to remove
+something from current scope. The items below are open architecture
+questions whose further investigation the Project Owner has paused
+pending a named trigger — the question remains live, nothing has been
+removed from scope, and no position between its live readings has been
+taken. Distinct heading, distinct entry prefix (`P-`, not `D-`),
+deliberately, to avoid a reader conflating this with the Deferred
+Architecture Initiatives above.
+
+### P-01 — ADW-07 Block 2 R3 (Event-specific "once committed" semantics)
+
+`00_ARCHITECTURE/07_AUDIT/EVENTS_AUDIT_AND_PROVENANCE.md`, Block 2,
+Residual Question R3, remains OPEN exactly as approved. Investigation
+found that D10's "once committed," applied to Domain Event, does not
+currently establish whether it denotes a temporal boundary (Temporal
+Trigger reading) or merely scopes the existing immutability rule to
+already-durable Events (Scoping Qualifier reading); both remain
+textually possible, and this entry resolves neither.
+
+**Reopen when** any of the following first occurs:
+
+- Block 1 OQ3 (correction/supersession) reaches a concrete design point
+  requiring an answer to whether a durable-but-unpublished Domain Event
+  may be mutated, or must instead be corrected via a new record;
+- ADW-08's persistence design reaches a point where the distinction
+  between a Domain Event's durability and its commitment (in D10's
+  sense) becomes materially relevant to that design;
+- WP18's schema design reaches a point requiring — or explicitly and
+  deliberately declining — a commit-phase state, field, or timestamp
+  for Domain Event.
