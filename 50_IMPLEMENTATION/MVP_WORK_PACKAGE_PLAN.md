@@ -255,7 +255,7 @@ Default status for all packages in this version: `Planned`.
 | WP19 | AuditRecord Model | P0 | WP13, WP16 | WP30, WP36 | High-impact actions create immutable audit records |
 | WP20 | ContextPackage Model | P0 | WP13, WP15 | WP25, WP27 | Context package stores sources, constraints, confidence, expiry — see Amendment A-06 |
 | WP21 | RuntimeSession Model | P1 | WP14, WP15, WP18 | WP27, WP31 | Session lifecycle and links to task, agent, context implemented |
-| WP22 | API Error and Response Standard | P1 | WP06, WP10 | WP23–WP39 | Consistent errors, validation responses, request IDs, pagination rules — see Amendment A-07 |
+| WP22 | API Error and Response Standard | P1 | WP06, WP10 | WP23–WP39 | Consistent errors, validation responses, request IDs, pagination rules — see Amendments A-07, A-08 |
 
 ### Amendments
 
@@ -277,6 +277,7 @@ expected to fall on the same calendar date.
 | A-05 | WP18 | 2026-08-05 | **Approved** | Not a field-list narrowing (there is no approved field set to narrow to) — a readiness and scope correction: WP18 status `🟢` → `🔴`, blocked pending ADW-07. Deliverables field `Event model/repository/service` withdrawn; no model, migration, repository, service, API, or field list is authorized until ADW-07 defines event semantics, correlation, provenance, relationships, and sensitive-data rules. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Deliverables: `Event` model/repository/service"*, acceptance criteria *"trace ID, correlation ID, type, source, timestamp."* |
 | A-06 | WP20 | 2026-08-08 | **Approved** | Not a field-list narrowing (there is no approved field set to narrow to) — a readiness and scope correction: WP20 status `🟢` → `🔴`, blocked pending clarification of the governing domain source (candidate governing workshop: ADW-06). Deliverables field `ContextPackage model/repository/service` withdrawn; no model, migration, repository, service, API, or field list is authorized until the governing workshop defines context/knowledge semantics, retention, and relationships. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Deliverables: `ContextPackage` model/repository/service per `docs/planning/PRE-CODING-BRIEF.md` §5.2"*, acceptance criteria *"a context package created for a task remains readable after the originating session ends."* |
 | A-07 | WP10, WP22 | 2026-08-11 | **Approved** | Transfers per-HTTP-request identifier generation and propagation from WP10 to WP22 — the first between-WP scope transfer in this amendment series (A-01–A-06 only narrowed or withdrew scope within one WP). WP10's Deliverables narrow to structured JSON logging only; status remains `🟢`, since the narrowed scope is genuinely delivered (`backend/app/core/logging.py`). WP22's Deliverables gain identifier generation/propagation, with an explicit Tier-6 boundary against Domain Event correlation, causation, provenance, distributed tracing, and cross-request workflow identity. Original wording (`MVP_WORK_PACKAGE_PLAN.md`, WP10): *"JSON logs with request and correlation identifiers."* |
+| A-08 | WP22 | 2026-08-11 | **Approved** | Narrows WP22's Definition of Done and Acceptance Criteria from their unqualified `every endpoint`/`whole API` wording to the scope ADR-0012 actually establishes: the standardized error envelope and the one-error-shape guarantee both apply to domain-facing API endpoints; operational/infrastructure endpoints (e.g. `/health`) are outside both. A scope correction, not an editorial clarification — the prior wording on each field committed to more than ADR-0012 delivers. Widened from its original single-field draft (Definition of Done only) once Acceptance Criteria was found to carry the same over-broad claim from the same cause (ADR-0012 §2) — recorded as deliberate, not an accumulation. Original wording (`IMPLEMENTATION_BACKLOG.md`): Definition of Done — *"every endpoint returns the standard envelope shape."*; Acceptance Criteria — *"a client can rely on one error shape across the whole API."* |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -556,6 +557,76 @@ Decision: Approved (A-07)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-11
 Approved Commit or PR: PR #27 (`docs/a07-wp10-wp22-identifier-scope-transfer`)
+```
+
+**A-08 rationale.** ADR-0012 resolves WP22's envelope-scope alternative
+as error-only, and explicitly places operational/infrastructure
+endpoints such as `/health` outside that envelope's scope — they have no
+current error path to govern and are consumed by orchestration tooling,
+not application clients.
+
+WP22's Definition of Done and Acceptance Criteria, as originally
+recorded, both stated a broader guarantee than ADR-0012 establishes:
+Definition of Done read "every endpoint returns the standard envelope
+shape"; Acceptance Criteria read "a client can rely on one error shape
+across the whole API." Both are unqualified, and both are broader than
+the scope ADR-0012 §2 delivers. This narrows both to match the scope
+established by ADR-0012 and WP22's existing planning boundary.
+
+Classified as a scope correction, not an editorial clarification, on the
+same reasoning A-02 and A-04 established: a WP's Definition of Done and
+Acceptance Criteria are each read by a future auditor as a commitment in
+their own right, and this repository's own convention (A-05, A-06) treats
+"Definition of Done" as an independently authoritative clause, not a
+silent restatement of Deliverables — the same reasoning extends to
+Acceptance Criteria, which A-01 and A-04 already amended directly as
+scope-bearing text, not descriptive prose. Excluding operational
+endpoints and narrowing both fields' scope to the domain-facing API
+withdraws recorded scope from what a literal reading of the prior text
+promised on each — it is not merely restating what was already
+understood.
+
+This amendment does not define "domain-facing endpoint" as equivalent to
+"WP13–WP21." WP13–WP21 is Deliverables' own historical scoping phrase,
+for a different purpose, and is left untouched here; it is not reused as
+the definition of either corrected field's scope, since WP13–WP21 is not
+itself a durable semantic definition of "domain-facing API" — A-02/A-04
+already removed API scope from some of those model WPs, and future
+WP23–WP39 endpoints are domain-facing too. The corrected text for both
+fields instead uses the semantic term "domain-facing API," matching
+ADR-0012 §2's own boundary (application clients, not
+operational/infrastructure consumers), not a WP-number list.
+
+**Scope note:** as first drafted, this amendment narrowed only the
+Definition of Done. Reviewing the full WP22 entry before commit surfaced
+that Acceptance Criteria carries the identical over-broad claim, from
+the identical cause (ADR-0012 §2) — leaving it uncorrected would have
+left WP22's own entry internally inconsistent immediately after this
+amendment landed: a domain-facing-scoped Definition of Done sitting next
+to a whole-API-scoped Acceptance Criteria two lines below it. A-08 is
+widened to cover both fields for that reason. This amendment has not yet
+been merged or numbered against a PR, so no re-approval is formally
+required — recorded here so the widening reads as deliberate, not as an
+accumulation of unrelated changes.
+
+**Definition of Done, corrected:** every domain-facing API endpoint
+returns the standard error envelope on failure, per ADR-0012;
+operational/infrastructure endpoints (e.g. `/health`) are outside that
+envelope's scope.
+
+**Acceptance Criteria, corrected:** a client can rely on one error shape
+across the domain-facing API; operational/infrastructure endpoints (e.g.
+`/health`) are outside that guarantee.
+
+### Amendment Approval Record (A-08)
+
+```text
+Decision: Approved (A-08)
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-11
+Approved Commit or PR: (to be filled in once this change's PR opens — not
+left as this placeholder past that point, per the correction already
+applied to A-03/A-04)
 ```
 
 ## Gate D — First Vertical Slice
