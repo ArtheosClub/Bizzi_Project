@@ -456,13 +456,18 @@ established as that source.
   implement, alias, or constrain Domain Event correlation, causation,
   provenance, distributed tracing, or cross-request workflow identity
   (ADW-07/ADW-08 territory, undecided). GC-005 (uniform 404 vs.
-  membership-level 403) is open but low-risk — the recommended
-  alternative restates an existing invariant (R-07) rather than
-  introducing a new one; build against it now.
-- **Definition of Done**: every endpoint returns the standard envelope
-  shape.
-- **Acceptance Criteria**: a client can rely on one error shape across the
-  whole API.
+  membership-level 403) is open but low-risk — ADR-0012 §6 selects
+  uniform `not_found` for WP22's generic HTTP error mapping, an
+  engineering-contract choice within the space R-07 permits, not a
+  consequence R-07 forces; build against it. GC-005 itself remains
+  `Proposed`, neither approved nor foreclosed.
+- **Definition of Done**: every domain-facing API endpoint returns the
+  standard error envelope on failure, per ADR-0012 — see Amendment A-08.
+  Operational/infrastructure endpoints (e.g. `/health`) are outside that
+  envelope's scope.
+- **Acceptance Criteria**: a client can rely on one error shape across
+  the domain-facing API; operational/infrastructure endpoints (e.g.
+  `/health`) are outside that guarantee — see Amendment A-08.
 - **Estimated Complexity**: S–M.
 - **Risk**: Low.
 - **Owner**: Engineering.
