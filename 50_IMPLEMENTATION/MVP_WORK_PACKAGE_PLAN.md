@@ -238,7 +238,7 @@ Default status for all packages in this version: `Planned`.
 | WP07 | PostgreSQL Local Service | P0 | WP06 | WP08, WP14 | Database runs through Docker Compose and accepts connections |
 | WP08 | ORM and Migration Setup | P0 | WP07 | WP13–WP20 | Initial migration applies and rolls back cleanly |
 | WP09 | Configuration and Environment Model | P0 | WP06 | WP10, WP16 | Typed settings, `.env.example`, environment separation |
-| WP10 | Structured Logging Foundation | P1 | WP09 | WP21, WP36 | JSON logs with request and correlation identifiers |
+| WP10 | Structured Logging Foundation | P1 | WP09 | WP21, WP36 | JSON logs — see Amendment A-07 |
 | WP11 | Test Framework and Quality Checks | P1 | WP06 | WP37 | Unit test command and lint/type checks pass |
 | WP12 | CI Foundation | P1 | WP11 | WP39 | CI runs tests and quality checks on push/PR |
 
@@ -255,7 +255,7 @@ Default status for all packages in this version: `Planned`.
 | WP19 | AuditRecord Model | P0 | WP13, WP16 | WP30, WP36 | High-impact actions create immutable audit records |
 | WP20 | ContextPackage Model | P0 | WP13, WP15 | WP25, WP27 | Context package stores sources, constraints, confidence, expiry — see Amendment A-06 |
 | WP21 | RuntimeSession Model | P1 | WP14, WP15, WP18 | WP27, WP31 | Session lifecycle and links to task, agent, context implemented |
-| WP22 | API Error and Response Standard | P1 | WP06, WP10 | WP23–WP39 | Consistent errors, validation responses, request IDs, pagination rules |
+| WP22 | API Error and Response Standard | P1 | WP06, WP10 | WP23–WP39 | Consistent errors, validation responses, request IDs, pagination rules — see Amendment A-07 |
 
 ### Amendments
 
@@ -276,6 +276,7 @@ expected to fall on the same calendar date.
 | A-04 | WP15 | 2026-08-04 | **Approved** | Deliverables field narrowed to model/migration/tests only, and the field list fixed to `id`, `workspace_id`, `phase`, `source_object_id`, `created_at`, `updated_at`. Original wording: *"`Task` model/repository/service implementing D07's state constitution (transition rules, authority, concurrency)"* with acceptance criteria *"Task states, owner, priority, source object, timestamps."* |
 | A-05 | WP18 | 2026-08-05 | **Approved** | Not a field-list narrowing (there is no approved field set to narrow to) — a readiness and scope correction: WP18 status `🟢` → `🔴`, blocked pending ADW-07. Deliverables field `Event model/repository/service` withdrawn; no model, migration, repository, service, API, or field list is authorized until ADW-07 defines event semantics, correlation, provenance, relationships, and sensitive-data rules. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Deliverables: `Event` model/repository/service"*, acceptance criteria *"trace ID, correlation ID, type, source, timestamp."* |
 | A-06 | WP20 | 2026-08-08 | **Approved** | Not a field-list narrowing (there is no approved field set to narrow to) — a readiness and scope correction: WP20 status `🟢` → `🔴`, blocked pending clarification of the governing domain source (candidate governing workshop: ADW-06). Deliverables field `ContextPackage model/repository/service` withdrawn; no model, migration, repository, service, API, or field list is authorized until the governing workshop defines context/knowledge semantics, retention, and relationships. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Deliverables: `ContextPackage` model/repository/service per `docs/planning/PRE-CODING-BRIEF.md` §5.2"*, acceptance criteria *"a context package created for a task remains readable after the originating session ends."* |
+| A-07 | WP10, WP22 | 2026-08-11 | **Approved** | Transfers per-HTTP-request identifier generation and propagation from WP10 to WP22 — the first between-WP scope transfer in this amendment series (A-01–A-06 only narrowed or withdrew scope within one WP). WP10's Deliverables narrow to structured JSON logging only; status remains `🟢`, since the narrowed scope is genuinely delivered (`backend/app/core/logging.py`). WP22's Deliverables gain identifier generation/propagation, with an explicit Tier-6 boundary against Domain Event correlation, causation, provenance, distributed tracing, and cross-request workflow identity. Original wording (`MVP_WORK_PACKAGE_PLAN.md`, WP10): *"JSON logs with request and correlation identifiers."* |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -509,6 +510,54 @@ Decision: Approved (A-06)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-08
 Approved Commit or PR: PR #23 (`docs/wp20-adw06-readiness-correction`)
+```
+
+**A-07 rationale.** A WP10↔WP22 identifier-ownership audit found that no
+approved source establishes who generates the per-HTTP-request identifier
+both WPs name: WP10's deliverable ("JSON logs with request and
+correlation identifiers") is the only place in the current plan claiming
+it as an output, and WP22 depends on WP10 — a dependency order consistent
+with WP10 as generator, WP22 as consumer, but not stated outright
+anywhere.
+
+**Planning ownership model selected:** WP10 nominally owns identifier
+support; WP22 will own generation and propagation through this explicit
+scope transfer. Existing authority does not independently establish that
+WP10 must generate the identifier — an earlier draft of this finding
+overstated a well-supported inference as a repository fact, corrected
+here.
+
+Verified against `backend/`: `app/core/logging.py` implements the JSON
+formatter WP10 promised; no request or correlation identifier exists
+anywhere in the codebase. WP10's narrowed scope (JSON logging alone) is
+genuinely delivered — its status marker is not corrected to `🔴`, only
+its written Deliverables are narrowed to match what's actually there,
+consistent with the marker staying accurate rather than the WP being
+reopened.
+
+No precedent exists in A-01 through A-06 for transferring scope between
+WP numbers — each prior amendment narrowed, withdrew, or split scope
+within a single WP. This is recorded as the first instance of that shape,
+not as an application of an existing one.
+
+**Boundary recorded for WP22's transferred scope:** the identifier
+identifies one HTTP request lifecycle only. It is a Tier-6 API/runtime
+observability concern. It does not define, implement, alias, or
+constrain Domain Event correlation, causation, provenance, distributed
+tracing, or cross-request workflow identity — those remain ADW-07 and
+ADW-08 territory, undecided. This boundary is a scope clarification, not
+a new architectural decision — it asserts nothing about Tier-2 domain
+concepts, only declines to claim anything about them.
+
+### Amendment Approval Record (A-07)
+
+```text
+Decision: Approved (A-07)
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-11
+Approved Commit or PR: (to be filled in once this change's PR opens —
+not left as this placeholder past that point, per the correction already
+applied to A-03/A-04)
 ```
 
 ## Gate D — First Vertical Slice
