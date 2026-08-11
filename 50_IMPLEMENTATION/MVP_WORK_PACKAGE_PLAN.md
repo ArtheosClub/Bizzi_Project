@@ -555,9 +555,7 @@ concepts, only declines to claim anything about them.
 Decision: Approved (A-07)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-11
-Approved Commit or PR: (to be filled in once this change's PR opens —
-not left as this placeholder past that point, per the correction already
-applied to A-03/A-04)
+Approved Commit or PR: PR #27 (`docs/a07-wp10-wp22-identifier-scope-transfer`)
 ```
 
 ## Gate D — First Vertical Slice
