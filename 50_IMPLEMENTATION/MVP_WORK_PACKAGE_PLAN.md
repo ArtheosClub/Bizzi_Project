@@ -624,9 +624,7 @@ across the domain-facing API; operational/infrastructure endpoints (e.g.
 Decision: Approved (A-08)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-11
-Approved Commit or PR: (to be filled in once this change's PR opens — not
-left as this placeholder past that point, per the correction already
-applied to A-03/A-04)
+Approved Commit or PR: PR #28 (`docs/adr0012-a08-wp22-api-contract`)
 ```
 
 ## Gate D — First Vertical Slice
