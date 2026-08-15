@@ -91,7 +91,15 @@ async def http_exception_handler(
         message = (
             exc.detail if isinstance(exc.detail, str) else "Request could not be processed"
         )
-        return JSONResponse(status_code=exc.status_code, content=_error_body(code, message))
+        # Starlette's HTTPException carries response headers of its own
+        # (e.g. the router's 405 sets Allow) — preserving them is
+        # existing HTTP semantics, not a new envelope field or contract
+        # decision.
+        return JSONResponse(
+            status_code=exc.status_code,
+            content=_error_body(code, message),
+            headers=exc.headers,
+        )
 
     # Defensive fallback only — not an ADR-0012 policy. Nothing in
     # backend/app/ raises HTTPException with any status besides the
@@ -109,6 +117,7 @@ async def http_exception_handler(
     return JSONResponse(
         status_code=exc.status_code,
         content=_error_body("internal_error", "Request could not be processed."),
+        headers=exc.headers,
     )
 
 

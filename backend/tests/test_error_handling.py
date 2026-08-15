@@ -44,6 +44,20 @@ def test_framework_405_shape() -> None:
     assert "details" not in body["error"]
 
 
+def test_framework_405_preserves_allow_header() -> None:
+    """Starlette's HTTPException carries its own headers (e.g. the
+    router's 405 sets Allow) — the WP22 handler must not silently
+    drop them while reshaping the body into the standard envelope.
+    """
+    with TestClient(real_app) as client:
+        response = client.post("/health")
+
+    assert response.status_code == 405
+    assert response.json()["error"]["code"] == "method_not_allowed"
+    assert "allow" in response.headers
+    assert "GET" in response.headers["allow"]
+
+
 def test_validation_error_shape() -> None:
     wrapped, fastapi_app = _test_app()
 
