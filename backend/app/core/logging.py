@@ -11,6 +11,8 @@ import logging
 import sys
 from datetime import UTC, datetime
 
+from app.core.request_context import get_request_id
+
 _RESERVED_RECORD_ATTRS = frozenset(logging.LogRecord("", 0, "", 0, "", (), None).__dict__)
 
 
@@ -35,9 +37,23 @@ class JsonFormatter(logging.Formatter):
         return json.dumps(payload, default=str)
 
 
+class RequestIDLogFilter(logging.Filter):
+    """Attaches the current request's ID (ADR-0012 §1/§8), if any, to
+    every log record. Reads the same ContextVar RequestIDMiddleware
+    populates — no independent identifier is generated here.
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        request_id = get_request_id()
+        if request_id is not None:
+            record.request_id = request_id
+        return True
+
+
 def configure_logging(level: int = logging.INFO) -> None:
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(JsonFormatter())
+    handler.addFilter(RequestIDLogFilter())
 
     root = logging.getLogger()
     root.handlers = [handler]
