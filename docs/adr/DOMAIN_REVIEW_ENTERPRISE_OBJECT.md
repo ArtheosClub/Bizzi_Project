@@ -245,6 +245,13 @@ applied nor excluded for them.
 
 This blocks WP14 and WP20. It does **not** block WP13.
 
+**2026-08-16 update:** AgentDefinition's half of this question is
+resolved — see ADR-0013 (`docs/adr/0013-agentdefinition-is-a-d02-enterprise-object.md`,
+Accepted): AgentDefinition is a D02 EnterpriseObject. ContextPackage's
+half remains open and unaffected by that decision. §6's "What follows"
+text is left as written: it records what was planned at the time of this
+review, not current status.
+
 ---
 
 ## 6. What follows
