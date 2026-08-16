@@ -55,3 +55,4 @@ one decision per file. Template: `0000-adr-template.md`.
 | [0010](0010-workspace-membership-mvp-scope.md) | WorkspaceMembership MVP scope — no WorkspaceInvitation; `role` column ships, GC-004 stays unapproved | Accepted |
 | [0011](0011-task-phase-transition-graph.md) | Task phase transition graph — `archived` reachable only from `active` | Accepted |
 | [0012](0012-wp22-api-contract-request-id-envelope-pagination-invariants.md) | WP22 API contract — request-ID propagation, error envelope shape, pagination invariants | Accepted |
+| [0013](0013-agentdefinition-is-a-d02-enterprise-object.md) | AgentDefinition is a D02 EnterpriseObject | Accepted |
