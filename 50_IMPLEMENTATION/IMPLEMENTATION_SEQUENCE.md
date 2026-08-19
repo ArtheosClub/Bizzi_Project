@@ -34,6 +34,15 @@ correcting the Planning Gap identified by the Implementation Readiness
 Review — every downstream WP's `workspace_id` foreign key needs WP12a's
 table to exist first.
 
+**2026-08-19 clarification**: adjacency in this Mandatory Order list
+must not be read as establishing a dependency edge. This is confirmed
+by the repository's own delivered state: WP14 appears before WP15 and
+WP16 while marked `[BLOCKED: GC-001, ADW-05]`, yet WP15 and WP16 were
+delivered and merged independently. Therefore WP18 immediately
+preceding WP19 here does not establish WP18 → WP19. WP19's dependency
+evidence is stated in §02, and the corrected §05 Dependency Tree is
+synchronized with that evidence.
+
 ## 02. Why Each Dependency Exists
 
 - **WP12a → WP13–WP22 (all)**: every Gate C entity carries `workspace_id`
@@ -124,8 +133,8 @@ WP12a
      │                                   └─ WP32 [blocked]
      ├─ WP15
      │   └─ WP20
-     └─ WP18
-         └─ WP19
+     ├─ WP18
+     └─ WP19
 
 WP16 ─┬─ WP17 (partial)
       ├─ WP19
@@ -133,3 +142,15 @@ WP16 ─┬─ WP17 (partial)
 
 WP22 (no Gate C entity dependency — parallel from the start)
 ```
+
+**2026-08-19 correction**: WP19 was previously drawn as a child of
+WP18 in §05. No WP18 → WP19 edge is justified in §02, which establishes
+WP13 → WP19 and WP16 → WP19, while §03's Parallel Work table states
+that WP18 and WP19 can run in parallel. `MVP_WORK_PACKAGE_PLAN.md`
+§07's Gate C table independently lists WP19's `depends_on` as WP13,
+WP16 — never WP18. The WP18 → WP19 representation is therefore
+reclassified as a stale dependency-tree artifact, not a real dependency.
+The correction preserves the independently documented WP13 → WP19 and
+WP16 → WP19 dependencies. WP19 does not inherit WP18's ADW-07 block.
+This correction rests on the documents' own evidence; no new amendment
+or architecture decision is being asserted.
