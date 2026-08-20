@@ -663,7 +663,7 @@ only safe until then" language coherent rather than contradicted.
 Decision: Approved (A-09)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-19
-Approved Commit or PR: *(pending — to be filled in when the PR is opened)*
+Approved Commit or PR: PR #32 (`docs/adr0014-auditrecord-subject-reference`)
 ```
 
 ## Gate D — First Vertical Slice
