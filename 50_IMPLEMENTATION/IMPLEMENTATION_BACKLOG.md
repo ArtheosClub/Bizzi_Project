@@ -315,36 +315,65 @@ ADW-07 must define, at minimum:
 `handover.md`, not here — this entry stays a scope record, not a
 workshop draft.)
 
-## WP19 — AuditRecord Model 🟢
+## WP19 — AuditRecord Model 🔴
 
 - **Goal**: high-impact actions create immutable audit records.
-- **Dependencies**: WP13, WP16.
+- **Dependencies**: WP13, WP16 (schema foundation). Actor attribution on
+  the audit record additionally needs WP16's deferred half
+  (`ActorContext`, still blocked on ADW-02) — a separate dimension from
+  this entry's blocker below: **who** acted (`ActorContext`) is
+  independent of **what** was acted on (ADR-0014 Q1/Q2); resolving one
+  does not resolve the other.
 - **Deliverables**: `AuditRecord` model/repository/service, atomic with
-  the mutation it audits (ADR-0005). GC-006 (which mutations count as
-  high-impact) and GC-007 (snapshot vs. diff shape) are open but
-  non-blocking for this WP specifically: use GC-006's own conservative
-  Alternative B (treat every mutation as high-impact) and GC-007's
-  diff-only shape as the interim default. **D09 R10 (Actor Attribution)
-  is unmodeled across all of Gate C** — found on `EnterpriseObject.owner_id`,
-  confirmed again on `Task.assignee_id` (`DOMAIN_REVIEW_TASK_LIFECYCLE.md`
-  §6) — and belongs here: R10's attribution records are described as
-  "Historical / immutable once recorded... mirrors D07's transition-record
-  and this project's audit-first principle," and ADW-07 (unwritten, same
-  workshop that governs this WP's own `AuditRecord` schema) is explicitly
-  named as owning provenance/attribution contracts. Not yet a blocker for
-  this WP's own conservative scope, same phrasing convention as ADW-02/
-  ADW-05 elsewhere in this document.
+  the mutation it audits (ADR-0005). Per **ADR-0014** (Accepted,
+  2026-08-19): the persisted `AuditRecord` must durably identify the
+  subject of its audited mutation (Q1, shape-neutral — no dedicated
+  reference column is mandated). **The persisted structural shape of
+  that reference (Q2) is OPEN — NOT ESTABLISHED**, and ADR-0014 makes
+  resolving or explicitly routing it a precondition for this WP's
+  model/migration implementation — see ADR-0014 Consequences, not
+  reproduced here. GC-006 (which mutations count as high-impact) and
+  GC-007 (snapshot vs. diff shape) remain `Requires Owner Decision`;
+  both stay open but non-blocking for this WP specifically: use
+  Alternative B (treat every mutation as high-impact — more
+  conservative than GC-006's own recommended Alternative A, chosen here
+  for interim simplicity, not because GC-006 recommends it) and a plain
+  diff-only shape (narrower than GC-007's recommended Alternative C,
+  which adds field-sensitivity marking, and which GC-007's own text
+  prefers specifically because diff-only alone leaves secret-exposure
+  risk partially open) as the interim defaults. **D09 R10 (Actor
+  Attribution) is unmodeled across all of Gate C** — found on
+  `EnterpriseObject.owner_id`, confirmed again on `Task.assignee_id`
+  (`DOMAIN_REVIEW_TASK_LIFECYCLE.md` §6) — and belongs here: R10's
+  attribution records are described as "Historical / immutable once
+  recorded... mirrors D07's transition-record and this project's
+  audit-first principle," and ADW-07 (unwritten, same workshop that
+  governs this WP's own `AuditRecord` schema) is explicitly named as
+  owning provenance/attribution contracts. Not yet a blocker beyond
+  this entry's own ADR-0014 blocker below, same phrasing convention as
+  ADW-02/ADW-05 elsewhere in this document.
 - **Definition of Done**: business write + audit write share one
-  transaction for every mutation (conservative default); audit content is
-  a field-level diff, not a full snapshot.
+  transaction for every mutation (conservative default); audit content
+  is a field-level diff, not a full snapshot; the persisted audit
+  content durably identifies its subject (ADR-0014 Q1) in whatever
+  shape Q2 eventually establishes. **Not achievable until Q2 is
+  resolved or an interim representation is explicitly authorized** —
+  see ADR-0014.
 - **Acceptance Criteria**: a mutation without its audit record cannot
-  commit.
+  commit, and an audit record that cannot be resolved to what it
+  audited is not a complete audit record (ADR-0014).
 - **Estimated Complexity**: M–L (transactional correctness is the risk
   driver).
 - **Risk**: Medium — must be revisited once GC-001-dependent entities
   (e.g., `WorkspaceProviderConfiguration`, which will hold credential
   references) exist, per the Implementation Readiness Review's finding
   that the diff-only default is only safe until then.
+- **Blocked on**: ADR-0014's Q2 routing obligation — ADW-07 must
+  resolve the persisted subject-reference shape, or explicitly route it
+  elsewhere, before model/migration implementation proceeds. Not on
+  WP18: PR #31 already established WP19 does not depend on WP18, and
+  this blocker runs through AuditRecord's own Q2 gap, not through
+  Event.
 - **Owner**: Engineering.
 
 ## WP20 — ContextPackage Model 🔴

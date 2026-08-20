@@ -56,3 +56,4 @@ one decision per file. Template: `0000-adr-template.md`.
 | [0011](0011-task-phase-transition-graph.md) | Task phase transition graph — `archived` reachable only from `active` | Accepted |
 | [0012](0012-wp22-api-contract-request-id-envelope-pagination-invariants.md) | WP22 API contract — request-ID propagation, error envelope shape, pagination invariants | Accepted |
 | [0013](0013-agentdefinition-is-a-d02-enterprise-object.md) | AgentDefinition is a D02 EnterpriseObject | Accepted |
+| [0014](0014-auditrecord-must-durably-identify-its-subject.md) | AuditRecord must durably identify its audited subject | Accepted |
