@@ -252,7 +252,7 @@ Default status for all packages in this version: `Planned`.
 | WP16 | Minimal Identity and Authentication | P0 | WP09 | WP17, WP23, WP29 | One authenticated human user and service/agent identities supported — see Amendment A-03 |
 | WP17 | Role and Permission Checks | P1 | WP14, WP16 | WP27, WP29 | Basic RBAC for user, agent, reviewer, approver |
 | WP18 | Event Model and Persistence | P0 | WP08, WP13 | WP21, WP30, WP34 | Events stored with trace ID, correlation ID, type, source, timestamp |
-| WP19 | AuditRecord Model | P0 | WP13, WP16 | WP30, WP36 | High-impact actions create immutable audit records |
+| WP19 | AuditRecord Model | P0 | WP13, WP16 | WP30, WP36 | High-impact actions create immutable audit records — see Amendment A-09 |
 | WP20 | ContextPackage Model | P0 | WP13, WP15 | WP25, WP27 | Context package stores sources, constraints, confidence, expiry — see Amendment A-06 |
 | WP21 | RuntimeSession Model | P1 | WP14, WP15, WP18 | WP27, WP31 | Session lifecycle and links to task, agent, context implemented |
 | WP22 | API Error and Response Standard | P1 | WP06, WP10 | WP23–WP39 | Consistent errors, validation responses, request IDs, pagination rules — see Amendments A-07, A-08 |
@@ -278,6 +278,7 @@ expected to fall on the same calendar date.
 | A-06 | WP20 | 2026-08-08 | **Approved** | Not a field-list narrowing (there is no approved field set to narrow to) — a readiness and scope correction: WP20 status `🟢` → `🔴`, blocked pending clarification of the governing domain source (candidate governing workshop: ADW-06). Deliverables field `ContextPackage model/repository/service` withdrawn; no model, migration, repository, service, API, or field list is authorized until the governing workshop defines context/knowledge semantics, retention, and relationships. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Deliverables: `ContextPackage` model/repository/service per `docs/planning/PRE-CODING-BRIEF.md` §5.2"*, acceptance criteria *"a context package created for a task remains readable after the originating session ends."* |
 | A-07 | WP10, WP22 | 2026-08-11 | **Approved** | Transfers per-HTTP-request identifier generation and propagation from WP10 to WP22 — the first between-WP scope transfer in this amendment series (A-01–A-06 only narrowed or withdrew scope within one WP). WP10's Deliverables narrow to structured JSON logging only; status remains `🟢`, since the narrowed scope is genuinely delivered (`backend/app/core/logging.py`). WP22's Deliverables gain identifier generation/propagation, with an explicit Tier-6 boundary against Domain Event correlation, causation, provenance, distributed tracing, and cross-request workflow identity. Original wording (`MVP_WORK_PACKAGE_PLAN.md`, WP10): *"JSON logs with request and correlation identifiers."* |
 | A-08 | WP22 | 2026-08-11 | **Approved** | Narrows WP22's Definition of Done and Acceptance Criteria from their unqualified `every endpoint`/`whole API` wording to the scope ADR-0012 actually establishes: the standardized error envelope and the one-error-shape guarantee both apply to domain-facing API endpoints; operational/infrastructure endpoints (e.g. `/health`) are outside both. A scope correction, not an editorial clarification — the prior wording on each field committed to more than ADR-0012 delivers. Widened from its original single-field draft (Definition of Done only) once Acceptance Criteria was found to carry the same over-broad claim from the same cause (ADR-0012 §2) — recorded as deliberate, not an accumulation. Original wording (`IMPLEMENTATION_BACKLOG.md`): Definition of Done — *"every endpoint returns the standard envelope shape."*; Acceptance Criteria — *"a client can rely on one error shape across the whole API."* |
+| A-09 | WP19 | 2026-08-19 | **Approved** | Readiness and scope correction, per **ADR-0014** (Accepted): WP19 status `🟢` → `🔴`, blocked pending Q2 (the persisted `AuditRecord` subject-reference shape) under ADR-0014's routing obligation, which uses ADW-07 as the future semantic destination named by `DECISION_0002` — not inherited from WP18; PR #31 already established WP19 does not depend on WP18. Deliverables gain an explicit requirement: the persisted `AuditRecord` must durably identify its audited subject (ADR-0014 Q1, shape-neutral — no dedicated reference column mandated). Also corrects two citation errors in the Deliverables field, found while verifying this amendment and unrelated to ADR-0014's own content: "GC-006's own conservative Alternative B" and "GC-007's diff-only shape" both attributed an interim default to the wrong proposal's recommendation — GC-006 recommends Alternative A, GC-007 recommends Alternative C. The interim defaults themselves (Alternative B; plain diff) are unchanged; only the attribution is corrected to WP19's own choice rather than either GC item's recommendation, so `Risk`'s "diff-only default" language stays coherent. Original wording (`IMPLEMENTATION_BACKLOG.md`): Deliverables — *"GC-006 (which mutations count as high-impact) and GC-007 (snapshot vs. diff shape) are open but non-blocking for this WP specifically: use GC-006's own conservative Alternative B (treat every mutation as high-impact) and GC-007's diff-only shape as the interim default."* |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -625,6 +626,44 @@ Decision: Approved (A-08)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-11
 Approved Commit or PR: PR #28 (`docs/adr0012-a08-wp22-api-contract`)
+```
+
+**A-09 rationale.** ADR-0014 (Accepted, 2026-08-19) resolved Q1 of
+WP19's subject-reference question — whether a persisted `AuditRecord`
+must durably identify what it audited — as a new, shape-neutral Project
+Owner decision, while leaving Q2 (the persisted structural shape of
+that reference) explicitly open and creating a routing obligation that
+uses ADW-07 — the future semantic destination already named by
+`DECISION_0002` — as its resolution point. Unlike A-05/A-06, this is
+not a case of an unwritten workshop leaving zero established
+requirement — ADR-0014 itself is the requirement's authority. What it
+shares with A-05/A-06 is the practical consequence: no model,
+migration, repository, service, or field list satisfying the
+requirement is authorized until Q2 resolves or an interim
+representation is explicitly authorized, so WP19's status moves `🟢` →
+`🔴` on the same readiness-and-scope-correction basis.
+
+While drafting this amendment, the existing Deliverables wording —
+"GC-006's own conservative Alternative B" and "GC-007's diff-only
+shape" — was checked directly against GC-006 and GC-007's own
+Recommendation sections (`GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md`)
+and found to misattribute both: GC-006 recommends Alternative A (a
+curated allowlist), not B; GC-007 recommends Alternative C (diff-based,
+with field-sensitivity marking), not diff-only B alone, and GC-007's
+own text argues against B alone specifically on secret-exposure
+grounds. Both interim defaults WP19 actually uses (Alternative B; plain
+diff) are unchanged by this correction — only their attribution is,
+from "the proposal's own recommendation" to "WP19's own conservative
+interim choice." This keeps `Risk`'s existing "diff-only default is
+only safe until then" language coherent rather than contradicted.
+
+### Amendment Approval Record (A-09)
+
+```text
+Decision: Approved (A-09)
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-19
+Approved Commit or PR: PR #32 (`docs/adr0014-auditrecord-subject-reference`)
 ```
 
 ## Gate D — First Vertical Slice
