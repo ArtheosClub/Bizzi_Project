@@ -318,3 +318,115 @@ supersession) remain OPEN. This approval does not extend to later
 ADW-07 subject matter, Event schema, Event relationships, WP18
 implementation, or ADW-07 as a whole.
 ```
+
+---
+
+## Block 3: AuditRecord Persisted Subject-Reference — Routing Decision
+
+**Document ID:** [not assigned — same numbering gap noted in Blocks 1 and 2]
+**Workshop:** ADW-07 — Events, Audit, and Provenance
+**Workshop Status:** OPEN
+**Block:** Block 3 — AuditRecord Persisted Subject-Reference / Routing Decision
+**Block Status:** APPROVED
+**Owner:** Project Owner
+**Decision authority:** Project Owner
+**Decider:** Andrew (Project Owner)
+**Decision Date:** 2026-08-22
+**Remaining ADW-07 work:** OPEN / NOT YET DECIDED
+**Builds on:** Block 1 (Event Semantics — Core Definition), Block 2 (Event Persistence Timing), ADR-0014 (AuditRecord must durably identify its audited subject) — all unmodified by this document. D09 (Relationship Model), D10 (Deletion and Supersession) — both `APPROVED — CLOSED`, unmodified.
+
+**Recording note:** this is the third Project Owner-authorized incremental recording within the still-OPEN ADW-07 workshop, and the first triggered by an ADR's routing obligation rather than a WP readiness pass. It is also the first Block in this workshop that was shown to the Project Owner for review prior to approval — Blocks 1 and 2 were each recorded only after approval had already occurred. This Block is recorded here in its approved, post-approval form.
+
+---
+
+### Scope
+
+This Block decides only whether ADW-07 accepts substantive ownership of the WP19 AuditRecord persisted subject-reference question — ADR-0014's Q2 — under branch (a) of ADR-0014's routing obligation, rather than invoking branch (b). It does not decide Q2's persisted representation, Residual Question R1 (Event ↔ Audit/Outbox/Publication-Intent identity), AuditRecord's complete domain definition, the Event/AuditRecord relationship, Open Question 1 (significance rule), Open Question 3 (correction/supersession mechanism), GC-002, GC-006, or GC-007, or Residual Questions R2/R3. Those remain open or deferred, as stated below.
+
+### Decision
+
+ADW-07 accepts substantive ownership of the persisted AuditRecord subject-reference question (ADR-0014 Q2), under branch (a) of ADR-0014's routing obligation. Resolution of Q2's actual persisted representation remains deferred to a later, not-yet-numbered ADW-07 block, contingent on an evaluative framework this Block does not create (see Non-Goals).
+
+### Existing Authority
+
+- ADR-0014, Consequences: "Before WP19 model/migration implementation proceeds, ADW-07 must either (a) resolve the persisted AuditRecord subject-reference representation, or (b) explicitly establish that persistence representation is outside its scope and identify the decision owner and follow-on mechanism." This is existing authority for the fact that a decision is required and for the two branches available — not for which branch is correct. That choice is this Block's own decision, below.
+- `ARCHITECTURE_SPECIFICATION.md` §7: ADW-07's declared purpose is "Define event semantics, immutable audit, provenance, correlation, and sensitive-data handling" — the only named workshop's scope statement that textually intersects an AuditRecord-shape question at all.
+- `D10_DELETION_AND_SUPERSESSION.md` §3, §14: assigns "the detailed audit/event record schema for lifecycle transitions" to ADW-07 by name. Scoped to lifecycle-transition audit records specifically — a proper subset of WP19's actual scope ("high-impact actions" generally, `IMPLEMENTATION_BACKLOG.md` WP19 Goal), not a citation that by itself reaches all of Q2.
+- This document, Block 1, Non-Goals: already deferred "AuditRecord's own domain definition; Event/AuditRecord relationship" to later ADW-07 work — adjacent to, but not identical with, Q2's persisted-shape question.
+
+None of the above states that ADW-07 owns Q2 specifically. Each is partial, adjacent existing authority. Read together they were convergent evidence, not prior authority for the ownership question itself — that gap is what this Block closes, not what it finds already closed.
+
+### New Decision Approved by Project Owner
+
+ADW-07 accepts substantive ownership of Q2 under branch (a) of ADR-0014's routing obligation.
+
+No approved source stated this directly before this Block. The three existing-authority citations above converge on ADW-07 without any one of them reaching Q2 by name; this decision is the act of closing that gap, as a Project Owner judgment on convergent evidence, not a restatement of something already established. Before this Block, "ADW-07 substantively owns Q2" was Inference. It becomes decision-level authority upon this approval — the earlier sources remain evidence for why the decision is coherent, not proof that it was already required beforehand.
+
+### Rationale
+
+Three lines of evidence were checked and found convergent, none alone sufficient: ADW-07's own declared scope ("immutable audit"); D10's partial schema deferral (lifecycle-transitions subset); and this document's own Block 1 Non-Goals deferral (domain definition and Event relationship). Every other named workshop's declared scope was checked against Q2 and found not to fit — ADW-08's scope ("repositories, transactions, outbox, idempotency, storage, indexing, and retention") is mechanism/storage language, not a domain-semantic "what does this record identify" question, consistent with ADR-0014's own finding that D09 §8's adjacent ADW-08 deferral does not textually reach AuditRecord; ADW-02/03/04/05/06/09/10's declared scopes do not intersect the question at all.
+
+This absence is evidence, not proof of exclusivity. No presently established alternative owner was found for branch (b) — that is what this investigation supported. It does not establish that no alternative owner could ever validly have been created or designated: ADR-0014 explicitly permitted ADW-07 to identify a decision owner and follow-on mechanism under branch (b), and nothing in this Block forecloses that path for a future question found not to fit ADW-07. The Project Owner also already has a demonstrated channel to decide domain-adjacent questions directly, bypassing a not-yet-written workshop entirely (ADR-0013's precedent; ADR-0014's own Q1 decision) — that channel was considered for Q2 specifically in ADR-0014's Alternatives-considered section and declined there for lack of an evaluative framework, not for lack of authority to use it. This Block's branch-(a) choice is a judgment made on convergent evidence in the absence of a better-fitting alternative, not a claim that ADW-07 is the only workshop that could ever have been assigned this question.
+
+### Invariants
+
+1. ADR-0014 requires ADW-07 to resolve Q2 (branch a) or explicitly establish it is outside ADW-07's scope and route it elsewhere (branch b). `[EXISTING AUTHORITY]`
+2. ADW-07 substantively owns the persisted AuditRecord subject-reference question (Q2), pending future resolution by a later ADW-07 block. `[NEW DECISION — PROJECT OWNER APPROVED]`
+3. This ownership decision does not itself select, favor, or exclude any candidate persisted representation for Q2. `[NEW DECISION — PROJECT OWNER APPROVED]`
+
+### Non-Goals / Deferred Questions
+
+Not decided by this Block:
+
+- Q2's persisted representation (composite FK, polymorphic reference, in-payload diff, opaque identifier, or any other candidate shape).
+- Residual Question R1 (Event ↔ Audit/Outbox/Publication-Intent identity).
+- AuditRecord's complete domain definition.
+- The Event/AuditRecord relationship.
+- Open Question 1 (event qualification/significance rule).
+- Open Question 3 (event correction/supersession mechanism).
+- GC-002, GC-006, GC-007 — all remain at their current Decision Register status, unaffected.
+- Residual Question R2 (persistence/transaction/consistency mechanism — ADW-08's question) and Residual Question R3 (paused, P-01).
+
+The evaluative framework Q2's shape decision requires — candidate representations, decision criteria, and their trade-offs — does not exist and is not created here. This is the same gap ADR-0014 cited when it declined to decide Q2 alongside Q1. This Block's approval does not make a future Q2 shape block ready to proceed; the missing framework remains the next prerequisite, recorded here as an absence, not invented.
+
+### Impact on Work Packages
+
+**Before this Block:** WP19 was blocked, with Q1 already closed by ADR-0014, Q2 unresolved, and ADR-0014's routing obligation still outstanding.
+
+**After this Block:**
+- **Q1 remains CLOSED** — unaffected, already settled by ADR-0014 — and continues as a binding, shape-neutral constraint on Q2's eventual representation. It is not itself an unresolved blocker.
+- **ADR-0014's routing obligation is DISCHARGED** via branch (a).
+- **ADW-07's substantive ownership of Q2 is ESTABLISHED**, by this Block.
+- **Q2's persisted representation remains OPEN — NOT ESTABLISHED.**
+- **The evaluative framework required to decide Q2 still does not exist** — the same gap ADR-0014 identified when declining to decide Q2 alongside Q1.
+- **Therefore WP19 model/migration implementation remains BLOCKED / unauthorized** — not because Q1 or the routing obligation remain unresolved (they do not), but because Q2's representation itself remains undecided and lacks a framework.
+
+Three states must be kept distinct: **routing resolved ≠ Q2 resolved ≠ WP19 implementation authorized.** "Routing closed" does not imply "path open" does not imply "WP19 implementation may proceed" — that inference chain is false and must not be drawn from this Block.
+
+**WP18** is unaffected — still blocked under Amendment A-05, on independent grounds unrelated to Q2.
+
+### Source Notes / Traceability
+
+- `docs/adr/0014-auditrecord-must-durably-identify-its-subject.md` — Consequences section, the routing obligation itself.
+- `00_ARCHITECTURE/ARCHITECTURE_SPECIFICATION.md` §7 — ADW-07's declared scope line.
+- `D10_DELETION_AND_SUPERSESSION.md` §3, §14 — partial schema deferral to ADW-07 (lifecycle transitions subset).
+- `00_ARCHITECTURE/07_AUDIT/EVENTS_AUDIT_AND_PROVENANCE.md` (this document, Block 1) — Non-Goals deferral of AuditRecord's domain definition and Event relationship.
+- `D09_RELATIONSHIP_MODEL.md` §8 — checked and found *not* to reach AuditRecord (its ADW-07 deferral is anaphorically scoped to D09's own R1–R11 relationships among six named concepts, none of which is AuditRecord); not used as support for this Block's decision, recorded here per the same discipline Block 2 applied to a citation it checked and did not use.
+- `00_ARCHITECTURE/00_GOVERNANCE/DECISION_0002_AUTHORITY_HIERARCHY_AND_VOCABULARY_BASELINE.md` §3, line 56 — names ADW-07 as the future destination for "AuditRecord relationships" generically; existing authority for the destination, not for this Block's ownership decision (same distinction ADR-0014 itself draws for this citation).
+- `50_IMPLEMENTATION/GATE_C_ARCHITECTURE_DECISION_PROPOSALS.md` — GC-002 Decision Register status (`Proposed`), unaffected by this Block.
+
+### Approval Record
+
+```text
+Decision: Approved — ADW-07 Block 3. ADW-07 accepts substantive
+ownership of the persisted AuditRecord subject-reference question
+(ADR-0014 Q2) under branch (a) of ADR-0014's routing obligation.
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-22
+Chapter Status: ADW-07 remains OPEN. Block 3 is APPROVED. Block 3
+resolves only the routing question. It does not approve Q2's persisted
+representation, R1, AuditRecord's complete domain definition, the
+Event/AuditRecord relationship, OQ1, OQ3, GC-002/006/007, R2, or R3.
+WP19 remains BLOCKED after this approval; this Block does not authorize
+WP19 model, migration, repository, service, or API work.
+```
