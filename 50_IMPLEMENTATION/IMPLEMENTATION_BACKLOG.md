@@ -248,10 +248,11 @@ shape question being resolved.
 ## WP17 — Role and Permission Checks 🟡
 
 - **Goal**: basic RBAC for user, agent, reviewer, approver.
-- **Dependencies**: WP14 (🔴), WP16 (🟡 — specifically WP16's deferred
-  `ActorContext` remainder, not just its schema foundation; permission
-  checks need a resolved actor/role at request time, which the schema
-  alone doesn't provide).
+- **Dependencies**: WP14 (🟡 — specifically WP14's deferred runtime/
+  configuration remainder, not its schema foundation), WP16 (🟡 —
+  specifically WP16's deferred `ActorContext` remainder, not just its
+  schema foundation; permission checks need a resolved actor/role at
+  request time, which the schema alone doesn't provide).
 - **Deliverables**: role/permission check middleware. GC-003 (invitation
   model) is resolved by ADR-0010 as deferred/not-applicable to the MVP —
   no longer a blocker. GC-004 (role model) is *not* approved by ADR-0010;
@@ -267,10 +268,10 @@ shape question being resolved.
 - **Acceptance Criteria**: an unauthorized actor is rejected; an
   authorized one proceeds.
 - **Estimated Complexity**: M.
-- **Risk**: Medium — transitively blocked by WP14 for the agent-role
-  half; the human-role half now requires resolving GC-004 for real (a
-  second role forces the scalar-vs-join question ADR-0010 deferred), plus
-  GC-008.
+- **Risk**: Medium — the agent-role half remains blocked on WP14's
+  deferred runtime/configuration concerns; the human-role half requires
+  resolving GC-004 for real (a second role forces the scalar-vs-join
+  question ADR-0010 deferred), plus GC-008.
 - **Owner**: Engineering (Project Owner sign-off on GC-004, GC-008).
 
 ## WP18 — Event Model and Persistence 🔴
@@ -527,16 +528,20 @@ established as that source.
 ## WP21 — RuntimeSession Model 🔴
 
 - **Goal**: session lifecycle and links to task, agent, context.
-- **Dependencies**: WP14 (🔴), WP15, WP18.
-- **Deliverables**: blocked by the same root cause as WP14 — a
-  `RuntimeSession` links to an `AgentDefinition` that cannot yet be
-  modeled.
-- **Definition of Done**: not determinable until WP14's Critical Path
-  items close.
-- **Acceptance Criteria**: not determinable until WP14's Critical Path
-  items close.
+- **Dependencies**: WP14 (🟡 — specifically WP14's deferred runtime/
+  configuration remainder, not its schema foundation), WP15, WP18.
+- **Deliverables**: blocked on WP14's deferred runtime/configuration
+  remainder. The `AgentDefinition` schema foundation is now authorized,
+  but RuntimeSession↔AgentDefinition semantics and runtime Provider/Model
+  resolution remain explicitly deferred by A-10.
+- **Definition of Done**: not determinable until WP14's deferred runtime/
+  configuration concerns required by WP21 are resolved.
+- **Acceptance Criteria**: not determinable until those WP14 deferred
+  runtime/configuration concerns are resolved.
 - **Estimated Complexity**: L.
-- **Risk**: High — Critical Path, same root cause as WP14 (GC-001, ADW-05).
+- **Risk**: High — Critical Path; GC-001/ADW-05 still govern the relevant
+  runtime/configuration remainder even though WP14's schema foundation is
+  unblocked.
 - **Owner**: Project Owner (GC-001, ADW-05), then Engineering.
 
 ## WP22 — API Error and Response Standard 🟢
@@ -583,11 +588,14 @@ established as that source.
 ## WP24 — Agent Selection and Assignment 🟡
 
 - **Goal**: task assigned to Process Analysis Agent by explicit rule.
-- **Dependencies**: WP14 (🔴), WP15, WP23.
-- **Deliverables**: blocked — assignment requires an `AgentDefinition` to
-  assign to.
+- **Dependencies**: WP14 (🟡 — specifically WP14's deferred runtime/
+  configuration remainder, not its schema foundation), WP15, WP23.
+- **Deliverables**: blocked — assignment requires the deferred
+  AgentDefinition runtime/configuration semantics needed to select and
+  assign an agent; the six-field schema foundation alone is insufficient.
 - **Estimated Complexity**: M.
-- **Risk**: High — inherits WP14's Critical Path block.
+- **Risk**: High — inherits WP14's deferred runtime/configuration block,
+  not its now-unblocked schema foundation.
 - **Owner**: Project Owner → Engineering.
 
 ## WP25 — Minimal Context Assembly 🟡
