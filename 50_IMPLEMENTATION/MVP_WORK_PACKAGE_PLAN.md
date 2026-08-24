@@ -279,6 +279,7 @@ expected to fall on the same calendar date.
 | A-07 | WP10, WP22 | 2026-08-11 | **Approved** | Transfers per-HTTP-request identifier generation and propagation from WP10 to WP22 — the first between-WP scope transfer in this amendment series (A-01–A-06 only narrowed or withdrew scope within one WP). WP10's Deliverables narrow to structured JSON logging only; status remains `🟢`, since the narrowed scope is genuinely delivered (`backend/app/core/logging.py`). WP22's Deliverables gain identifier generation/propagation, with an explicit Tier-6 boundary against Domain Event correlation, causation, provenance, distributed tracing, and cross-request workflow identity. Original wording (`MVP_WORK_PACKAGE_PLAN.md`, WP10): *"JSON logs with request and correlation identifiers."* |
 | A-08 | WP22 | 2026-08-11 | **Approved** | Narrows WP22's Definition of Done and Acceptance Criteria from their unqualified `every endpoint`/`whole API` wording to the scope ADR-0012 actually establishes: the standardized error envelope and the one-error-shape guarantee both apply to domain-facing API endpoints; operational/infrastructure endpoints (e.g. `/health`) are outside both. A scope correction, not an editorial clarification — the prior wording on each field committed to more than ADR-0012 delivers. Widened from its original single-field draft (Definition of Done only) once Acceptance Criteria was found to carry the same over-broad claim from the same cause (ADR-0012 §2) — recorded as deliberate, not an accumulation. Original wording (`IMPLEMENTATION_BACKLOG.md`): Definition of Done — *"every endpoint returns the standard envelope shape."*; Acceptance Criteria — *"a client can rely on one error shape across the whole API."* |
 | A-09 | WP19 | 2026-08-19 | **Approved** | Readiness and scope correction, per **ADR-0014** (Accepted): WP19 status `🟢` → `🔴`, blocked pending Q2 (the persisted `AuditRecord` subject-reference shape) under ADR-0014's routing obligation, which uses ADW-07 as the future semantic destination named by `DECISION_0002` — not inherited from WP18; PR #31 already established WP19 does not depend on WP18. Deliverables gain an explicit requirement: the persisted `AuditRecord` must durably identify its audited subject (ADR-0014 Q1, shape-neutral — no dedicated reference column mandated). Also corrects two citation errors in the Deliverables field, found while verifying this amendment and unrelated to ADR-0014's own content: "GC-006's own conservative Alternative B" and "GC-007's diff-only shape" both attributed an interim default to the wrong proposal's recommendation — GC-006 recommends Alternative A, GC-007 recommends Alternative C. The interim defaults themselves (Alternative B; plain diff) are unchanged; only the attribution is corrected to WP19's own choice rather than either GC item's recommendation, so `Risk`'s "diff-only default" language stays coherent. Original wording (`IMPLEMENTATION_BACKLOG.md`): Deliverables — *"GC-006 (which mutations count as high-impact) and GC-007 (snapshot vs. diff shape) are open but non-blocking for this WP specifically: use GC-006's own conservative Alternative B (treat every mutation as high-impact) and GC-007's diff-only shape as the interim default."* |
+| A-10 | WP14 | 2026-08-24 | **Approved** | Readiness and scope correction: WP14 status `🔴` → `🟡`. ADR-0013, ADR-0015, ADR-0009 and ADR-0004 authorize the schema foundation with exactly `id`, `workspace_id`, `phase`, `owner_id`, `created_at`, `updated_at`. GC-001 and ADW-05 remain open and unresolved; they are removed as schema-foundation blockers only. No repository, service, or API is authorized in this scope; ADR-0005/WP19 still applies. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Dependencies: WP13; GC-001 approval (Critical Path); ADW-05 (Critical Path — not yet written)."* Deliverables, Definition of Done, and Acceptance Criteria were *"not determinable until both Critical Path items close."* |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -664,6 +665,52 @@ Decision: Approved (A-09)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-19
 Approved Commit or PR: PR #32 (`docs/adr0014-auditrecord-subject-reference`)
+```
+
+**A-10 rationale.** ADR-0013 (Accepted, 2026-08-16) classified
+AgentDefinition as a D02 EnterpriseObject; ADR-0015 (Accepted,
+2026-08-24) resolved the physical-persistence question ADR-0013 itself
+left open — standalone persistence is the MVP default for D02
+EnterpriseObject specializations, and AgentDefinition uses it. Together
+with ADR-0009 §5's phase-lifecycle rule (made applicable to
+AgentDefinition by ADR-0013's own stated scope) and ADR-0004's
+independent workspace-scoping rule, the minimum physical schema for
+AgentDefinition is now authorized by the accepted domain decisions
+together with the established Gate C schema conventions: `id`,
+`workspace_id`, `phase`, `owner_id`, `created_at`, `updated_at` — no
+more, no fewer.
+
+What they jointly establish is narrower than WP14's original stated goal
+("configurable agent definition with capabilities and permissions") —
+this amendment authorizes only the six-field schema foundation, not
+capabilities, permissions, Provider/Model-referencing fields, runtime
+configuration, or RuntimeSession wiring.
+
+GC-001 (Provider/Model catalog scope) and ADW-05 (capabilities-versus-
+permissions boundary and AgentDefinition's broader runtime semantics)
+are **not resolved** by this amendment or by ADR-0013/ADR-0015. Both
+remain genuinely open. What changes is narrower and specific: neither
+is a blocker for the six fields above, because none of those fields
+references a Provider, a Model, a capability, or a permission. Each
+concern remains deferred to the later Work Package or architecture
+decision that actually consumes it; A-10 does not re-route or resolve
+those concerns.
+
+No repository, service, or API is authorized in this schema-foundation
+scope. ADR-0005/WP19 prevents unaudited state-changing service work,
+consistent with the schema-first treatment already used in Gate C.
+
+Status moves `🔴` → `🟡`: a schema foundation is unblocked while a real
+runtime/configuration remainder stays open. WP14 does not become `🟢`;
+the schema foundation's readiness does not imply the WP is complete.
+
+### Amendment Approval Record (A-10)
+
+```text
+Decision: Approved (A-10)
+Decider: Andrew (Project Owner)
+Decision Date: 2026-08-24
+Approved Commit or PR: pending — record the actual PR after merge
 ```
 
 ## Gate D — First Vertical Slice
