@@ -173,15 +173,15 @@ def test_constraints_use_the_naming_convention() -> None:
 
 
 def test_migration_is_wired_into_the_revision_chain() -> None:
-    """This migration must follow WP16's, and be the single head.
+    """This migration must follow WP16 and remain in one resolvable chain.
 
-    Resolved through Alembic's own ScriptDirectory, same as every prior
-    migration test — a chain Alembic cannot resolve fails here too, and a
-    second head appearing (making `upgrade head` ambiguous) fails here.
+    The repository may add later migrations after Task. The current head is
+    therefore owned by the newest migration's test; this guard verifies Task's
+    own predecessor and that Alembic still resolves a single chain.
     """
     script = ScriptDirectory.from_config(Config(str(ALEMBIC_INI)))
 
-    assert script.get_heads() == [TASK_REVISION]
+    assert len(script.get_heads()) == 1
 
     revision = script.get_revision(TASK_REVISION)
     assert revision.down_revision == USER_AND_MEMBERSHIP_REVISION
