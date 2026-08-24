@@ -61,22 +61,88 @@ item), 🟢 Unblocked.
 - **Risk**: Low.
 - **Owner**: Engineering.
 
-## WP14 — AgentDefinition Model 🔴
+## WP14 — AgentDefinition Model 🟡
 
-- **Goal**: configurable agent definition with capabilities and permissions.
-- **Dependencies**: WP13; **GC-001 approval (Critical Path)**; **ADW-05
-  (Critical Path — not yet written)**.
-- **Deliverables**: cannot be finalized — schema shape depends on GC-001's
-  outcome (global catalog vs. workspace-scoped) and ADW-05's domain
-  semantics for `AgentDefinition`/`Provider`/`Model`.
-- **Definition of Done**: not determinable until both Critical Path items
-  close.
-- **Acceptance Criteria**: not determinable until both Critical Path items
-  close.
-- **Estimated Complexity**: L (uncertain pending resolution).
-- **Risk**: High — this is one of the two Critical Path Approval/Modeling
-  Gaps identified by the Implementation Readiness Review.
-- **Owner**: Project Owner (GC-001 approval, ADW-05), then Engineering.
+Split by Amendment A-10 (`MVP_WORK_PACKAGE_PLAN.md` § Gate C —
+Amendments; approved 2026-08-24 by Project Owner) into a schema
+foundation — now ready — and a deferred runtime/configuration
+remainder, the same split shape WP16 carries after A-03.
+
+- **Goal**: schema foundation for `AgentDefinition` as a D02
+  EnterpriseObject (ADR-0013), persisted standalone for the MVP
+  (ADR-0015). Capabilities, permissions, and runtime semantics remain
+  out of scope for this schema-foundation deliverable — see Deferred
+  Concerns.
+- **Dependencies**: WP13.
+- **Governing decisions**: ADR-0013, ADR-0015, ADR-0009 (phase),
+  ADR-0004 (workspace scoping). **GC-001 and ADW-05 are no longer
+  dependencies of the schema foundation** — see Deferred Concerns below.
+- **Deliverables**: `AgentDefinition` model, migration, tests only —
+  same scope discipline as WP13/WP15/WP16's schema foundations. Field
+  list fixed to exactly `id`, `workspace_id`, `phase`, `owner_id`,
+  `created_at`, `updated_at`:
+  - `id` — UUID primary key, established WP13/Task/WorkspaceMembership
+    convention.
+  - `workspace_id` — required independently by ADR-0004 ("every MVP
+    table beyond `users` and `sessions` carries `workspace_id`"), cited
+    directly, not derived through the D02 classification.
+  - `phase` — governed by ADR-0009 §5 plus ADR-0013's applicability
+    consequence, not by D10 §6 alone: `active` / `archived` /
+    `superseded`, creation default `active`, `String`/`VARCHAR` with a
+    database `CHECK` constraint, not a PostgreSQL `ENUM`.
+  - `owner_id` — represents EnterpriseObject ownership, consistent with
+    the existing `EnterpriseObject` contract (WP13/WP16). Ownership,
+    not actor attribution — creation attribution belongs to the audit
+    record (ADW-07, deferred), not to this column.
+  - `created_at`, `updated_at` — established WP13/Task/
+    WorkspaceMembership convention.
+
+  No `enterprise_objects` row is created for `AgentDefinition` — ADR-0015
+  establishes standalone persistence as the MVP default. No repository,
+  service, or API is authorized in this schema-foundation scope.
+  ADR-0005/WP19 prevents unaudited state-changing service work,
+  consistent with the schema-first treatment already used in Gate C.
+- **Definition of Done**:
+  - `AgentDefinition` is persisted as a standalone table with exactly
+    the six fields above.
+  - The database `CHECK` rejects `phase` values outside `active`,
+    `archived`, `superseded`; creation defaults to `active`.
+  - `workspace_id` and `owner_id` are enforced as real foreign keys.
+  - No `enterprise_objects` row, repository, service, or API is created
+    by this WP.
+- **Acceptance Criteria (schema-level)**: valid phase values are
+  accepted; unknown phase values are rejected; omitted phase resolves
+  to `active`; `workspace_id` and `owner_id` constraints are enforced;
+  the exact six-field column set is preserved, no more, no fewer.
+- **Estimated Complexity**: M (schema only, same class as WP13/WP15/
+  WP16 — narrowed from the prior `L (uncertain pending resolution)` now
+  that the persistence-representation question is resolved).
+- **Risk**: Low for the schema foundation — the field set is sourced
+  (ADR-0013, ADR-0015, ADR-0009, ADR-0004) and the persistence pattern
+  is decided. Medium/deferred for the eventual runtime/configuration
+  layer — GC-001 and ADW-05 remain genuinely open (see Deferred
+  Concerns), and this WP's schema-foundation completion does not reduce
+  that uncertainty; it only removes it as a blocker for the six fields
+  above.
+- **Owner**: Engineering, for the schema foundation. Project Owner
+  (GC-001 approval) and ADW-05's eventual resolution remain owned as
+  before for the deferred remainder.
+- **Deferred Concerns** — remain **OPEN, NOT resolved**, and are not
+  schema-foundation blockers: GC-001 (Provider/Model catalog scope),
+  Provider identity, Model identity, the Provider↔Model relationship,
+  `WorkspaceProviderConfiguration`, capabilities, permissions, the
+  capabilities-versus-permissions boundary (ADW-05), the RuntimeSession
+  ↔ AgentDefinition relationship, runtime Provider/Model resolution,
+  credential ownership/storage/rotation, tool policy, context policy,
+  escalation policy, and runtime configuration generally. Each concern
+  remains deferred to the later Work Package or architecture decision
+  that actually consumes it; A-10 does not re-route or resolve those
+  concerns.
+- **Marker note**: `🟡`, not `🟢` — the same distinction WP16's marker
+  note draws. Schema foundation is unblocked; the deferred runtime/
+  configuration remainder is not. `🟡` here means "nothing
+  architecturally undecided is blocking this WP's schema-foundation
+  scope," not "fully complete end-to-end."
 
 ## WP15 — Task Model and Lifecycle 🟢
 
