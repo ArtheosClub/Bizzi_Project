@@ -529,20 +529,23 @@ established as that source.
 
 - **Goal**: session lifecycle and links to task, agent, context.
 - **Dependencies**: WP14 (🟡 — specifically WP14's deferred runtime/
-  configuration remainder, not its schema foundation), WP15, WP18.
-- **Deliverables**: blocked on WP14's deferred runtime/configuration
-  remainder. The `AgentDefinition` schema foundation is now authorized,
-  but RuntimeSession↔AgentDefinition semantics and runtime Provider/Model
+  configuration remainder, not its schema foundation), WP15, WP18 (🔴).
+- **Deliverables**: blocked on two independent prerequisites: WP18's
+  Event-model block, and WP14's deferred runtime/configuration remainder.
+  The `AgentDefinition` schema foundation is now authorized, but
+  RuntimeSession↔AgentDefinition semantics and runtime Provider/Model
   resolution remain explicitly deferred by A-10.
-- **Definition of Done**: not determinable until WP14's deferred runtime/
-  configuration concerns required by WP21 are resolved.
-- **Acceptance Criteria**: not determinable until those WP14 deferred
-  runtime/configuration concerns are resolved.
+- **Definition of Done**: not determinable until WP18 is unblocked and
+  the WP14 deferred runtime/configuration concerns required by WP21 are
+  resolved.
+- **Acceptance Criteria**: not determinable until both prerequisite
+  classes above are resolved.
 - **Estimated Complexity**: L.
-- **Risk**: High — Critical Path; GC-001/ADW-05 still govern the relevant
-  runtime/configuration remainder even though WP14's schema foundation is
-  unblocked.
-- **Owner**: Project Owner (GC-001, ADW-05), then Engineering.
+- **Risk**: High — Critical Path; WP18 remains directly blocked, while
+  GC-001/ADW-05 still govern WP14's relevant runtime/configuration
+  remainder even though WP14's schema foundation is unblocked.
+- **Owner**: Project Owner (GC-001, ADW-05 and WP18's governing unblock),
+  then Engineering.
 
 ## WP22 — API Error and Response Standard 🟢
 
