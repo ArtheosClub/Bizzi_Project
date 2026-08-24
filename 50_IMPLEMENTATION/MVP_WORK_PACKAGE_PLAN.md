@@ -669,7 +669,7 @@ Approved Commit or PR: PR #32 (`docs/adr0014-auditrecord-subject-reference`)
 
 **A-10 rationale.** ADR-0013 (Accepted, 2026-08-16) classified
 AgentDefinition as a D02 EnterpriseObject; ADR-0015 (Accepted,
-2026-08-24) resolved the physical-persistence question ADR-0013 itself
+2026-08-23) resolved the physical-persistence question ADR-0013 itself
 left open — standalone persistence is the MVP default for D02
 EnterpriseObject specializations, and AgentDefinition uses it. Together
 with ADR-0009 §5's phase-lifecycle rule (made applicable to
@@ -710,7 +710,7 @@ the schema foundation's readiness does not imply the WP is complete.
 Decision: Approved (A-10)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-08-24
-Approved Commit or PR: pending — record the actual PR after merge
+Approved Commit or PR: PR #35 (`docs/wp14-a10-planning-sync`)
 ```
 
 ## Gate D — First Vertical Slice
