@@ -57,3 +57,4 @@ one decision per file. Template: `0000-adr-template.md`.
 | [0012](0012-wp22-api-contract-request-id-envelope-pagination-invariants.md) | WP22 API contract — request-ID propagation, error envelope shape, pagination invariants | Accepted |
 | [0013](0013-agentdefinition-is-a-d02-enterprise-object.md) | AgentDefinition is a D02 EnterpriseObject | Accepted |
 | [0014](0014-auditrecord-must-durably-identify-its-subject.md) | AuditRecord must durably identify its audited subject | Accepted |
+| [0015](0015-standalone-persistence-default-for-d02-specializations.md) | Standalone persistence is the default for D02 EnterpriseObject specializations in the MVP | Accepted |
