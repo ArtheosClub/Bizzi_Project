@@ -11,6 +11,15 @@ from app.core.config import get_settings
 from app.models import AgentDefinition, User, Workspace
 from app.models.agent_definition import AGENT_DEFINITION_PHASES
 
+EXPECTED_COLUMNS = {
+    "id",
+    "workspace_id",
+    "phase",
+    "owner_id",
+    "created_at",
+    "updated_at",
+}
+
 
 @pytest.fixture(scope="module")
 def engine():  # type: ignore[no-untyped-def]
@@ -56,6 +65,11 @@ def test_migration_created_the_table(engine) -> None:  # type: ignore[no-untyped
     assert "agent_definitions" in inspect(engine).get_table_names()
 
 
+def test_migration_created_exactly_the_a10_columns(engine) -> None:  # type: ignore[no-untyped-def]
+    columns = {column["name"] for column in inspect(engine).get_columns("agent_definitions")}
+    assert columns == EXPECTED_COLUMNS
+
+
 def test_migration_applied_the_naming_convention(engine) -> None:  # type: ignore[no-untyped-def]
     inspector = inspect(engine)
     assert (
@@ -79,6 +93,20 @@ def test_round_trip_defaults_phase_to_active_via_orm(session, workspace, user) -
     assert agent.id is not None
     assert agent.created_at is not None
     assert agent.updated_at is not None
+
+
+def test_creating_agent_definition_does_not_create_enterprise_object_row(
+    session, workspace, user
+) -> None:  # type: ignore[no-untyped-def]
+    agent = AgentDefinition(workspace_id=workspace.id, owner_id=user.id)
+    session.add(agent)
+    session.flush()
+
+    count = session.execute(
+        text("SELECT count(*) FROM enterprise_objects WHERE id = :id"),
+        {"id": agent.id},
+    ).scalar_one()
+    assert count == 0
 
 
 def test_server_default_resolves_phase_to_active(session, workspace, user) -> None:  # type: ignore[no-untyped-def]
