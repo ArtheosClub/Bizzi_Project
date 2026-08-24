@@ -195,6 +195,9 @@ need that is not currently demonstrated.
   predicate wording, unchanged by this ADR
 - `docs/adr/0009-enterprise-object-phase-lifecycle.md` — anti-duplication
   reasoning considered as evidence, not authority, for this decision
+- `docs/adr/0004-workspace-scoped-multi-tenancy.md` — independent
+  authority requiring `workspace_id` on AgentDefinition as an MVP table,
+  regardless of its D02 classification
 - `docs/adr/DOMAIN_REVIEW_ENTERPRISE_OBJECT.md` §5 — ContextPackage's
   still-open classification question, unaffected by this ADR
 - `backend/alembic/versions/c3e8b5d1f704_enterprise_object.py` — the
