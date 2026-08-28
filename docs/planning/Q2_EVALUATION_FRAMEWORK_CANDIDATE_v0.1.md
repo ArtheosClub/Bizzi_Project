@@ -74,7 +74,7 @@ Type disambiguation is a strong derived concern inside A1, not an independently 
 
 ### A2 — Committed reference meaning must not silently change
 
-**Established core — D10 historical-record semantics and ADR-0014 reversibility reasoning.** Once committed, the AuditRecord's persisted meaning must not silently repoint to a different subject. Correction requires a new historical record rather than mutation of the committed record.
+**Established core — D10 historical-record semantics and ADR-0014 reversibility reasoning.** Once committed, the AuditRecord's persisted meaning must not silently repoint to a different subject. Because audit records are durable and immutable, silently changing the meaning of an already committed audit reference is not permitted. A correction should therefore be represented as a new historical record rather than by mutating the committed record; this is a derived consequence of the immutability rule, not a separately quoted D10 sentence.
 
 Diagnostic question:
 
@@ -88,7 +88,9 @@ A2 does not itself establish that the referenced subject must remain physically 
 
 ### A4 — Do not assume Event/AuditRecord identity
 
-**Established non-identity; complete relationship still open — ADW-07 Blocks 1–2, R1.** A Q2 representation must not depend on an assumption that Event and AuditRecord share identity or infrastructure. If a candidate requires one particular R1 answer, classify the dependency as `UNDETERMINED — R1 DECISION REQUIRED`.
+**Established non-identity; complete relationship still open — ADW-07 Block 1.** Domain Event is not an AuditRecord, and their complete relationship remains open. A Q2 representation must not depend on an assumption that Event and AuditRecord share identity or infrastructure.
+
+Separately, Block 2 Residual Question R1 remains open concerning Domain Event ↔ Durable Audit / Outbox / Publication-Intent identity. Do not treat R1 as synonymous with the Event/AuditRecord relationship. If a candidate depends on one particular R1 answer, classify that dependency as `UNDETERMINED — R1 DECISION REQUIRED`.
 
 ### A5 — Retention duration is excluded
 
@@ -158,7 +160,7 @@ Use `SUPPORTED`, `UNSUPPORTED`, `UNDETERMINED — DECISION REQUIRED`, or `NOT AP
 - **S6 Subject deletion** — does historical subject identity remain meaningful if a subject may later be physically deleted? Does the candidate assume, without authority, that AuditRecord itself prevents deletion?
 - **S7 Lifecycle change** — does reference meaning survive archival, supersession, or other lifecycle changes without rewriting the AuditRecord?
 - **S8 New subject type** — what changes if a sixth auditable subject type is introduced?
-- **S9 R1 unresolved** — does the candidate require a particular Event/AuditRecord relationship that ADW-07 has not decided?
+- **S9 R1 unresolved** — if the candidate depends on a particular Domain Event ↔ Durable Audit / Outbox / Publication-Intent identity answer, does it require one R1 outcome that ADW-07 has not decided? R1 is not another name for the separate, still-open Event/AuditRecord relationship.
 - **S10 Cross-workspace ambiguity** — can subjects from different architectural scopes become indistinguishable under the persisted reference contract?
 
 ---
@@ -229,7 +231,7 @@ not an arbitrary candidate selection.
 This artifact does not:
 
 - select, recommend, rank, reject, or enumerate candidate representations;
-- resolve Event/AuditRecord R1;
+- resolve the Event/AuditRecord relationship or Block 2 Residual Question R1 (Domain Event ↔ Durable Audit / Outbox / Publication-Intent identity);
 - decide D1–D6;
 - decide whether AuditRecord references block subject deletion;
 - create a uniform workspace-reference rule;
