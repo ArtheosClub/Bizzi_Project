@@ -1,23 +1,24 @@
 # WP19 / Q2 D1–D5 Decision Pass v0.1
 
-> **Post-decision synchronization — 2026-08-30:** D1, D2, D3, and D4 are now **CLOSED — ACCEPTED** by Project Owner. Canonical authorities:
+> **Post-decision synchronization — 2026-08-30:** D1, D2, D3, D4, and D5 are now **CLOSED — ACCEPTED** by Project Owner. Canonical authorities:
 > - `00_ARCHITECTURE/07_AUDIT/ADW07_D1_SUBJECT_TYPE_DISAMBIGUATION_DECISION.md`
 > - `00_ARCHITECTURE/07_AUDIT/ADW07_D2_WORKSPACE_SUBJECT_SEMANTICS_DECISION.md`
 > - `00_ARCHITECTURE/07_AUDIT/ADW07_D3_SUBJECT_DELETION_DECISION.md`
 > - `00_ARCHITECTURE/07_AUDIT/ADW07_D4_SUBJECT_REFERENCE_SEMANTICS_DECISION.md`
+> - `00_ARCHITECTURE/07_AUDIT/ADW07_D5_SUBJECT_TYPE_EXTENSIBILITY_DECISION.md`
 >
-> D5 remains **OPEN**. Q2 persisted representation remains **OPEN / NOT ESTABLISHED**.
+> Q2-RI and Q2-ST remain **OPEN**. Q2 persisted representation remains **OPEN / NOT ESTABLISHED**.
 
-**Status:** Historical decision-structuring analysis — D1–D4 subsequently ACCEPTED; D5 remains OPEN  
+**Status:** Historical decision-structuring analysis — D1–D5 subsequently ACCEPTED  
 **Date:** 2026-08-30  
 **Subject:** ADR-0014 Q2 — D1–D5 decision pass  
 **Decision owner:** Project Owner through ADW-07  
-**Authority:** Historical planning only. D1–D4 authority is recorded in the canonical artifacts above. This file does not select a persisted representation or decide D5.  
+**Authority:** Historical planning only. D1–D5 authority is recorded in the canonical artifacts above. This file does not select a persisted representation and does not decide Q2-RI or Q2-ST.  
 **Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED pending explicit Q2 persisted-representation resolution or separate explicit authorization of an interim shape.
 
 ## 1. Scope and guardrails
 
-This planning artifact records the current decision-pass state after the approved D6 evaluation procedure and explicit Project Owner decisions D1–D4.
+This planning artifact records the decision-pass state after the approved D6 evaluation procedure and explicit Project Owner decisions D1–D5.
 
 It does not:
 
@@ -25,7 +26,8 @@ It does not:
 - turn qualitative comparison strength or implementation concreteness into architecture authority;
 - approve GC-002 Alternative B;
 - choose FK/composite-FK/payload/opaque/registry or another persistence shape;
-- decide database/application referential-integrity enforcement;
+- decide Q2-RI database-enforced referential-integrity weight;
+- decide Q2-ST subject-type ranging rule;
 - define or close actor attribution or ActorContext persistence semantics;
 - restore a WP18 → WP19 dependency;
 - authorize WP19 implementation;
@@ -37,13 +39,15 @@ It does not:
 
 WP19 remains **BLOCKED / UNAUTHORIZED pending Q2 persisted AuditRecord subject-reference representation resolution**, unless Project Owner separately issues explicit authorization for a bounded interim shape.
 
-This is the direct ADR-0014 Q2 blocker. It is **not** a restored WP18 dependency. D1–D4 acceptance does not by itself make WP19 buildable.
+This is the direct ADR-0014 Q2 blocker. It is **not** a restored WP18 dependency. D1–D5 acceptance does not by itself make WP19 buildable.
 
 ## 3. Candidate guardrails
 
-N1–N5 remain **UNAPPROVED CANDIDATES**. D4 semantic authority does not imply that any candidate is more approved than another.
+N1–N5 remain **UNAPPROVED CANDIDATES**. D1–D5 authority does not imply that any candidate is more approved than another.
 
 GC-002 Alternative B remains **PROPOSED ONLY**. Its existing concrete description does not make it the default and does not confer normative authority.
+
+The later post-D1–D5 N1 recommendation has been suspended pending Q2-RI. N1 vs N3 is currently **UNDETERMINED — Q2-RI DECISION REQUIRED**.
 
 Persistence representation remains **OPEN / NOT ESTABLISHED**.
 
@@ -71,21 +75,19 @@ D3 requires committed historical audited-subject identity to survive later subje
 
 D4 establishes that AuditRecord subject identity is mandatory, durable, explicit, stable, and independently resolvable. It identifies what was audited and remains distinct from actor attribution, ActorContext, request/runtime/Workspace context, association participants, route, diff, and payload.
 
-D4 does **not** select N1–N5, choose persistence representation, approve GC-002 Alternative B, choose referential-integrity enforcement, or authorize implementation.
+D4 does **not** select N1–N5, choose persistence representation, approve GC-002 Alternative B, choose Q2-RI referential-integrity weight, or authorize implementation.
 
 Actor attribution and ActorContext persistence/identity semantics remain **separate unresolved architecture surfaces**; D4 only establishes that they cannot substitute for audited-subject identity or establish it by implication.
 
 ## 8. D5 — Subject-type set / extensibility requirement
 
-### Decision question
+**CLOSED — ACCEPTED.** Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D5_SUBJECT_TYPE_EXTENSIBILITY_DECISION.md`.
 
-**For Q2, is the architecture requirement limited to the current five subject types, or must the persisted representation also satisfy an explicit extensibility requirement for future auditable subject types?**
+D5 requires the current Q2 representation to support the five accepted subject types: `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, and `Task`. These define the current acceptance scope, not a permanently closed universe. Future auditable subject types require separate explicit architecture authority and must satisfy the then-applicable D1–D4 invariants.
 
-### Status
+D5 does not require arbitrary future-type support without migration or representation evolution, does not authorize wildcard/`Unknown`/`Other`/implementation-defined kinds, and does not let extensibility convenience determine or default the persistence representation.
 
-**OPEN — PROJECT OWNER DECISION REQUIRED.**
-
-D5 must state any extensibility requirement at architecture level without selecting an implementation mechanism by implication.
+D5 does not itself establish the separate Q2-ST rule that determines the architecture-level ranging principle behind the subject-type vocabulary.
 
 ## 9. Decision interaction map
 
@@ -95,22 +97,26 @@ D5 must state any extensibility requirement at architecture level without select
 | D2 Workspace subject semantics | CLOSED — ACCEPTED | No |
 | D3 Subject lifecycle / historical resolution | CLOSED — ACCEPTED | No |
 | D4 Durable subject-reference semantics | CLOSED — ACCEPTED | No |
-| D5 Subject-type set / extensibility | OPEN | No |
+| D5 Subject-type set / extensibility | CLOSED — ACCEPTED | No |
+| Q2-RI Referential-integrity weight | OPEN | No |
+| Q2-ST Subject-type ranging rule | OPEN | No |
 
 ## 10. Current gate result
 
-**D1–D4 CLOSED — ACCEPTED; D5 OPEN; Q2 PERSISTED REPRESENTATION OPEN / NOT ESTABLISHED; NO N1–N5 DEFAULT OR SELECTION; GC-002 ALTERNATIVE B PROPOSED ONLY; ACTOR ATTRIBUTION / ACTORCONTEXT REMAIN SEPARATE UNRESOLVED SURFACES; WP18 DEPENDENCY NOT RESTORED.**
+**D1–D5 CLOSED — ACCEPTED; Q2-RI OPEN; Q2-ST OPEN; Q2 PERSISTED REPRESENTATION OPEN / NOT ESTABLISHED; N1 VS N3 RANKING SUSPENDED; NO N1–N5 DEFAULT OR SELECTION; GC-002 ALTERNATIVE B PROPOSED ONLY; ACTOR ATTRIBUTION / ACTORCONTEXT REMAIN SEPARATE UNRESOLVED SURFACES; WP18 DEPENDENCY NOT RESTORED.**
 
 Current state:
 
-- D1–D4: **CLOSED — ACCEPTED**;
-- D5: **OPEN**;
+- D1–D5: **CLOSED — ACCEPTED**;
+- Q2-RI: **OPEN — PROJECT OWNER DECISION REQUIRED before N1/N3 ranking can be resumed**;
+- Q2-ST: **OPEN — PROJECT OWNER DECISION REQUIRED before final Q2 representation decision**;
 - Q2 persisted representation: **OPEN / NOT ESTABLISHED**;
 - N1–N5: **UNAPPROVED CANDIDATES**;
+- N1 vs N3: **UNDETERMINED — Q2-RI DECISION REQUIRED**;
 - GC-002 Alternative B: **PROPOSED ONLY**;
 - actor attribution / ActorContext persistence semantics: **SEPARATE / UNRESOLVED**;
 - WP18 dependency: **NOT RESTORED**;
 - ADW-07: **OPEN**;
 - WP19: **BLOCKED / UNAUTHORIZED pending Q2 persisted-representation resolution or separate explicit interim-shape authorization**.
 
-The next bounded decision stage is D5. Nothing in this planning synchronization authorizes models, migrations, repositories, services, APIs, backend changes, or tests.
+The next substantive Q2 decision surface is Q2-RI. Q2-ST must be closed before the final Q2 persisted-representation decision. Nothing in this planning synchronization authorizes models, migrations, repositories, services, APIs, backend changes, or tests.
