@@ -1,11 +1,13 @@
 # WP19 / Q2-ST Subject-Type Ranging Rule Options v0.1
 
-**Status:** Draft — options/evaluation only  
+**Status:** Historical — pre-decision options/evaluation  
 **Date:** 2026-08-30  
 **Subject:** ADR-0014 Q2 — rule determining the admissible AuditRecord subject-type discriminator vocabulary  
 **Decision owner:** Project Owner through ADW-07  
-**Authority:** None. This artifact structures Q2-ST; it does not decide it.  
-**Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED.
+**Authority:** None. Historical analysis only. Canonical accepted authority: `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_ST_SUBJECT_TYPE_RANGING_RULE_DECISION.md`.  
+**Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED pending final Q2 persisted-representation authority.
+
+> **Historical-status note:** Q2-ST was accepted on 2026-08-30 as O2. The option analysis below is preserved as the pre-decision record. Any language below describing Q2-ST as OPEN or O2 as merely proposed is historical rather than current state.
 
 ## 1. Bounded question
 
