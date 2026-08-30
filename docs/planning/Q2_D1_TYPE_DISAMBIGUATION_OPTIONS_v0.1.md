@@ -1,10 +1,12 @@
 # WP19 / Q2 D1 Type-Disambiguation Options v0.1
 
-**Status:** Draft — D1 proposal narrowed for Project Owner acceptance
+> **Post-decision synchronization — 2026-08-30:** D1 is now **CLOSED — ACCEPTED** by Project Owner. Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D1_SUBJECT_TYPE_DISAMBIGUATION_DECISION.md`. The analysis below is preserved as the pre-decision record. D2–D5 remain **OPEN**. Q2 persisted representation remains **OPEN** and WP19 remains **BLOCKED / UNAUTHORIZED** pending Q2 resolution.
+
+**Status:** Historical pre-decision analysis — D1 subsequently ACCEPTED
 **Date:** 2026-08-30
 **Subject:** ADR-0014 Q2 / D1 — subject-type disambiguation
 **Decision owner:** Project Owner through ADW-07
-**Authority:** Not yet established. Proposed for explicit Project Owner acceptance.
+**Authority:** Historical analysis only. Canonical D1 authority is recorded separately in `ADW07_D1_SUBJECT_TYPE_DISAMBIGUATION_DECISION.md`.
 **Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED pending Q2 resolution.
 
 ## 1. D1 bounded question
@@ -101,9 +103,11 @@ It is the only retained semantic rule that:
 
 ## 5. Decision status and explicit non-decisions
 
-### D1 decision status
+### Historical decision status at time of analysis
 
 **PROPOSED — NOT YET ACCEPTED**
+
+**Post-decision state:** **CLOSED — ACCEPTED**. See canonical D1 authority referenced at the top of this file.
 
 ### D1 scope
 
@@ -128,16 +132,18 @@ D1 does not decide:
 - implementation;
 - final Q2 persisted representation.
 
-### Authority
+### Historical authority state at time of analysis
 
-**NOT YET ESTABLISHED.** This preferred D1 proposal becomes new D1 authority only after explicit Project Owner acceptance and separate authority recording.
+**NOT YET ESTABLISHED.** The proposal became D1 authority only after explicit Project Owner acceptance and separate authority recording.
 
 ## 6. Gate result
 
-**ALL D1 OPTIONS REVIEWED — INDIRECT / AMBIGUOUS / CONDITION-DEPENDENT RULES REMOVED FROM ACTIVE CHOICE — EXPLICIT DURABLE TYPE DISCRIMINATOR RETAINED AS THE SOLE PREFERRED D1 PROPOSAL — NOT YET ACCEPTED.**
+**ALL D1 OPTIONS REVIEWED — INDIRECT / AMBIGUOUS / CONDITION-DEPENDENT RULES REMOVED FROM ACTIVE CHOICE — EXPLICIT DURABLE TYPE DISCRIMINATOR RETAINED AS THE SOLE PREFERRED D1 PROPOSAL.**
 
-No candidate N1–N5 is approved or rejected by this narrowing. GC-002 Alternative B remains Proposed only.
+**Post-decision result:** Project Owner subsequently accepted the proposal; D1 is now **CLOSED — ACCEPTED**.
+
+No candidate N1–N5 is approved or rejected by this narrowing or by D1 acceptance. GC-002 Alternative B remains Proposed only.
 
 WP19 remains **BLOCKED / UNAUTHORIZED pending Q2 subject-reference representation resolution**.
 
-The next bounded step is explicit Project Owner acceptance or rejection/amendment of the preferred D1 proposal. Only after acceptance may D1 be recorded as authority. D2 remains unopened until that recording is complete.
+D2–D5 remain open and must be addressed separately; the accepted D1 rule must not be used to answer them by implication.
