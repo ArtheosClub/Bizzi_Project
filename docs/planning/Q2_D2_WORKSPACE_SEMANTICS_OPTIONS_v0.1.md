@@ -1,181 +1,135 @@
 # WP19 / Q2 D2 Workspace-Semantics Options v0.1
 
-**Status:** Draft — D2 decision analysis only
-**Date:** 2026-08-30
-**Subject:** ADR-0014 Q2 / D2 — reference-level workspace semantics
-**Decision owner:** Project Owner through ADW-07
-**Authority:** None. This artifact structures and evaluates D2 options; it does not decide D2.
+**Status:** Draft — D2 proposal narrowed for Project Owner review  
+**Date:** 2026-08-30  
+**Subject:** ADR-0014 Q2 / D2 — semantic meaning of `Workspace` as an AuditRecord subject type  
+**Decision owner:** Project Owner through ADW-07  
+**Authority:** None. This artifact proposes a D2 semantic rule; it does not decide D2.  
 **Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED pending Q2 subject-reference representation resolution.
 
 ## 1. D2 bounded question
 
-**What workspace/scoping semantics must a persisted AuditRecord subject reference preserve across the current Q2 subject types — `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, and `Task` — without deciding how those semantics are physically stored or enforced?**
+**What does `Workspace` mean when the accepted D1 subject-type discriminator of a durable persisted AuditRecord subject reference has the value `Workspace`?**
 
-D2 addresses only the **durable workspace/scoping meaning of the subject reference**.
+D2 is limited to the semantic meaning of `Workspace` as a first-class audited subject type.
 
-D2 does not decide:
+D2 must not convert `Workspace` into an implicit owning/current/context workspace for another subject type.
 
-- D3 subject deletion / post-deletion historical resolution;
-- D4 database-enforced referential integrity;
-- D5 future subject-type/extensibility requirement;
-- persistence shape;
-- FK/composite-FK strategy;
-- physical columns or payload layout;
-- migration policy or migration cost;
-- ownership;
-- runtime resolver/API contract;
-- actor attribution;
-- implementation;
-- final Q2 persisted representation.
+D1 is already **CLOSED — ACCEPTED** and establishes only that every durable subject reference has an explicit subject-type discriminator whose committed value identifies exactly one of the five current Q2 subject types.
 
-D1 is already **CLOSED — ACCEPTED** and supplies only the requirement for an explicit durable subject-type discriminator. D2 must not reinterpret or expand D1.
+## 2. Required semantic distinctions
 
-## 2. D2 evaluation criterion
+D2 must keep the following concepts distinct:
 
-A D2 rule is sufficient only if it gives a durable, unambiguous workspace/scoping interpretation for an AuditRecord subject reference across the five current Q2 subject types without requiring D2 to choose a persistence mechanism or enforcement layer.
+1. **`Workspace` as subject** — the audited subject identity is the Workspace entity itself.
+2. **Workspace associated with another subject** — workspace ownership, containment, scope, tenancy, or other contextual relation of a different subject.
+3. **`WorkspaceMembership` as subject** — the audited subject is the membership entity/relationship itself, not the Workspace it references.
+4. **`EnterpriseObject` associated with a workspace** — the audited subject remains the EnterpriseObject; its workspace association is contextual metadata unless separately made part of that subject-reference contract by another decision.
+5. **No workspace context** — D2 does not require every subject reference or every possible audit semantic to derive identity from a workspace context.
+6. **Multi-workspace / cross-workspace semantics** — if such semantics are allowed or required, D2 does not define them here. They remain an independent scoping/context question and must not redefine `Workspace` subject identity by implication.
 
-For this pass:
+The same separation applies to `User` and `Task`: a workspace related to those subjects is not an implicit substitution for their subject identity.
 
-- `Workspace`, `EnterpriseObject`, `WorkspaceMembership`, and `Task` are evaluated as subjects whose audit meaning is workspace-bound or workspace-contextual;
-- `User` is structurally asymmetric because user identity need not itself be owned by exactly one workspace;
-- a rule may use the AuditRecord's own durable workspace context as part of the semantic contract without requiring a particular physical encoding here;
-- DB enforcement is explicitly out of scope and remains D4.
+## 3. D2 options considered
 
-Results use:
+### D2-O1 — `Workspace` is the Workspace entity itself
 
-- `PASS` — the semantic rule itself is sufficient for current-scope workspace interpretation;
-- `FAIL` — the rule leaves current-scope workspace meaning ambiguous or contradictory;
-- `CONDITIONAL` — the rule works only if an additional unresolved semantic condition is established.
+**Rule:** when the D1 discriminator value is `Workspace`, the durable AuditRecord subject reference identifies the Workspace entity itself.
 
-## 3. D2 options
+A workspace associated with another audited subject is contextual metadata or a separate relation; it does not substitute for that subject.
 
-### D2-O1 — Reference-local workspace binding for every subject type
+**Result: PASS.**
 
-**Rule:** every persisted AuditRecord subject reference carries its own durable workspace binding, independent of any workspace semantics that may already be available from the AuditRecord or subject.
+This directly defines the semantic meaning of the `Workspace` discriminator without importing ownership, containment, tenancy, or workspace-consistency rules for the other four subject types.
 
-For current types:
+### D2-O2 — `Workspace` means the owning/current workspace of another subject
 
-- `Workspace`: reference binding denotes that Workspace;
-- `EnterpriseObject`: binding denotes the workspace to which the subject belongs;
-- `WorkspaceMembership`: binding denotes the membership's workspace;
-- `Task`: binding denotes the task's workspace;
-- `User`: binding denotes the workspace context in which that User is being audited, not ownership of the User identity itself.
+**Rule:** a `Workspace` discriminator may be used to stand for the workspace that owns, contains, scopes, or is currently associated with another audited object.
 
-**D2 result: PASS as a semantic rule, but over-prescriptive for D2-only selection.**
+**Result: FAIL.**
 
-It can provide unambiguous workspace meaning, including for User, but making a distinct workspace binding mandatory on every reference risks deciding duplication/placement semantics that belong to persistence-shape evaluation.
+This collapses subject identity into contextual ownership. It would allow an AuditRecord whose actual audited subject is an `EnterpriseObject`, `WorkspaceMembership`, `Task`, or `User` context to be represented as `Workspace`, despite D1 requiring the discriminator to identify exactly one subject type.
 
-**Does not by itself decide:** FK enforcement, composite keys, physical `workspace_id`, migration, resolver, ownership, D3–D5.
+### D2-O3 — `Workspace` is a fallback subject whenever workspace context exists
 
-### D2-O2 — Subject-derived workspace semantics only
+**Rule:** where an operation occurs in a workspace, `Workspace` may be used as the subject even if another current Q2 subject type is the concrete audited entity.
 
-**Rule:** the subject reference carries no independent workspace meaning; workspace context is always derived from the referenced subject's own identity/scoping semantics.
+**Result: FAIL.**
 
-**D2 result: FAIL for current five-type scope.**
+This makes `Workspace` a universal fallback and weakens the accepted D1 distinction among the five subject types.
 
-This is insufficient because `User` need not have a single workspace ownership semantics, and a `Workspace` subject is the workspace rather than an object contained by another workspace. The rule therefore does not give one uniform durable interpretation for all five current subject types.
+### D2-O4 — `Workspace` subject plus mandatory ownership/scoping rule for every other type
 
-This failure does not reject any persistence candidate; it rejects only a D2 semantic rule that relies exclusively on subject-derived workspace meaning.
+**Rule:** `Workspace` identifies the Workspace entity itself, while D2 simultaneously defines how every other subject type must relate to a workspace.
 
-### D2-O3 — AuditRecord-context-only workspace semantics
+**Result: OUT OF D2 SCOPE.**
 
-**Rule:** the subject reference carries no workspace-specific semantic obligation beyond being interpreted inside the durable workspace context of its containing AuditRecord.
+The first clause is valid D2 semantics. The second clause broadens D2 into contextual ownership, scoping, consistency, or cross-workspace policy and risks deciding later decision surfaces or persistence constraints by implication.
 
-Under this rule, the AuditRecord's workspace context is authoritative for the audit occurrence, while the subject reference itself need not preserve any additional relationship between subject and workspace.
+## 4. Narrowing finding
 
-**D2 result: CONDITIONAL / insufficiently strong.**
+Only D2-O1 is retained as the bounded D2 semantic rule.
 
-This establishes where the audit occurred but does not by itself require that a workspace-scoped subject is actually consistent with that workspace. It would allow a reference contract whose audit workspace and subject workspace disagree unless another rule supplies consistency.
+The following are rejected from the active D2 choice:
 
-Such a consistency rule cannot be silently imported from D4 or implementation.
+- using `Workspace` as the owning/current workspace of another subject;
+- using `Workspace` as a fallback whenever workspace context exists;
+- using D2 to impose a universal workspace-consistency or ownership rule on `EnterpriseObject`, `User`, `WorkspaceMembership`, or `Task`.
 
-### D2-O4 — Durable audit-workspace binding plus subject-consistency rule
+These removals do not decide how workspace context is represented, whether cross-workspace operations exist, or what consistency rules may later apply.
 
-**Rule:** every persisted AuditRecord subject reference is interpreted within the AuditRecord's durable workspace context, and the durable reference contract must preserve the following semantic consistency:
+## 5. Preferred D2 proposal
 
-1. for a `Workspace` subject, the referenced Workspace is the AuditRecord's workspace context;
-2. for a workspace-scoped `EnterpriseObject`, `WorkspaceMembership`, or `Task` subject, the subject belongs to the AuditRecord's workspace context;
-3. for a `User` subject, the User identity may be globally scoped, but the AuditRecord records that User as the audited subject within the AuditRecord's workspace context; D2 does not assert that the User is owned by that workspace.
+### D2 recommendation
 
-The rule requires durable semantic consistency but does not prescribe whether that consistency is represented redundantly in the subject reference, derivable from subject identity, checked by application logic, or enforced by database constraints.
+**`Workspace` is a first-class subject type. When the discriminator is `Workspace`, the durable subject reference identifies the Workspace entity itself. A workspace associated with another subject is contextual metadata, not an implicit substitution for that subject.**
 
-**D2 result: PASS.**
+This rule means, in particular:
 
-This is sufficient across all five current subject types while respecting the User/Workspace asymmetry and without deciding persistence shape or enforcement location.
+- `Workspace` does not stand in for an `EnterpriseObject` merely because that object belongs to a workspace;
+- `Workspace` does not stand in for a `WorkspaceMembership` merely because the membership references that workspace;
+- `Workspace` does not stand in for a `Task` merely because the task is workspace-scoped;
+- `Workspace` does not stand in for a `User` merely because the audit occurs in a workspace context.
 
-### D2-O5 — Per-type independent workspace rules
-
-**Rule:** each subject type may define its own unrelated workspace semantics with no common Q2-level invariant.
-
-**D2 result: FAIL.**
-
-Type-specific details are unavoidable, but without a common invariant the persisted AuditRecord subject-reference contract does not establish what cross-workspace inconsistency means at Q2 level. This leaves S10 unresolved by design rather than deciding it.
-
-Per-type realization details may still be needed later; D2 only requires a common semantic invariant.
-
-## 4. D2 comparison
-
-| Option | Workspace meaning across all five current types | Handles `User` asymmetry | Requires persistence shape? | Requires DB enforcement? | D2 result |
-|---|---|---|---|---|---|
-| O1 Reference-local binding everywhere | Unambiguous | Yes | Risks over-prescribing duplication/placement | No | PASS but over-prescriptive |
-| O2 Subject-derived only | Not uniform | No | No | No | FAIL |
-| O3 AuditRecord context only | Audit occurrence scoped, subject consistency unresolved | Yes | No | No | CONDITIONAL |
-| O4 Audit workspace + subject consistency | Unambiguous common invariant | Yes | No | No | PASS |
-| O5 Per-type unrelated rules | No common invariant | Potentially | No | No | FAIL |
-
-## 5. D2 evaluation finding
-
-The narrowest rule that resolves workspace semantics without choosing physical representation is O4:
-
-- it preserves the AuditRecord's durable workspace context;
-- it requires workspace-scoped subjects to be semantically consistent with that context;
-- it treats `Workspace` as self-contextual rather than as a child of another workspace;
-- it permits `User` identity to remain globally scoped while still locating the audit occurrence in one workspace;
-- it does not require a duplicate `workspace_id` inside every subject reference;
-- it does not choose DB versus application/domain enforcement;
-- it does not select N1–N5 or GC-002 Alternative B.
-
-O1 is semantically sufficient but stronger than necessary because it requires a separate reference-local workspace binding even when durable context could be supplied without that duplication. O3 is too weak because it does not require subject/workspace consistency. O2 and O5 do not provide a sufficient common Q2 invariant.
-
-## 6. D2 recommendation
-
-### D2 recommendation — PROPOSED FOR PROJECT OWNER REVIEW
-
-**A persisted AuditRecord subject reference MUST be interpreted within the AuditRecord's durable workspace context. For a `Workspace` subject, the referenced Workspace MUST be that workspace context. For a workspace-scoped `EnterpriseObject`, `WorkspaceMembership`, or `Task` subject, the subject MUST belong to that workspace context. A `User` subject MAY remain globally scoped; D2 requires only that the AuditRecord identifies that User as the audited subject within the AuditRecord's workspace context and does not assert workspace ownership of the User identity. D2 does not decide how workspace consistency is physically represented or enforced.**
-
-### D2 decision status
+## 6. D2 decision status
 
 **PROPOSED — NOT YET ACCEPTED**
 
 ### D2 scope
 
-**Reference-level workspace/scoping semantics only.**
+**Semantic meaning of `Workspace` as a subject type only.**
 
 ### Explicit non-decisions
 
 D2 does not decide:
 
+- how another subject's workspace association is represented;
+- whether all subjects must have workspace context;
+- multi-workspace semantics;
+- cross-workspace semantics;
+- workspace ownership or containment rules;
+- subject/workspace consistency enforcement;
 - D3;
 - D4;
 - D5;
 - persistence shape;
-- whether `workspace_id` is duplicated in the subject reference;
-- composite-FK or other FK strategy;
+- physical placement of the D1 type discriminator;
+- FK or composite-FK strategy;
 - database versus application/domain enforcement;
 - migration;
-- ownership;
-- runtime resolver/API;
+- ownership of persistence implementation;
+- runtime resolver/API contract;
 - actor attribution;
 - implementation;
 - final Q2 persisted representation.
 
 ### Authority
 
-**NOT YET ESTABLISHED.** This recommendation becomes D2 authority only after explicit Project Owner acceptance and separate authority recording.
+**NOT YET ESTABLISHED.** This proposal becomes D2 authority only after explicit Project Owner acceptance and separate authority recording.
 
 ## 7. Gate result
 
-**D2 OPTIONS STRUCTURED AND EVALUATED — ONE REPRESENTATION-NEUTRAL WORKSPACE-SEMANTICS RULE RECOMMENDED — D2 REMAINS OPEN / NOT YET ACCEPTED.**
+**D2 NARROWED TO `Workspace` SUBJECT IDENTITY — SUBJECT IDENTITY KEPT DISTINCT FROM WORKSPACE CONTEXT / OWNERSHIP — ONE SEMANTIC RULE PROPOSED — NOT YET ACCEPTED.**
 
 Current Q2 state:
 
@@ -188,4 +142,4 @@ Current Q2 state:
 - ADW-07: **OPEN**;
 - WP19: **BLOCKED / UNAUTHORIZED pending Q2 subject-reference representation resolution**.
 
-The next bounded step is Project Owner review of the D2 recommendation. No implementation or persisted-representation selection is authorized by this artifact.
+No model, migration, interim persistence representation, or WP19 implementation authorization is created by this artifact.
