@@ -1,29 +1,35 @@
 # WP19 / Q2 D1–D5 Decision Pass v0.1
 
-> **Post-decision synchronization — 2026-08-30:** D1, D2, and D3 are now **CLOSED — ACCEPTED** by Project Owner. Canonical authorities: `00_ARCHITECTURE/07_AUDIT/ADW07_D1_SUBJECT_TYPE_DISAMBIGUATION_DECISION.md`, `00_ARCHITECTURE/07_AUDIT/ADW07_D2_WORKSPACE_SUBJECT_SEMANTICS_DECISION.md`, and `00_ARCHITECTURE/07_AUDIT/ADW07_D3_SUBJECT_DELETION_DECISION.md`. D4 and D5 remain **OPEN**.
+> **Post-decision synchronization — 2026-08-30:** D1, D2, D3, and D4 are now **CLOSED — ACCEPTED** by Project Owner. Canonical authorities:
+> - `00_ARCHITECTURE/07_AUDIT/ADW07_D1_SUBJECT_TYPE_DISAMBIGUATION_DECISION.md`
+> - `00_ARCHITECTURE/07_AUDIT/ADW07_D2_WORKSPACE_SUBJECT_SEMANTICS_DECISION.md`
+> - `00_ARCHITECTURE/07_AUDIT/ADW07_D3_SUBJECT_DELETION_DECISION.md`
+> - `00_ARCHITECTURE/07_AUDIT/ADW07_D4_SUBJECT_REFERENCE_SEMANTICS_DECISION.md`
 >
-> **D4 scope clarification — 2026-08-30:** Project Owner has explicitly narrowed/reframed the active D4 decision stage as a separate semantic/options question about the durable AuditRecord subject-reference contract. The earlier planning formulation of D4 as “DB-enforced referential integrity” is retained below only as historical scaffolding and is **not** the active D4 definition. Referential-integrity mechanism remains unresolved and must not be inferred as a D4 answer, persistence-shape choice, or approval of GC-002 Alternative B.
+> D5 remains **OPEN**. Q2 persisted representation remains **OPEN / NOT ESTABLISHED**.
 
-**Status:** Historical decision-structuring analysis — D1/D2/D3 subsequently ACCEPTED; D4/D5 remain OPEN
-**Date:** 2026-08-30
-**Subject:** ADR-0014 Q2 — explicit D1–D5 decision pass after A1–A6, S1–S10, and C1–C5
-**Decision owner:** Project Owner through ADW-07
-**Authority:** Historical analysis only. D1–D3 authority is recorded separately. Active D4 scope is governed by the Project Owner clarification recorded above and by the dedicated D4 options artifact; this file does not itself decide D4/D5 or select a persisted representation.
+**Status:** Historical decision-structuring analysis — D1–D4 subsequently ACCEPTED; D5 remains OPEN  
+**Date:** 2026-08-30  
+**Subject:** ADR-0014 Q2 — D1–D5 decision pass  
+**Decision owner:** Project Owner through ADW-07  
+**Authority:** Historical planning only. D1–D4 authority is recorded in the canonical artifacts above. This file does not select a persisted representation or decide D5.  
 **Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED pending explicit Q2 persisted-representation resolution or separate explicit authorization of an interim shape.
 
-## 1. Scope and boundary
+## 1. Scope and guardrails
 
-The approved ADW-07 Block 4 / D6 procedure completed A1–A6 authoritative-constraint application, S1–S10 semantic stress tests, and C1–C5 qualitative comparison.
+This planning artifact records the current decision-pass state after the approved D6 evaluation procedure and explicit Project Owner decisions D1–D4.
 
-This artifact historically structured D1–D5. It does not:
+It does not:
 
-- select a Q2 persisted representation;
-- turn qualitative comparison strength into a default candidate;
-- treat stress-test support/failure as candidate approval/rejection;
-- decide D4 or D5 by implication;
-- create implementation authorization;
-- modify WP19 backlog or implementation sequence;
+- select, prefer, default, reject, or approve N1–N5;
+- turn qualitative comparison strength or implementation concreteness into architecture authority;
+- approve GC-002 Alternative B;
+- choose FK/composite-FK/payload/opaque/registry or another persistence shape;
+- decide database/application referential-integrity enforcement;
+- define or close actor attribution or ActorContext persistence semantics;
 - restore a WP18 → WP19 dependency;
+- authorize WP19 implementation;
+- modify WP19 backlog or implementation sequence;
 - resolve GC-006 or GC-007;
 - close ADW-07.
 
@@ -31,67 +37,43 @@ This artifact historically structured D1–D5. It does not:
 
 WP19 remains **BLOCKED / UNAUTHORIZED pending Q2 persisted AuditRecord subject-reference representation resolution**, unless Project Owner separately issues explicit authorization for a bounded interim shape.
 
-This is the direct ADR-0014 Q2 blocker, not a restored WP18 dependency. Acceptance of D1–D3 does not make WP19 buildable.
+This is the direct ADR-0014 Q2 blocker. It is **not** a restored WP18 dependency. D1–D4 acceptance does not by itself make WP19 buildable.
 
-## 3. Candidate and authority guardrails
+## 3. Candidate guardrails
 
-- N1–N5 remain options/candidates until separate explicit decision authority acts.
-- No candidate becomes default because it is more concretely documented.
-- GC-002 Alternative B remains **PROPOSED ONLY**.
-- D4 must not approve a persistence shape, FK strategy, composite-FK strategy, or enforcement layer by implication.
+N1–N5 remain **UNAPPROVED CANDIDATES**. D4 semantic authority does not imply that any candidate is more approved than another.
+
+GC-002 Alternative B remains **PROPOSED ONLY**. Its existing concrete description does not make it the default and does not confer normative authority.
+
+Persistence representation remains **OPEN / NOT ESTABLISHED**.
 
 ## 4. D1 — Type disambiguation
 
 **CLOSED — ACCEPTED.** Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D1_SUBJECT_TYPE_DISAMBIGUATION_DECISION.md`.
 
-D1 requires an explicit durable subject-type discriminator identifying exactly one current Q2 subject type and does not decide physical placement or persistence mechanism.
+D1 requires explicit durable subject-type disambiguation and does not decide physical placement or persistence mechanism.
 
-## 5. D2 — `Workspace` subject semantics
+## 5. D2 — Workspace subject semantics
 
 **CLOSED — ACCEPTED.** Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D2_WORKSPACE_SUBJECT_SEMANTICS_DECISION.md`.
 
-D2 makes `Workspace` a first-class audited subject and keeps another subject's workspace context distinct from subject identity.
+D2 makes `Workspace` a first-class audited subject and keeps Workspace context associated with another subject distinct from subject identity.
 
 ## 6. D3 — Subject lifecycle / historical resolution
 
 **CLOSED — ACCEPTED.** Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D3_SUBJECT_DELETION_DECISION.md`.
 
-D3 requires committed historical audited-subject identity to survive later subject deletion/deactivation and context lifecycle changes. It does not authorize deletion/mutation of committed AuditRecords, select referential-integrity behavior, choose retention/legal/compliance policy, or choose persistence shape.
+D3 requires committed historical audited-subject identity to survive later subject deletion/deactivation and context lifecycle changes. It does not authorize deletion/mutation of committed AuditRecords, select retention/legal/compliance policy, choose referential-integrity behavior, or choose persistence shape.
 
-## 7. D4 — Active scope: durable subject-reference semantics
+## 7. D4 — Durable subject-reference semantics
 
-### Active bounded question
+**CLOSED — ACCEPTED.** Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D4_SUBJECT_REFERENCE_SEMANTICS_DECISION.md`.
 
-D4 must clarify the semantic contract of a durable AuditRecord subject reference without selecting persistence shape and without replacing D1–D3.
+D4 establishes that AuditRecord subject identity is mandatory, durable, explicit, stable, and independently resolvable. It identifies what was audited and remains distinct from actor attribution, ActorContext, request/runtime/Workspace context, association participants, route, diff, and payload.
 
-The active D4 surfaces include:
+D4 does **not** select N1–N5, choose persistence representation, approve GC-002 Alternative B, choose referential-integrity enforcement, or authorize implementation.
 
-- what constitutes the subject identity carried by the reference beyond the already-accepted D1 type discriminator;
-- which identity forms are semantically admissible at the contract level;
-- how subject identity remains distinct from context and association;
-- what temporal resolvability the durable reference must provide;
-- how unknown, legacy, unavailable, deleted, or inactive subjects are treated semantically;
-- how D4 relates to, but does not replace, D3 historical-resolution and retention/deletion boundaries.
-
-### Explicit D4 non-decisions
-
-D4 does not decide:
-
-- models, migrations, repositories, services, APIs, backend implementation, or tests;
-- N1–N5 selection/default;
-- FK/composite-FK/payload/opaque/registry/other persistence shape;
-- database versus application/domain referential-integrity enforcement;
-- GC-002 Alternative B approval;
-- retention periods or legal/compliance policy;
-- D5.
-
-### Historical planning note
-
-The earlier planning formulation asked whether DB-enforced referential integrity was required/preferred/optional/inappropriate. That question remains a legitimate unresolved persistence/integrity surface, but **it is not the active definition of D4 after the Project Owner scope clarification of 2026-08-30**. It must not be silently answered inside D4 semantic analysis.
-
-### Status
-
-**OPEN — PROJECT OWNER DECISION REQUIRED.**
+Actor attribution and ActorContext persistence/identity semantics remain **separate unresolved architecture surfaces**; D4 only establishes that they cannot substitute for audited-subject identity or establish it by implication.
 
 ## 8. D5 — Subject-type set / extensibility requirement
 
@@ -107,29 +89,28 @@ D5 must state any extensibility requirement at architecture level without select
 
 ## 9. Decision interaction map
 
-| Decision | Current state | Does answering it select a candidate by itself? |
+| Decision | Current state | Selects a persistence candidate by itself? |
 |---|---|---|
 | D1 Type disambiguation | CLOSED — ACCEPTED | No |
 | D2 Workspace subject semantics | CLOSED — ACCEPTED | No |
 | D3 Subject lifecycle / historical resolution | CLOSED — ACCEPTED | No |
-| D4 Durable subject-reference semantics | OPEN | No |
+| D4 Durable subject-reference semantics | CLOSED — ACCEPTED | No |
 | D5 Subject-type set / extensibility | OPEN | No |
 
 ## 10. Current gate result
 
-**D1/D2/D3 CLOSED — ACCEPTED; D4/D5 OPEN; NO CANDIDATE DEFAULT, RECOMMENDATION, REJECTION, OR SELECTION CREATED.**
+**D1–D4 CLOSED — ACCEPTED; D5 OPEN; Q2 PERSISTED REPRESENTATION OPEN / NOT ESTABLISHED; NO N1–N5 DEFAULT OR SELECTION; GC-002 ALTERNATIVE B PROPOSED ONLY; ACTOR ATTRIBUTION / ACTORCONTEXT REMAIN SEPARATE UNRESOLVED SURFACES; WP18 DEPENDENCY NOT RESTORED.**
 
 Current state:
 
-- Q2 persisted representation: **OPEN**;
-- D1: **CLOSED — ACCEPTED**;
-- D2: **CLOSED — ACCEPTED**;
-- D3: **CLOSED — ACCEPTED**;
-- D4–D5: **OPEN — PROJECT OWNER DECISIONS REQUIRED**;
+- D1–D4: **CLOSED — ACCEPTED**;
+- D5: **OPEN**;
+- Q2 persisted representation: **OPEN / NOT ESTABLISHED**;
 - N1–N5: **UNAPPROVED CANDIDATES**;
 - GC-002 Alternative B: **PROPOSED ONLY**;
-- WP19: **BLOCKED / UNAUTHORIZED pending Q2 persisted-representation resolution or separate explicit interim-shape authorization**;
+- actor attribution / ActorContext persistence semantics: **SEPARATE / UNRESOLVED**;
 - WP18 dependency: **NOT RESTORED**;
-- ADW-07: **OPEN**.
+- ADW-07: **OPEN**;
+- WP19: **BLOCKED / UNAUTHORIZED pending Q2 persisted-representation resolution or separate explicit interim-shape authorization**.
 
-The next bounded stage is D4 semantic/options analysis. It must not become an implementation pass or a persistence-shape decision.
+The next bounded decision stage is D5. Nothing in this planning synchronization authorizes models, migrations, repositories, services, APIs, backend changes, or tests.
