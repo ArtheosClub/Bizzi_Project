@@ -1,10 +1,12 @@
 # WP19 / Q2 D1–D5 Decision Pass v0.1
 
-**Status:** Draft — Q2 decision analysis only
+> **Post-decision synchronization — 2026-08-30:** D1 is now **CLOSED — ACCEPTED** by Project Owner. Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D1_SUBJECT_TYPE_DISAMBIGUATION_DECISION.md`. This document is otherwise preserved as the historical decision-structuring snapshot produced before D1 acceptance. D2–D5 remain **OPEN — PROJECT OWNER DECISIONS REQUIRED**.
+
+**Status:** Historical decision-structuring analysis — D1 subsequently ACCEPTED; D2–D5 remain OPEN
 **Date:** 2026-08-30
 **Subject:** ADR-0014 Q2 — explicit D1–D5 decision pass after A1–A6, S1–S10, and C1–C5
 **Decision owner:** Project Owner through ADW-07
-**Authority:** None. This artifact structures D1–D5 for explicit decision authority; it does not itself decide D1–D5 or select, approve, reject, recommend, or default a persisted representation.
+**Authority:** Historical analysis only. D1 authority is recorded separately; this artifact still structures D2–D5 for explicit decision authority and does not itself select, approve, reject, recommend, or default a persisted representation.
 **Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED pending explicit Q2 resolution.
 
 ## 1. Scope and boundary
@@ -22,7 +24,7 @@ It does not:
 - select a Q2 persisted representation;
 - turn qualitative comparison strength into a default candidate;
 - treat stress-test support/failure as candidate approval/rejection;
-- decide any D1–D5 question by implication;
+- decide any D2–D5 question by implication;
 - create implementation authorization;
 - modify WP19 backlog or implementation sequence;
 - restore a WP18 → WP19 dependency;
@@ -81,26 +83,19 @@ Therefore neither completion of this D1–D5 analysis artifact nor any individua
 
 **What durable information is required for a committed AuditRecord subject reference to distinguish the subject's type sufficiently for stable resolution?**
 
-The decision must determine whether subject type must be structurally encoded in the persisted reference, may be derived through another durable interpretation convention, or whether some other bounded rule is authoritative.
-
-### Why D1 is required
-
-A1 exposed D1 directly for N1, N4, and N5. C1/C2/C5 show that the answer changes query shape, integrity location, and historical interpretation burden. D1 may also affect concrete realizations of N2/N3, but no such realization is assumed.
-
-### What D1 must not decide by accident
-
-D1 must not silently choose:
-
-- `subject_type + subject_id`;
-- a registry or global namespace;
-- payload placement;
-- DB FK enforcement;
-- a specific discriminator vocabulary;
-- the winning candidate.
-
-### Status
+### Historical status at time of this decision-pass analysis
 
 **OPEN — PROJECT OWNER DECISION REQUIRED.**
+
+### Post-decision state
+
+**CLOSED — ACCEPTED.** Canonical D1 authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D1_SUBJECT_TYPE_DISAMBIGUATION_DECISION.md`.
+
+Accepted rule:
+
+> A persisted AuditRecord subject reference MUST include an explicit durable subject-type discriminator as part of its durable reference contract. The discriminator’s committed value MUST identify exactly one of the current Q2 subject types: Workspace, EnterpriseObject, User, WorkspaceMembership, or Task. Type qualification within a durable subject identity satisfies this rule. D1 does not decide the physical placement or persistence mechanism of the discriminator.
+
+D1 acceptance does not answer D2–D5 and does not select a Q2 persisted representation.
 
 ## 5. D2 — Reference-level workspace semantics
 
@@ -229,16 +224,17 @@ A combination of D1–D5 answers may make some candidate realizations incompatib
 
 ## 10. Decision-pass gate result
 
-**D1–D5 DECISION QUESTIONS STRUCTURED — NO D1–D5 ANSWER ASSUMED — NO CANDIDATE DEFAULT, RECOMMENDATION, REJECTION, OR SELECTION CREATED.**
+**D1 STRUCTURED AND SUBSEQUENTLY ACCEPTED — D2–D5 REMAIN OPEN — NO CANDIDATE DEFAULT, RECOMMENDATION, REJECTION, OR SELECTION CREATED.**
 
-Current state remains:
+Current state:
 
 - Q2 persisted representation: **OPEN**;
-- D1–D5: **OPEN — PROJECT OWNER DECISIONS REQUIRED**;
+- D1: **CLOSED — ACCEPTED**;
+- D2–D5: **OPEN — PROJECT OWNER DECISIONS REQUIRED**;
 - N1–N5: **UNAPPROVED CANDIDATES**;
 - GC-002 Alternative B: **PROPOSED ONLY**;
 - WP19: **BLOCKED / UNAUTHORIZED pending Q2 subject-reference representation resolution**;
 - WP18 dependency: **NOT RESTORED**;
 - ADW-07: **OPEN**.
 
-The next step is not implementation. Project Owner decision authority must address D1–D5 to the extent required for a rational Q2 representation decision. Only after those explicit decisions may a separate persisted-representation decision compare the surviving/coherent candidate realizations and approve or reject them. WP19 readiness must then be reconsidered separately.
+The next step is not implementation. Project Owner decision authority must address D2–D5 to the extent required for a rational Q2 representation decision. Only after those explicit decisions may a separate persisted-representation decision compare the surviving/coherent candidate realizations and approve or reject them. WP19 readiness must then be reconsidered separately.
