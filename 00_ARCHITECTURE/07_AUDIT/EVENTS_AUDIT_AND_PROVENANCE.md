@@ -1,5 +1,15 @@
 # ADW-07 — Events, Audit, and Provenance
 
+## Authoritative decision index
+
+Later approved ADW-07 decisions may be recorded in separate canonical authority files rather than duplicated into this workshop document. The pointer-only authoritative index is:
+
+`00_ARCHITECTURE/07_AUDIT/ADW07_DECISION_INDEX.md`
+
+The index contains only identifier, status, decision date, and canonical path. It does not reproduce decision wording. Canonical normative text remains solely at the path named by the index.
+
+---
+
 ## Block 1: Event Semantics — Core Definition
 
 **Document ID:** [not assigned — no numbering convention exists yet
