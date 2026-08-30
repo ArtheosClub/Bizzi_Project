@@ -11,143 +11,159 @@
 
 **Can the rule unambiguously distinguish the subject type of a persisted AuditRecord subject reference across the five current Q2 subject types: `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, and `Task`?**
 
-D1 chooses only the **subject-type disambiguation rule**.
+D1 evaluates and proposes only a **subject-type disambiguation rule**.
 
 This pass does not evaluate or decide:
 
-- database-level referential integrity;
-- a concrete FK or column schema;
+- database-level referential integrity or FK enforcement;
+- concrete persistence/FK/column shape;
 - migration policy or migration cost;
+- extensibility beyond the current five types;
+- immutability/evolution cost;
 - persistence ownership;
-- runtime resolver contract;
+- runtime resolver/API contract;
 - actor attribution;
-- D2 workspace/reference scoping semantics;
-- D3 deletion/historical-resolution policy;
-- D4 DB-enforced referential integrity policy;
-- D5 future subject-type/extensibility policy;
-- the final Q2 persisted representation.
+- D2, D3, D4, or D5;
+- final Q2 persisted representation.
 
 No N1–N5 candidate and no GC-002 Alternative B is approved by default.
 
-## 2. D1 evaluation rule
+## 2. D1 evaluation method
 
-An option is sufficient for D1 only if, from the **durably persisted AuditRecord subject-reference information or its durable interpretation rule**, the system can determine exactly one of the five subject types for the committed reference.
+For each option this pass records:
 
-The evaluation asks only whether type disambiguation is unambiguous. It does not ask how the identified subject instance is joined, validated, resolved at runtime, migrated, owned, or protected by database constraints.
+1. the exact type-disambiguation rule;
+2. the subject-type values admitted by the rule for current Q2 scope;
+3. whether one persisted reference can be interpreted as more than one of those types;
+4. a D1-only result: `PASS`, `FAIL`, or `CONDITIONAL`;
+5. a short explanation;
+6. explicit non-decisions.
 
-## 3. D1 options
+`PASS` means the rule itself is sufficient to identify exactly one of the five subject types without requiring an unresolved condition.
 
-### D1-O1 — Explicit persisted subject-type discriminator
+`FAIL` means the rule, under currently established corpus facts, does not uniquely determine one of the five types.
 
-**Rule:** the persisted AuditRecord subject reference carries an explicit durable subject-type discriminator whose value identifies exactly one supported subject type.
+`CONDITIONAL` means the rule can uniquely determine type only if an additional durable condition is established. A conditional result is not architecture rejection and does not authorize that condition.
 
-For the current Q2 scope, the discriminator vocabulary must distinguish:
+The evaluation asks only whether type disambiguation is unambiguous. It does not compare integrity strength, migration cost, extensibility, resolver design, ownership, or implementation convenience.
 
-- `Workspace`;
-- `EnterpriseObject`;
-- `User`;
-- `WorkspaceMembership`;
-- `Task`.
+## 3. D1 option evaluation
 
-**D1 evaluation:** **SUFFICIENT.** An explicit discriminator can unambiguously identify one of the five subject types without depending on table shape, workspace semantics, FK enforcement, runtime resolution, or ownership.
+| Option | Exact D1 rule | Allowed current subject-type values | Can one persisted reference mean >1 type? | Result | Short explanation |
+|---|---|---|---|---|---|
+| **O1 Explicit type tag** | Every persisted subject reference has an explicit durable type discriminator whose committed value denotes exactly one member of the current type vocabulary. | `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, `Task` | **No**, if the discriminator is single-valued and its vocabulary has one semantic meaning per value. | **PASS** | Type is directly and durably disambiguated without needing a persistence-shape or resolver assumption. |
+| **O2 Type-qualified identity** | The persisted subject identity is durably qualified by a type/namespace component such that the qualification denotes exactly one current subject type. | Type qualification must map uniquely to `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, or `Task`. | **No**, provided the qualification contract is one-to-one with the five type meanings. | **PASS** | Type qualification is itself an explicit durable disambiguation rule. D1 does not decide how the qualification is physically encoded. |
+| **O3 Globally unique identifiers** | All five subject types use one common identifier space, and type is inferred from the identifier alone. | No separate type value is present; all five types participate in the same identifier space. | **Yes under current facts**: uniqueness of an identifier value does not by itself state which subject type owns that value. | **FAIL** | Collision-freedom across types establishes instance uniqueness, not type semantics. A separate type-bearing namespace/encoding would turn this into O2 rather than identifier uniqueness alone. |
+| **O4 Type-specific slots** | The persisted reference occurs in one of a set of positions whose durable semantic meaning is bound to a particular subject type. | One distinguishable position/semantic slot for each of `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, `Task`. | **CONDITIONALLY No**: only if the reference contract guarantees an unambiguous active type position. | **CONDITIONAL** | Position can encode type, but the needed unambiguous-position rule must be established. D1 does not authorize a physical per-type-column schema or exclusivity constraint. |
+| **O5 Unqualified identifier** | A persisted identifier with no explicit type qualification/discriminator is used, and type is inferred from that value or external interpretation. | No explicit subject-type values are carried by the reference. | **Yes / not proven unique under current corpus.** The current five tables use independently generated identifiers and no established type-bearing identity convention is authoritative. | **FAIL** | An unqualified value does not itself provide durable type semantics. Inventing a resolver or namespace here would exceed D1 evaluation. |
 
-**Does not imply:** a `subject_type + subject_id` physical schema, a particular column, enum implementation, FK, resolver, migration, or future extensibility contract.
+## 4. Option details and explicit non-decisions
 
-### D1-O2 — Type inferred solely from subject identifier value
+### O1 — Explicit type tag — PASS
 
-**Rule:** the subject type is determined from the persisted identifier value itself, without a separate explicit type discriminator.
+**Rule:** every persisted AuditRecord subject reference carries, as part of its durable reference contract, one explicit subject-type discriminator value.
 
-**D1 evaluation:** **NOT CURRENTLY SUFFICIENT.** The current corpus does not establish a shared type-prefixed/global identity namespace or another durable identifier encoding that makes the five subject types unambiguously distinguishable from the identifier alone. Creating such a namespace here would be new architecture, not evaluation of an established D1 rule.
+**Current allowed type values:** exactly the five current Q2 semantic types: `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, `Task`.
 
-This does not reject opaque-identifier candidate N4. It only means identifier-only type inference lacks an established disambiguation rule at D1 today.
+**Ambiguity:** the same committed discriminator value cannot denote more than one of those types under the rule.
 
-### D1-O3 — Type inferred from physical reference location/slot
+**Does not decide:** where the discriminator is stored; whether it is a DB column, payload field, composite component, enum, string, or other encoding; FK enforcement; D2–D5; migration; ownership; runtime resolver/API; actor attribution; implementation.
 
-**Rule:** subject type is determined by which subject-type-specific persisted reference location is used.
+### O2 — Type-qualified identity — PASS
 
-**D1 evaluation:** **CONDITIONALLY SUFFICIENT AS A TYPE RULE, BUT OVER-COUPLED TO PERSISTENCE SHAPE FOR D1.** If mutually interpretable type-specific locations existed, location could distinguish the five types. But adopting this as D1 authority would silently constrain the persistence representation toward a per-type structural shape before the separate Q2 representation decision.
+**Rule:** persisted subject identity contains a durable qualification whose semantic contract identifies one subject type as part of the identity reference.
 
-Therefore it is not the preferred D1-only rule. This is not an architecture rejection of N3.
+**Current allowed type values:** the qualification must map one-to-one to the same five current Q2 types.
 
-### D1-O4 — Type inferred from referenced database target / FK relation
+**Ambiguity:** none if the qualification contract is one-to-one. A qualification that can denote multiple types would not satisfy O2.
 
-**Rule:** subject type is determined by the database relation or target to which the persisted reference is constrained.
+**Does not decide:** delimiter/encoding; global registry; DB key shape; FK; resolver; workspace semantics; D2–D5; migration; ownership; implementation.
 
-**D1 evaluation:** **CONDITIONALLY SUFFICIENT AS A TYPE RULE, BUT OUT OF D1 SCOPE AS AN AUTHORITY CHOICE.** A concrete target relation can identify type, but making DB target structure the authoritative type-disambiguation mechanism would decide part of D4/concrete persistence shape by implication.
+**Relationship to O1:** O2 is semantically compatible with the broader O1 rule because the type qualification is an explicit durable type discriminator. D1 need not choose its physical encoding.
 
-This is not an architecture rejection of N2 or GC-002 Alternative B.
+### O3 — Globally unique identifiers — FAIL
 
-### D1-O5 — Type inferred from persisted AuditRecord content/payload
+**Rule:** one collision-free identifier space spans all five types and the identifier alone is expected to reveal the type.
 
-**Rule:** subject type is determined from a durable subject-type value or other unambiguous type marker inside persisted AuditRecord content.
+**Current allowed type values:** none are explicitly encoded.
 
-**D1 evaluation:** **SUFFICIENT IN PRINCIPLE, BUT PLACEMENT IS NOT A D1 DECISION.** If persisted content contains an explicit durable type discriminator, the type can be unambiguously distinguished. However D1 should decide the semantic rule — explicit durable type discrimination — without deciding that the discriminator must live in payload/content.
+**Ambiguity:** global uniqueness can prove that an identifier belongs to at most one subject instance if such a global identity system exists, but it does not make the subject type semantically derivable from the identifier value unless the identifier also carries type qualification. Type qualification would make the rule O2.
 
-This is not an approval or rejection of N5.
+**Does not decide:** whether a future global identity system should exist; registry design; resolver; FK; D2–D5; migration; ownership; implementation.
 
-## 4. D1 evaluation finding
+### O4 — Type-specific slots — CONDITIONAL
 
-The representation-neutral common denominator that satisfies D1 without silently deciding D2–D5 or the Q2 persistence shape is:
+**Rule:** the durable semantic position occupied by the reference determines subject type.
 
-> **The persisted AuditRecord subject reference must include, or be governed by, an explicit durable subject-type discriminator whose committed value unambiguously identifies exactly one supported subject type.**
+**Current allowed type values:** one semantic position for each of the five current Q2 types.
 
-For the current Q2 scope, the discriminator must distinguish `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, and `Task`.
+**Ambiguity:** disambiguation succeeds only if the contract guarantees that a committed AuditRecord reference cannot simultaneously or ambiguously activate multiple type positions for one audited subject.
 
-The word **explicit** means that type interpretation is part of the durable reference contract rather than being guessed from transient runtime state. It does **not** prescribe where or how that discriminator is physically stored.
+**Why conditional:** the current D1 evaluation must not invent an exclusivity/cardinality constraint. Therefore type-specific positions are capable of disambiguation, but their sufficiency depends on a separately established unambiguous-position rule.
 
-The word **durable** means the committed type meaning must remain interpretable as historical AuditRecord meaning. It does not establish a runtime resolver contract or migration policy.
+**Does not decide:** physical columns; nullability; CHECK constraints; FK enforcement; exact cardinality implementation; D2–D5; migration; ownership; implementation.
 
-## 5. Proposed explicit D1 choice
+### O5 — Unqualified identifier — FAIL
 
-### D1 decision — PROPOSED FOR PROJECT OWNER ACCEPTANCE
+**Rule:** type is inferred from an identifier that carries no explicit durable type qualification.
 
-**A persisted AuditRecord subject reference MUST carry an explicit durable subject-type discriminator, as part of its durable reference contract, whose committed value unambiguously identifies exactly one supported subject type. For the current Q2 scope, that rule MUST distinguish `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, and `Task`. The physical placement and persistence mechanism of that discriminator are not decided by D1.**
+**Current allowed type values:** no type vocabulary is persisted as part of the rule.
 
-### Scope
+**Ambiguity:** unresolved. Current corpus facts do not establish a durable convention by which the raw identifier alone determines whether the subject is Workspace, EnterpriseObject, User, WorkspaceMembership, or Task.
 
-**Only subject-type disambiguation.**
+**Does not decide:** whether an external resolver could be designed later; namespace policy; DB integrity; D2–D5; migration; ownership; implementation.
 
-### Does not decide
+## 5. D1 evaluation finding
 
-- D2 — reference-level workspace semantics;
-- D3 — subject deletion / historical-resolution policy;
-- D4 — DB-enforced referential-integrity policy;
-- D5 — subject-type-set / future-extensibility requirement;
-- database-level integrity;
-- concrete FK/schema shape;
+O1 and O2 pass the D1-only test because both make type meaning an explicit durable part of the subject-reference contract. O2 is a qualified encoding of the same semantic requirement rather than a reason to choose a particular persistence shape.
+
+O3 and O5 fail the bounded D1 test because identifier uniqueness or an unqualified identifier does not, by itself, establish durable type semantics.
+
+O4 is conditional because type-specific position can encode type, but D1 cannot silently invent the exclusivity/cardinality rule needed to guarantee unambiguous interpretation.
+
+The narrow representation-neutral rule supported by the D1 evaluation is therefore explicit durable type discrimination, while leaving its physical placement and mechanism open.
+
+## 6. D1 recommendation
+
+### D1 recommendation
+
+**A persisted AuditRecord subject reference MUST include an explicit durable subject-type discriminator as part of its durable reference contract. The discriminator's committed value MUST identify exactly one of the current Q2 subject types: `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, or `Task`. Type qualification within the durable subject identity satisfies this rule. The physical placement and persistence mechanism of the discriminator are not decided by D1.**
+
+### D1 decision status
+
+**PROPOSED — NOT YET ACCEPTED**
+
+### D1 scope
+
+**Type disambiguation only.**
+
+### Explicit non-decisions
+
+- D2;
+- D3;
+- D4;
+- D5;
+- persistence shape;
+- FK strategy or database-level integrity;
 - migration policy;
+- extensibility policy;
+- immutability/evolution cost;
 - ownership;
-- runtime resolver contract;
+- runtime resolver/API contract;
 - actor attribution;
+- implementation;
 - final Q2 persisted representation.
 
 ### Authority
 
-**NOT YET ESTABLISHED — PROPOSED FOR EXPLICIT PROJECT OWNER ACCEPTANCE.**
+**NOT YET ESTABLISHED.** This recommendation is proposed for explicit Project Owner acceptance. It becomes new D1 authority only after that acceptance is explicitly given and separately recorded.
 
-## 6. Candidate-neutrality check
+## 7. Candidate-neutrality and gate result
 
-This proposed D1 rule does not select N1–N5:
+This D1 recommendation does not approve or reject N1–N5 and does not approve GC-002 Alternative B. Candidate compatibility with an accepted D1 rule is a later evaluation input; it is not a D1 architecture selection.
 
-- N1 could satisfy it through a durable polymorphic type contract;
-- N2 could satisfy it in a concrete realization without D1 deciding the FK mechanism;
-- N3 could satisfy it without D1 requiring per-type physical slots as the discriminator mechanism;
-- N4 would need an explicit durable type contract in addition to or governing opaque identity, but D1 does not define its resolver;
-- N5 could satisfy it through persisted content, but D1 does not require payload placement.
-
-These statements are compatibility observations only. They are not candidate approvals, recommendations, or final Q2 evaluation.
-
-## 7. Gate result
-
-**D1 OPTIONS EVALUATED — ONE REPRESENTATION-NEUTRAL TYPE-DISAMBIGUATION RULE PROPOSED — AUTHORITY NOT YET ESTABLISHED.**
-
-D1 remains **OPEN** until explicit Project Owner acceptance.
+**D1 OPTIONS EVALUATED — D1 RECOMMENDATION PRODUCED — DECISION STATUS PROPOSED / NOT YET ACCEPTED — NO NEW AUTHORITY CREATED.**
 
 WP19 remains **BLOCKED / UNAUTHORIZED pending Q2 subject-reference representation resolution**.
 
-If the Project Owner accepts the proposed D1 rule, the next bounded actions are:
-
-1. record D1 as explicit authority without expanding its scope;
-2. keep D2–D5 OPEN;
-3. proceed to D2 options as a separate decision pass;
-4. do not silently substitute the accepted D1 mechanism into D2–D5.
+Only after explicit Project Owner acceptance may D1 be recorded as a separate Project Owner decision. D2–D5 must remain open, and the accepted D1 rule must not be allowed to close or answer them by implication.
