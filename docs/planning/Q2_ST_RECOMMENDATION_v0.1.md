@@ -1,11 +1,13 @@
 # WP19 / Q2-ST Recommendation v0.1
 
-**Status:** Draft — recommendation only  
+**Status:** Historical — recommendation accepted as Q2-ST-O2 on 2026-08-30  
 **Date:** 2026-08-30  
 **Subject:** Q2-ST — subject-type ranging rule  
 **Decision owner:** Project Owner through ADW-07  
-**Authority:** None. This artifact recommends; it does not decide Q2-ST.  
-**Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED.
+**Authority:** None. Historical recommendation only. Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_ST_SUBJECT_TYPE_RANGING_RULE_DECISION.md`.  
+**Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED pending final Q2 persisted-representation authority.
+
+> **Historical-status note:** this file preserves the reviewed recommendation that preceded acceptance. Any language below saying Q2-ST is OPEN, recommended, or awaiting Project Owner review describes the pre-acceptance state and is retained as historical analysis rather than current authority.
 
 ## 1. Recommendation
 
