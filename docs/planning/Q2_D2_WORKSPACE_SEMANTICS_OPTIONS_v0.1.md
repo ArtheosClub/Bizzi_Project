@@ -1,11 +1,13 @@
 # WP19 / Q2 D2 Workspace-Semantics Options v0.1
 
-**Status:** Draft — D2 proposal narrowed for Project Owner review  
+> **Post-decision synchronization — 2026-08-30:** D2 is now **CLOSED — ACCEPTED** by Project Owner. Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D2_WORKSPACE_SUBJECT_SEMANTICS_DECISION.md`. The analysis below is preserved as the pre-acceptance D2 options/evaluation record. D3–D5 remain **OPEN**. Q2 persisted representation remains **OPEN**, and WP19 remains **BLOCKED / UNAUTHORIZED** unless a separate explicit interim-shape authorization is issued.
+
+**Status:** Historical D2 options/evaluation — D2 subsequently ACCEPTED  
 **Date:** 2026-08-30  
 **Subject:** ADR-0014 Q2 / D2 — semantic meaning of `Workspace` as an AuditRecord subject type  
 **Decision owner:** Project Owner through ADW-07  
-**Authority:** None. This artifact proposes a D2 semantic rule; it does not decide D2.  
-**Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED pending Q2 subject-reference representation resolution.
+**Authority:** Historical analysis only. Canonical D2 authority is recorded separately in `00_ARCHITECTURE/07_AUDIT/ADW07_D2_WORKSPACE_SUBJECT_SEMANTICS_DECISION.md`.  
+**Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED pending Q2 persisted-representation resolution or separate explicit authorization of an interim shape.
 
 ## 1. D2 bounded question
 
@@ -68,9 +70,9 @@ The first clause is valid D2 semantics. The second clause broadens D2 into conte
 
 ## 4. Narrowing finding
 
-Only D2-O1 is retained as the bounded D2 semantic rule.
+Only D2-O1 was retained as the bounded D2 semantic rule.
 
-The following are rejected from the active D2 choice:
+The following were rejected from the active D2 choice:
 
 - using `Workspace` as the owning/current workspace of another subject;
 - using `Workspace` as a fallback whenever workspace context exists;
@@ -78,7 +80,7 @@ The following are rejected from the active D2 choice:
 
 These removals do not decide how workspace context is represented, whether cross-workspace operations exist, or what consistency rules may later apply.
 
-## 5. Preferred D2 proposal
+## 5. Preferred D2 proposal — subsequently accepted
 
 ### D2 recommendation
 
@@ -91,9 +93,11 @@ This rule means, in particular:
 - `Workspace` does not stand in for a `Task` merely because the task is workspace-scoped;
 - `Workspace` does not stand in for a `User` merely because the audit occurs in a workspace context.
 
-## 6. D2 decision status
+## 6. D2 decision state
 
-**PROPOSED — NOT YET ACCEPTED**
+**CLOSED — ACCEPTED.**
+
+Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D2_WORKSPACE_SUBJECT_SEMANTICS_DECISION.md`.
 
 ### D2 scope
 
@@ -123,23 +127,19 @@ D2 does not decide:
 - implementation;
 - final Q2 persisted representation.
 
-### Authority
-
-**NOT YET ESTABLISHED.** This proposal becomes D2 authority only after explicit Project Owner acceptance and separate authority recording.
-
 ## 7. Gate result
 
-**D2 NARROWED TO `Workspace` SUBJECT IDENTITY — SUBJECT IDENTITY KEPT DISTINCT FROM WORKSPACE CONTEXT / OWNERSHIP — ONE SEMANTIC RULE PROPOSED — NOT YET ACCEPTED.**
+**D2 CLOSED — ACCEPTED — CANONICAL AUTHORITY RECORDED SEPARATELY.**
 
 Current Q2 state:
 
 - D1: **CLOSED — ACCEPTED**;
-- D2: **OPEN — PROPOSED / NOT YET ACCEPTED**;
+- D2: **CLOSED — ACCEPTED**;
 - D3–D5: **OPEN**;
 - Q2 persisted representation: **OPEN**;
 - N1–N5: **UNAPPROVED**;
 - GC-002 Alternative B: **PROPOSED ONLY**;
 - ADW-07: **OPEN**;
-- WP19: **BLOCKED / UNAUTHORIZED pending Q2 subject-reference representation resolution**.
+- WP19: **BLOCKED / UNAUTHORIZED pending Q2 persisted-representation resolution or separate explicit interim-shape authorization**.
 
-No model, migration, interim persistence representation, or WP19 implementation authorization is created by this artifact.
+No model, migration, interim persistence representation, or WP19 implementation authorization is created by D2.
