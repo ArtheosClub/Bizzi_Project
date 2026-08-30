@@ -9,7 +9,7 @@
 
 ## 1. D4 bounded question
 
-**What semantic contract must a durable persisted AuditRecord subject reference satisfy, beyond the already-accepted D1–D3 rules, so that subject identity remains unambiguous, historically meaningful, and distinguishable from context or association over time?**
+**What semantic contract must a durable persisted AuditRecord subject reference satisfy, beyond the already-accepted D1–D3 rules, so that subject identity remains unambiguous, historically meaningful, and distinguishable from context, association, and actor attribution over time?**
 
 D4 is a semantic/options decision stage. It is not a persistence-design stage.
 
@@ -29,7 +29,7 @@ A persisted AuditRecord subject reference includes an explicit durable subject-t
 - `WorkspaceMembership`;
 - `Task`.
 
-D4 cannot replace this discriminator with context inference or association inference.
+D4 cannot replace this discriminator with context inference, association inference, or actor inference.
 
 ### D2 — subject versus Workspace context
 
@@ -43,9 +43,11 @@ A committed AuditRecord preserves enough durable subject-reference information t
 
 D4 therefore must not define subject identity as “whatever live row currently resolves” or make historical meaning contingent on current availability.
 
+D3 supplies lifecycle and historical-resolution boundaries only. It does not establish retention periods, legal/compliance erasure policy, or referential-integrity mechanics, and D4 must not attribute those decisions to D3.
+
 ## 3. D4 semantic surfaces
 
-D4 evaluates six semantic surfaces only.
+D4 evaluates seven semantic surfaces only.
 
 ### S4.1 — What constitutes subject identity?
 
@@ -75,7 +77,17 @@ Examples:
 - a User operating in a Workspace remains a User subject if User is the audited subject;
 - an association may itself be a subject only where it is represented as an accepted subject type, such as `WorkspaceMembership`.
 
-### S4.4 — Temporal resolvability
+### S4.4 — Subject identity versus actor attribution
+
+The audited subject answers **what entity was audited**. Actor attribution answers **who or what performed, initiated, authorized, or was attributed to the action**.
+
+These are separate semantic axes. Actor identity, initiator identity, service identity, user identity acting in a Workspace, or other attribution data MUST NOT substitute for missing subject identity and MUST NOT be used to infer a different audited-subject type.
+
+A `User` may be the audited subject in one AuditRecord and the actor in another; the semantic role in the record determines which axis the identity belongs to.
+
+D4 does not define the actor-attribution contract itself.
+
+### S4.5 — Temporal resolvability
 
 The committed subject reference must remain semantically interpretable over time in accordance with D3 even if current live dereference fails.
 
@@ -86,13 +98,13 @@ D4 must distinguish:
 
 The first is required by D3; the second is not universally required by D3.
 
-### S4.5 — Unknown, legacy, unavailable, deleted, or inactive subject
+### S4.6 — Unknown, legacy, unavailable, deleted, or inactive subject
 
 D4 must define whether lack of current resolution invalidates historical identity.
 
 It must not silently invent a new current Q2 subject type such as `Unknown` or `Legacy` because D1 currently permits exactly the five accepted discriminator values.
 
-### S4.6 — Relationship to D3 retention/deletion boundaries
+### S4.7 — Relationship to D3 lifecycle/history boundaries
 
 D4 may rely on D3's historical-identity invariant but must not establish retention periods, legal/compliance erasure policy, FK delete actions, or physical preservation mechanics.
 
@@ -132,7 +144,15 @@ This conflicts with D2 and weakens D1 subject-type meaning.
 
 This changes the audited subject and conflicts with D2/D3 historical meaning.
 
-### D4-O5 — Preserved historical identity may remain currently unresolved
+### D4-O5 — Actor attribution may substitute for subject identity
+
+**Rule:** where subject identity is missing or unavailable, actor/initiator/attribution identity may be used as the audited-subject identity or as evidence sufficient to infer it.
+
+**Result: FAIL.**
+
+Actor attribution and audited-subject identity answer different semantic questions. Substitution would collapse two independent audit dimensions and could falsely identify the actor as the entity that was mutated or audited.
+
+### D4-O6 — Preserved historical identity may remain currently unresolved
 
 **Rule:** a committed subject reference may be historically valid even when no current live entity can be resolved, provided the durable reference still preserves the accepted subject type and a stable historical identity sufficient to distinguish the audited subject according to D1–D3.
 
@@ -140,7 +160,7 @@ This changes the audited subject and conflicts with D2/D3 historical meaning.
 
 This covers deleted, unavailable, archived, disconnected, or legacy-resolution cases without inventing a persistence mechanism.
 
-### D4-O6 — Unknown subject type/value as a sixth current subject category
+### D4-O7 — Unknown subject type/value as a sixth current subject category
 
 **Rule:** persist `Unknown`, `Legacy`, or equivalent as another subject type whenever resolution is unavailable.
 
@@ -150,7 +170,7 @@ D1 explicitly requires the discriminator's committed value to identify exactly o
 
 A legacy record may have incomplete or non-conforming historical data, but that is different from creating a new accepted subject type.
 
-### D4-O7 — Legacy identity may be preserved without pretending it is canonical
+### D4-O8 — Legacy identity may be preserved without pretending it is canonical
 
 **Rule:** where a historical/legacy AuditRecord has an identity value that cannot be normalized to the current canonical identity convention without invention, the original durable evidence may be preserved and explicitly treated as legacy/unresolved metadata while the record's compliance with the current D1–D4 contract is reported separately.
 
@@ -160,7 +180,7 @@ This avoids fabricating identity. It does not declare non-conforming legacy reco
 
 ## 5. Current five subject types
 
-D4-O2/O5 apply uniformly at semantic-contract level to all five accepted D1 types:
+D4-O2/O6 apply uniformly at semantic-contract level to all five accepted D1 types:
 
 ### `Workspace`
 
@@ -172,7 +192,7 @@ The reference identifies one historical EnterpriseObject subject. Workspace asso
 
 ### `User`
 
-The reference identifies one historical User subject. Disabled/deleted/unavailable account state does not convert the subject into Workspace/context identity. Legal/compliance handling remains separate.
+The reference identifies one historical User subject when User is the audited subject. Disabled/deleted/unavailable account state does not convert the subject into Workspace/context identity. A User acting on another subject is actor attribution and does not make User the audited subject. Legal/compliance handling remains separate.
 
 ### `WorkspaceMembership`
 
@@ -190,7 +210,7 @@ D4 must distinguish these states:
 - **Unavailable current subject:** historical identity is known, but the live subject cannot currently be fetched/resolved.
 - **Deleted/deactivated subject:** D3 applies; historical identity remains stable.
 - **Legacy identity evidence:** historical data exists under an earlier/non-canonical convention; do not fabricate canonical identity.
-- **Missing/insufficient subject identity:** the record cannot be claimed compliant with the current durable subject-reference contract merely because context or actor data exists.
+- **Missing/insufficient subject identity:** the record cannot be claimed compliant with the current durable subject-reference contract merely because context, association, or actor-attribution data exists.
 
 D4 does not define migration, repair, reconciliation, or legacy-data rewriting procedures.
 
@@ -198,12 +218,13 @@ D4 does not define migration, repair, reconciliation, or legacy-data rewriting p
 
 The narrowest rule consistent with D1–D3 is:
 
-> **A durable committed AuditRecord subject reference MUST identify exactly one historical audited subject instance using the accepted D1 subject type together with a durable subject-identity value or identity convention whose committed meaning remains stable over time. Subject identity MUST remain distinct from context and from association participants. Historical validity does not depend on successful current live dereference: an unavailable, deleted, deactivated, or otherwise non-live subject may remain historically resolvable when the committed reference still identifies that subject under the durable identity contract. D4 does not create additional subject types, does not permit context to substitute for subject identity, and does not select the physical representation or referential-integrity mechanism. Legacy or insufficient identity evidence MUST NOT be silently normalized by invention; its compatibility with the current contract must be handled explicitly.**
+> **A durable committed AuditRecord subject reference MUST identify exactly one historical audited subject instance using the accepted D1 subject type together with a durable subject-identity value or identity convention whose committed meaning remains stable over time. Subject identity MUST remain distinct from context, association participants, and actor attribution. Historical validity does not depend on successful current live dereference: an unavailable, deleted, deactivated, or otherwise non-live subject may remain historically resolvable when the committed reference still identifies that subject under the durable identity contract. D4 does not create additional subject types, does not permit context, association participants, or actor attribution to substitute for subject identity, and does not select the physical representation or referential-integrity mechanism. Legacy or insufficient identity evidence MUST NOT be silently normalized by invention; its compatibility with the current contract must be handled explicitly.**
 
 ## 8. What D4 does not decide
 
 D4 does not decide:
 
+- actor-attribution semantics, fields, identity model, or attribution mechanism;
 - exact field/column names;
 - UUID versus integer versus string versus composite identity values;
 - FK or composite-FK structure;
@@ -232,7 +253,7 @@ This artifact is an options/evaluation document only. A separate Project Owner a
 
 ## 10. Gate result
 
-**D4 SEMANTIC OPTIONS STRUCTURED — D1–D3 PRESERVED — SUBJECT / CONTEXT / ASSOCIATION KEPT DISTINCT — TEMPORAL HISTORICAL RESOLUTION DEFINED WITHOUT LIVE-DEREFERENCE REQUIREMENT — UNKNOWN/LEGACY/UNAVAILABLE CASES EXPOSED — NO PERSISTENCE SHAPE OR N1–N5 SELECTION — GC-002 ALTERNATIVE B REMAINS PROPOSED ONLY — D4 OPEN / NOT YET ACCEPTED.**
+**D4 SEMANTIC OPTIONS STRUCTURED — D1–D3 PRESERVED — SUBJECT / CONTEXT / ASSOCIATION / ACTOR ATTRIBUTION KEPT DISTINCT — TEMPORAL HISTORICAL RESOLUTION DEFINED WITHOUT LIVE-DEREFERENCE REQUIREMENT — UNKNOWN/LEGACY/UNAVAILABLE CASES EXPOSED — D3 LIFECYCLE/HISTORY BOUNDARY PRESERVED WITHOUT RETENTION-POLICY SUBSTITUTION — NO PERSISTENCE SHAPE OR N1–N5 SELECTION — GC-002 ALTERNATIVE B REMAINS PROPOSED ONLY — D4 OPEN / NOT YET ACCEPTED.**
 
 Current Q2 state:
 
