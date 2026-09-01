@@ -1,14 +1,15 @@
 # Q2 Evaluation Framework Candidate v0.1
 
-**Status:** Draft
-**Artifact type:** Research candidate — non-authoritative reference material
-**Date:** 2026-08-23
-**Subject:** ADR-0014 Q2 — persisted `AuditRecord` subject-reference representation
-**Decision owner:** Project Owner through ADW-07
-**Authority:** None. This artifact records research and a candidate decision procedure only.
-**Implementation effect:** None. WP19 remains blocked and unauthorized for implementation.
+**Status:** Active — evaluation procedure approved for normative use  
+**Artifact type:** Approved evaluation procedure; not Q2 representation authority  
+**Date:** 2026-08-23  
+**Procedure approval:** 2026-08-28 — ADW-07 Block 4  
+**Subject:** ADR-0014 Q2 — persisted `AuditRecord` subject-reference representation  
+**Decision owner:** Project Owner through ADW-07  
+**Authority:** Procedure authority conferred by `00_ARCHITECTURE/07_AUDIT/ADW07_BLOCK4_Q2_EVALUATION_PROCEDURE_APPROVAL.md`. This artifact defines the approved evaluation method; it does not itself select a Q2 representation or replace the separate authority artifacts that decide individual decision surfaces.  
+**Implementation effect:** None. WP19 remains blocked and unauthorized for implementation pending explicit Q2 persisted-representation resolution or separate explicit bounded interim-shape authorization.
 
-> **Standing warning:** This document is not an ADR, ADW decision block, architecture decision, planning authority, or implementation authorization. It must not be cited as authority for a Q2 representation or for any D1–D6 decision below. It is filed under `docs/planning/`, `DECISION_0002`'s Tier 4 (`docs/planning/` + `50_IMPLEMENTATION/`: sequencing and MVP scope). Tier 4 standing applies to the directory, not to this document's content — this artifact is not a planning decision or amendment, and its own non-authoritative status rests on this declaration, not on its location. `06_REFERENCE/` was considered and rejected: `DECISION_0002`'s Tier 0–6 hierarchy does not mention that directory at all, so its absence from the table was never an exclusionary ranking to rely on, and its current contents (RKM-01/RSM-01, both Draft) are a different genre of document — proposed repository-reorganization models, not research/decision-support material.
+> **Authority boundary:** This document was originally authored as a research candidate and subsequently approved by ADW-07 Block 4 for normative procedural use. Its procedure is therefore active. Representation outcomes and later decisions are not created by this document merely because the procedure is active. D1–D5 are governed by their separate canonical ADW-07 authority artifacts. Q2 persisted representation remains unresolved.
 
 ---
 
@@ -16,7 +17,7 @@
 
 ADR-0014 closes Q1: a persisted `AuditRecord` must durably identify the subject of the audited mutation. The decision is shape-neutral. No dedicated column, foreign key, composite key, payload representation, reference table, or other persisted shape is approved by default.
 
-ADW-07 Block 3 discharges ADR-0014's routing obligation under branch (a) and establishes ADW-07 as the substantive owner of Q2. It does not decide Q2's persisted representation and does not create the evaluative framework required to decide it.
+ADW-07 Block 3 discharges ADR-0014's routing obligation under branch (a) and establishes ADW-07 as the substantive owner of Q2. ADW-07 Block 4 subsequently approved the evaluation procedure in this artifact for normative use. D1–D5 were then decided through separate canonical ADW-07 authority artifacts. None of those decisions selects the final persisted representation.
 
 Current state:
 
@@ -24,16 +25,18 @@ Current state:
 Q1 CLOSED
 → routing obligation DISCHARGED
 → ADW-07 ownership of Q2 ESTABLISHED
+→ evaluation procedure ACTIVE / APPROVED FOR NORMATIVE USE
+→ D1–D5 CLOSED / ACCEPTED through separate authority artifacts
+→ Q2-RI OPEN — DB-enforced referential-integrity weight not established
 → Q2 persisted representation OPEN — NOT ESTABLISHED
-→ evaluative framework not yet approved
 → WP19 BLOCKED / implementation unauthorized
 ```
 
 ```text
-Routing resolved != Q2 resolved != WP19 implementation authorized
+Procedure approved != decision surfaces resolved != Q2 representation resolved != WP19 implementation authorized
 ```
 
-This artifact proposes the following candidate procedure:
+The approved procedure is:
 
 ```text
 AUTHORITATIVE CONSTRAINTS
@@ -54,8 +57,6 @@ Q2 REPRESENTATION DECISION
 SEPARATE WP19 READINESS RE-EVALUATION
 ```
 
-The procedure itself is not yet normative. Project Owner approval is required before it is used as the required Q2 decision method.
-
 ---
 
 ## 2. Authoritative constraints
@@ -70,11 +71,11 @@ Diagnostic questions when applying A1:
 - Can the subject type be determined directly or through an explicitly defined durable convention?
 - Does resolution survive independently of request state, logs, session memory, transient actor context, or other non-durable information?
 
-Type disambiguation is a strong derived concern inside A1, not an independently established hard gate.
+Type disambiguation was a strong derived concern inside A1 when this framework was authored. It was later resolved separately by accepted D1 authority.
 
 ### A2 — Committed reference meaning must not silently change
 
-**Established core — D10 historical-record semantics and ADR-0014 reversibility reasoning.** Once committed, the AuditRecord's persisted meaning must not silently repoint to a different subject. Correction requires a new historical record rather than mutation of the committed record.
+**Established core — D10 historical-record semantics and ADR-0014 reversibility reasoning.** Once committed, the AuditRecord's persisted meaning must not silently repoint to a different subject. Because audit records are durable and immutable, silently changing the meaning of an already committed audit reference is not permitted. A correction should therefore be represented as a new historical record rather than by mutating the committed record; this is a derived consequence of the immutability rule, not a separately quoted D10 sentence.
 
 Diagnostic question:
 
@@ -88,7 +89,9 @@ A2 does not itself establish that the referenced subject must remain physically 
 
 ### A4 — Do not assume Event/AuditRecord identity
 
-**Established non-identity; complete relationship still open — ADW-07 Blocks 1–2, R1.** A Q2 representation must not depend on an assumption that Event and AuditRecord share identity or infrastructure. If a candidate requires one particular R1 answer, classify the dependency as `UNDETERMINED — R1 DECISION REQUIRED`.
+**Established non-identity; complete relationship still open — ADW-07 Block 1.** Domain Event is not an AuditRecord, and their complete relationship remains open. A Q2 representation must not depend on an assumption that Event and AuditRecord share identity or infrastructure.
+
+Separately, Block 2 Residual Question R1 remains open concerning Domain Event ↔ Durable Audit / Outbox / Publication-Intent identity. Do not treat R1 as synonymous with the Event/AuditRecord relationship. If a candidate depends on one particular R1 answer, classify that dependency as `UNDETERMINED — R1 DECISION REQUIRED`.
 
 ### A5 — Retention duration is excluded
 
@@ -157,8 +160,8 @@ Use `SUPPORTED`, `UNSUPPORTED`, `UNDETERMINED — DECISION REQUIRED`, or `NOT AP
 - **S5 Task as subject** — does it work for a conventional workspace-scoped work item?
 - **S6 Subject deletion** — does historical subject identity remain meaningful if a subject may later be physically deleted? Does the candidate assume, without authority, that AuditRecord itself prevents deletion?
 - **S7 Lifecycle change** — does reference meaning survive archival, supersession, or other lifecycle changes without rewriting the AuditRecord?
-- **S8 New subject type** — what changes if a sixth auditable subject type is introduced?
-- **S9 R1 unresolved** — does the candidate require a particular Event/AuditRecord relationship that ADW-07 has not decided?
+- **S8 New subject type** — what changes if a future auditable subject type is introduced under separate architecture authority?
+- **S9 R1 unresolved** — if the candidate depends on a particular Domain Event ↔ Durable Audit / Outbox / Publication-Intent identity answer, does it require one R1 outcome that ADW-07 has not decided? R1 is not another name for the separate, still-open Event/AuditRecord relationship.
 - **S10 Cross-workspace ambiguity** — can subjects from different architectural scopes become indistinguishable under the persisted reference contract?
 
 ---
@@ -170,8 +173,8 @@ Comparison follows authority checking. Comparative dimensions cannot override A1
 No weights or numeric score are proposed in v0.1.
 
 - **C1 Queryability / audit retrieval** — how naturally can audit history be retrieved for a known subject? ADR-0005 supports queryability as a legitimate concern but does not mandate a particular mechanism.
-- **C2 Integrity characteristics** — what correctness properties can be enforced, and where? Keep this neutral between DB constraints, application/domain validation, durable identifier conventions, and other mechanisms. A DB foreign key receives no automatic preference.
-- **C3 Extensibility** — what schema, interpretation, migration, or discriminator changes are required to add another subject type?
+- **C2 Integrity characteristics** — what correctness properties can be enforced, and where? Keep this neutral between DB constraints, application/domain validation, durable identifier conventions, and other mechanisms. A DB foreign key receives no automatic preference unless separate authority establishes such a preference or requirement.
+- **C3 Extensibility** — what schema, interpretation, migration, or discriminator changes are required to add another subject type? Under accepted D5, extensibility convenience is informative but is not by itself a ranking preference.
 - **C4a Write/storage cost** — persisted fields, indexes, storage growth, write complexity.
 - **C4b Read/query cost** — joins, predicates, payload parsing, indexability, cross-type querying.
 - **C4c Migration cost** — initial migration, future migration burden, historical-data transformation.
@@ -179,16 +182,21 @@ No weights or numeric score are proposed in v0.1.
 
 ---
 
-## 7. Explicit open decision surfaces
+## 7. Decision surfaces and identifier reconciliation
 
-These are questions exposed by the research. This artifact does **not** decide them.
+The original research candidate exposed six decision surfaces labeled D1–D6. D1–D5 have since been decided through separate canonical ADW-07 authority artifacts, and D6 was approved by ADW-07 Block 4. This section preserves traceability while reconciling one identifier collision discovered after those decisions were recorded.
 
-- **D1 — Type disambiguation:** must subject type be structurally encoded, or may another durable convention resolve it?
-- **D2 — Reference-level workspace semantics:** how should workspace integrity apply across structurally asymmetric subject types?
-- **D3 — Subject deletion:** does an AuditRecord reference itself block physical deletion of its subject? Current authority does not clearly establish this.
-- **D4 — DB-enforced referential integrity:** requirement, preference, or neither? Not established.
-- **D5 — Subject-type set:** fixed to WP19's five current types or designed for extension? Not established.
-- **D6 — Procedure approval:** should ADW-07 use the proposed constraint-check → stress-test → comparison procedure? Candidate only; Project Owner approval required before normative use.
+- **D1 — Type disambiguation:** CLOSED / ACCEPTED. Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D1_SUBJECT_TYPE_DISAMBIGUATION_DECISION.md`.
+- **D2 — Workspace subject semantics:** CLOSED / ACCEPTED. Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D2_WORKSPACE_SUBJECT_SEMANTICS_DECISION.md`.
+- **D3 — Subject deletion / historical identity:** CLOSED / ACCEPTED. Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D3_SUBJECT_DELETION_DECISION.md`.
+- **D4 — Subject-reference semantics:** CLOSED / ACCEPTED. Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D4_SUBJECT_REFERENCE_SEMANTICS_DECISION.md`.
+- **D5 — Current subject-type scope / extensibility:** CLOSED / ACCEPTED. Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_D5_SUBJECT_TYPE_EXTENSIBILITY_DECISION.md`.
+- **D6 — Procedure approval:** CLOSED / APPROVED by ADW-07 Block 4. Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_BLOCK4_Q2_EVALUATION_PROCEDURE_APPROVAL.md`.
+- **Q2-RI — DB-enforced referential integrity:** OPEN. Is DB-enforced referential integrity a requirement, a preference, or neither for the Q2 persisted subject-reference representation? Not established.
+
+**Identifier reconciliation note:** the original v0.1 research candidate labeled the DB-enforced referential-integrity surface as `D4`. The identifier `D4` was subsequently assigned to the accepted Subject Reference Semantics decision. The historical RI surface is therefore renamed **Q2-RI** for all current and future work. This is a namespace reconciliation only; it does not answer the RI question.
+
+A separate subject-type ranging-rule gap has also been exposed after D1/D5 acceptance. It is not silently added to D1 or D5 and is handled as a separate bounded surface, **Q2-ST**, outside the historical D1–D6 numbering.
 
 ---
 
@@ -212,13 +220,13 @@ The following are **not** admitted merely by assumption:
 
 ## 9. Decision-sufficiency test
 
-Before the framework becomes normative, ask:
+Before selecting a representation, ask:
 
-> If two future candidates both satisfy all authoritative constraints, do the stress tests and comparative criteria provide enough information to explain a rational choice between them?
+> If two candidates both satisfy all authoritative constraints, do the stress tests, comparative criteria, and resolved decision surfaces provide enough information to explain a rational choice between them?
 
 If not, the response is:
 
-**FRAMEWORK INSUFFICIENT — ADD DECISION DIMENSION**
+**FRAMEWORK INSUFFICIENT — ADD OR RESOLVE DECISION DIMENSION**
 
 not an arbitrary candidate selection.
 
@@ -229,14 +237,14 @@ not an arbitrary candidate selection.
 This artifact does not:
 
 - select, recommend, rank, reject, or enumerate candidate representations;
-- resolve Event/AuditRecord R1;
-- decide D1–D6;
-- decide whether AuditRecord references block subject deletion;
-- create a uniform workspace-reference rule;
+- resolve the Event/AuditRecord relationship or Block 2 Residual Question R1 (Domain Event ↔ Durable Audit / Outbox / Publication-Intent identity);
+- itself decide D1–D5; their authority lives in separate canonical files;
+- decide Q2-RI;
+- decide Q2-ST;
+- create a uniform workspace-reference rule beyond accepted D2;
 - approve or change GC-002, GC-006, or GC-007;
 - authorize WP19;
 - alter WP18;
-- create an ADW-07 Block 4;
 - create an ADR;
 - change backend or schema scope.
 
@@ -269,24 +277,21 @@ Every architecture-based result must cite authority. Implementation-based result
 
 `DECISION_0002` establishes the binding Tier 0–6 authority chain and explicitly assigns `docs/planning/` (together with `50_IMPLEMENTATION/`) to Tier 4: "Sequencing and MVP scope, deriving vocabulary from Tier 2 and technology assumptions from Tier 3" (`DECISION_0002` §1; mirrored in `ARCHITECTURE_SPECIFICATION.md` §3). This is an explicit ranking, not an absence.
 
-That Tier 4 standing belongs to the directory, not automatically to any document filed in it. `docs/planning/DEFERRED_ARCHITECTURE_INITIATIVES.md` already establishes the pattern this artifact follows: a Tier-4 location can and does hold proposed, not-yet-decided material, provided the document's own header states its status plainly. This file does the same — it holds research and a candidate procedure, not a planning decision, and its non-authoritative status rests on the declaration at the top of this document, not on an inference from where it sits.
+The artifact was originally placed here as a research candidate. Its later procedural authority is conferred externally by ADW-07 Block 4; its directory placement does not by itself elevate representation recommendations or decisions. Canonical D1–D5 authority remains in `00_ARCHITECTURE/07_AUDIT/`.
 
-`06_REFERENCE/` was considered and rejected as a placement. `DECISION_0002`'s Tier 0–6 hierarchy does not mention that directory at all — its absence from the table means the question of its rank was never addressed, not that it was assigned a non-authoritative rank by omission. Its only current occupants, RKM-01 and RSM-01 (both Draft), are a different genre of document — proposed repository-reorganization models, not decision-support research — so filing unrelated material there would establish a new pattern by fiat rather than follow an existing one.
-
-No new authority tier or document-status vocabulary is created here. Under ADR-0008, the document status is `Draft`: authored, not in force, and still materially changeable.
+No new authority tier is created by activating the approved procedure.
 
 ---
 
-## 13. Next review step
+## 13. Current next steps
 
-Before candidate representations are enumerated:
+The evaluation procedure is already approved and D1–D5 are already accepted. Before a Project Owner Q2 persisted-representation decision:
 
-1. review A1–A6 for completeness and citation precision;
-2. confirm that candidate checking is a procedure against A1–A6, not a duplicate gate layer;
-3. review S1–S10 and C1–C5 for representation neutrality;
-4. decide whether the proposed procedure itself should receive Project Owner approval for normative use;
-5. leave D1–D6 unresolved unless and until a separate explicit decision addresses them.
+1. resolve **Q2-RI** — DB-enforced referential-integrity weight (`requirement / preference / neither` or another explicitly approved formulation);
+2. resolve **Q2-ST** — the architecture-level rule that determines the admissible AuditRecord subject-type discriminator vocabulary;
+3. re-apply the resulting authority to N1–N5 without importing a physical-shape preference by implication;
+4. only then prepare the separate Project Owner Q2 persisted-representation decision.
 
-Until then:
+Until that separate representation decision:
 
-**RESEARCH CANDIDATE ONLY — Q2 REMAINS OPEN — WP19 REMAINS BLOCKED.**
+**PROCEDURE ACTIVE — Q2 REPRESENTATION OPEN — WP19 REMAINS BLOCKED / UNAUTHORIZED.**

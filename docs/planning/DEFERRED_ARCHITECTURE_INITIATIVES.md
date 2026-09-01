@@ -58,6 +58,36 @@ Packages complete, decisions covered by tests.
 verification layer; building them separately means building the same
 traversal twice.
 
+## D-11 — Reusable AuditRecord subject-kind ↔ persisted-identity mapping layer
+
+Q2-ST analysis identified an architecturally viable alternative in which
+AuditRecord subject kinds are governed through an explicit reusable mapping
+layer between logical subject kinds and one or more permitted persisted
+identity forms (Q2-ST-O3).
+
+The idea is deferred rather than rejected. Under the current recommended
+Q2-ST-O2 rule, mapping is an exception mechanism rather than the default
+architecture layer. Building a general mapping layer before any mapping
+exception exists would introduce governance/resolver/versioning machinery
+against predicted future specialization growth rather than a demonstrated
+need.
+
+**Reopen when:** the **first mapping exception is explicitly accepted**
+under the Q2-ST subject-ranging authority — i.e. the first time one already-
+authorized AuditRecord subject kind is permitted to resolve to an additional
+persisted identity form that is not already covered by its canonical
+persisted subject-identity contract.
+
+That event is itself evidence that a reusable mapping abstraction may now
+solve an existing problem. On reopen, compare continuing with explicit
+per-exception authority against promoting a reusable versioned mapping
+contract. The review must preserve D3/D4 historical stability, D5-equivalent
+authority for expansion of the audited-subject universe, and accepted Q2-RI
+per-realization weighting.
+
+This entry does not authorize O3, any mapping exception, any resolver
+infrastructure, or any new AuditRecord subject kind.
+
 ---
 
 ## Explicitly not doing

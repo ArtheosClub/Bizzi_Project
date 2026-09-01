@@ -138,6 +138,12 @@ remainder, the same split shape WP16 carries after A-03.
   remains deferred to the later Work Package or architecture decision
   that actually consumes it; A-10 does not re-route or resolve those
   concerns.
+- **AuditRecord subject-kind trigger.** Before any service or runtime
+  work in this WP's deferred remainder introduces an auditable mutation
+  for a persisted identity form not already covered by accepted
+  AuditRecord subject authority, consult
+  `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_ST_SUBJECT_TYPE_RANGING_RULE_DECISION.md`.
+  Pointer only; the canonical rule is in that record.
 - **Marker note**: `🟡`, not `🟢` — the same distinction WP16's marker
   note draws. Schema foundation is unblocked; the deferred runtime/
   configuration remainder is not. `🟡` here means "nothing
@@ -441,6 +447,11 @@ workshop draft.)
   WP18: PR #31 already established WP19 does not depend on WP18, and
   this blocker runs through AuditRecord's own Q2 gap, not through
   Event.
+- **AuditRecord subject-kind trigger.** Before implementation introduces
+  an auditable mutation for a persisted identity form not already
+  covered by accepted AuditRecord subject authority, consult
+  `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_ST_SUBJECT_TYPE_RANGING_RULE_DECISION.md`.
+  Pointer only; the canonical rule is in that record.
 - **Owner**: Engineering.
 
 ## WP20 — ContextPackage Model 🔴
