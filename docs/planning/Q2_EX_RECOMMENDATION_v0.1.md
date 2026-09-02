@@ -1,11 +1,13 @@
 # WP19 / Q2-EX Recommendation v0.1
 
-**Status:** Draft — recommendation only  
+**Status:** Historical — recommendation accepted as Q2-EX-O1 on 2026-09-01  
 **Date:** 2026-08-30  
 **Subject:** BR3/N3 exclusivity / discriminator consistency  
 **Decision owner:** Project Owner through ADW-07  
-**Authority:** None. This artifact recommends; it does not decide Q2-EX or final Q2 representation.  
-**Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED.
+**Authority:** None. Historical recommendation only. Canonical authority: `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_EX_SUBJECT_KIND_EXCLUSIVITY_DECISION.md`.  
+**Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED pending final Q2 persisted-representation authority.
+
+> **Historical-status note:** this file preserves the reviewed recommendation that preceded acceptance. Any language below saying Q2-EX is OPEN, recommended, or awaiting Project Owner review describes the pre-acceptance state and is retained as historical analysis rather than current authority.
 
 ## 1. Recommendation
 

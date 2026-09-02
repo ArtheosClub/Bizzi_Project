@@ -1,10 +1,12 @@
 # WP19 / Q2-EX — O1 vs O2 Comparison v0.1
 
-**Status:** Draft — bounded comparative analysis only  
+**Status:** Historical — pre-decision options/evaluation  
 **Date:** 2026-08-30  
 **Subject:** BR3/N3 — structural qualification versus duplicated scalar discriminator  
-**Authority:** None. This artifact compares Q2-EX-O1 and Q2-EX-O2; it does not select BR3 or final Q2 representation.  
-**Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED.
+**Authority:** None. Historical analysis only. Canonical accepted authority: `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_EX_SUBJECT_KIND_EXCLUSIVITY_DECISION.md`.  
+**Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED pending final Q2 persisted-representation authority.
+
+> **Historical-status note:** Q2-EX was accepted on 2026-09-01 as O1, conditional on BR3/N3 selection. The comparative analysis below is preserved as the pre-decision record. Any language below describing Q2-EX as OPEN or O1 as merely proposed or recommended is historical rather than current state.
 
 ## 1. Compared realizations
 

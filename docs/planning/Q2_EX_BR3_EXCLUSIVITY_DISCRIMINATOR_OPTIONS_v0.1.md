@@ -112,6 +112,16 @@ A representation that permits zero/multiple slots or disagreement between durabl
 
 This planning artifact recommends rejection; only explicit architecture authority can close Q2-EX.
 
+### Q2-EX-O5 — Derived, non-independently-writable kind projection over structural qualification
+
+**Evaluation:** not an alternative to O1–O4 — an augmentation of O1. Viable, but no demonstrated need; recommended for deferral rather than selection or rejection.
+
+A database-derived column computes the subject kind from which authorized reference path is populated. It provides the scalar type-query ergonomics of O2/O3 without their agreement invariant, because a derived value is not independently written and therefore cannot disagree with the state it is computed from. It presupposes structural qualification and adds nothing to the durable subject-identity contract itself.
+
+No query workload has been observed that requires it: WP19 has no implementation and no audit rows exist, so the need is predicted rather than demonstrated. Deferring it costs little precisely because it introduces no independently written state — adding it later changes no committed fact and creates no historical-consistency obligation, unlike O2 and O3, whose duplicated state is expensive to reverse once records are permanent.
+
+This planning artifact recommends deferral; only explicit architecture authority can close Q2-EX.
+
 ## 5. Comparative matrix
 
 | Dimension | O1 Structural qualification | O2 Separate discriminator + DB invariant | O3 Separate discriminator + app invariant |
@@ -124,6 +134,8 @@ This planning artifact recommends rejection; only explicit architecture authorit
 | Additional DB integrity credit | Available if exactly-one is DB-enforced | Strongest for consistency/match | None for consistency/match |
 | Scalar `subject_type` query | Derived | Direct | Direct |
 | Evolution when a new kind is authorized | Add slot + extend exactly-one | Add slot + discriminator value + extend match rule | Same as O2 plus service validation |
+
+Q2-EX-O5 is not in this matrix: it augments O1 rather than competing with it, so its rows would duplicate O1's on every dimension except the scalar type-query row.
 
 ## 6. Decision-sufficiency observation
 
@@ -151,4 +163,4 @@ If the final Q2 representation does not select BR3/N3, Q2-EX may be closed as NO
 
 ## 8. Next bounded step
 
-Evaluate Q2-EX-O1/O2/O3 and determine whether one is preferred if BR3 is selected. Do not yet create final Q2 representation authority unless that authority either resolves Q2-EX together with BR3 selection or selects a non-BR3 representation and explicitly marks Q2-EX NOT APPLICABLE.
+Q2-EX is now closed by accepted architecture authority; see `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_EX_SUBJECT_KIND_EXCLUSIVITY_DECISION.md`. This artifact is retained as the options material the decision was taken on.
