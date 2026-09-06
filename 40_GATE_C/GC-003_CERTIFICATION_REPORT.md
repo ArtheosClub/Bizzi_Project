@@ -1,3 +1,33 @@
+> ## ⚠️ Prologue — added 2026-09-06
+>
+> **A certification assessment report is a snapshot of repository state at
+> a specific point in time. It is not a living document. It is never
+> edited to reflect later changes — later developments are recorded in a
+> prologue like this one, and the findings below stand exactly as
+> originally written, including any that subsequent events have
+> overtaken.**
+>
+> This prologue is additive. Not one word of the report body below has
+> been altered.
+>
+> **Subsequent developments affecting this report's findings:**
+>
+> - **PR #2 (`claude/gate-c-platform-backbone`) has since been merged**
+>   — merge commit `dfb8804`, 2026-07-27. The statements below that
+>   describe it as open or unmerged — §4.6 (Observed Gaps), §5 (Major
+>   Non-Conformity #4), §7 (Risk R-3), and §9 (Condition 4) — were
+>   accurate when this report was written and are no longer current.
+> - **Outstanding Item OI-004**, which carried this finding forward, was
+>   closed 2026-08-03 by Project Owner authorization under OIR-01 §10
+>   Exit Mechanism 3 (Repository Change), citing the same merge commit
+>   (`45_GATE_C_TRANSITION/OUTSTANDING_ITEMS.md`).
+>
+> This prologue records repository facts only. It does not restate,
+> amend, discharge, or reinterpret any condition enumerated in §9, and it
+> does not alter the certification recommendation in §9 or the
+> certification statement in §10. The disposition of §9's conditions
+> belongs to GC-004 (Gate C Approval) and GC-005 (Gate Closure), per §10.
+
 # GC-003 — Gate C Certification Assessment Report
 
 Document ID: GC-003
