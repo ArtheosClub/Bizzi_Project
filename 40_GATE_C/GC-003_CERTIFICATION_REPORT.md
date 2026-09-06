@@ -1,3 +1,32 @@
+> ## ⚠️ Prologue — added 2026-09-06
+>
+> **This certification assessment report is a snapshot of repository state
+> at a specific point in time. It is not a living document. Its assessment
+> body is not edited to reflect later changes; subsequent developments are
+> recorded in an additive prologue, while the original findings remain
+> preserved as issued.**
+>
+> This prologue is additive. Not one word of the report body below has been
+> altered.
+>
+> **Subsequent developments affecting this report's findings:**
+>
+> - **PR #2 has since been merged** (merge commit
+>   `dfb88047f66cc30dcd1e7c0ad6daec1910d461b9`, 2026-07-27).
+>   Statements in §4.6, §5 Major Non-Conformity #4, §7 risk R-3,
+>   and §9 condition 4 that describe PR #2 or its five-file reconciliation
+>   as unmerged, open, or outstanding were accurate at the assessment
+>   baseline and are no longer current.
+> - The underlying repository condition was subsequently resolved, so Major
+>   Non-Conformity #4, risk R-3, and §9 condition 4 are no longer outstanding.
+> - **OI-004 was closed on 2026-08-03** by repository change, recorded in
+>   `45_GATE_C_TRANSITION/OUTSTANDING_ITEMS.md` by commit
+>   `3f3758e66c90ce1544cbd9a3cc0b01bfccafefad`.
+> - These subsequent developments do not reopen OI-004, alter any other
+>   finding, or constitute a new certification assessment. The original
+>   **CONDITIONAL PASS** remains the recommendation issued by this report.
+>
+
 # GC-003 — Gate C Certification Assessment Report
 
 Document ID: GC-003
