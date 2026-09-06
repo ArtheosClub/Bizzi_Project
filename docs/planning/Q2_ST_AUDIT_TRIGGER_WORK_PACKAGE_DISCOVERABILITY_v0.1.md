@@ -4,7 +4,7 @@
 **Date:** 2026-08-30  
 **Scope:** WP14 / WP19 discoverability for the accepted Q2-ST AuditRecord subject-identity reopen trigger  
 **Authority:** None. Canonical authority is `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_ST_SUBJECT_TYPE_RANGING_RULE_DECISION.md`.  
-**Implementation effect:** None. WP19 remains BLOCKED / UNAUTHORIZED.
+**Implementation effect:** None. The persisted Q2 representation decision was accepted 2026-09-05 and the Q2 blocker is closed; this note does not authorize WP19 implementation, whose readiness and authorized scope are governed by its `IMPLEMENTATION_BACKLOG.md` entry and applicable approved amendments.
 
 ## Purpose
 
@@ -18,7 +18,10 @@ WP19 is the Work Package that will implement the persisted AuditRecord subject-r
 
 **Planning discoverability rule:** before WP19 representation/migration/service implementation is authorized, re-check the accepted Q2-ST authority for the AuditRecord subject-kind / canonical persisted subject-identity trigger. Any subject identity form used by WP19 must already be covered by an accepted AuditRecord subject kind and canonical persisted subject-identity contract, or the required subject-kind/mapping authority must be reopened first.
 
-This note does not change WP19's current state: **BLOCKED / UNAUTHORIZED** pending final Q2 persisted-representation resolution.
+This note does not change WP19's state. The final Q2 persisted-representation
+decision was accepted 2026-09-05, closing the Q2 blocker. This note does not
+authorize WP19 implementation; readiness and authorized scope are governed by
+WP19's `IMPLEMENTATION_BACKLOG.md` entry and applicable approved amendments.
 
 ## WP14 — AgentDefinition runtime/configuration remainder
 
