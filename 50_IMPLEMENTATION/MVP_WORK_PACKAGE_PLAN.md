@@ -720,11 +720,14 @@ blocker A-09 recorded. What it does not do is authorize WP19's currently
 recorded deliverable, which still reads `model/repository/service`. A-11
 therefore proposes the narrowest scope that actually changes the critical path.
 
-**Why not schema-only.** A-02, A-04 and A-10 each deferred a repository/service
-half because ADR-0005 forbids unaudited state-changing service work and
-`AuditService` does not exist. Narrowing WP19 the same way would create the
-`audit_records` table and leave every dependent exactly as blocked as before.
-The unblocking unit is a callable service, not a table.
+**Why not schema-only.** A-02 and A-04 deferred their repository/service work
+specifically because ADR-0005 requires `AuditService`. A-10 likewise kept
+repository/service work outside its schema foundation, with ADR-0005/WP19 as one
+boundary alongside WP14's independent unresolved runtime/configuration concerns.
+Narrowing WP19 to schema-only would create the table without providing the
+callable audit boundary required by WP13 and WP15, and would remove none of
+WP14's independent blockers. The unblocking unit is a callable service, not a
+table.
 
 **What it unblocks, and what it does not.** A callable `AuditService` unlocks
 the deferred audited-service work for WP13 and WP15. For WP14 it removes one
