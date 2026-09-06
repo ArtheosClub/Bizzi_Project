@@ -388,68 +388,115 @@ ADW-07 must define, at minimum:
 `handover.md`, not here — this entry stays a scope record, not a
 workshop draft.)
 
-## WP19 — AuditRecord Model 🔴
+## WP19 — AuditRecord Model 🟡
+
+Amended by A-11 (`MVP_WORK_PACKAGE_PLAN.md` § Gate C — Amendments;
+approved 2026-09-06 by Project Owner). The authorized scope is the minimal
+operational audit core below; actor attribution remains deferred.
 
 - **Goal**: high-impact actions create immutable audit records.
 - **Dependencies**: WP13, WP16 (schema foundation). Actor attribution on
   the audit record additionally needs WP16's deferred half
-  (`ActorContext`, still blocked on ADW-02) — a separate dimension from
-  this entry's blocker below: **who** acted (`ActorContext`) is
-  independent of **what** was acted on (ADR-0014 Q1/Q2); resolving one
-  does not resolve the other.
-- **Deliverables**: `AuditRecord` model/repository/service, atomic with
-  the mutation it audits (ADR-0005). Per **ADR-0014** (Accepted,
-  2026-08-19): the persisted `AuditRecord` must durably identify the
-  subject of its audited mutation (Q1, shape-neutral — no dedicated
-  reference column is mandated). **The persisted structural shape of
-  that reference (Q2) is OPEN — NOT ESTABLISHED**, and ADR-0014 makes
-  resolving or explicitly routing it a precondition for this WP's
-  model/migration implementation — see ADR-0014 Consequences, not
-  reproduced here. GC-006 (which mutations count as high-impact) and
-  GC-007 (snapshot vs. diff shape) remain `Requires Owner Decision`;
-  both stay open but non-blocking for this WP specifically: use
-  Alternative B (treat every mutation as high-impact — more
-  conservative than GC-006's own recommended Alternative A, chosen here
-  for interim simplicity, not because GC-006 recommends it) and a plain
-  diff-only shape (narrower than GC-007's recommended Alternative C,
-  which adds field-sensitivity marking, and which GC-007's own text
-  prefers specifically because diff-only alone leaves secret-exposure
-  risk partially open) as the interim defaults. **D09 R10 (Actor
-  Attribution) is unmodeled across all of Gate C** — found on
-  `EnterpriseObject.owner_id`, confirmed again on `Task.assignee_id`
-  (`DOMAIN_REVIEW_TASK_LIFECYCLE.md` §6) — and belongs here: R10's
-  attribution records are described as "Historical / immutable once
-  recorded... mirrors D07's transition-record and this project's
-  audit-first principle," and ADW-07 (unwritten, same workshop that
-  governs this WP's own `AuditRecord` schema) is explicitly named as
-  owning provenance/attribution contracts. Not yet a blocker beyond
-  this entry's own ADR-0014 blocker below, same phrasing convention as
-  ADW-02/ADW-05 elsewhere in this document.
-- **Definition of Done**: business write + audit write share one
-  transaction for every mutation (conservative default); audit content
-  is a field-level diff, not a full snapshot; the persisted audit
-  content durably identifies its subject (ADR-0014 Q1) in whatever
-  shape Q2 eventually establishes. **Not achievable until Q2 is
-  resolved or an interim representation is explicitly authorized** —
-  see ADR-0014.
-- **Acceptance Criteria**: a mutation without its audit record cannot
-  commit, and an audit record that cannot be resolved to what it
-  audited is not a complete audit record (ADR-0014).
-- **Estimated Complexity**: M–L (transactional correctness is the risk
-  driver).
-- **Risk**: Medium — must be revisited once GC-001-dependent entities
-  (e.g., `WorkspaceProviderConfiguration`, which will hold credential
-  references) exist, per the Implementation Readiness Review's finding
-  that the diff-only default is only safe until then.
-- **Blocked on**: ADR-0014's Q2 routing obligation — ADW-07 must
-  resolve the persisted subject-reference shape, or explicitly route it
-  elsewhere, before model/migration implementation proceeds. Not on
-  WP18: PR #31 already established WP19 does not depend on WP18, and
-  this blocker runs through AuditRecord's own Q2 gap, not through
-  Event.
-- **AuditRecord subject-kind trigger.** Before implementation introduces
-  an auditable mutation for a persisted identity form not already
-  covered by accepted AuditRecord subject authority, consult
+  (`ActorContext`, still blocked on ADW-02). **Who** acted (`ActorContext`)
+  remains independent of **what** was acted on (ADR-0014 Q1/Q2).
+- **Deliverables**:
+  - `AuditRecord` model, migration, tests.
+  - An **append-only** repository: insert and read only; no update or delete
+    path is implemented. Read methods are workspace-scoped (ADR-0004).
+  - A minimal `AuditService.record(...)`, called by state-changing service
+    methods per ADR-0005.
+  - The business mutation and its audit record are written through **one
+    SQLAlchemy session and one transaction** — if the mutation does not
+    commit, neither does its audit record, and vice versa.
+  - `workspace_id` is **required and indexed** (ADR-0004). An ordinary caller
+    does not pass it as a free value: `AuditService` derives it from the
+    already-loaded workspace-scoped subject or from a trusted mutation
+    envelope.
+  - Five nullable subject-reference columns, one per accepted D1 subject kind:
+    `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, `Task`.
+    Each holds that kind's canonical audited-subject identity per the accepted
+    Q2 decision §3.
+  - **Exactly one** subject-reference column is populated per committed record,
+    enforced at the database persistence boundary (accepted Q2-EX-O1).
+  - **No persisted `subject_type` or kind token.** Subject kind is determined
+    structurally by which column is populated.
+  - **Write-time validation contract**: a caller does not pass an arbitrary
+    subject UUID; `AuditService` accepts a trusted loaded subject or mutation
+    envelope; the service determines the permitted subject path, canonical
+    primary key and workspace; the repository accepts an already-validated
+    representation; a workspace mismatch or unsupported subject kind rejects
+    the whole transaction. This is the explicit recorded mechanism Q2-RI
+    requires where database FK enforcement is absent. Without this, the
+    exactly-one constraint guarantees only that one UUID is present, not that
+    it ever denoted a real subject.
+  - The five subject-reference columns are **not foreign-key constraints**.
+    No delete behavior is selected or pre-approved.
+  - Action is recorded as a **named constant** (`AuditActions.*` per ADR-0005),
+    never an ad-hoc string.
+  - Content is recorded as a **field-level diff**, not a full snapshot — WP19's
+    own conservative interim choice, narrower than GC-007's recommended
+    Alternative C.
+  - **Every state-changing mutation within the authorized operational slice**
+    requires atomic audit — WP19's own conservative interim choice, more
+    conservative than GC-006's recommended Alternative A. The initial callable
+    slice covers `EnterpriseObject` and `Task` mutations needed by WP13 and
+    WP15. Other subject kinds remain schema-supported — all five columns exist
+    — but require their own applicable workspace/context source and service
+    authorization before use.
+    `User` in particular has no `workspace_id` of its own, so the source of the
+    required `AuditRecord.workspace_id` remains unestablished for it pending
+    `ActorContext`/ADW-02.
+  - **Not in scope**: actor attribution (`ActorContext`, WP16's deferred
+    remainder, blocked on ADW-02) and D09 R10 attribution modeling; foreign-key
+    constraints and any delete behavior; audit query or API surface; GC-006's
+    curated allowlist; GC-007's field-sensitivity marking; any relationship to
+    `Event`/WP18; audited `AgentDefinition` mutations.
+  - **Naming reconciliation, bounded**: for the bounded A-11 implementation,
+    `AuditService.record(...)` persists an `AuditRecord`. This is the
+    implementation target for ADR-0005's authoritative audit-trail write. It
+    does not identify `AuditRecord` with Domain Event, resolve the
+    Event/AuditRecord relationship, or amend ADR-0005's accepted text.
+- **Definition of Done**:
+  - A state-changing service method and its audit record commit or fail
+    together, through one session and one transaction.
+  - `workspace_id` is present, non-null and indexed on every committed record,
+    and is derived by the service rather than supplied freely by the caller.
+  - Repository read methods are workspace-scoped.
+  - Every committed `AuditRecord` has exactly one populated subject-reference
+    column, and the database rejects zero or more than one.
+  - Subject kind is derivable from the populated column alone; no
+    `subject_type` column exists.
+  - The repository exposes no update or delete path.
+  - The write-time validation contract rejects an unsupported subject kind or
+    a workspace mismatch by failing the whole transaction.
+  - Actions are recorded from named constants only; audit content is a
+    field-level diff.
+  - No foreign-key constraint is created on any subject-reference column, and
+    no delete behavior is selected.
+- **Acceptance Criteria**:
+  - A mutation without its audit record cannot commit — atomicity test in both
+    directions.
+  - A committed `AuditRecord` retains its populated subject-reference value and
+    its structural subject-kind determination independently of later subject
+    lifecycle state or loss of live dereferenceability. This criterion neither
+    requires nor authorizes physical subject deletion.
+  - Inserting a record with zero populated subject-reference columns is rejected
+    by the database; so is inserting one with two or more.
+  - A record whose subject reference was never validated against a loaded
+    subject cannot be produced through the service path.
+  - An `AuditRecord` that cannot be resolved to what it audited is not a
+    complete audit record (ADR-0014).
+- **Estimated Complexity**: M–L (transactional correctness is the risk driver).
+- **Risk**: Medium — must be revisited once GC-001-dependent entities (e.g.,
+  `WorkspaceProviderConfiguration`, which will hold credential references)
+  exist, per the Implementation Readiness Review's finding that the diff-only
+  default is only safe until then.
+- **Blocked on**: nothing for the authorized scope above. The deferred
+  actor-attribution remainder remains blocked on ADW-02. WP19 does not depend on
+  WP18 (PR #31).
+- **AuditRecord subject-kind trigger.** Before implementation introduces an
+  auditable mutation for a persisted identity form not already covered by
+  accepted AuditRecord subject authority, consult
   `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_ST_SUBJECT_TYPE_RANGING_RULE_DECISION.md`.
   Pointer only; the canonical rule is in that record.
 - **Owner**: Engineering.
