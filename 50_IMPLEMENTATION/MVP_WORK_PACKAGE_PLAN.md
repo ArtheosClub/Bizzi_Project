@@ -252,7 +252,7 @@ Default status for all packages in this version: `Planned`.
 | WP16 | Minimal Identity and Authentication | P0 | WP09 | WP17, WP23, WP29 | One authenticated human user and service/agent identities supported — see Amendment A-03 |
 | WP17 | Role and Permission Checks | P1 | WP14, WP16 | WP27, WP29 | Basic RBAC for user, agent, reviewer, approver |
 | WP18 | Event Model and Persistence | P0 | WP08, WP13 | WP21, WP30, WP34 | Events stored with trace ID, correlation ID, type, source, timestamp |
-| WP19 | AuditRecord Model | P0 | WP13, WP16 | WP30, WP36 | High-impact actions create immutable audit records — see Amendment A-09 |
+| WP19 | AuditRecord Model | P0 | WP13, WP16 | WP30, WP36 | High-impact actions create immutable audit records — see Amendments A-09, A-11 |
 | WP20 | ContextPackage Model | P0 | WP13, WP15 | WP25, WP27 | Context package stores sources, constraints, confidence, expiry — see Amendment A-06 |
 | WP21 | RuntimeSession Model | P1 | WP14, WP15, WP18 | WP27, WP31 | Session lifecycle and links to task, agent, context implemented |
 | WP22 | API Error and Response Standard | P1 | WP06, WP10 | WP23–WP39 | Consistent errors, validation responses, request IDs, pagination rules — see Amendments A-07, A-08 |
