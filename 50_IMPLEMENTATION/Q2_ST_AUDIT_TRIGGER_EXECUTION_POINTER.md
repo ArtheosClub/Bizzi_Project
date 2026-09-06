@@ -19,7 +19,13 @@ This pointer does not authorize WP14 runtime/repository/service/API work and doe
 
 Before WP19 model/migration/service implementation proceeds, consult the canonical Q2-ST decision in addition to the final Q2 persisted-representation authority. Any subject identity form used by the selected representation must be covered by an accepted AuditRecord subject kind and canonical persisted subject-identity contract, or subject-kind/mapping authority must reopen first.
 
-WP19 remains **BLOCKED / UNAUTHORIZED** until the separate persisted Q2 representation decision is accepted.
+The persisted Q2 representation decision was accepted 2026-09-05
+(`00_ARCHITECTURE/07_AUDIT/ADW07_Q2_PERSISTED_REPRESENTATION_DECISION.md`), and
+the Q2 blocker is closed. This pointer does not itself authorize WP19
+implementation. WP19 readiness and authorized scope are governed by its current
+`IMPLEMENTATION_BACKLOG.md` entry and applicable approved amendments. Any
+implementation must still perform the Q2-ST check above for every subject
+identity it uses.
 
 ## Later service-layer WPs
 
