@@ -20,9 +20,10 @@
 | Q2-RI — Referential-Integrity Weight | ACCEPTED | 2026-08-30 | `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_RI_REFERENTIAL_INTEGRITY_WEIGHT_DECISION.md` |
 | Q2-ST — Subject-Type Ranging Rule | ACCEPTED | 2026-08-30 | `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_ST_SUBJECT_TYPE_RANGING_RULE_DECISION.md` |
 | Q2-EX — Subject-Kind Exclusivity and Qualification | ACCEPTED — CONDITIONAL | 2026-09-01 | `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_EX_SUBJECT_KIND_EXCLUSIVITY_DECISION.md` |
+| Q2 — Persisted Subject-Reference Representation | ACCEPTED | 2026-09-05 | `00_ARCHITECTURE/07_AUDIT/ADW07_Q2_PERSISTED_REPRESENTATION_DECISION.md` |
 
 ## Canonical-text rule
 
 The canonical normative text is only the text at the path named in the table. This index intentionally contains no decision wording. If index metadata conflicts with a canonical decision artifact, the canonical decision artifact controls and the index must be corrected.
 
-ADW-07 remains OPEN. Q2 persisted representation remains OPEN / NOT ESTABLISHED. This index does not authorize WP19 implementation.
+ADW-07 remains OPEN. Q2 persisted representation is CLOSED / ACCEPTED. This index does not authorize WP19 implementation.
