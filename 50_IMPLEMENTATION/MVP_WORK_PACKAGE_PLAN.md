@@ -811,6 +811,15 @@ reconciliation is stated in the approved Deliverables text.
 
 **Blocked on** (approved): nothing for the scope above; the deferred remainder — actor attribution — remains blocked on ADW-02.
 
+### Amendment Approval Record (A-11)
+
+```text
+Decision: Approved (A-11)
+Decider: Andrew (Project Owner)
+Decision Date: 2026-09-06
+Approved Commit or PR: PR #47 (`docs/wp19-a11-approved`)
+```
+
 ## Gate D — First Vertical Slice
 
 | ID | Title | Priority | Depends On | Blocks | Deliverable / Acceptance Criteria |
