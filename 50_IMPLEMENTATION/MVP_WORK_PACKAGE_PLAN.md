@@ -280,7 +280,7 @@ expected to fall on the same calendar date.
 | A-08 | WP22 | 2026-08-11 | **Approved** | Narrows WP22's Definition of Done and Acceptance Criteria from their unqualified `every endpoint`/`whole API` wording to the scope ADR-0012 actually establishes: the standardized error envelope and the one-error-shape guarantee both apply to domain-facing API endpoints; operational/infrastructure endpoints (e.g. `/health`) are outside both. A scope correction, not an editorial clarification — the prior wording on each field committed to more than ADR-0012 delivers. Widened from its original single-field draft (Definition of Done only) once Acceptance Criteria was found to carry the same over-broad claim from the same cause (ADR-0012 §2) — recorded as deliberate, not an accumulation. Original wording (`IMPLEMENTATION_BACKLOG.md`): Definition of Done — *"every endpoint returns the standard envelope shape."*; Acceptance Criteria — *"a client can rely on one error shape across the whole API."* |
 | A-09 | WP19 | 2026-08-19 | **Approved** | Readiness and scope correction, per **ADR-0014** (Accepted): WP19 status `🟢` → `🔴`, blocked pending Q2 (the persisted `AuditRecord` subject-reference shape) under ADR-0014's routing obligation, which uses ADW-07 as the future semantic destination named by `DECISION_0002` — not inherited from WP18; PR #31 already established WP19 does not depend on WP18. Deliverables gain an explicit requirement: the persisted `AuditRecord` must durably identify its audited subject (ADR-0014 Q1, shape-neutral — no dedicated reference column mandated). Also corrects two citation errors in the Deliverables field, found while verifying this amendment and unrelated to ADR-0014's own content: "GC-006's own conservative Alternative B" and "GC-007's diff-only shape" both attributed an interim default to the wrong proposal's recommendation — GC-006 recommends Alternative A, GC-007 recommends Alternative C. The interim defaults themselves (Alternative B; plain diff) are unchanged; only the attribution is corrected to WP19's own choice rather than either GC item's recommendation, so `Risk`'s "diff-only default" language stays coherent. Original wording (`IMPLEMENTATION_BACKLOG.md`): Deliverables — *"GC-006 (which mutations count as high-impact) and GC-007 (snapshot vs. diff shape) are open but non-blocking for this WP specifically: use GC-006's own conservative Alternative B (treat every mutation as high-impact) and GC-007's diff-only shape as the interim default."* |
 | A-10 | WP14 | 2026-08-24 | **Approved** | Readiness and scope correction: WP14 status `🔴` → `🟡`. ADR-0013, ADR-0015, ADR-0009 and ADR-0004 authorize the schema foundation with exactly `id`, `workspace_id`, `phase`, `owner_id`, `created_at`, `updated_at`. GC-001 and ADW-05 remain open and unresolved; they are removed as schema-foundation blockers only. No repository, service, or API is authorized in this scope; ADR-0005/WP19 still applies. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Dependencies: WP13; GC-001 approval (Critical Path); ADW-05 (Critical Path — not yet written)."* Deliverables, Definition of Done, and Acceptance Criteria were *"not determinable until both Critical Path items close."* |
-| A-11 | WP19 | 2026-09-06 | **Proposed** | Readiness and scope correction proposed under the accepted ADR-0014 Q2 persisted-representation decision (`00_ARCHITECTURE/07_AUDIT/ADW07_Q2_PERSISTED_REPRESENTATION_DECISION.md`, ACCEPTED 2026-09-05), which closes the Q2 blocker A-09 recorded. Proposes WP19 status `🔴` → `🟡` and narrows WP19 to a **minimal operational audit core**: `AuditRecord` model, migration, tests; an append-only repository (insert and read only); a minimal `AuditService.record(...)`; the business mutation and its audit record written through one SQLAlchemy session and one transaction; a required, indexed `workspace_id` (ADR-0004); five nullable subject-reference columns for `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, `Task`, with database-enforced exactly-one and no persisted `subject_type`; action as a named constant; content as a field-level diff; every state-changing mutation within the authorized operational slice is treated as requiring atomic audit — WP19's own conservative interim choice, and GC-006's curated allowlist is still not adopted within that slice; the initial callable slice covers `EnterpriseObject` and `Task` mutations needed by WP13 and WP15, while other subject kinds remain schema-supported but require their own applicable workspace/context and service authorization before use. **Schema-only would not discharge the blocker**: a callable `AuditService` — not a table — is the unblocking unit. **Unblocking effect, precisely**: a callable `AuditService` is required to unlock the deferred audited-service work for WP13 and WP15. It also removes one prerequisite for later WP14 service work, but does **not** authorize or unblock audited `AgentDefinition` mutations: standalone `AgentDefinition` (ADR-0015, no `enterprise_objects` row) is not covered by the current five-kind AuditRecord subject contract and requires separate D5 / Q2-ST subject-kind or mapping authority, in addition to WP14's other unresolved runtime/configuration gates. Subject-reference columns are **not** FK constraints: Q2-RI admits absent database FK enforcement only "where durable correctness, validation, and historical subject resolvability are established through another explicit, recorded mechanism", which this amendment supplies as a write-time validation contract; creating real FKs would additionally require selecting a delete behavior, which the Q2 decision §8 neither selects nor pre-approves and which D3 §5 leaves expressly undecided. Actor attribution is **excluded** and remains with WP16's deferred remainder and ADW-02; D09 R10 remains unmodeled. Original opening wording (`IMPLEMENTATION_BACKLOG.md`, Deliverables, first sentence of a longer field): *"`AuditRecord` model/repository/service, atomic with the mutation it audits (ADR-0005)."* |
+| A-11 | WP19 | 2026-09-06 | **Approved** | Readiness and scope correction approved under the accepted ADR-0014 Q2 persisted-representation decision (`00_ARCHITECTURE/07_AUDIT/ADW07_Q2_PERSISTED_REPRESENTATION_DECISION.md`, ACCEPTED 2026-09-05), which closes the Q2 blocker A-09 recorded. Moves WP19 status `🔴` → `🟡` and narrows WP19 to a **minimal operational audit core**: `AuditRecord` model, migration, tests; an append-only repository (insert and read only); a minimal `AuditService.record(...)`; the business mutation and its audit record written through one SQLAlchemy session and one transaction; a required, indexed `workspace_id` (ADR-0004); five nullable subject-reference columns for `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, `Task`, with database-enforced exactly-one and no persisted `subject_type`; action as a named constant; content as a field-level diff; every state-changing mutation within the authorized operational slice is treated as requiring atomic audit — WP19's own conservative interim choice, and GC-006's curated allowlist is still not adopted within that slice; the initial callable slice covers `EnterpriseObject` and `Task` mutations needed by WP13 and WP15, while other subject kinds remain schema-supported but require their own applicable workspace/context and service authorization before use. **Schema-only would not discharge the blocker**: a callable `AuditService` — not a table — is the unblocking unit. **Unblocking effect, precisely**: a callable `AuditService` is required to unlock the deferred audited-service work for WP13 and WP15. It also removes one prerequisite for later WP14 service work, but does **not** authorize or unblock audited `AgentDefinition` mutations: standalone `AgentDefinition` (ADR-0015, no `enterprise_objects` row) is not covered by the current five-kind AuditRecord subject contract and requires separate D5 / Q2-ST subject-kind or mapping authority, in addition to WP14's other unresolved runtime/configuration gates. Subject-reference columns are **not** FK constraints: Q2-RI admits absent database FK enforcement only "where durable correctness, validation, and historical subject resolvability are established through another explicit, recorded mechanism", which this amendment supplies as a write-time validation contract; creating real FKs would additionally require selecting a delete behavior, which the Q2 decision §8 neither selects nor pre-approves and which D3 §5 leaves expressly undecided. Actor attribution is **excluded** and remains with WP16's deferred remainder and ADW-02; D09 R10 remains unmodeled. Original opening wording (`IMPLEMENTATION_BACKLOG.md`, Deliverables, first sentence of a longer field): *"`AuditRecord` model/repository/service, atomic with the mutation it audits (ADR-0005)."* |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -714,11 +714,11 @@ Decision Date: 2026-08-24
 Approved Commit or PR: PR #35 (`docs/wp14-a10-planning-sync`)
 ```
 
-**A-11 rationale (Proposed).** The accepted Q2 persisted-representation
+**A-11 rationale.** The accepted Q2 persisted-representation
 decision (2026-09-05) discharges ADR-0014's routing obligation and closes the
 blocker A-09 recorded. What it does not do is authorize WP19's currently
 recorded deliverable, which still reads `model/repository/service`. A-11
-therefore proposes the narrowest scope that actually changes the critical path.
+therefore adopts the narrowest scope that actually changes the critical path.
 
 **Why not schema-only.** A-02 and A-04 deferred their repository/service work
 specifically because ADR-0005 requires `AuditService`. A-10 likewise kept
@@ -764,11 +764,11 @@ ADR-0014 and ADW-07 name the persisted artifact `AuditRecord`. A-11 does not
 resolve that, and does not amend ADR-0005, but it cannot leave the
 implementation target ambiguous either — an implementation whose ADR-0005
 conformance is undecidable is not a conformant implementation. The bounded
-reconciliation is stated in the proposed Deliverables text.
+reconciliation is stated in the approved Deliverables text.
 
-#### A-11 proposed WP19 field text (not applied)
+#### A-11 approved WP19 field text
 
-**Deliverables** (proposed):
+**Deliverables** (approved):
 
 > Minimal operational audit core, per Amendment A-11:
 > - `AuditRecord` model, migration, tests.
@@ -789,7 +789,7 @@ reconciliation is stated in the proposed Deliverables text.
 >
 > **Naming reconciliation, bounded**: for the bounded A-11 implementation, `AuditService.record(...)` persists an `AuditRecord`. This is the implementation target for ADR-0005's authoritative audit-trail write. It does not identify `AuditRecord` with Domain Event, resolve the Event/AuditRecord relationship, or amend ADR-0005's accepted text.
 
-**Definition of Done** (proposed):
+**Definition of Done** (approved):
 
 > - A state-changing service method and its audit record commit or fail together, through one session and one transaction.
 > - `workspace_id` is present, non-null and indexed on every committed record, and is derived by the service rather than supplied freely by the caller.
@@ -801,7 +801,7 @@ reconciliation is stated in the proposed Deliverables text.
 > - Actions are recorded from named constants only; audit content is a field-level diff.
 > - No foreign-key constraint is created on any subject-reference column, and no delete behavior is selected.
 
-**Acceptance Criteria** (proposed):
+**Acceptance Criteria** (approved):
 
 > - A mutation without its audit record cannot commit — atomicity test in both directions.
 > - A committed `AuditRecord` retains its populated subject-reference value and its structural subject-kind determination independently of later subject lifecycle state or loss of live dereferenceability. This criterion neither requires nor authorizes physical subject deletion.
@@ -809,7 +809,7 @@ reconciliation is stated in the proposed Deliverables text.
 > - A record whose subject reference was never validated against a loaded subject cannot be produced through the service path.
 > - An `AuditRecord` that cannot be resolved to what it audited is not a complete audit record (ADR-0014).
 
-**Blocked on** (proposed): nothing for the scope above; the deferred remainder — actor attribution — remains blocked on ADW-02.
+**Blocked on** (approved): nothing for the scope above; the deferred remainder — actor attribution — remains blocked on ADW-02.
 
 ## Gate D — First Vertical Slice
 
