@@ -820,6 +820,45 @@ Decision Date: 2026-09-06
 Approved Commit or PR: PR #47 (`docs/wp19-a11-approved`)
 ```
 
+### A-11-CLAR-01 — scope of the foreign-key exclusion, and the scoping-FK choice
+
+```text
+Status: Accepted
+Decision Owner / Decider: Andrew (Project Owner)
+Decision Date: 2026-09-07
+```
+
+This record clarifies A-11's wording **and** makes one binding implementation
+choice. It does not amend A-11 and does not reopen the accepted Q2 persisted
+representation decision, D3, or Q2-RI.
+
+**The ambiguity.** A-11's Deliverables bullet excludes foreign keys for *the
+five subject-reference columns*. Its `Not in scope` bullet reads `foreign-key
+constraints and any delete behavior` without qualification. The two readings
+differ on `audit_records.workspace_id`.
+
+1. A-11's foreign-key exclusion is read narrowly: it applies to the five
+   subject-reference columns and to them only.
+2. Those five columns remain free of foreign-key constraints, and no delete
+   behavior is selected or pre-approved for them. The accepted Q2 decision §8
+   selects none; D3 §5 leaves FK action expressly undecided.
+3. `audit_records.workspace_id` is outside that exclusion. It is ADR-0004
+   workspace scoping, not an audited-subject reference.
+4. As a Project Owner implementation decision recorded here — not as a
+   consequence of ADR-0004, which requires the column and workspace-scoped
+   access but no foreign key — `audit_records.workspace_id` carries a real
+   foreign key to `workspaces.id`, matching every currently implemented
+   workspace-scoped Gate C table (`enterprise_objects`, `tasks`,
+   `agent_definitions`, `workspace_memberships`).
+5. No explicit `ON DELETE` action is specified for it, matching those same
+   tables, where `ondelete` appears in no model and no migration. Absence of an
+   explicit clause is not absence of behavior: the resulting behavior is
+   PostgreSQL's `NO ACTION`.
+6. The consequence is accepted explicitly: while any audit records scoped to
+   a workspace exist, that `workspaces` row cannot be physically deleted. This
+   record selects no delete behavior for the audited-subject references, which
+   remain foreign-key-free.
+
 ## Gate D — First Vertical Slice
 
 | ID | Title | Priority | Depends On | Blocks | Deliverable / Acceptance Criteria |
