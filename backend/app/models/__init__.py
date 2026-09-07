@@ -16,6 +16,7 @@ entry is what keeps the import from being removed as unused by a linter.
 """
 
 from app.models.agent_definition import AgentDefinition
+from app.models.audit_record import AuditRecord
 from app.models.enterprise_object import EnterpriseObject
 from app.models.task import Task
 from app.models.user import User
@@ -24,6 +25,7 @@ from app.models.workspace_membership import WorkspaceMembership
 
 __all__ = [
     "AgentDefinition",
+    "AuditRecord",
     "EnterpriseObject",
     "Task",
     "User",
