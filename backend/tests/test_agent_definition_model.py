@@ -135,7 +135,13 @@ def test_constraints_use_the_naming_convention() -> None:
 
 
 def test_migration_is_wired_into_the_revision_chain() -> None:
+    """The agent_definition migration must follow task directly.
+
+    Later migrations may legitimately follow it; this guard verifies only
+    its own predecessor. The single-head assertion this test used to carry
+    moved to the newest migration's test when audit_record was added --
+    head ownership transfers with each new terminal migration, by design.
+    """
     script = ScriptDirectory.from_config(Config(str(ALEMBIC_INI)))
-    assert script.get_heads() == [AGENT_DEFINITION_REVISION]
     revision = script.get_revision(AGENT_DEFINITION_REVISION)
     assert revision.down_revision == TASK_REVISION

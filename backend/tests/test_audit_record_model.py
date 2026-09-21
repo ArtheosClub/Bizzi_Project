@@ -177,12 +177,24 @@ def test_constraints_use_the_naming_convention() -> None:
 
 
 def test_migration_is_wired_into_the_revision_chain() -> None:
-    """The audit_record migration must follow agent_definition directly.
+    """The audit_record migration must follow agent_definition directly,
+    and is currently the chain's single head.
 
-    Later migrations may legitimately follow it; this guard verifies only
-    its own predecessor.
+    Head ownership belongs to the newest terminal migration and transfers
+    when one is added: whichever migration next follows audit_record must
+    move the single-head assertion into its own test and reduce this one to
+    its `down_revision` check, exactly as agent_definition's was. The
+    failing assertion is the reminder, and that is deliberate rather than a
+    defect.
+
+    The seven per-migration `down_revision` guards pin every edge of the
+    chain but cannot detect branching -- two migrations sharing a
+    predecessor produce two heads while every individual guard still
+    passes. This assertion is the only thing in the repository that catches
+    that, which is why it is carried forward rather than dropped.
     """
     script = ScriptDirectory.from_config(Config(str(ALEMBIC_INI)))
 
     revision = script.get_revision(AUDIT_RECORD_REVISION)
     assert revision.down_revision == AGENT_DEFINITION_REVISION
+    assert script.get_heads() == [AUDIT_RECORD_REVISION]
