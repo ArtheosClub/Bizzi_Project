@@ -35,6 +35,7 @@ claiming otherwise here would be false.
 import inspect
 import uuid
 from datetime import datetime
+from typing import get_type_hints
 
 import pytest
 
@@ -319,12 +320,15 @@ def test_the_two_authorization_tables_cover_the_same_subject_kinds() -> None:
     assert set(SUBJECT_COLUMNS) == set(ALLOWED_ACTIONS_BY_SUBJECT_TYPE)
 
 
-def test_record_signature_has_no_workspace_id_override() -> None:
+def test_record_signature_excludes_workspace_id_and_returns_nothing() -> None:
     """`workspace_id` is derived from the subject, never accepted as a
     free parameter -- this is what makes that structural rather than a
-    documentation claim."""
+    documentation claim. The return type is pinned here as well: `mypy
+    app` does not cover test call sites, so nothing else would stop the
+    service from handing a raw ORM record back to a caller."""
     signature = inspect.signature(AuditService.record)
     assert "workspace_id" not in signature.parameters
+    assert get_type_hints(AuditService.record)["return"] is type(None)
 
 
 def test_record_signature_exposes_expected_workspace_id_as_optional_confirmation() -> (

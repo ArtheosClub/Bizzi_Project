@@ -189,7 +189,7 @@ class AuditService:
         action: str,
         content: Mapping[str, Any],
         expected_workspace_id: uuid.UUID | None = None,
-    ) -> AuditRecord:
+    ) -> None:
         """Record one audited mutation in the caller's open transaction.
 
         `session` must be the same session `subject` was loaded or
@@ -314,4 +314,4 @@ class AuditService:
 
         # 12. The validated record, and only the validated record, reaches
         #     the repository.
-        return audit_record_repository.add(session, record)
+        audit_record_repository.add(session, record)

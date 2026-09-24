@@ -456,12 +456,16 @@ def test_list_by_workspace_rejects_invalid_limits(  # type: ignore[no-untyped-de
 def test_record_accepts_a_persistent_same_session_enterprise_object(  # type: ignore[no-untyped-def]
     session, enterprise_object
 ) -> None:
-    record = AuditService.record(
+    AuditService.record(
         session,
         subject=enterprise_object,
         action=ENTERPRISE_OBJECT_CREATED,
         content={"type": [None, "business_request"]},
     )
+
+    records = audit_record_repository.list_by_workspace(session, enterprise_object.workspace_id)
+    assert len(records) == 1
+    record = records[0]
     assert record.id is not None
     assert record.subject_enterprise_object_id == enterprise_object.id
 
@@ -469,12 +473,16 @@ def test_record_accepts_a_persistent_same_session_enterprise_object(  # type: ig
 def test_record_accepts_a_persistent_same_session_task(  # type: ignore[no-untyped-def]
     session, task
 ) -> None:
-    record = AuditService.record(
+    AuditService.record(
         session,
         subject=task,
         action=TASK_CREATED,
         content={"phase": [None, "active"]},
     )
+
+    records = audit_record_repository.list_by_workspace(session, task.workspace_id)
+    assert len(records) == 1
+    record = records[0]
     assert record.id is not None
     assert record.subject_task_id == task.id
 
@@ -587,9 +595,13 @@ def test_scheduled_for_deletion_subject_is_rejected(  # type: ignore[no-untyped-
 def test_record_derives_workspace_and_populates_exactly_one_column(  # type: ignore[no-untyped-def]
     session, task, workspace
 ) -> None:
-    record = AuditService.record(
+    AuditService.record(
         session, subject=task, action=TASK_CREATED, content={"phase": [None, "active"]}
     )
+
+    records = audit_record_repository.list_by_workspace(session, workspace.id)
+    assert len(records) == 1
+    record = records[0]
     assert record.workspace_id == workspace.id
     assert record.subject_task_id == task.id
     assert record.subject_enterprise_object_id is None
@@ -601,13 +613,17 @@ def test_record_derives_workspace_and_populates_exactly_one_column(  # type: ign
 def test_matching_expected_workspace_id_is_accepted(  # type: ignore[no-untyped-def]
     session, enterprise_object, workspace
 ) -> None:
-    record = AuditService.record(
+    AuditService.record(
         session,
         subject=enterprise_object,
         action=ENTERPRISE_OBJECT_CREATED,
         content={"type": [None, "business_request"]},
         expected_workspace_id=workspace.id,
     )
+
+    records = audit_record_repository.list_by_workspace(session, workspace.id)
+    assert len(records) == 1
+    record = records[0]
     assert record.workspace_id == workspace.id
 
 
@@ -636,9 +652,13 @@ def test_content_tuple_pairs_are_normalized_and_deeply_detached(  # type: ignore
     at once."""
     caller_content = {"tags": (["a"], ["b"])}
 
-    record = AuditService.record(
+    AuditService.record(
         session, subject=task, action=TASK_CREATED, content=caller_content
     )
+
+    records = audit_record_repository.list_by_workspace(session, task.workspace_id)
+    assert len(records) == 1
+    record = records[0]
 
     assert record.content["tags"] == [["a"], ["b"]]
     assert isinstance(record.content["tags"][0], list)
@@ -703,15 +723,20 @@ def test_atomicity_same_transaction_co_visibility(  # type: ignore[no-untyped-de
     session.add(obj)
     session.flush()
 
-    record = AuditService.record(
+    AuditService.record(
         session,
         subject=obj,
         action=ENTERPRISE_OBJECT_CREATED,
         content={"type": [None, "business_request"]},
     )
 
+    records = audit_record_repository.list_by_workspace(session, workspace.id)
+    assert len(records) == 1
+    record = records[0]
+    record_id = record.id
+
     assert _visible_in_a_second_session(session, EnterpriseObject, obj.id)
-    assert _visible_in_a_second_session(session, AuditRecord, record.id)
+    assert _visible_in_a_second_session(session, AuditRecord, record_id)
 
 
 def test_atomicity_audit_side_failure_rolls_back_both(  # type: ignore[no-untyped-def]
@@ -764,12 +789,16 @@ def test_atomicity_business_mutation_failure_after_audit_flush(  # type: ignore[
     session.flush()
     obj_id = obj.id
 
-    record = AuditService.record(
+    AuditService.record(
         session,
         subject=obj,
         action=ENTERPRISE_OBJECT_CREATED,
         content={"type": [None, "business_request"]},
     )
+
+    records = audit_record_repository.list_by_workspace(session, workspace.id)
+    assert len(records) == 1
+    record = records[0]
     record_id = record.id
 
     obj.phase = "not-a-real-phase"
