@@ -46,17 +46,114 @@ item), 🟢 Unblocked.
   type, status, owner, timestamps." `status` → `phase` per D07 §6 /
   LAW-D07-15, governed by ADR-0009.)*
 - **Dependencies**: WP06, WP08, **WP12a**.
-- **Deliverables**: `EnterpriseObject` model, migration. *(Amendment A-02,
-  `MVP_WORK_PACKAGE_PLAN.md` § Gate C — Amendments; approved 2026-08-03 by
-  Project Owner, PR #13. Original wording: "EnterpriseObject
-  model/repository/service, migration." Repository and service deferred
-  to WP19 — ADR-0005 requires audit-inside-transaction, and
-  `AuditService` does not exist yet.)*
-- **Definition of Done**: `workspace_id` required and indexed (ADR-0004);
-  every repository method scoped by `workspace_id`.
-- **Acceptance Criteria**: CRUD works; a request for another workspace's
-  object returns not-found (the query simply never matches — no special
-  code path needed regardless of GC-005's approval status).
+- **Deliverables**: WP13's complete Deliverables, as amended. The first item
+  was delivered under A-01/A-02; the remainder is the audited-service half
+  restored by Amendment A-12:
+  - The existing `EnterpriseObject` model and its Alembic migration, unchanged
+    by A-12.
+  - A workspace-scoped `EnterpriseObject` repository: insert, get-by-id within
+    a workspace, and list-by-workspace. The two read methods take
+    `workspace_id` explicitly (ADR-0004). Insert accepts an already-formed
+    instance whose `workspace_id` the service has established, and takes no
+    second `workspace_id` parameter of its own — a competing source of the
+    same truth is a defect, not a safeguard. No delete path. No update method
+    — an update mutates a loaded instance and is flushed, matching the audit
+    repository's shape.
+  - A bounded `EnterpriseObjectService` with exactly three operations:
+    `create`, `archive`, `unarchive`.
+  - `create` persists `workspace_id`, `type` and `owner_id`, and forces
+    `phase` to `active` — ADR-0009 §3 admits only `creation -> active`. The
+    instance is flushed before the audit write, because
+    `AuditService.record(...)` requires a persistent subject with a persisted
+    identity. Audited as `AuditActions.ENTERPRISE_OBJECT_CREATED` with a
+    field-level diff whose `before` values are null.
+  - `archive` and `unarchive` perform `active -> archived` and `archived -> active`
+    only, audited as `AuditActions.ENTERPRISE_OBJECT_UPDATED` with the diff
+    `{"phase": [before, after]}`.
+  - `archive` and `unarchive` take `workspace_id` and the `EnterpriseObject`
+    identity, load the subject through the repository's workspace-scoped get,
+    and return not-found when the identity belongs to another workspace. They
+    do not accept a freely supplied ORM subject.
+  - All audit writes occur in the caller's session and transaction. Neither
+    the service nor the repository commits or rolls back; the caller owns the
+    transaction, matching the audit layer's contract.
+  - No method on a mutation path returns a mutable ORM instance. `create`
+    returns the new identity; callers that need the row read it back through
+    the repository's workspace-scoped read.
+  - No new action constants. The two existing `EnterpriseObject` constants and
+    their A-11 admissibility entry are sufficient and unchanged.
+  - **Transitions into `superseded` are out of scope, and not because ADR-0009
+    forbids them.** ADR-0009 §3 permits `active -> superseded` and
+    `archived -> superseded`. They are excluded because D10 §12 Binding
+    consequence 4 requires supersession to record a D09-typed relationship,
+    the general relationship mechanism is not designed, and the model
+    deliberately carries no `superseded_by_id`. Unimplementable today, not
+    prohibited.
+  - **Not in scope**: any API, controller or route — that is WP23, itself
+    blocked through WP16 on ADW-02; mutation of `type` or `owner_id`, neither
+    of which has approved change semantics; any delete path, since D10 §5.1
+    forbids unqualified deletion, D10 §12 Binding consequence 3 makes a
+    generic `is_deleted` a defect, and physical deletion is separately
+    constrained by D10 §8 Invariant 5; WP15's `Task` service; actor
+    attribution, still blocked on ADW-02.
+  - **RuntimeEvent, deferred and recorded**: WP13's service does not emit a
+    `RuntimeEvent`. ADR-0005's post-commit emission obligation is neither
+    discharged nor reinterpreted by A-12; it is inherited by whichever work
+    package delivers `RuntimeEventService`, which cannot be WP18 until ADW-07
+    defines event semantics. The absence is stated in the service module so a
+    future reader finds it without reading this amendment.
+  *(Amendment A-02, `MVP_WORK_PACKAGE_PLAN.md` § Gate C — Amendments; approved
+  2026-08-03 by Project Owner, PR #13. Original wording: "EnterpriseObject
+  model/repository/service, migration." Repository and service deferred to
+  WP19 — ADR-0005 requires audit-inside-transaction, and `AuditService` did
+  not exist when A-02 was approved.)*
+  *(Amendment A-12, `MVP_WORK_PACKAGE_PLAN.md` § Gate C — Amendments; approved
+  2026-09-24 by Project Owner. WP19 delivered `AuditService`, merged as
+  `2e8512d7`. The text below mirrors `#### A-12 approved WP13 field text`
+  normatively.)*
+- **Definition of Done**:
+  - Every mutation and its audit write use the caller's same session and
+    transaction. Neither module commits or rolls back. When the caller rolls
+    back after any mutation or audit failure, neither change becomes durable;
+    the modules do not and cannot enforce that the caller handles the failure
+    correctly.
+  - Every repository read takes `workspace_id`; a request for another
+    workspace's object returns not-found because the query never matches, with
+    no special code path.
+  - `create` yields `phase = active`, with the migration's `server_default`
+    proven by a direct-insert test rather than by the Python default alone.
+  - `archive` and `unarchive` reject every transition other than the two they
+    implement, including any attempt to reach `superseded`.
+  - No mutation-path method returns a mutable ORM instance.
+  - Neither module contains an executable commit or rollback call, asserted
+    statically in the shape WP19 already uses.
+  - The deferred `RuntimeEvent` emission is discoverable in the source, and a
+    static test asserts that neither `enterprise_object_service.py` nor its
+    repository imports or calls a `RuntimeEvent` or `RuntimeEventService`
+    symbol. The prohibition is bounded to the slice WP13 delivers, so it
+    cannot later forbid the implementation of `RuntimeEventService` itself.
+    Testing the absence of a component that does not exist is otherwise almost
+    contentless; what is testable is that this slice's modules do not pretend
+    otherwise.
+- **Acceptance Criteria**:
+  - A `create` produces one persisted object and exactly one audit record
+    whose populated subject column is the `EnterpriseObject` one.
+  - `archive` followed by `unarchive` produces two audit records carrying the
+    expected phase diffs in order.
+  - A get or list scoped to another workspace returns nothing.
+  - An `archive` or `unarchive` request using another workspace's identity
+    returns not-found and changes neither the object nor the audit trail.
+  - An attempt to reach `superseded` through the service is rejected.
+  - In caller-controlled transaction tests, an audit-side failure followed by
+    rollback leaves neither the business mutation nor an audit record durable;
+    a business-side failure after the audit flush followed by rollback leaves
+    neither durable.
+  - Neither `enterprise_object_service.py` nor its repository imports or calls
+    a `RuntimeEvent` or `RuntimeEventService` symbol, asserted statically, and
+    the omission is recorded in the service module's own text.
+- **Blocked on**: nothing for the scope above. The `RuntimeEvent` obligation
+  remains recorded and unaddressed, carried by whichever work package delivers
+  `RuntimeEventService`.
 - **Estimated Complexity**: M.
 - **Risk**: Low.
 - **Owner**: Engineering.

@@ -246,7 +246,7 @@ Default status for all packages in this version: `Planned`.
 
 | ID | Title | Priority | Depends On | Blocks | Deliverable / Acceptance Criteria |
 |---|---|---:|---|---|---|
-| WP13 | EnterpriseObject Model | P0 | WP06, WP08 | WP14, WP23 | CRUD model with canonical ID, type, `phase`, owner, timestamps — see Amendment A-01 |
+| WP13 | EnterpriseObject Model | P0 | WP06, WP08 | WP14, WP23 | `EnterpriseObject` model and migration plus a bounded audited repository/service — see Amendments A-01, A-02, A-12 |
 | WP14 | AgentDefinition Model | P0 | WP13 | WP24, WP27 | Configurable agent definition with capabilities and permissions |
 | WP15 | Task Model and Lifecycle | P0 | WP13 | WP23–WP32 | Task states, owner, priority, source object, timestamps implemented — see Amendment A-04 |
 | WP16 | Minimal Identity and Authentication | P0 | WP09 | WP17, WP23, WP29 | One authenticated human user and service/agent identities supported — see Amendment A-03 |
@@ -281,6 +281,7 @@ expected to fall on the same calendar date.
 | A-09 | WP19 | 2026-08-19 | **Approved** | Readiness and scope correction, per **ADR-0014** (Accepted): WP19 status `🟢` → `🔴`, blocked pending Q2 (the persisted `AuditRecord` subject-reference shape) under ADR-0014's routing obligation, which uses ADW-07 as the future semantic destination named by `DECISION_0002` — not inherited from WP18; PR #31 already established WP19 does not depend on WP18. Deliverables gain an explicit requirement: the persisted `AuditRecord` must durably identify its audited subject (ADR-0014 Q1, shape-neutral — no dedicated reference column mandated). Also corrects two citation errors in the Deliverables field, found while verifying this amendment and unrelated to ADR-0014's own content: "GC-006's own conservative Alternative B" and "GC-007's diff-only shape" both attributed an interim default to the wrong proposal's recommendation — GC-006 recommends Alternative A, GC-007 recommends Alternative C. The interim defaults themselves (Alternative B; plain diff) are unchanged; only the attribution is corrected to WP19's own choice rather than either GC item's recommendation, so `Risk`'s "diff-only default" language stays coherent. Original wording (`IMPLEMENTATION_BACKLOG.md`): Deliverables — *"GC-006 (which mutations count as high-impact) and GC-007 (snapshot vs. diff shape) are open but non-blocking for this WP specifically: use GC-006's own conservative Alternative B (treat every mutation as high-impact) and GC-007's diff-only shape as the interim default."* |
 | A-10 | WP14 | 2026-08-24 | **Approved** | Readiness and scope correction: WP14 status `🔴` → `🟡`. ADR-0013, ADR-0015, ADR-0009 and ADR-0004 authorize the schema foundation with exactly `id`, `workspace_id`, `phase`, `owner_id`, `created_at`, `updated_at`. GC-001 and ADW-05 remain open and unresolved; they are removed as schema-foundation blockers only. No repository, service, or API is authorized in this scope; ADR-0005/WP19 still applies. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Dependencies: WP13; GC-001 approval (Critical Path); ADW-05 (Critical Path — not yet written)."* Deliverables, Definition of Done, and Acceptance Criteria were *"not determinable until both Critical Path items close."* |
 | A-11 | WP19 | 2026-09-06 | **Approved** | Readiness and scope correction approved under the accepted ADR-0014 Q2 persisted-representation decision (`00_ARCHITECTURE/07_AUDIT/ADW07_Q2_PERSISTED_REPRESENTATION_DECISION.md`, ACCEPTED 2026-09-05), which closes the Q2 blocker A-09 recorded. Moves WP19 status `🔴` → `🟡` and narrows WP19 to a **minimal operational audit core**: `AuditRecord` model, migration, tests; an append-only repository (insert and read only); a minimal `AuditService.record(...)`; the business mutation and its audit record written through one SQLAlchemy session and one transaction; a required, indexed `workspace_id` (ADR-0004); five nullable subject-reference columns for `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, `Task`, with database-enforced exactly-one and no persisted `subject_type`; action as a named constant; content as a field-level diff; every state-changing mutation within the authorized operational slice is treated as requiring atomic audit — WP19's own conservative interim choice, and GC-006's curated allowlist is still not adopted within that slice; the initial callable slice covers `EnterpriseObject` and `Task` mutations needed by WP13 and WP15, while other subject kinds remain schema-supported but require their own applicable workspace/context and service authorization before use. **Schema-only would not discharge the blocker**: a callable `AuditService` — not a table — is the unblocking unit. **Unblocking effect, precisely**: a callable `AuditService` is required to unlock the deferred audited-service work for WP13 and WP15. It also removes one prerequisite for later WP14 service work, but does **not** authorize or unblock audited `AgentDefinition` mutations: standalone `AgentDefinition` (ADR-0015, no `enterprise_objects` row) is not covered by the current five-kind AuditRecord subject contract and requires separate D5 / Q2-ST subject-kind or mapping authority, in addition to WP14's other unresolved runtime/configuration gates. Subject-reference columns are **not** FK constraints: Q2-RI admits absent database FK enforcement only "where durable correctness, validation, and historical subject resolvability are established through another explicit, recorded mechanism", which this amendment supplies as a write-time validation contract; creating real FKs would additionally require selecting a delete behavior, which the Q2 decision §8 neither selects nor pre-approves and which D3 §5 leaves expressly undecided. Actor attribution is **excluded** and remains with WP16's deferred remainder and ADW-02; D09 R10 remains unmodeled. Original opening wording (`IMPLEMENTATION_BACKLOG.md`, Deliverables, first sentence of a longer field): *"`AuditRecord` model/repository/service, atomic with the mutation it audits (ADR-0005)."* |
+| A-12 | WP13 | 2026-09-24 | **Approved** | Restores to WP13's Deliverables the audited-service half that A-02 deferred while `AuditService` did not exist, and narrows the Acceptance Criteria from the unqualified `CRUD works` to a bounded operation set. Records a bounded deferral of ADR-0005's post-commit `RuntimeEvent` emission. Wording being widened (`IMPLEMENTATION_BACKLOG.md`, as amended by A-02): *"EnterpriseObject model, migration."* |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -858,6 +859,146 @@ differ on `audit_records.workspace_id`.
    a workspace exist, that `workspaces` row cannot be physically deleted. This
    record selects no delete behavior for the audited-subject references, which
    remain foreign-key-free.
+
+**A-12 rationale.** WP13's deferred audited-service half is unblocked and
+unauthorized at the same time. A-12 restores it to WP13's Deliverables, narrows
+the Acceptance Criteria to the bounded operation set A-12 authorizes, and
+records a bounded deferral of ADR-0005's post-commit `RuntimeEvent` emission.
+What follows establishes each of those.
+
+**The narrowing was temporal, and its condition has expired.** A-02's recorded
+reason is that `ADR-0005 requires audit-inside-transaction for every
+state-changing service method, and AuditService does not exist until WP19`.
+A-11's rationale states the converse directly: `A callable AuditService unlocks
+the deferred audited-service work for WP13 and WP15`. WP19 is delivered and
+merged as `2e8512d7`.
+
+**No work package currently carries this scope.** A-02 removed repository and
+service from WP13's Deliverables; A-11's approved Deliverables text lists only
+the audit repository and `AuditService`, so the work is not in WP19 either. The
+deferral phrase `deferred to WP19` in `IMPLEMENTATION_BACKLOG.md` means deferred
+until WP19 exists, not transferred into WP19's scope — A-02's rationale says
+`does not exist until WP19`, a date, not a destination. The work is therefore
+unblocked and unauthorized at the same time, and A-12 is what removes that
+gap.
+
+**The code says the same.** `app/services/audit_actions.py` states that `a
+constant existing here authorizes nothing by itself -- the create/update code
+paths on EnterpriseObject and Task remain WP13/WP15 work`. `AuditService.record`
+has no production caller; the static architecture test asserts that
+`audit_service.py` is the only consumer of the repository write API. The audit
+core is delivered and unused.
+
+**No new action constants are required.** `ENTERPRISE_OBJECT_CREATED` and
+`ENTERPRISE_OBJECT_UPDATED` already exist and are already admissible for the
+`EnterpriseObject` subject type. An archive is an `updated` with the field-level
+diff `{"phase": ["active", "archived"]}`. A-11's admissibility surface is
+therefore not widened by A-12 — an important property, since widening it would
+require revisiting A-11 rather than amending WP13.
+
+**ADR-0005's `RuntimeEvent`, and why A-12 defers rather than reinterprets it.**
+ADR-0005 (Accepted, 2026-07-11) states in its Decision section:
+
+> After the transaction commits, the service emits a `RuntimeEvent` via
+> `RuntimeEventService` for coordination/observability purposes.
+
+`RuntimeEventService` does not exist. `Event` is WP18, whose Deliverables A-05
+withdrew entirely pending ADW-07, and `ADW07_DECISION_INDEX.md` records ADW-07
+as OPEN. A state-changing `EnterpriseObject` service written today cannot
+satisfy that bullet, and an implementer deciding on its own that the emission
+is not needed would be reinterpreting an accepted ADR without authority.
+
+Three ways out. Only the Project Owner can choose.
+
+**O1 — bounded, recorded deferral.** A-12's approved text states that WP13's
+service does not emit a `RuntimeEvent`, that the obligation is not discharged,
+and that it is inherited by whichever work package delivers
+`RuntimeEventService`. The absence is made discoverable in the source, the way
+`audit_actions.py` already documents `TASK_COMPLETED`'s deliberate absence.
+Precedent is direct: A-11 performed exactly this kind of bounded reconciliation
+for ADR-0005's own vocabulary, stating that `AuditService.record(...)` persists
+an `AuditRecord` as the implementation target for ADR-0005's authoritative
+audit-trail write, without amending ADR-0005. ADR-0005 also names
+`TransactionManager.runInTransaction`, a mechanism that does not exist either,
+and A-11 substituted one SQLAlchemy session and one transaction the same way.
+
+**O2 — implement a minimal `RuntimeEventService` now.** Rejected on the same
+ground A-05 used to withdraw WP18's Deliverables: event semantics,
+correlation, provenance, relationships and sensitive-data rules are undefined
+until ADW-07, so anything built now would either invent them or be replaced.
+
+**O3 — amend ADR-0005.** Heavier than the situation needs, and it means editing
+an accepted decision record. If the RuntimeEvent obligation is ever to be
+dropped rather than deferred, that is the correct route, but nothing here
+argues for dropping it.
+
+**A-12 takes O1.** It is the only option that neither invents undecided
+semantics nor edits an accepted record, and it leaves an explicit, attributable
+trace of a known incompleteness rather than a silent one. WP13 neither
+implements nor emits a `RuntimeEvent`; ADR-0005's obligation stands and passes
+to the future work package that delivers `RuntimeEventService` once ADW-07 is
+settled. The absence is held in place by a static test and by explanatory text
+in the production module.
+
+**Scope: WP13 alone.** WP15 goes to its own later decision. Its transition
+authority, concurrency and the deliberately absent `TASK_COMPLETED` form an
+independent area of risk, and combining the two would make the boundaries — and
+the cause of any defect — harder to establish.
+
+#### A-12 approved WP13 field text
+
+**Deliverables** (approved, replacing the A-02 text):
+
+> WP13's complete Deliverables, as amended. The first item was delivered under A-01/A-02; the remainder is the audited-service half restored by Amendment A-12:
+>
+> - The existing `EnterpriseObject` model and its Alembic migration, unchanged by A-12.
+> - A workspace-scoped `EnterpriseObject` repository: insert, get-by-id within a workspace, and list-by-workspace. The two read methods take `workspace_id` explicitly (ADR-0004). Insert accepts an already-formed instance whose `workspace_id` the service has established, and takes no second `workspace_id` parameter of its own — a competing source of the same truth is a defect, not a safeguard. No delete path. No update method — an update mutates a loaded instance and is flushed, matching the audit repository's shape.
+> - A bounded `EnterpriseObjectService` with exactly three operations: `create`, `archive`, `unarchive`.
+> - `create` persists `workspace_id`, `type` and `owner_id`, and forces `phase` to `active` — ADR-0009 §3 admits only `creation -> active`. The instance is flushed before the audit write, because `AuditService.record(...)` requires a persistent subject with a persisted identity. Audited as `AuditActions.ENTERPRISE_OBJECT_CREATED` with a field-level diff whose `before` values are null.
+> - `archive` and `unarchive` perform `active -> archived` and `archived -> active` only, audited as `AuditActions.ENTERPRISE_OBJECT_UPDATED` with the diff `{"phase": [before, after]}`.
+> - `archive` and `unarchive` take `workspace_id` and the `EnterpriseObject` identity, load the subject through the repository's workspace-scoped get, and return not-found when the identity belongs to another workspace. They do not accept a freely supplied ORM subject.
+> - All audit writes occur in the caller's session and transaction. Neither the service nor the repository commits or rolls back; the caller owns the transaction, matching the audit layer's contract.
+> - No method on a mutation path returns a mutable ORM instance. `create` returns the new identity; callers that need the row read it back through the repository's workspace-scoped read.
+> - No new action constants. The two existing `EnterpriseObject` constants and their A-11 admissibility entry are sufficient and unchanged.
+>
+> **Transitions into `superseded` are out of scope, and not because ADR-0009 forbids them.** ADR-0009 §3 permits `active -> superseded` and `archived -> superseded`. They are excluded because D10 §12 Binding consequence 4 requires supersession to record a D09-typed relationship, the general relationship mechanism is not designed, and the model deliberately carries no `superseded_by_id`. Unimplementable today, not prohibited.
+>
+> **Not in scope**: any API, controller or route — that is WP23, itself blocked through WP16 on ADW-02; mutation of `type` or `owner_id`, neither of which has approved change semantics; any delete path, since D10 §5.1 forbids unqualified deletion, D10 §12 Binding consequence 3 makes a generic `is_deleted` a defect, and physical deletion is separately constrained by D10 §8 Invariant 5; WP15's `Task` service; actor attribution, still blocked on ADW-02.
+>
+> **RuntimeEvent, deferred and recorded**: WP13's service does not emit a `RuntimeEvent`. ADR-0005's post-commit emission obligation is neither discharged nor reinterpreted by A-12; it is inherited by whichever work package delivers `RuntimeEventService`, which cannot be WP18 until ADW-07 defines event semantics. The absence is stated in the service module so a future reader finds it without reading this amendment.
+
+**Definition of Done** (approved):
+
+> - Every mutation and its audit write use the caller's same session and transaction. Neither module commits or rolls back. When the caller rolls back after any mutation or audit failure, neither change becomes durable; the modules do not and cannot enforce that the caller handles the failure correctly.
+> - Every repository read takes `workspace_id`; a request for another workspace's object returns not-found because the query never matches, with no special code path.
+> - `create` yields `phase = active`, with the migration's `server_default` proven by a direct-insert test rather than by the Python default alone.
+> - `archive` and `unarchive` reject every transition other than the two they implement, including any attempt to reach `superseded`.
+> - No mutation-path method returns a mutable ORM instance.
+> - Neither module contains an executable commit or rollback call, asserted statically in the shape WP19 already uses.
+> - The deferred `RuntimeEvent` emission is discoverable in the source, and a static test asserts that neither `enterprise_object_service.py` nor its repository imports or calls a `RuntimeEvent` or `RuntimeEventService` symbol. The prohibition is bounded to the slice WP13 delivers, so it cannot later forbid the implementation of `RuntimeEventService` itself. Testing the absence of a component that does not exist is otherwise almost contentless; what is testable is that this slice's modules do not pretend otherwise.
+
+**Acceptance Criteria** (approved, narrowing `CRUD works`):
+
+> - A `create` produces one persisted object and exactly one audit record whose populated subject column is the `EnterpriseObject` one.
+> - `archive` followed by `unarchive` produces two audit records carrying the expected phase diffs in order.
+> - A get or list scoped to another workspace returns nothing.
+> - An `archive` or `unarchive` request using another workspace's identity returns not-found and changes neither the object nor the audit trail.
+> - An attempt to reach `superseded` through the service is rejected.
+> - In caller-controlled transaction tests, an audit-side failure followed by rollback leaves neither the business mutation nor an audit record durable; a business-side failure after the audit flush followed by rollback leaves neither durable.
+> - Neither `enterprise_object_service.py` nor its repository imports or calls a `RuntimeEvent` or `RuntimeEventService` symbol, asserted statically, and the omission is recorded in the service module's own text.
+
+**Blocked on** (approved): nothing for the scope above. The `RuntimeEvent`
+obligation remains recorded and unaddressed, carried by whichever work package
+delivers `RuntimeEventService`.
+
+### Amendment Approval Record (A-12)
+
+```text
+Decision: Approved (A-12)
+Decider: Andrew (Project Owner)
+Decision Date: 2026-09-24
+Approved Commit or PR: PR #50 (`docs/wp13-a12-approved`)
+```
 
 ## Gate D — First Vertical Slice
 
