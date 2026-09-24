@@ -25,7 +25,7 @@ flowchart TB
         identity["Identity/Auth<br/>(WP16)"]
         rbac["Role/Permission checks<br/>(WP17)"]
         event["Event model/service<br/>(WP18)"]
-        audit["AuditRecord model/service<br/>(WP19)"]
+        audit["AuditRecord model + AuditService.record(...)<br/>+ append-only workspace-scoped repository<br/>(WP19 — implemented on feat/wp19-audit-record-core,<br/>pending merge)"]
         context["ContextPackage model/service<br/>(WP20) — PRE-CODING-BRIEF.md §5.2"]
         runtime["RuntimeSession model/service<br/>(WP21) — PRE-CODING-BRIEF.md §5.1"]
         apistd["API error/response standard<br/>(WP22)"]
@@ -93,7 +93,7 @@ flowchart TB
 | Identity/Auth | One authenticated human user + service/agent identities; workspace relationship via `WorkspaceMembership`, not a flat field on `User` (WP16) | `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md`, "Multi-tenancy" section below |
 | RBAC | Basic role/permission checks for user, agent, reviewer, approver (WP17) | `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` |
 | `Event` | Trace ID, correlation ID, type, source, timestamp (WP18) | `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` |
-| `AuditRecord` | Immutable audit records for high-impact actions; `workspace_id` inherited from the audited entity at the repository layer, never set by calling services (WP19) | ADR-0005, "Multi-tenancy" section below |
+| `AuditRecord` | Audit records for high-impact actions; the supported repository API is append-only — insert and workspace-scoped read only; `workspace_id` derived by `AuditService.record(...)` from the audited subject, never supplied by a calling service; `audit_record_repository` receives the formed record, adds and flushes it (WP19) — implemented on `feat/wp19-audit-record-core`, pending merge | ADR-0005, "Multi-tenancy" section below |
 | `ContextPackage` | Sources, constraints, confidence, expiry; survives session termination | `PRE-CODING-BRIEF.md` §5.2 |
 | `RuntimeSession` | One temporary agent execution, linked to task/agent/context (WP21) | `PRE-CODING-BRIEF.md` §5.1 |
 | API error/response standard | Consistent errors, validation responses, request IDs, pagination (WP22) | `28_API_CONTRACTS/01_API_DESIGN_PRINCIPLES.md` |
@@ -105,6 +105,19 @@ FastAPI: Router/Endpoint → Service → Repository). The canonical mutation
 flow for any Gate C write path is documented in
 `docs/c4/C4_DYNAMIC_CANONICAL_FLOW.md` and does not change with the stack —
 only "Controller" relabels to "Router/Endpoint".
+
+WP19's realized write path, implemented on `feat/wp19-audit-record-core`
+and pending merge, is the Service → Repository half of that flow with no
+router yet: `AuditService.record(...)` validates the call and derives both
+the canonical subject identity and `workspace_id` from a persistent subject
+attached to the caller's own session; `audit_record_repository` receives the
+already-formed record, adds and flushes it; neither layer commits or rolls
+back. When the caller performs the business mutation and the audit write
+through one session and one transaction, the two participate in that
+caller-owned transaction; these modules do not enforce that the caller does
+so. The repository is not drawn as a separate component because this
+diagram's granularity represents persistence through `app.db.session`,
+rather than drawing per-component repository functions.
 
 ## Multi-tenancy: workspace_id on every Gate C entity (resolved)
 
@@ -127,10 +140,12 @@ exceptions**:
   everywhere else — only how identity arrives at that `workspace_id`
   differs.
 - `AuditRecord` carries `workspace_id`, but the value is never supplied
-  independently by a calling service — the repository layer copies it from
-  the entity/mutation being audited, so there is exactly one place
-  (`AuditService`/its repository) that can get this wrong, not one place
-  per service. No service constructs an `AuditRecord.workspace_id` itself.
+  independently by a calling service — `AuditService.record(...)` derives it
+  from the audited subject and constructs the record; `audit_record_repository`
+  receives an already-formed record and does not compute the scope. There is
+  exactly one place that can get this wrong, not one place per calling
+  service. No calling service constructs an `AuditRecord.workspace_id`
+  itself.
 
 This shape (in particular `WorkspaceMembership`) has been reported back to
 the project owner and is confirmed — implement against it directly rather
