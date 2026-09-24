@@ -997,8 +997,7 @@ delivers `RuntimeEventService`.
 Decision: Approved (A-12)
 Decider: Andrew (Project Owner)
 Decision Date: 2026-09-24
-Approved Commit or PR: (to be filled in once this change's PR opens — not
-left as this placeholder past that point, per A-03/A-04/A-05/A-09)
+Approved Commit or PR: PR #50 (`docs/wp13-a12-approved`)
 ```
 
 ## Gate D — First Vertical Slice
