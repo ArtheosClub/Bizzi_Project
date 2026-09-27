@@ -121,7 +121,7 @@ don't assume they're interchangeable:
 | `.env.prod.example` | yes | no (placeholders only, e.g. `POSTGRES_PASSWORD=`) | nothing automatically | Documents which variables production needs, mirroring `.env.example`'s role. |
 | `.env.prod` | **no** (gitignored) | would if it existed — never commit it | nothing automatically | Not part of the normal deploy path. Production should get real secrets from the deployment platform's own secret injection (Docker/Kubernetes secrets, a managed secrets store), not a checked-in file. This file is only a local convenience if you're testing a prod-shaped container by hand. |
 
-`app/core/config.py`'s `Settings` itself always points at `env_file=".env"`
+`backend/app/core/config.py`'s `Settings` itself always points at `env_file=".env"`
 (pydantic-settings) — it does **not** branch on an `ENV` value to pick a
 different filename. Which file actually supplies values is decided by
 *what loads it*, not by `Settings`: `docker compose up` / manual `uv run`
