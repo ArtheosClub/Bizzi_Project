@@ -3,8 +3,9 @@
 Loads backend/.env.test so the test suite runs against the same
 non-sensitive, fixed values docker-compose.yml's postgres-test service
 uses, instead of a value hardcoded in Python. Settings.database_url is
-required (fail-fast, see app/core/config.py), so tests need a value even
-though nothing in Gate B's test suite actually queries a database yet.
+required (fail-fast, see app/core/config.py), so tests need a value. The
+persistence test modules now query the database directly, each defining its
+own engine and session fixtures; this file only loads the environment.
 
 load_dotenv never overrides an already-set environment variable by
 default, so a real DATABASE_URL set explicitly (e.g. by CI's job-level

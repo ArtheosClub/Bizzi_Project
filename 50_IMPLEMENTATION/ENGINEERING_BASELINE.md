@@ -23,6 +23,31 @@
 >   `CAPABILITY_MAP_v1.0.md` duplicates) — only the branch-merge condition
 >   specifically. The rest of §7 stands as originally written.
 
+> ## ⚠️ Prologue — added 2026-09-27
+>
+> Additive, on the same terms as the 2026-08-03 prologue: not one word of
+> the body below has been altered.
+>
+> **Further developments affecting this document's findings:**
+>
+> - **§ "Branch state" is no longer current.** It records `main` as 54
+>   commits behind `agent/architecture-specification-v1-1`, as not
+>   containing `00_ARCHITECTURE/`, `00_CONSTITUTION/`, EGC-01,
+>   `06_REFERENCE/` or the four Implementation documents, and as still
+>   containing `TEST_WRITE.md`/`CONNECTOR_TEST.md`. Measured on
+>   2026-09-27: `00_ARCHITECTURE/`, `00_CONSTITUTION/` and `06_REFERENCE/`
+>   all exist on `main`; EGC-01 is on `main` at
+>   `01_GOVERNANCE/EGC-01_ENGINEERING_GOVERNANCE_CHARTER.md`; neither
+>   `TEST_WRITE.md` nor `CONNECTOR_TEST.md` is tracked on `main`; and
+>   `agent/architecture-specification-v1-1` is no longer advertised by the
+>   remote, so the 54-commit comparison has no referent.
+> - **The Readiness table's `Operations | BLOCKED` row is no longer
+>   current.** Its stated reason — "The baseline described in this document
+>   does not exist on `main`" — is the same premise as above, and it does
+>   not hold. This entry does not assert what Operations' status *is*;
+>   that is a Project Owner judgement, not a measurement, and the row
+>   stands as written per this document's convention.
+
 # Engineering Baseline — Bizzi Platform
 
 Version: 1.0
