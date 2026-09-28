@@ -101,8 +101,9 @@ class EnterpriseObject(Base):
     # requires supersession to record a D09-typed relationship, and modelling
     # that as a direct self-FK here would commit to a representation before
     # the general relationship mechanism is designed (ADR-0009,
-    # "A constraint on future work"). Nothing in WP13 performs transitions,
-    # so nothing here sets this to `superseded`.
+    # "A constraint on future work"). A-12 adds active <-> archived transitions
+    # in EnterpriseObjectService; transitions to superseded remain out of scope
+    # until the required D09-typed relationship exists.
     phase: Mapped[str] = mapped_column(
         String(32),
         nullable=False,
