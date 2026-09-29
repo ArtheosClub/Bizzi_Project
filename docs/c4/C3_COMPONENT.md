@@ -1,43 +1,140 @@
 # C3 — Component Diagram (Backend API container)
 
-Scope: components inside the Backend API container. Solid = built (Gate B,
-`backend/app/`, merged to `main`). Dashed = planned (Gate C,
-`50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` WP13–WP22).
-
-This is a from-scratch rewrite for the actual Python/FastAPI package
-structure — the previous version of this diagram was NestJS-module-based
-(`ConfigModule` → `HealthModule`) and had no equivalent in this codebase;
-ADR-0007 §9.4 flagged it as needing this rewrite when the stack changed.
+Scope: components present in this revision of `backend/app/`, including the
+WP13/A-12 service slice. Solid nodes and arrows describe implemented pieces,
+not completion of an entire work package or availability through an API.
+The separate dashed graph retains earlier integration intentions, not current capabilities.
+The layer matrix below distinguishes models, repositories, services and APIs.
+This Python/FastAPI view follows ADR-0007 and ADR-0003.
 
 ```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 100, "rankSpacing": 160, "curve": "linear"}}}%%
 flowchart TB
-    subgraph API["Backend API (FastAPI) — backend/app/"]
-        config["app.core.config<br/>Settings (pydantic-settings)<br/>fail-fast on missing DATABASE_URL"]
-        logging_["app.core.logging<br/>JsonFormatter, structured stdout logs"]
-        dbsession["app.db.session<br/>SQLAlchemy engine + SessionLocal + get_db()"]
-        dbbase["app.db.base<br/>Declarative Base (empty — no models yet)"]
-        health["app.api.health<br/>GET /health"]
-        main["app.main<br/>FastAPI app, lifespan, router registration"]
-
-        eo["EnterpriseObject router/service/model<br/>(WP13)"]
-        agentDef["AgentDefinition router/service/model<br/>(WP14) — PRE-CODING-BRIEF.md §5.1"]
-        task["Task router/service/model<br/>(WP15)"]
-        identity["Identity/Auth<br/>(WP16)"]
-        rbac["Role/Permission checks<br/>(WP17)"]
-        event["Event model/service<br/>(WP18)"]
-        audit["AuditRecord model + AuditService.record(...)<br/>+ append-only workspace-scoped repository<br/>(WP19 — implemented on feat/wp19-audit-record-core,<br/>pending merge)"]
-        context["ContextPackage model/service<br/>(WP20) — PRE-CODING-BRIEF.md §5.2"]
-        runtime["RuntimeSession model/service<br/>(WP21) — PRE-CODING-BRIEF.md §5.1"]
-        apistd["API error/response standard<br/>(WP22)"]
+    subgraph API["Backend API — backend/app/"]
+        main["app.main / FastAPI"]
+        health["app.api.health / GET /health"]
+        config["app.core.config / Settings"]
+        logging_["app.core.logging / structured logging"]
+        errors["app.core.errors / error handlers"]
+        request["app.core.request_context / RequestIDMiddleware"]
+        session["app.db.session / engine, SessionLocal, get_db"]
+        base["app.db.base / Base + naming convention"]
+        models["app.models / ORM model aggregation"]
+        eo["EnterpriseObjectService / create, archive, unarchive"]
+        eorepo["enterprise_object_repository / add, scoped get/list"]
+        audit["AuditService.record / validate and derive audit subject"]
+        auditrepo["audit_record_repository / append-only API"]
     end
-    db[("PostgreSQL 18.4")]
+    db[("PostgreSQL")]
+    main --> health
+    main --> config
+    main --> logging_
+    main --> errors
+    request -->|"wraps FastAPI"| main
+    logging_ -->|"reads request identifier"| request
+    session --> config
+    session --> db
+    models --> base
+    eo -->|"scoped load or insert"| eorepo
+    eo -->|"same caller session"| audit
+    audit --> auditrepo
+    eorepo -->|"uses models"| models
+    auditrepo -->|"uses AuditRecord"| models
+    eorepo -->|"caller-supplied SQLAlchemy Session"| db
+    auditrepo -->|"caller-supplied SQLAlchemy Session"| db
+```
 
-    main -->|"registers"| health
-    main -->|"reads settings via"| config
-    main -->|"configures"| logging_
-    dbsession -->|"reads settings via"| config
-    dbsession -->|"Prisma-free: psycopg v3"| db
+Repository-to-database arrows denote persistence through the supplied session,
+not repository-owned connections or transaction boundaries. Neither repository
+imports the application's session factory. `get_db` is not wired into a domain
+route. There is no implemented arrow from EnterpriseObjectService to runtime
+events or authorization: those integrations are outside A-12.
 
+## Implemented infrastructure
+
+| Component | Responsibility |
+| --- | --- |
+| `app.main`, `app.api.health` | FastAPI composition and health route |
+| `app.core.config` | Typed settings, required database URL |
+| `app.core.logging` | Structured logging with request identifier |
+| `app.core.request_context` | Outermost ASGI request-ID middleware, not domain-event correlation |
+| `app.core.errors` | ADR-0012 error handlers and error-only envelope |
+| `app.db.session` | SQLAlchemy engine, session factory and dependency generator |
+| `app.db.base` | Declarative base with constraint naming convention |
+| `app.models` | Aggregates models for `backend/alembic/env.py` metadata |
+| `backend/alembic/` | Baseline and subsequent model migrations; not only an empty baseline |
+
+## Domain implementation by layer
+
+“Absent” means not implemented in this revision, not prohibited or authorized
+for immediate implementation. No row asserts that an entire WP is complete.
+
+| Subject | Model | Repository | Service | Domain API |
+| --- | --- | --- | --- | --- |
+| Workspace | Present | Absent | Absent | Absent |
+| User / WorkspaceMembership | Both present | Absent | Absent | Absent |
+| EnterpriseObject | Present; `phase`, not universal status | Scoped add/get/list | create/archive/unarchive (A-12) | Absent |
+| AgentDefinition | Present | Absent | Absent | Absent |
+| Task | Present | Absent | Absent | Absent |
+| AuditRecord | Present | Append-only insert and scoped reads | Existing AuditService.record (WP19 integration) | Absent |
+
+Role/permission checks, runtime events, ContextPackage and RuntimeSession are
+not implemented here. Their domain decisions and work-package dependencies
+remain governed by `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` and the relevant
+ADRs, rather than by the presence of a dashed node in this diagram.
+
+## Implemented mutation and audit path
+
+EnterpriseObjectService loads transitions by workspace and identity, locks and
+refreshes the row, validates its phase, and records the mutation through
+AuditService. Create flushes the new active object before the audit call.
+AuditService derives the canonical subject and workspace from that persistent
+subject and passes a formed audit record to its repository. Business code does
+not call the audit repository directly.
+
+The caller supplies one session and owns the transaction and failure rollback.
+Neither service nor repository commits or rolls back. Mutation operations return
+an identity or None, not an ORM object. Reads remain repository operations.
+
+The A-12 implementation does not discharge ADR-0005's post-commit RuntimeEvent
+obligation or amend that ADR. The obligation remains deferred outside this
+slice, as recorded in the A-12 approved Deliverables in
+`50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` (Approval Record: PR 50).
+ADR-0009 §3 explicitly permits `active -> superseded` and
+`archived -> superseded`; its "A constraint on future work" section requires
+the D09-typed relationship. Those transitions remain outside A-12 until that
+relationship exists. See `docs/adr/0009-enterprise-object-phase-lifecycle.md`.
+No actor attribution, domain API, type/owner mutation or delete operation is
+introduced.
+
+The endpoint-level canonical flow remains documented in
+`docs/c4/C4_DYNAMIC_CANONICAL_FLOW.md`; this slice implements its bounded
+service/repository/audit portion, not a routed endpoint.
+
+## Retained integration intentions — not the implementation view
+
+The earlier diagram's thirteen dashed relationships are retained below rather
+than silently removed by the layer taxonomy change. This is a trace of the
+earlier target view, not authorization to implement its deferred components.
+Some relationships (EnterpriseObject persistence and audit) now have a bounded
+implementation shown above. Others still depend on approved future work.
+In particular, this graph does not override A-12's RuntimeEvent deferral or
+assert that actor resolution, authorization or domain routes exist today.
+
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 100, "rankSpacing": 160, "curve": "linear"}}}%%
+flowchart TB
+    identity["Identity / actor resolution"]
+    eo["EnterpriseObject integration"]
+    rbac["Role / permission checks"]
+    task["Task integration"]
+    agentDef["AgentDefinition integration"]
+    context["ContextPackage"]
+    runtime["RuntimeSession"]
+    event["Runtime events"]
+    audit["Audit integration"]
+    dbsession["Session-based persistence"]
+    apistd["Domain API error / response integration"]
     identity -.->|"supplies ActorContext to"| eo
     eo -.->|"checked via"| rbac
     task -.->|"checked via"| rbac
@@ -51,102 +148,38 @@ flowchart TB
     eo -.->|"persists via"| dbsession
     apistd -.->|"wraps"| eo
     apistd -.->|"wraps"| task
-
-    style main fill:#2b6cb0,color:#fff
-    style config fill:#2b6cb0,color:#fff
-    style logging_ fill:#2b6cb0,color:#fff
-    style dbsession fill:#2b6cb0,color:#fff
-    style dbbase fill:#2b6cb0,color:#fff
-    style health fill:#2b6cb0,color:#fff
-    style db fill:#2b6cb0,color:#fff
-    style eo fill:#4a5568,color:#fff,stroke-dasharray: 5 5
-    style agentDef fill:#4a5568,color:#fff,stroke-dasharray: 5 5
-    style task fill:#4a5568,color:#fff,stroke-dasharray: 5 5
-    style identity fill:#4a5568,color:#fff,stroke-dasharray: 5 5
-    style rbac fill:#4a5568,color:#fff,stroke-dasharray: 5 5
-    style event fill:#4a5568,color:#fff,stroke-dasharray: 5 5
-    style audit fill:#4a5568,color:#fff,stroke-dasharray: 5 5
-    style context fill:#4a5568,color:#fff,stroke-dasharray: 5 5
-    style runtime fill:#4a5568,color:#fff,stroke-dasharray: 5 5
-    style apistd fill:#4a5568,color:#fff,stroke-dasharray: 5 5
 ```
 
-## Components — built (Gate B)
+## Multi-tenancy: implementation traceability, not a decision record
 
-| Component | Responsibility | Governing doc |
-|---|---|---|
-| `app.main` | FastAPI app instance, `lifespan` context (not the deprecated `on_event`), router registration | `backend/README.md` |
-| `app.core.config` | Typed `Settings` (pydantic-settings); `database_url` required, fails fast at startup if missing | `docs/planning/TECH_STACK.md` "Environment files" |
-| `app.core.logging` | `JsonFormatter` — structured JSON to stdout, including `extra=` fields | `backend/README.md` "Run locally" |
-| `app.db.session` | Sync SQLAlchemy engine, `SessionLocal`, `get_db()` dependency generator — not wired into any route yet | `backend/README.md` "Migrations" |
-| `app.db.base` | Empty `DeclarativeBase` — exists so `alembic/env.py` has a stable `target_metadata`, no models defined yet | ADR-0003 |
-| `app.api.health` | `GET /health` → `{"status": "ok"}` | `docs/c4/C1_CONTEXT.md` |
-| Alembic (`backend/alembic/`) | Migration tooling, one intentionally-empty baseline revision proving `alembic upgrade head` works on a clean DB | ADR-0007 (supersedes Prisma) |
+This section describes the implementation and its governing sources; it does
+not create or amend authority. The governing artifacts are
+`docs/adr/0004-workspace-scoped-multi-tenancy.md` (Decision),
+`docs/adr/0010-workspace-membership-mvp-scope.md`, and Amendments A-03, A-11 and
+A-12 in `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md`.
 
-## Components — planned (Gate C, WP13–WP22)
+ADR-0004 permits no exception to workspace isolation. Its direct-field rule
+explicitly excludes `users` and `sessions`; that exception is not permission
+to bypass isolation, nor a claim that a sessions implementation exists here.
 
-| Component | Responsibility | Governing doc |
-|---|---|---|
-| `EnterpriseObject` | Canonical object model: ID, type, status, owner, timestamps (WP13) | `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` |
-| `AgentDefinition` | Enterprise role definition — one of `AgentDefinition`/`AgentInstance`/`Provider`/`Model`/`RuntimeSession` (WP14) | `PRE-CODING-BRIEF.md` §5.1 |
-| `Task` | Task states, owner, priority, source object (WP15) | `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` |
-| Identity/Auth | One authenticated human user + service/agent identities; workspace relationship via `WorkspaceMembership`, not a flat field on `User` (WP16) | `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md`, "Multi-tenancy" section below |
-| RBAC | Basic role/permission checks for user, agent, reviewer, approver (WP17) | `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` |
-| `Event` | Trace ID, correlation ID, type, source, timestamp (WP18) | `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` |
-| `AuditRecord` | Audit records for high-impact actions; the supported repository API is append-only — insert and workspace-scoped read only; `workspace_id` derived by `AuditService.record(...)` from the audited subject, never supplied by a calling service; `audit_record_repository` receives the formed record, adds and flushes it (WP19) — implemented on `feat/wp19-audit-record-core`, pending merge | ADR-0005, "Multi-tenancy" section below |
-| `ContextPackage` | Sources, constraints, confidence, expiry; survives session termination | `PRE-CODING-BRIEF.md` §5.2 |
-| `RuntimeSession` | One temporary agent execution, linked to task/agent/context (WP21) | `PRE-CODING-BRIEF.md` §5.1 |
-| API error/response standard | Consistent errors, validation responses, request IDs, pagination (WP22) | `28_API_CONTRACTS/01_API_DESIGN_PRINCIPLES.md` |
-
-## Layering rule (still applies once Gate C components exist)
-
-Every solid arrow above is one-directional per ADR-0003 (reinterpreted for
-FastAPI: Router/Endpoint → Service → Repository). The canonical mutation
-flow for any Gate C write path is documented in
-`docs/c4/C4_DYNAMIC_CANONICAL_FLOW.md` and does not change with the stack —
-only "Controller" relabels to "Router/Endpoint".
-
-WP19's realized write path, implemented on `feat/wp19-audit-record-core`
-and pending merge, is the Service → Repository half of that flow with no
-router yet: `AuditService.record(...)` validates the call and derives both
-the canonical subject identity and `workspace_id` from a persistent subject
-attached to the caller's own session; `audit_record_repository` receives the
-already-formed record, adds and flushes it; neither layer commits or rolls
-back. When the caller performs the business mutation and the audit write
-through one session and one transaction, the two participate in that
-caller-owned transaction; these modules do not enforce that the caller does
-so. The repository is not drawn as a separate component because this
-diagram's granularity represents persistence through `app.db.session`,
-rather than drawing per-component repository functions.
-
-## Multi-tenancy: workspace_id on every Gate C entity (resolved)
-
-Confirmed by the project owner before any Gate C model is written — this
-replaces the earlier "flagged, not yet resolved" note. Per ADR-0004, **no
-exceptions**:
-
-- `EnterpriseObject`, `Task`, `Event`, `AgentDefinition`, `ContextPackage`,
-  `RuntimeSession` — each carries `workspace_id` as a required, indexed
-  field, following ADR-0004's flat-field pattern directly.
-- **Identity/Auth is the one exception to the flat-field shape, not to the
-  isolation rule.** A `User` is not itself workspace-scoped (one user can
-  belong to multiple workspaces). The workspace relationship lives on a
-  `WorkspaceMembership` join entity instead:
-  `id, workspace_id, user_id, role, created_at`. `ActorContext` for a
-  request resolves to a role by looking up `(user_id, workspace_id)` in
-  `WorkspaceMembership`, not by reading a field off `User` directly. Every
-  repository method for workspace-scoped entities still takes
-  `workspace_id` from this resolved context, same as ADR-0004 requires
-  everywhere else — only how identity arrives at that `workspace_id`
-  differs.
+- The implemented `EnterpriseObject`, `Task`, `AgentDefinition` and
+  `AuditRecord` models carry required, indexed `workspace_id` fields.
+  Event, ContextPackage and RuntimeSession remain future components; their
+  inclusion in the earlier target view does not establish delivered models.
+- `User` is not itself workspace-scoped. `WorkspaceMembership` records the
+  workspace relationship using `id, workspace_id, user_id, role, created_at`
+  under ADR-0010. A-03's rationale and Approval Record (2026-08-03, PR 19)
+  distinguish this schema foundation from deferred login, authentication
+  middleware and `ActorContext` resolution. No current runtime actor-resolution
+  behavior is claimed here.
+- A-12 repository reads take workspace identity explicitly. Insert takes an
+  already-formed object rather than a second, competing workspace argument.
+  Scoping does not implement authorization; the trusted caller supplies context.
 - `AuditRecord` carries `workspace_id`, but the value is never supplied
   independently by a calling service — `AuditService.record(...)` derives it
   from the audited subject and constructs the record; `audit_record_repository`
   receives an already-formed record and does not compute the scope. There is
-  exactly one place that can get this wrong, not one place per calling
-  service. No calling service constructs an `AuditRecord.workspace_id`
-  itself.
-
-This shape (in particular `WorkspaceMembership`) has been reported back to
-the project owner and is confirmed — implement against it directly rather
-than re-deriving it at WP16.
+  one owner of this derivation, rather than a separate implementation per
+  calling service. No calling service constructs an `AuditRecord.workspace_id`
+  itself. This is existing WP19 infrastructure integrated by the A-12 slice,
+  not a new WP13 audit service.
