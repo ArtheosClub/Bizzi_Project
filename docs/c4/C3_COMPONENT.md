@@ -7,6 +7,11 @@ The separate dashed graph retains earlier integration intentions, not current ca
 The layer matrix below distinguishes models, repositories, services and APIs.
 This Python/FastAPI view follows ADR-0007 and ADR-0003.
 
+For the service/repository slice, dependency edges include its model and
+persistence layers (including explicitly labelled type dependencies), matching
+the layer matrix; service-internal helpers such as `audit_actions` are outside
+this view, not absent from the implementation.
+
 ```mermaid
 %%{init: {"flowchart": {"nodeSpacing": 100, "rankSpacing": 160, "curve": "linear"}}}%%
 flowchart TB
@@ -19,7 +24,7 @@ flowchart TB
         request["app.core.request_context / RequestIDMiddleware"]
         session["app.db.session / engine, SessionLocal, get_db"]
         base["app.db.base / Base + naming convention"]
-        models["app.models / ORM model aggregation"]
+        models["app.models / ORM model modules"]
         eo["EnterpriseObjectService / create, archive, unarchive"]
         eorepo["enterprise_object_repository / add, scoped get/list"]
         audit["AuditService.record / validate and derive audit subject"]
@@ -38,7 +43,10 @@ flowchart TB
     eo -->|"scoped load or insert"| eorepo
     eo -->|"same caller session"| audit
     audit --> auditrepo
-    eorepo -->|"uses models"| models
+    eo -->|"uses EnterpriseObject"| models
+    audit -->|"uses audit and subject models"| models
+    audit -->|"subject type annotation"| base
+    eorepo -->|"uses EnterpriseObject"| models
     auditrepo -->|"uses AuditRecord"| models
     eorepo -->|"caller-supplied SQLAlchemy Session"| db
     auditrepo -->|"caller-supplied SQLAlchemy Session"| db
@@ -61,7 +69,7 @@ events or authorization: those integrations are outside A-12.
 | `app.core.errors` | ADR-0012 error handlers and error-only envelope |
 | `app.db.session` | SQLAlchemy engine, session factory and dependency generator |
 | `app.db.base` | Declarative base with constraint naming convention |
-| `app.models` | Aggregates models for `backend/alembic/env.py` metadata |
+| `app.models` | Groups ORM model submodules used by services and repositories; incoming edges refer to those model classes, not to an aggregation API. Its `__init__.py` separately imports models for `backend/alembic/env.py` metadata. |
 | `backend/alembic/` | Baseline and subsequent model migrations; not only an empty baseline |
 
 ## Domain implementation by layer
