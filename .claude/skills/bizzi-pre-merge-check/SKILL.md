@@ -1,106 +1,176 @@
 ---
 name: bizzi-pre-merge-check
-description: Mandatory checklist to run before merging or pushing any Bizzi Platform backend code to a shared git branch, and before deleting any merged branch. Verifies coding-standards compliance, test coverage, workspace scoping, audit/event wiring, ADR bookkeeping, that no Stop Condition is active, and that a branch's content is provably on main before it is deleted. Use immediately before every `git merge`, `git push` to a shared branch, PR merge that touches backend/ or docs/adr, docs/c4, docs/planning, or branch cleanup.
+description: Mandatory Bizzi Platform checklist before every git push to a shared branch (including first publication), git merge or PR merge involving backend/, docs/adr/, docs/c4/, docs/planning/, or project governance/skills, and before deleting a merged branch. Review stop conditions, scope, tests, audit/event obligations, and integration evidence. Apply checks to the change and publication stage; applicable PR-triggered CI must pass before merge, not before the first push needed to create the PR.
 ---
 
-# Pre-merge check — Bizzi Platform backend
+# Pre-merge check — Bizzi Platform
 
-Run through this in order. If any item fails, fix it or stop and ask the
-user — do not merge past a failing item to "keep moving." Per
-`docs/planning/DEVELOPMENT_PLAN.md` §9: "Stop conditions override delivery
-speed."
+This review is mandatory before shared-branch pushes and merges, including
+changes to `.claude/skills/` such as this checklist itself, and before
+merged-branch deletion. Apply the scope and stage distinctions below.
 
-## 1. Stop conditions — check these first (`14_IMPLEMENTATION_CHECKLIST.md` §20)
+Review the actual diff and current governing sources, not remembered status.
+Follow the Repository Synchronization Rule in `CLAUDE.md` before branch
+planning or merge recommendations. Use `git --no-optional-locks` for local
+Git checks, especially status, to avoid optional index writes.
 
-- [ ] No query or response crosses a `workspace_id` boundary.
-- [ ] No authorization bypass exists (every mutating endpoint goes through
-      `AuthorizationService`).
-- [ ] No state-changing action is missing its `AuditService.record(...)` call.
-- [ ] No raw secret, token, or password appears in logs, events, or
-      responses.
-- [ ] Migrations apply cleanly to a fresh database (`uv run alembic upgrade
-      head`; `uv run alembic upgrade --sql head` validates the chain with no
-      database available).
-- [ ] CI is green, not "green after a retry that masked a flake."
-- [ ] No test was skipped or weakened to make this change pass.
+Record relevant checks as passed, failed, or not verified; mark an
+inapplicable check N/A with a short reason. Missing evidence for an
+applicable gate is not N/A. Match verification effort to the change:
+documentation edits do not require inventing backend work or new CI.
+Approved ADRs and amendments govern applicability; this checklist neither
+changes their scope nor grants permission to push, merge, or delete.
 
-If any box is unchecked, **stop** — this is a hard gate, not a judgment
-call.
+Save one item-by-item review artifact in the external `workflow_BIZZI`
+directory before the action under review. Identify the action, reviewed
+revision (or uncommitted diff), and date. Give each checklist item and
+applicable stage-specific gate a disposition plus a concise evidence
+reference or reason; include N/A items rather than silently omitting them.
+An existing review artifact may be updated or referenced: no separate file
+per item is needed. The artifact records evidence, not action authorization.
 
-## 2. Coding standards (`30_BACKEND_IMPLEMENTATION_PLAN/13_BACKEND_CODING_STANDARDS.md` §27)
+## 1. Stop conditions and publication stage
 
-- [ ] Routers/endpoints contain no ORM calls, no repository calls, no business
-      rules, no direct audit/event emission (ADR-0003).
-- [ ] Services never return raw ORM records or bypass `workspace_id`.
-- [ ] Repositories never authorize, never own lifecycle rules, never emit
-      events, never return DTOs.
-- [ ] No bare `findById`/`updateById` without workspace scoping exists
-      anywhere in the diff (ADR-0004).
-- [ ] File/class/method naming matches convention (kebab-case files,
-      PascalCase classes, camelCase methods, snake_case DB fields).
-- [ ] No `any` or `@ts-ignore` without an inline justification.
-- [ ] Errors thrown are shared-kernel types, not ad-hoc strings.
+Apply `30_BACKEND_IMPLEMENTATION_PLAN/14_IMPLEMENTATION_CHECKLIST.md` §20
+and `docs/planning/DEVELOPMENT_PLAN.md` §9:
 
-## 3. Tests (`30_BACKEND_IMPLEMENTATION_PLAN/09_TESTING_STRATEGY.md`)
+- [ ] Workspace isolation is not broken.
+- [ ] Authorization is not bypassed where required by the approved scope.
+      Required checks go through `AuthorizationService` (ADR-0006), not
+      inline ownership-policy substitutes.
+      Workspace filtering alone is not authorization; a persistence-only
+      slice does not authorize deferred endpoints or access policy.
+- [ ] Required mutation audit records are not missing.
+- [ ] Raw secrets do not appear in logs, events, or API responses.
+- [ ] Relevant migrations can apply to a clean database. For migration or
+      persistence changes, use clean-database execution evidence;
+      `alembic upgrade --sql head` generates SQL, not this proof.
+- [ ] CI is not repeatedly failing without resolution; tests have not been
+      skipped or weakened to force progress.
+- [ ] AI-generated code is not repeatedly violating architecture boundaries.
 
-- [ ] New/changed P1 routes have API-level test coverage.
-- [ ] New/changed services and repositories have unit/service-level test
-      coverage.
-- [ ] Every new lifecycle transition (e.g. task complete, decision confirm)
-      has a test for both the success path and at least one
-      authorization-failure path.
-- [ ] Any new mutation has a test asserting the audit event and runtime
-      event were both emitted.
+An active stop condition pauses implementation. Resolve it or ask the owner;
+delivery speed does not override it. A retry is not inherently a violation:
+explain the failure and resolution rather than hiding an unresolved flake.
 
-## 4. Traceability
+Distinguish publication from merge:
 
-- [ ] If this change made an architectural decision, an ADR exists for it
-      (`bizzi-write-adr` skill) and is linked from the PR.
-- [ ] If this change adds/removes a container or Python package/router, or changes
-      which services call which, the relevant `docs/c4/` diagram is updated
-      in the same change.
-- [ ] If this change affects a WP's scope, `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md`
-      is updated (status, acceptance criteria, or a note).
+- Before a first feature-branch push, review applicable local evidence.
+  If the workflow only runs for that branch after a PR exists, record CI
+  as pending publication, not green. That absence alone does not prohibit
+  the push needed to create the PR.
+- Before merge, verify all applicable CI jobs required by the project or
+  platform have completed successfully on the exact PR head. Missing,
+  pending, failed, or unexpectedly skipped jobs do not satisfy this gate.
+  Re-read `.github/workflows/backend-ci.yml` and any other current workflows;
+  do not infer success from an empty check list or from an older head.
+- If path filters intentionally exclude the entire change, record CI as
+  not applicable and use relevant document checks (`git diff --check`,
+  links, and parsing/rendering for changed diagrams). Do not claim a new
+  backend test result. If a docs workflow applies, verify it too.
+  Support this N/A with the workflow path and revision, relevant event/path
+  filters, and changed paths showing why no applicable trigger matches.
 
-## 5. Scope discipline
+## 2. Current-stack coding standards
 
-- [ ] This change stays within the WP it claims to implement — no
-      unrelated modules, tables, or endpoints snuck in (R-SCOPE-001).
-- [ ] Nothing in `02_MVP_VERTICAL_SLICE.md`'s explicit exclusion list
-      (full RBAC, agent recommendation application, process engine,
-      operating map generation, semantic memory search, custom dashboards,
-      etc.) has been quietly implemented ahead of its Phase 3 WP.
+Use ADR-0007 (`docs/adr/0007-bizzi-mvp-backend-stack-python-fastapi.md`),
+`backend/pyproject.toml`, and the stack-agnostic principles in
+`30_BACKEND_IMPLEMENTATION_PLAN/13_BACKEND_CODING_STANDARDS.md`.
+Historical TypeScript/NestJS syntax is not a Python naming requirement.
 
-Only after every relevant box above is checked: merge.
+- [ ] Routers contain no ORM/repository calls, business rules, or direct
+      audit/event emission (ADR-0003).
+- [ ] Services do not return raw ORM records or bypass workspace scope.
+- [ ] Repositories do not authorize, own lifecycle decisions, emit events,
+      or return DTOs. Scoped entity lookups include workspace scope
+      (ADR-0004); honor the approved contract for insert operations.
+- [ ] Python modules/functions use snake_case and classes use PascalCase;
+      Ruff and mypy requirements follow the current project configuration.
+      Any typing escape has a concrete justification, not a blanket waiver.
+- [ ] Error behavior follows the layer's approved contract. Do not force
+      HTTP exception types or new error vocabulary into a repository or
+      service-only slice; preserve ADR-0012's API boundary and no-leak
+      contract when HTTP behavior is involved.
 
-## 6. After merging — verify before deleting the branch
+## 3. Tests and mutation obligations
 
-Do not delete a branch on the strength of GitHub's "merged" label or a
-recollection that it was merged. Verify against current remote state, per
-the Repository Synchronization Rule in `CLAUDE.md`:
+Use the current WP acceptance criteria and Definition of Done, with
+`30_BACKEND_IMPLEMENTATION_PLAN/09_TESTING_STRATEGY.md` for principles.
 
+- [ ] New/changed P1 routes have API-level coverage; changed services and
+      repositories have appropriate unit/service and persistence coverage.
+- [ ] Lifecycle changes cover success, invalid transitions, and workspace
+      isolation. Test authorization failures where authorization is in
+      scope; do not implement deferred authorization merely to fill a box.
+- [ ] Mutations prove required audit and transaction behavior under ADR-0005
+      (`docs/adr/0005-audit-first-mutations.md`): audit through
+      `AuditService.record(...)`, not direct audit-repository access from
+      domain services, in the same transaction as the mutation.
+- [ ] RuntimeEvent obligations follow ADR-0005 unless a specifically
+      approved amendment defers them. Tests cover required post-commit
+      emission; audit is not event emission.
+
+For the A-12-bounded WP13 `create`/`archive`/`unarchive` slice, consult
+Amendment A-12 in `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` and the
+matching WP13 entry in `50_IMPLEMENTATION/IMPLEMENTATION_BACKLOG.md`:
+
+- Mutation and audit share the caller's session/transaction. Neither
+  module commits or rolls back; tests establish caller rollback behavior.
+- RuntimeEvent emission is explicitly deferred, not completed or waived.
+  Preserve the stated handoff to the work package delivering
+  `RuntimeEventService` after ADW-07. Preserve A-12's source explanation
+  and static tests excluding RuntimeEvent imports/calls from these modules.
+- Do not generalize the deferral to other mutations or add API, delete,
+  supersession, or actor-attribution work outside A-12. Use all of A-12's
+  acceptance criteria, not just this summary.
+
+Tie evidence to the reviewed source revision. If relevant bytes change
+after a run, revalidate affected checks; do not present an older run as
+covering untested code. A prose-only change need not trigger an unrelated
+full test run.
+
+## 4. Traceability and scope
+
+- [ ] Architectural decisions have the required approval and ADR record
+      (`bizzi-write-adr`); do not rewrite accepted decisions retroactively.
+- [ ] Relevant C4 views reflect changed components/dependencies, with
+      type dependencies distinguished from runtime calls. Render the
+      actual document reviewed, not an uncommitted layout candidate.
+- [ ] Work remains within its approved WP and explicit exclusions in
+      `30_BACKEND_IMPLEMENTATION_PLAN/02_MVP_VERTICAL_SLICE.md` and current
+      amendments. Scope changes require the governing approval process,
+      not merely a status note in a register.
+- [ ] Register updates follow their amendment rules. Historical snapshots
+      retain their stated correction convention; do not silently rewrite
+      a snapshot as a living status report.
+
+Recommend merge only when applicable gates are satisfied and outstanding
+non-blocking limitations are explicit. Performing the merge additionally
+requires the owner's authorization; a recommendation does not grant it.
+Keep documentation clarification distinct from new implementation claims.
+
+## 5. After merging — verification is not deletion approval
+
+For specifically authorized branch cleanup, refresh remote state and pin
+the exact branch and main tips. Check ancestry against those tips:
+
+```sh
+git --no-optional-locks fetch --all --prune
+git --no-optional-locks merge-base --is-ancestor origin/<branch> origin/main
 ```
-git fetch --all --prune
-git merge-base --is-ancestor origin/<branch> origin/main
-```
 
-**If it exits 0** — every commit on the branch is reachable from `main`.
-Delete it, no further questions.
+- Exit 0 proves commit reachability, not permission to delete. Confirm the
+  target is still the verified tip before deleting the authorized ref.
+- Exit 1 is not proof of missing work: rebases and squash merges change
+  commit identities. Inspect integration and remaining unique work;
+  record where the content landed and why deletion preserves it. A PR's
+  merged label alone is insufficient evidence.
+  This preserves the reason for the alternative proof: integrated content
+  can survive even when the original commits are not ancestors of main.
+- Any other exit status is an error, not a negative ancestry result.
+  If verification fails, the target moved, or integration remains unclear,
+  stop cleanup and resolve that uncertainty.
 
-**If it exits 1** — the branch's commits are not ancestors of `main`. This
-does *not* mean the work is missing, and it is *not* a block on deletion.
-A rebased or squashed branch has different SHAs on `main` carrying the same
-content, so it can never satisfy the check no matter how long it is kept.
-Before deleting, state explicitly **where the content landed** — the PR
-number or the commit on `main` that carries it — and record that statement
-wherever the deletion is being tracked (PR comment, cleanup list, or the
-session's report to the project owner).
-
-If you cannot identify where the content landed, that is the one case to
-stop and ask. An unexplained non-ancestor branch is the only kind whose
-deletion actually loses something.
-
-This exists because "merged" is a label and ancestry is a fact, and because
-the seven branches consolidated into PR #8 were rebased — their original
-SHAs are not on `main` even though all of their content is. A one-stage
-check would have refused to ever clear them.
+Do not expand remote-branch cleanup into local-branch deletion, tracking
+configuration changes, bundle removal, or object-store maintenance. Those
+are separate actions with their own authorization and preservation needs.
