@@ -6,6 +6,7 @@ import pytest
 from sqlalchemy import event, func, select
 from sqlalchemy.exc import IntegrityError
 
+from app.core.authentication import authenticate
 from app.models import AuditRecord, User, Workspace, WorkspaceMembership
 from app.services.audit_actions import (
     BOOTSTRAP_ACTIONS,
@@ -24,19 +25,18 @@ def _counts(db):
     ]
 
 
-def _create(db):
+def _create(db, verifier):
     if not db.in_transaction():
         db.begin()  # caller explicitly opens Session transaction within fixture rollback
     return BootstrapService.create_owner(
         db,
-        issuer="synthetic-issuer",
-        subject="synthetic-bootstrap",
+        identity=authenticate("synthetic-test-token", verifier),
         workspace_name="Synthetic bootstrap",
     )
 
 
-def test_saved_record_linkage_query(identity_db):
-    result = _create(identity_db)
+def test_saved_record_linkage_query(identity_db, verifier):
+    result = _create(identity_db, verifier)
     # Verification query of stored records; no reliance on returned ORM objects.
     rows = list(
         identity_db.scalars(
@@ -64,7 +64,7 @@ def test_saved_record_linkage_query(identity_db):
 
 
 @pytest.mark.parametrize("step", range(1, 7))
-def test_failure_each_insert_rolls_back_all_six_rows(identity_db, step):
+def test_failure_each_insert_rolls_back_all_six_rows(identity_db, step, verifier):
     seen = 0
 
     def fail(mapper, connection, target):
@@ -79,7 +79,7 @@ def test_failure_each_insert_rolls_back_all_six_rows(identity_db, step):
     try:
         with pytest.raises(ValueError, match="synthetic injected"):
             with identity_db.begin_nested():
-                _create(identity_db)
+                _create(identity_db, verifier)
     finally:
         for model in models:
             event.remove(model, "before_insert", fail)
@@ -110,8 +110,8 @@ def test_preexisting_subject_refused_even_without_audit(identity_db, owner_graph
     assert _counts(identity_db) == before
 
 
-def test_partial_unique_index_refuses_duplicate_action(identity_db):
-    result = _create(identity_db)
+def test_partial_unique_index_refuses_duplicate_action(identity_db, verifier):
+    result = _create(identity_db, verifier)
     row = identity_db.scalar(
         select(AuditRecord).where(AuditRecord.action == USER_BOOTSTRAP_CREATED)
     )
