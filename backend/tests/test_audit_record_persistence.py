@@ -109,9 +109,7 @@ def workspace(session, user):  # type: ignore[no-untyped-def]
 
 @pytest.fixture()
 def enterprise_object(session, workspace, user):  # type: ignore[no-untyped-def]
-    obj = EnterpriseObject(
-        workspace_id=workspace.id, type="business_request", owner_id=user.id
-    )
+    obj = EnterpriseObject(workspace_id=workspace.id, type="business_request", owner_id=user.id)
     session.add(obj)
     session.flush()
     return obj
@@ -453,14 +451,17 @@ def test_list_by_workspace_rejects_invalid_limits(  # type: ignore[no-untyped-de
 # --- (13)-(14): AuditService.record accepts a persistent same-session subject
 
 
-def test_record_accepts_a_persistent_same_session_enterprise_object(  # type: ignore[no-untyped-def]
-    session, enterprise_object
+def test_record_accepts_a_persistent_same_session_enterprise_object(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    enterprise_object,
 ) -> None:
     AuditService.record(
         session,
         subject=enterprise_object,
         action=ENTERPRISE_OBJECT_CREATED,
         content={"type": [None, "business_request"]},
+        actor_context=actor_context,
     )
 
     records = audit_record_repository.list_by_workspace(session, enterprise_object.workspace_id)
@@ -470,14 +471,17 @@ def test_record_accepts_a_persistent_same_session_enterprise_object(  # type: ig
     assert record.subject_enterprise_object_id == enterprise_object.id
 
 
-def test_record_accepts_a_persistent_same_session_task(  # type: ignore[no-untyped-def]
-    session, task
+def test_record_accepts_a_persistent_same_session_task(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    task,
 ) -> None:
     AuditService.record(
         session,
         subject=task,
         action=TASK_CREATED,
         content={"phase": [None, "active"]},
+        actor_context=actor_context,
     )
 
     records = audit_record_repository.list_by_workspace(session, task.workspace_id)
@@ -490,27 +494,30 @@ def test_record_accepts_a_persistent_same_session_task(  # type: ignore[no-untyp
 # --- (15): subject-state rejections, six cases ------------------------------
 
 
-def test_transient_subject_is_rejected(  # type: ignore[no-untyped-def]
-    session, workspace, user
+def test_transient_subject_is_rejected(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    workspace,
+    user,
 ) -> None:
-    subject = EnterpriseObject(
-        workspace_id=workspace.id, type="business_request", owner_id=user.id
-    )
+    subject = EnterpriseObject(workspace_id=workspace.id, type="business_request", owner_id=user.id)
     with pytest.raises(ValueError, match="is not persistent"):
         AuditService.record(
             session,
             subject=subject,
             action=ENTERPRISE_OBJECT_CREATED,
             content={"type": [None, "business_request"]},
+            actor_context=actor_context,
         )
 
 
-def test_pending_subject_is_rejected(  # type: ignore[no-untyped-def]
-    session, workspace, user
+def test_pending_subject_is_rejected(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    workspace,
+    user,
 ) -> None:
-    subject = EnterpriseObject(
-        workspace_id=workspace.id, type="business_request", owner_id=user.id
-    )
+    subject = EnterpriseObject(workspace_id=workspace.id, type="business_request", owner_id=user.id)
     session.add(subject)
     with pytest.raises(ValueError, match="is not persistent"):
         AuditService.record(
@@ -518,11 +525,14 @@ def test_pending_subject_is_rejected(  # type: ignore[no-untyped-def]
             subject=subject,
             action=ENTERPRISE_OBJECT_CREATED,
             content={"type": [None, "business_request"]},
+            actor_context=actor_context,
         )
 
 
-def test_detached_subject_is_rejected(  # type: ignore[no-untyped-def]
-    session, enterprise_object
+def test_detached_subject_is_rejected(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    enterprise_object,
 ) -> None:
     session.expunge(enterprise_object)
     with pytest.raises(ValueError, match="is not persistent"):
@@ -531,11 +541,15 @@ def test_detached_subject_is_rejected(  # type: ignore[no-untyped-def]
             subject=enterprise_object,
             action=ENTERPRISE_OBJECT_UPDATED,
             content={"type": ["business_request", "process"]},
+            actor_context=actor_context,
         )
 
 
-def test_subject_from_a_different_session_is_rejected(  # type: ignore[no-untyped-def]
-    session, workspace, user
+def test_subject_from_a_different_session_is_rejected(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    workspace,
+    user,
 ) -> None:
     """The observer below is opened with the same nested-savepoint
     isolation as `_visible_in_a_second_session`, rather than depending on
@@ -557,13 +571,16 @@ def test_subject_from_a_different_session_is_rejected(  # type: ignore[no-untype
                 subject=subject,
                 action=ENTERPRISE_OBJECT_CREATED,
                 content={"type": [None, "business_request"]},
+                actor_context=actor_context,
             )
     finally:
         other.close()
 
 
-def test_deleted_and_flushed_subject_is_rejected(  # type: ignore[no-untyped-def]
-    session, enterprise_object
+def test_deleted_and_flushed_subject_is_rejected(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    enterprise_object,
 ) -> None:
     session.delete(enterprise_object)
     session.flush()
@@ -573,11 +590,14 @@ def test_deleted_and_flushed_subject_is_rejected(  # type: ignore[no-untyped-def
             subject=enterprise_object,
             action=ENTERPRISE_OBJECT_UPDATED,
             content={"type": ["business_request", "process"]},
+            actor_context=actor_context,
         )
 
 
-def test_scheduled_for_deletion_subject_is_rejected(  # type: ignore[no-untyped-def]
-    session, enterprise_object
+def test_scheduled_for_deletion_subject_is_rejected(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    enterprise_object,
 ) -> None:
     session.delete(enterprise_object)
     with pytest.raises(ValueError, match="scheduled for deletion"):
@@ -586,17 +606,25 @@ def test_scheduled_for_deletion_subject_is_rejected(  # type: ignore[no-untyped-
             subject=enterprise_object,
             action=ENTERPRISE_OBJECT_UPDATED,
             content={"type": ["business_request", "process"]},
+            actor_context=actor_context,
         )
 
 
 # --- (16)-(17): derived workspace/column, expected_workspace_id ------------
 
 
-def test_record_derives_workspace_and_populates_exactly_one_column(  # type: ignore[no-untyped-def]
-    session, task, workspace
+def test_record_derives_workspace_and_populates_exactly_one_column(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    task,
+    workspace,
 ) -> None:
     AuditService.record(
-        session, subject=task, action=TASK_CREATED, content={"phase": [None, "active"]}
+        session,
+        subject=task,
+        action=TASK_CREATED,
+        content={"phase": [None, "active"]},
+        actor_context=actor_context,
     )
 
     records = audit_record_repository.list_by_workspace(session, workspace.id)
@@ -610,8 +638,11 @@ def test_record_derives_workspace_and_populates_exactly_one_column(  # type: ign
     assert record.subject_workspace_membership_id is None
 
 
-def test_matching_expected_workspace_id_is_accepted(  # type: ignore[no-untyped-def]
-    session, enterprise_object, workspace
+def test_matching_expected_workspace_id_is_accepted(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    enterprise_object,
+    workspace,
 ) -> None:
     AuditService.record(
         session,
@@ -619,6 +650,7 @@ def test_matching_expected_workspace_id_is_accepted(  # type: ignore[no-untyped-
         action=ENTERPRISE_OBJECT_CREATED,
         content={"type": [None, "business_request"]},
         expected_workspace_id=workspace.id,
+        actor_context=actor_context,
     )
 
     records = audit_record_repository.list_by_workspace(session, workspace.id)
@@ -627,8 +659,10 @@ def test_matching_expected_workspace_id_is_accepted(  # type: ignore[no-untyped-
     assert record.workspace_id == workspace.id
 
 
-def test_mismatched_expected_workspace_id_is_rejected(  # type: ignore[no-untyped-def]
-    session, enterprise_object
+def test_mismatched_expected_workspace_id_is_rejected(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    enterprise_object,
 ) -> None:
     with pytest.raises(ValueError, match="workspace mismatch"):
         AuditService.record(
@@ -637,14 +671,17 @@ def test_mismatched_expected_workspace_id_is_rejected(  # type: ignore[no-untype
             action=ENTERPRISE_OBJECT_CREATED,
             content={"type": [None, "business_request"]},
             expected_workspace_id=uuid.uuid4(),
+            actor_context=actor_context,
         )
 
 
 # --- (18): deep detachment and tuple normalization --------------------------
 
 
-def test_content_tuple_pairs_are_normalized_and_deeply_detached(  # type: ignore[no-untyped-def]
-    session, task
+def test_content_tuple_pairs_are_normalized_and_deeply_detached(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    task,
 ) -> None:
     """A shallow copy would fail the mutation assertion below; a naive
     `dict(content)` would fail the list-normalization assertion -- the
@@ -653,7 +690,11 @@ def test_content_tuple_pairs_are_normalized_and_deeply_detached(  # type: ignore
     caller_content = {"tags": (["a"], ["b"])}
 
     AuditService.record(
-        session, subject=task, action=TASK_CREATED, content=caller_content
+        session,
+        subject=task,
+        action=TASK_CREATED,
+        content=caller_content,
+        actor_context=actor_context,
     )
 
     records = audit_record_repository.list_by_workspace(session, task.workspace_id)
@@ -670,8 +711,10 @@ def test_content_tuple_pairs_are_normalized_and_deeply_detached(  # type: ignore
 # --- (19)-(20): checks 8 and 9, unreachable from the unit suite ------------
 
 
-def test_subject_with_id_nulled_in_memory_is_rejected(  # type: ignore[no-untyped-def]
-    session, task
+def test_subject_with_id_nulled_in_memory_is_rejected(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    task,
 ) -> None:
     """Reaches check 8, which the unit suite cannot exercise: nulling an
     attribute in memory leaves a persistent, same-session instance
@@ -686,13 +729,19 @@ def test_subject_with_id_nulled_in_memory_is_rejected(  # type: ignore[no-untype
     task.id = None
     with pytest.raises(ValueError, match="id must be set"):
         AuditService.record(
-            session, subject=task, action=TASK_CREATED, content={"phase": [None, "active"]}
+            session,
+            subject=task,
+            action=TASK_CREATED,
+            content={"phase": [None, "active"]},
+            actor_context=actor_context,
         )
     session.rollback()
 
 
-def test_subject_with_workspace_id_nulled_in_memory_is_rejected(  # type: ignore[no-untyped-def]
-    session, task
+def test_subject_with_workspace_id_nulled_in_memory_is_rejected(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    task,
 ) -> None:
     """Reaches check 9, for the same reason item 19 reaches check 8. No
     query follows the mutation; the transaction is rolled back
@@ -700,7 +749,11 @@ def test_subject_with_workspace_id_nulled_in_memory_is_rejected(  # type: ignore
     task.workspace_id = None
     with pytest.raises(ValueError, match="workspace_id must be set"):
         AuditService.record(
-            session, subject=task, action=TASK_CREATED, content={"phase": [None, "active"]}
+            session,
+            subject=task,
+            action=TASK_CREATED,
+            content={"phase": [None, "active"]},
+            actor_context=actor_context,
         )
     session.rollback()
 
@@ -708,8 +761,11 @@ def test_subject_with_workspace_id_nulled_in_memory_is_rejected(  # type: ignore
 # --- Atomicity ---------------------------------------------------------
 
 
-def test_atomicity_same_transaction_co_visibility(  # type: ignore[no-untyped-def]
-    session, workspace, user
+def test_atomicity_same_transaction_co_visibility(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    workspace,
+    user,
 ) -> None:
     """Business mutation and its audit record, flushed through one
     session and one transaction, are both visible from a second session
@@ -717,9 +773,7 @@ def test_atomicity_same_transaction_co_visibility(  # type: ignore[no-untyped-de
     deliberately never commits its outer transaction -- see the module
     docstring.
     """
-    obj = EnterpriseObject(
-        workspace_id=workspace.id, type="business_request", owner_id=user.id
-    )
+    obj = EnterpriseObject(workspace_id=workspace.id, type="business_request", owner_id=user.id)
     session.add(obj)
     session.flush()
 
@@ -728,6 +782,7 @@ def test_atomicity_same_transaction_co_visibility(  # type: ignore[no-untyped-de
         subject=obj,
         action=ENTERPRISE_OBJECT_CREATED,
         content={"type": [None, "business_request"]},
+        actor_context=actor_context,
     )
 
     records = audit_record_repository.list_by_workspace(session, workspace.id)
@@ -749,9 +804,7 @@ def test_atomicity_audit_side_failure_rolls_back_both(  # type: ignore[no-untype
     mutation genuinely reaches the database, and the audit half fails the
     exactly-one CHECK -- a real, database-level all-or-nothing case.
     """
-    obj = EnterpriseObject(
-        workspace_id=workspace.id, type="business_request", owner_id=user.id
-    )
+    obj = EnterpriseObject(workspace_id=workspace.id, type="business_request", owner_id=user.id)
     session.add(obj)
     session.flush()
     obj_id = obj.id
@@ -773,8 +826,11 @@ def test_atomicity_audit_side_failure_rolls_back_both(  # type: ignore[no-untype
     assert not _visible_in_a_second_session(session, AuditRecord, bad_audit_id)
 
 
-def test_atomicity_business_mutation_failure_after_audit_flush(  # type: ignore[no-untyped-def]
-    session, workspace, user
+def test_atomicity_business_mutation_failure_after_audit_flush(
+    actor_context,  # type: ignore[no-untyped-def]
+    session,
+    workspace,
+    user,
 ) -> None:
     """A newly created object, not a pre-existing one: with a
     pre-existing row, rollback would only restore its previous phase, and
@@ -782,9 +838,7 @@ def test_atomicity_business_mutation_failure_after_audit_flush(  # type: ignore[
     created object keeps this scenario's assertion -- neither the object
     nor the audit row exists after rollback -- literally true.
     """
-    obj = EnterpriseObject(
-        workspace_id=workspace.id, type="business_request", owner_id=user.id
-    )
+    obj = EnterpriseObject(workspace_id=workspace.id, type="business_request", owner_id=user.id)
     session.add(obj)
     session.flush()
     obj_id = obj.id
@@ -794,6 +848,7 @@ def test_atomicity_business_mutation_failure_after_audit_flush(  # type: ignore[
         subject=obj,
         action=ENTERPRISE_OBJECT_CREATED,
         content={"type": [None, "business_request"]},
+        actor_context=actor_context,
     )
 
     records = audit_record_repository.list_by_workspace(session, workspace.id)
@@ -809,3 +864,14 @@ def test_atomicity_business_mutation_failure_after_audit_flush(  # type: ignore[
 
     assert not _visible_in_a_second_session(session, EnterpriseObject, obj_id)
     assert not _visible_in_a_second_session(session, AuditRecord, record_id)
+
+
+@pytest.fixture
+def actor_context(session, workspace, user):
+    from app.core.actor_context import ActorContext
+    from app.models import WorkspaceMembership
+
+    membership = WorkspaceMembership(user_id=user.id, workspace_id=workspace.id, role="owner")
+    session.add(membership)
+    session.flush()
+    return ActorContext(user.id, workspace.id, membership.id, "synthetic-audit-test")

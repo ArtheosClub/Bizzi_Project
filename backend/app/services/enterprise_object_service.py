@@ -5,9 +5,11 @@ is neither discharged nor reinterpreted: it passes to the work package that
 delivers RuntimeEventService after ADW-07 defines event semantics.
 
 Supersession is permitted by ADR-0009 but cannot be implemented until its
-D09-typed relationship exists (D10 section 12). No API, actor attribution,
-authorization policy, type/owner mutation or deletion is added here. Workspace
-and owner identifiers come from the trusted caller; scoping is not authorization.
+D09-typed relationship exists (D10 section 12). Stage 2 adds actor/membership
+attribution and checks the persisted owner
+membership before writes under the prospective record-5 scope. No API,
+type/owner mutation or deletion is added. Workspace scoping alone is not
+authorization; trusted context is confirmed against persisted facts.
 
 The caller must roll back on mutation or audit failure. Neither this module nor
 its repository ends the transaction, and neither can enforce correct recovery
@@ -22,10 +24,11 @@ import uuid
 
 from sqlalchemy.orm import Session
 
+from app.core.actor_context import ActorContext
 from app.models.enterprise_object import PHASE_ACTIVE, PHASE_ARCHIVED, EnterpriseObject
 from app.repositories import enterprise_object_repository
 from app.services.audit_actions import ENTERPRISE_OBJECT_CREATED, ENTERPRISE_OBJECT_UPDATED
-from app.services.audit_service import AuditService
+from app.services.audit_service import AuditService, _validate_actor
 
 
 def _transition(
@@ -34,12 +37,14 @@ def _transition(
     object_id: uuid.UUID,
     before: str,
     after: str,
+    actor_context: ActorContext | None,
 ) -> None:
     obj = enterprise_object_repository.get_by_id(session, workspace_id, object_id, for_update=True)
     if obj is None:
         raise LookupError("EnterpriseObject not found in workspace")
     if obj.phase != before:
         raise ValueError(f"cannot transition EnterpriseObject from {obj.phase!r} to {after!r}")
+    _validate_actor(session, actor_context, workspace_id)
     obj.phase = after
     AuditService.record(
         session,
@@ -47,6 +52,7 @@ def _transition(
         action=ENTERPRISE_OBJECT_UPDATED,
         content={"phase": [before, after]},
         expected_workspace_id=workspace_id,
+        actor_context=actor_context,
     )
 
 
@@ -60,8 +66,12 @@ class EnterpriseObjectService:
         workspace_id: uuid.UUID,
         type: str,
         owner_id: uuid.UUID,
+        actor_context: ActorContext | None = None,
     ) -> uuid.UUID:
         """Create active, flush for audit identity, and return only that identity."""
+        _validate_actor(session, actor_context, workspace_id)
+        if actor_context is None or owner_id != actor_context.actor_id:
+            raise ValueError("creation owner does not match trusted actor")
         obj = EnterpriseObject(
             workspace_id=workspace_id, type=type, owner_id=owner_id, phase=PHASE_ACTIVE
         )
@@ -77,15 +87,28 @@ class EnterpriseObjectService:
                 "phase": [None, obj.phase],
             },
             expected_workspace_id=workspace_id,
+            actor_context=actor_context,
         )
         return obj.id
 
     @staticmethod
-    def archive(session: Session, *, workspace_id: uuid.UUID, object_id: uuid.UUID) -> None:
+    def archive(
+        session: Session,
+        *,
+        workspace_id: uuid.UUID,
+        object_id: uuid.UUID,
+        actor_context: ActorContext | None = None,
+    ) -> None:
         """Only active -> archived; repeated archive fails before audit."""
-        _transition(session, workspace_id, object_id, PHASE_ACTIVE, PHASE_ARCHIVED)
+        _transition(session, workspace_id, object_id, PHASE_ACTIVE, PHASE_ARCHIVED, actor_context)
 
     @staticmethod
-    def unarchive(session: Session, *, workspace_id: uuid.UUID, object_id: uuid.UUID) -> None:
+    def unarchive(
+        session: Session,
+        *,
+        workspace_id: uuid.UUID,
+        object_id: uuid.UUID,
+        actor_context: ActorContext | None = None,
+    ) -> None:
         """Only archived -> active; superseded is terminal."""
-        _transition(session, workspace_id, object_id, PHASE_ARCHIVED, PHASE_ACTIVE)
+        _transition(session, workspace_id, object_id, PHASE_ARCHIVED, PHASE_ACTIVE, actor_context)

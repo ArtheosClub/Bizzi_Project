@@ -1,10 +1,14 @@
-"""No Stage-1 bootstrap mutation before reviewed WP19 audit integration."""
-
-import pytest
+"""Bootstrap CLI-wrapper exercised only through rollback-bound pytest."""
 
 from app.cli.bootstrap_owner import bootstrap_owner
+from app.models import User
 
 
-def test_bootstrap_not_callable_before_wp19():
-    with pytest.raises(RuntimeError, match="reviewed WP19 audit"):
-        bootstrap_owner()
+def test_cli_wrapper_creates_owner_inside_external_test_transaction(identity_db):
+    result = bootstrap_owner(
+        identity_db,
+        issuer="synthetic-issuer",
+        subject="synthetic-cli-owner",
+        workspace_name="Synthetic CLI",
+    )
+    assert identity_db.get(User, result.user_id) is not None

@@ -31,7 +31,10 @@ Bounded to A-11's initial callable slice: `EnterpriseObject` and `Task`,
 the two kinds WP13 and WP15 need. The other three accepted D1 subject
 kinds (`Workspace`, `User`, `WorkspaceMembership`) remain
 schema-supported -- all five `subject_*` columns exist on the table --
-but are deliberately absent from `SUBJECT_COLUMNS` below. `User` in
+but are deliberately absent from ordinary `SUBJECT_COLUMNS` below. Record 4b
+authorizes only their dedicated bootstrap batch operation, whose new Workspace
+provides the common audit scope and whose User reference identifies the
+requesting Owner. It does not broaden ordinary `record()` subject kinds. `User` in
 particular carries no `workspace_id` of its own, so the source of the
 required `AuditRecord.workspace_id` is not established for it. Listing
 any of the three here would assert a service authorization A-11
@@ -107,14 +110,26 @@ from types import MappingProxyType
 from typing import Any, Final, cast
 
 from sqlalchemy import inspect as sa_inspect
+from sqlalchemy import select
 from sqlalchemy.orm import Session, object_session
 
+from app.core.actor_context import ActorContext
+from app.core.authorization import AuthorizationService
 from app.db.base import Base
 from app.models.audit_record import AuditRecord
 from app.models.enterprise_object import EnterpriseObject
 from app.models.task import Task
+from app.models.user import User
+from app.models.workspace import Workspace
+from app.models.workspace_membership import WorkspaceMembership
 from app.repositories import audit_record_repository
-from app.services.audit_actions import ALLOWED_ACTIONS_BY_SUBJECT_TYPE
+from app.services.audit_actions import (
+    ALLOWED_ACTIONS_BY_SUBJECT_TYPE,
+    BOOTSTRAP_ACTIONS,
+    MEMBERSHIP_BOOTSTRAP_CREATED,
+    USER_BOOTSTRAP_CREATED,
+    WORKSPACE_BOOTSTRAP_CREATED,
+)
 
 #: Which `subject_*` column carries each authorized subject kind's
 #: canonical identity. Bounded to A-11's initial callable slice -- see the
@@ -158,22 +173,14 @@ def _validate_and_detach_content(content: Mapping[str, Any]) -> dict[str, list[A
         if not isinstance(key, str) or key.strip() == "":
             raise ValueError(f"content key {key!r} must be a non-blank string")
         if not isinstance(pair, (list, tuple)) or len(pair) != 2:
-            raise ValueError(
-                f"content[{key!r}] must be a two-element [before, after] pair"
-            )
+            raise ValueError(f"content[{key!r}] must be a two-element [before, after] pair")
         try:
-            roundtripped = cast(
-                "list[Any]", json.loads(json.dumps(list(pair), allow_nan=False))
-            )
+            roundtripped = cast("list[Any]", json.loads(json.dumps(list(pair), allow_nan=False)))
         except (TypeError, ValueError) as exc:
-            raise ValueError(
-                f"content[{key!r}] is not JSON-compatible: {exc}"
-            ) from exc
+            raise ValueError(f"content[{key!r}] is not JSON-compatible: {exc}") from exc
         before, after = roundtripped
         if before == after:
-            raise ValueError(
-                f"content[{key!r}] records no change: before and after are equal"
-            )
+            raise ValueError(f"content[{key!r}] records no change: before and after are equal")
         detached[key] = [before, after]
     return detached
 
@@ -189,6 +196,7 @@ class AuditService:
         action: str,
         content: Mapping[str, Any],
         expected_workspace_id: uuid.UUID | None = None,
+        actor_context: ActorContext | None = None,
     ) -> None:
         """Record one audited mutation in the caller's open transaction.
 
@@ -217,6 +225,8 @@ class AuditService:
         right kind of thing, an inadmissible value) -- before adding or
         flushing any `AuditRecord` in every case.
         """
+        if isinstance(action, str) and action in BOOTSTRAP_ACTIONS:
+            raise ValueError("bootstrap actions require the dedicated bootstrap operation")
         subject_type = type(subject)
 
         # 1. Exact authorized subject type. TypeError: the wrong kind of
@@ -268,9 +278,7 @@ class AuditService:
         #    different one. Established before any of that session's own
         #    state is read.
         if object_session(subject) is not session:
-            raise ValueError(
-                "subject is not attached to the session performing this write"
-            )
+            raise ValueError("subject is not attached to the session performing this write")
 
         # 7. Scheduled for deletion but not yet flushed: still persistent
         #    by SQLAlchemy's definition, so only `session.deleted` reveals
@@ -295,23 +303,142 @@ class AuditService:
             raise ValueError(f"{subject_type.__name__}.workspace_id must be set")
 
         # 10. expected_workspace_id confirms; it never overrides.
-        if (
-            expected_workspace_id is not None
-            and expected_workspace_id != workspace_id
-        ):
+        if expected_workspace_id is not None and expected_workspace_id != workspace_id:
             raise ValueError(
                 "workspace mismatch: expected_workspace_id does not match "
                 "the subject's own workspace_id"
             )
+
+        # Record 4b: every new governed ordinary mutation has attribution.
+        if actor_context is None:
+            raise ValueError("ordinary audit requires actor attribution")
+        _validate_actor(session, actor_context, workspace_id)
 
         # 11. Exactly the mapped subject column is populated.
         record = AuditRecord(
             workspace_id=workspace_id,
             action=action,
             content=detached_content,
+            actor_id=actor_context.actor_id,
+            membership_id=actor_context.membership_id,
             **{column: subject_id},
         )
 
         # 12. The validated record, and only the validated record, reaches
         #     the repository.
         audit_record_repository.add(session, record)
+
+    @staticmethod
+    def record_bootstrap(
+        session: Session,
+        *,
+        user: User,
+        workspace: Workspace,
+        membership: WorkspaceMembership,
+    ) -> None:
+        """Record 4b: one new bootstrap batch; caller alone owns rollback/commit.
+
+        Before writes, reject persistent/previously flushed or duplicate-ID subjects.
+        BootstrapService constructs the pending instances in this call; no caller IDs.
+        No transaction-id proof or global Session/raw-SQL confinement is claimed.
+        """
+        expected = ((user, User), (workspace, Workspace), (membership, WorkspaceMembership))
+        with session.no_autoflush:
+            for obj, model in expected:
+                if type(obj) is not model or object_session(obj) is not session:
+                    raise ValueError("bootstrap subjects must belong to the caller session")
+                state = cast(Any, sa_inspect(obj))
+                if not state.pending or obj not in session.new or obj.id is None:
+                    raise ValueError("bootstrap subject existed before this call")
+                if session.scalar(select(model.id).where(model.id == obj.id)) is not None:
+                    raise ValueError("bootstrap subject existed before this call")
+            if (
+                workspace.owner_id != user.id
+                or membership.user_id != user.id
+                or membership.workspace_id != workspace.id
+                or membership.role != "owner"
+                or not user.auth_issuer
+                or not user.auth_subject
+                or user.deactivated_at is not None
+            ):
+                raise ValueError("invalid bootstrap ownership, identity or membership")
+        # Explicit table dependency order; each creation remains in caller transaction.
+        session.flush([user])
+        session.flush([workspace])
+        session.flush([membership])
+        records = (
+            AuditRecord(
+                workspace_id=workspace.id,
+                action=USER_BOOTSTRAP_CREATED,
+                subject_user_id=user.id,
+                actor_id=None,
+                membership_id=None,
+                content={"id": [None, str(user.id)]},
+            ),
+            AuditRecord(
+                workspace_id=workspace.id,
+                action=WORKSPACE_BOOTSTRAP_CREATED,
+                subject_workspace_id=workspace.id,
+                actor_id=None,
+                membership_id=None,
+                content={"owner_id": [None, str(user.id)], "name": [None, workspace.name]},
+            ),
+            AuditRecord(
+                workspace_id=workspace.id,
+                action=MEMBERSHIP_BOOTSTRAP_CREATED,
+                subject_workspace_membership_id=membership.id,
+                actor_id=None,
+                membership_id=None,
+                content={
+                    "user_id": [None, str(user.id)],
+                    "workspace_id": [None, str(workspace.id)],
+                    "role": [None, membership.role],
+                },
+            ),
+        )
+        for record in records:
+            _validate_and_detach_content(record.content)
+            audit_record_repository.add(session, record)
+        stored = list(
+            session.scalars(
+                select(AuditRecord).where(
+                    AuditRecord.workspace_id == workspace.id,
+                    AuditRecord.action.in_(BOOTSTRAP_ACTIONS),
+                )
+            )
+        )
+        if len(stored) != 3 or {x.action for x in stored} != BOOTSTRAP_ACTIONS:
+            raise ValueError("bootstrap audit set incomplete")
+        if len({x.created_at for x in stored}) != 1:
+            raise ValueError("bootstrap audit timestamps differ")
+
+
+def _validate_actor(
+    session: Session, context: ActorContext | None, workspace_id: uuid.UUID
+) -> None:
+    if context is None or not context.request_id:
+        raise ValueError("ordinary audit requires actor attribution")
+    with session.no_autoflush:
+        row = session.execute(
+            select(User, WorkspaceMembership, Workspace)
+            .join(WorkspaceMembership, WorkspaceMembership.user_id == User.id)
+            .join(Workspace, Workspace.id == WorkspaceMembership.workspace_id)
+            .where(
+                User.id == context.actor_id,
+                WorkspaceMembership.id == context.membership_id,
+                Workspace.id == workspace_id,
+            )
+            .execution_options(populate_existing=True)
+        ).one_or_none()
+    if row is None or row[0].deactivated_at is not None:
+        raise ValueError("invalid ordinary audit actor attribution")
+    user, membership, workspace = row
+    AuthorizationService().assert_owner(
+        context,
+        membership_id=membership.id,
+        member_id=user.id,
+        workspace_id=workspace.id,
+        workspace_owner_id=workspace.owner_id,
+        role=membership.role,
+        resource_workspace_id=workspace_id,
+    )

@@ -19,3 +19,11 @@ def find_for_identity(db: Session, user_id: UUID) -> list[tuple[WorkspaceMembers
         .limit(2)
     ).all()
     return [(membership, workspace) for membership, workspace in rows]
+
+
+def create_for_bootstrap(db: Session, *, user_id: UUID, workspace_id: UUID) -> WorkspaceMembership:
+    from uuid import uuid4
+
+    obj = WorkspaceMembership(id=uuid4(), user_id=user_id, workspace_id=workspace_id, role="owner")
+    db.add(obj)
+    return obj

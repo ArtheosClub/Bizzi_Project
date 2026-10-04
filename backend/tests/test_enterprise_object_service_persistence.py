@@ -48,7 +48,13 @@ def db(engine):
 
 def create(db):
     session, workspace_id, owner_id = db
-    return Service.create(session, workspace_id=workspace_id, type="example", owner_id=owner_id)
+    return Service.create(
+        session,
+        workspace_id=workspace_id,
+        type="example",
+        owner_id=owner_id,
+        actor_context=_test_context(session, workspace_id),
+    )
 
 
 def records(db):
@@ -93,13 +99,29 @@ def test_archive_unarchive_diffs_in_call_order(db):
     session, workspace_id, _ = db
     object_id = create(db)
     initial_ids = {row.id for row in records(db)}
-    assert Service.archive(session, workspace_id=workspace_id, object_id=object_id) is None
+    assert (
+        Service.archive(
+            session,
+            workspace_id=workspace_id,
+            object_id=object_id,
+            actor_context=_test_context(session, workspace_id),
+        )
+        is None
+    )
     first = [row for row in records(db) if row.id not in initial_ids]
     assert len(first) == 1
     assert first[0].content == {"phase": ["active", "archived"]}
     assert repository.get_by_id(session, workspace_id, object_id).phase == "archived"
     initial_ids.add(first[0].id)
-    assert Service.unarchive(session, workspace_id=workspace_id, object_id=object_id) is None
+    assert (
+        Service.unarchive(
+            session,
+            workspace_id=workspace_id,
+            object_id=object_id,
+            actor_context=_test_context(session, workspace_id),
+        )
+        is None
+    )
     second = [row for row in records(db) if row.id not in initial_ids]
     assert len(second) == 1
     assert second[0].content == {"phase": ["archived", "active"]}
@@ -120,7 +142,12 @@ def test_cross_workspace_and_missing_identity_are_indistinguishable(db, operatio
     messages = []
     for target in (object_id, uuid.uuid4()):
         with pytest.raises(LookupError) as exc:
-            getattr(Service, operation)(session, workspace_id=other.id, object_id=target)
+            getattr(Service, operation)(
+                session,
+                workspace_id=other.id,
+                object_id=target,
+                actor_context=_test_context(session, other.id),
+            )
         messages.append(str(exc.value))
     assert messages[0] == messages[1]
     assert repository.get_by_id(session, workspace_id, object_id).phase == "active"
@@ -146,7 +173,12 @@ def test_invalid_persisted_transition_has_no_audit(db, monkeypatch, operation, p
     record = Mock()
     monkeypatch.setattr(AuditService, "record", record)
     with pytest.raises(ValueError, match="cannot transition"):
-        getattr(Service, operation)(session, workspace_id=workspace_id, object_id=obj.id)
+        getattr(Service, operation)(
+            session,
+            workspace_id=workspace_id,
+            object_id=obj.id,
+            actor_context=_test_context(session, workspace_id),
+        )
     record.assert_not_called()
     session.refresh(obj)
     assert obj.phase == phase and records(db) == []
@@ -185,13 +217,17 @@ def test_repository_list_order_and_limit(db):
 
 
 def test_business_constraint_failure_precedes_audit(db, monkeypatch):
-    session, workspace_id, _ = db
+    session, workspace_id, owner_id = db
     record = Mock()
     monkeypatch.setattr(AuditService, "record", record)
     with pytest.raises(IntegrityError):
         with session.begin_nested():
             Service.create(
-                session, workspace_id=workspace_id, type="example", owner_id=uuid.uuid4()
+                session,
+                workspace_id=workspace_id,
+                type=None,  # NOT NULL business constraint after valid attribution
+                owner_id=owner_id,
+                actor_context=_test_context(session, workspace_id),
             )
     record.assert_not_called()
     assert repository.list_by_workspace(session, workspace_id) == []
@@ -227,7 +263,11 @@ def test_create_failure_then_caller_rollback_is_not_durable(engine, monkeypatch,
             expected_error = ValueError if failure == "audit_validation" else IntegrityError
             with pytest.raises(expected_error):
                 object_id = Service.create(
-                    session, workspace_id=workspace_id, type="example", owner_id=user.id
+                    session,
+                    workspace_id=workspace_id,
+                    type="example",
+                    owner_id=user.id,
+                    actor_context=_test_context(session, workspace_id),
                 )
                 # Both rows have flushed before this subsequent business failure.
                 assert len(audit_record_repository.list_by_workspace(session, workspace_id)) == 1
@@ -263,7 +303,12 @@ def test_transition_rollback_restores_prior_phase(db, monkeypatch, operation, ph
     # The caller's savepoint owns rollback, preserving fixture setup.
     with pytest.raises(ValueError):
         with session.begin_nested():
-            getattr(Service, operation)(session, workspace_id=workspace_id, object_id=obj.id)
+            getattr(Service, operation)(
+                session,
+                workspace_id=workspace_id,
+                object_id=obj.id,
+                actor_context=_test_context(session, workspace_id),
+            )
             assert len(records(db)) == 1
             raise ValueError("business failure after audit flush")
     session.expire_all()
@@ -279,7 +324,12 @@ def test_lock_refreshes_stale_loaded_phase(db):
         text("UPDATE enterprise_objects SET phase='archived' WHERE id=:id"), {"id": obj.id}
     )
     assert obj.phase == "active"  # intentionally stale ORM identity map
-    Service.unarchive(session, workspace_id=workspace_id, object_id=obj.id)
+    Service.unarchive(
+        session,
+        workspace_id=workspace_id,
+        object_id=obj.id,
+        actor_context=_test_context(session, workspace_id),
+    )
     assert obj.phase == "active"
     assert records(db)[0].content == {"phase": ["archived", "active"]}
 
@@ -295,22 +345,41 @@ def test_two_connections_serialize_archive_and_reject_repeated_transition(engine
             setup.add(Workspace(id=workspace_id, name="WP13 lock probe", owner_id=user_id))
             setup.flush()
             object_id = Service.create(
-                setup, workspace_id=workspace_id, owner_id=user_id, type="example"
+                setup,
+                workspace_id=workspace_id,
+                owner_id=user_id,
+                type="example",
+                actor_context=_test_context(setup, workspace_id),
             )
             setup.commit()
         with Session(engine) as first, Session(engine) as second:
             assert first.scalar(text("SELECT pg_backend_pid()")) != second.scalar(
                 text("SELECT pg_backend_pid()")
             )
-            Service.archive(first, workspace_id=workspace_id, object_id=object_id)
+            Service.archive(
+                first,
+                workspace_id=workspace_id,
+                object_id=object_id,
+                actor_context=_test_context(first, workspace_id),
+            )
             second.execute(text("SET LOCAL lock_timeout = '200ms'"))
             with pytest.raises(OperationalError) as exc:
-                Service.archive(second, workspace_id=workspace_id, object_id=object_id)
+                Service.archive(
+                    second,
+                    workspace_id=workspace_id,
+                    object_id=object_id,
+                    actor_context=_test_context(second, workspace_id),
+                )
             assert exc.value.orig.sqlstate == "55P03"
             second.rollback()
             first.commit()
             with pytest.raises(ValueError, match="cannot transition"):
-                Service.archive(second, workspace_id=workspace_id, object_id=object_id)
+                Service.archive(
+                    second,
+                    workspace_id=workspace_id,
+                    object_id=object_id,
+                    actor_context=_test_context(second, workspace_id),
+                )
             second.rollback()
         with Session(engine) as observer:
             assert repository.get_by_id(observer, workspace_id, object_id).phase == "archived"
@@ -323,6 +392,33 @@ def test_two_connections_serialize_archive_and_reject_repeated_transition(engine
             cleanup.execute(
                 delete(EnterpriseObject).where(EnterpriseObject.workspace_id == workspace_id)
             )
+            from app.models import WorkspaceMembership
+
+            cleanup.execute(
+                delete(WorkspaceMembership).where(WorkspaceMembership.workspace_id == workspace_id)
+            )
             cleanup.execute(delete(Workspace).where(Workspace.id == workspace_id))
             cleanup.execute(delete(User).where(User.id == user_id))
             cleanup.commit()
+
+
+def _test_context(session, workspace_id):
+    from sqlalchemy import select
+
+    from app.core.actor_context import ActorContext
+    from app.models import WorkspaceMembership
+
+    workspace = session.get(Workspace, workspace_id)
+    member = session.scalar(
+        select(WorkspaceMembership).where(
+            WorkspaceMembership.workspace_id == workspace_id,
+            WorkspaceMembership.user_id == workspace.owner_id,
+        )
+    )
+    if member is None:
+        member = WorkspaceMembership(
+            user_id=workspace.owner_id, workspace_id=workspace_id, role="owner"
+        )
+        session.add(member)
+        session.flush()
+    return ActorContext(workspace.owner_id, workspace_id, member.id, "synthetic-eo-test")

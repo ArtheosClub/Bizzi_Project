@@ -65,6 +65,8 @@ def test_audit_record_has_exactly_the_a11_columns() -> None:
         "content",
         *SUBJECT_COLUMNS,
         "created_at",
+        "actor_id",
+        "membership_id",
     }
 
 
@@ -99,10 +101,7 @@ def test_workspace_id_is_a_real_foreign_key_with_no_ondelete() -> None:
     fk = next(iter(workspace_id.foreign_keys))
     assert fk.target_fullname == "workspaces.id"
     assert fk.ondelete is None
-    assert any(
-        list(index.columns) == [workspace_id]
-        for index in AuditRecord.__table__.indexes
-    )
+    assert any(list(index.columns) == [workspace_id] for index in AuditRecord.__table__.indexes)
 
 
 def test_subject_columns_have_no_foreign_keys() -> None:
@@ -151,11 +150,7 @@ def test_exactly_one_subject_reference_check_constraint_exists() -> None:
     `app/db/base.py`'s convention resolves the name to
     ck_audit_records_exactly_one_subject_reference.
     """
-    checks = [
-        c
-        for c in AuditRecord.__table__.constraints
-        if isinstance(c, CheckConstraint)
-    ]
+    checks = [c for c in AuditRecord.__table__.constraints if isinstance(c, CheckConstraint)]
     assert len(checks) == 1
     assert str(checks[0].sqltext) == EXACTLY_ONE_SUBJECT_REFERENCE
 
@@ -167,10 +162,7 @@ def test_constraints_use_the_naming_convention() -> None:
     assert table.primary_key.name == "pk_audit_records"
 
     workspace_fks = list(table.columns["workspace_id"].foreign_keys)
-    assert (
-        workspace_fks[0].constraint.name
-        == "fk_audit_records_workspace_id_workspaces"
-    )
+    assert workspace_fks[0].constraint.name == "fk_audit_records_workspace_id_workspaces"
 
     checks = [c for c in table.constraints if isinstance(c, CheckConstraint)]
     assert checks[0].name == "ck_audit_records_exactly_one_subject_reference"
@@ -197,4 +189,5 @@ def test_migration_is_wired_into_the_revision_chain() -> None:
 
     revision = script.get_revision(AUDIT_RECORD_REVISION)
     assert revision.down_revision == AGENT_DEFINITION_REVISION
-    assert script.get_heads() == [AUDIT_RECORD_REVISION]
+    assert script.get_heads() == ["adw02_02"]
+    assert script.get_revision("adw02_02").down_revision == "adw02_01"

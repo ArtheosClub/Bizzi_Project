@@ -40,13 +40,22 @@ TASK_UPDATED = "task.updated"
 #: unreachable, since a module attribute can still be rebound, and `Final` is
 #: enforced by static analysis only. `AuditService.record(...)` is what applies
 #: the table.
-ALLOWED_ACTIONS_BY_SUBJECT_TYPE: Final[Mapping[type, frozenset[str]]] = (
-    MappingProxyType(
-        {
-            EnterpriseObject: frozenset(
-                {ENTERPRISE_OBJECT_CREATED, ENTERPRISE_OBJECT_UPDATED}
-            ),
-            Task: frozenset({TASK_CREATED, TASK_UPDATED}),
-        }
-    )
+ALLOWED_ACTIONS_BY_SUBJECT_TYPE: Final[Mapping[type, frozenset[str]]] = MappingProxyType(
+    {
+        EnterpriseObject: frozenset({ENTERPRISE_OBJECT_CREATED, ENTERPRISE_OBJECT_UPDATED}),
+        Task: frozenset({TASK_CREATED, TASK_UPDATED}),
+    }
+)
+
+
+# Record 4b: exclusive to AuditService.record_bootstrap, not ordinary record.
+USER_BOOTSTRAP_CREATED = "user.bootstrap_created"
+WORKSPACE_BOOTSTRAP_CREATED = "workspace.bootstrap_created"
+MEMBERSHIP_BOOTSTRAP_CREATED = "workspace_membership.bootstrap_created"
+BOOTSTRAP_ACTIONS = frozenset(
+    {
+        USER_BOOTSTRAP_CREATED,
+        WORKSPACE_BOOTSTRAP_CREATED,
+        MEMBERSHIP_BOOTSTRAP_CREATED,
+    }
 )

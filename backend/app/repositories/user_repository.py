@@ -20,3 +20,11 @@ def get_by_id(db: Session, user_id: UUID) -> User | None:
     return db.scalar(
         select(User).execution_options(populate_existing=True).where(User.id == user_id)
     )
+
+
+def create_for_bootstrap(db: Session, *, issuer: str, subject: str) -> User:
+    from uuid import uuid4
+
+    obj = User(id=uuid4(), auth_issuer=issuer, auth_subject=subject)
+    db.add(obj)
+    return obj
