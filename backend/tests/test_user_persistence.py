@@ -39,7 +39,8 @@ def session(engine):  # type: ignore[no-untyped-def]
         yield db
     finally:
         db.close()
-        transaction.rollback()
+        if transaction.is_active:
+            transaction.rollback()
         connection.close()
 
 
@@ -68,3 +69,32 @@ def test_user_round_trip(session: Session) -> None:
     fetched = session.get(User, user.id)
     assert fetched is not None
     assert fetched.id == user.id
+
+
+def test_identity_binding_round_trip(session: Session) -> None:
+    user = User(auth_issuer="synthetic-issuer", auth_subject="synthetic-round-trip")
+    session.add(user)
+    session.flush()
+    session.expire(user)
+    assert user.auth_subject == "synthetic-round-trip"
+
+
+def test_duplicate_identity_binding_rejected(session: Session) -> None:
+    from sqlalchemy.exc import IntegrityError
+
+    session.add_all(
+        [
+            User(auth_issuer="synthetic-issuer", auth_subject="duplicate"),
+            User(auth_issuer="synthetic-issuer", auth_subject="duplicate"),
+        ]
+    )
+    with pytest.raises(IntegrityError):
+        session.flush()
+
+
+def test_partial_binding_rejected(session: Session) -> None:
+    from sqlalchemy.exc import IntegrityError
+
+    session.add(User(auth_issuer="synthetic-issuer"))
+    with pytest.raises(IntegrityError):
+        session.flush()

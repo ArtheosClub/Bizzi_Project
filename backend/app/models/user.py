@@ -1,29 +1,13 @@
-"""User — bare identity only, per WP16 Amendment A-03.
+"""Human identity/Actor shared realization, Owner ADW-02 records 4/5.
 
-ADW-02 (Identity and Workspace Boundary) is the domain workshop that owns
-identity and credential mechanics (`ADW_01_CORE_DOMAIN_SEMANTICS.md` §10
-lists it as deferred beyond ADW-01) and it is unwritten. No approved
-source anywhere in this repository specifies what fields `User` should
-carry beyond bare identity.
-
-Shipping `email`, `password_hash`, or any other credential-shaped field
-now would settle ADW-02's scope by migration rather than by decision —
-Architecture Review Checklist question 4's exact concern. Same treatment
-`EnterpriseObject.type` already got for its own unenumerated values: ship
-what's decided, leave undecided what isn't.
-
-Fields are exactly `id`, `created_at`, `updated_at` — nothing else. This
-table exists now only because `WorkspaceMembership.user_id` and the
-`owner_id` FK backfills on `Workspace`/`EnterpriseObject` need a real
-table to point at (both prior migrations explicitly promised "WP16's own
-migration adds it"). Login, auth middleware, and any credential field
-wait on ADW-02.
+Historic bare identities remain unbound, not fabricated into authenticated
+Actors. No passwords/email anchor; four existing FK contracts preserved.
 """
 
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, func
+from sqlalchemy import CheckConstraint, DateTime, String, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -32,6 +16,20 @@ from app.db.base import Base
 
 class User(Base):
     __tablename__ = "users"
+
+    __table_args__ = (
+        UniqueConstraint("auth_issuer", "auth_subject", name="uq_users_auth_issuer_auth_subject"),
+        CheckConstraint(
+            "(auth_issuer IS NULL AND auth_subject IS NULL) OR "
+            "(auth_issuer IS NOT NULL AND auth_subject IS NOT NULL "
+            "AND auth_issuer <> '' AND auth_subject <> '')",
+            name="auth_binding_is_complete",
+        ),
+    )
+
+    auth_issuer: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    auth_subject: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    deactivated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),

@@ -45,6 +45,23 @@ class AppError(Exception):
         self.message = message
 
 
+class UnauthenticatedError(AppError):
+    code = "unauthenticated"
+    http_status = status.HTTP_401_UNAUTHORIZED
+
+    def __init__(self) -> None:
+        super().__init__("Authentication required")
+
+
+class AccessDeniedError(AppError):
+    # NEW Owner decision Q07, beyond ADR-0012's resource-only selection.
+    code = "not_found"
+    http_status = status.HTTP_404_NOT_FOUND
+
+    def __init__(self) -> None:
+        super().__init__("Resource not found")
+
+
 def _error_body(
     code: str, message: str, details: Sequence[dict[str, Any]] | None = None
 ) -> dict[str, Any]:
@@ -83,14 +100,10 @@ async def validation_exception_handler(
     )
 
 
-async def http_exception_handler(
-    request: Request, exc: StarletteHTTPException
-) -> JSONResponse:
+async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
     code = _HTTP_EXCEPTION_CODES.get(exc.status_code)
     if code is not None:
-        message = (
-            exc.detail if isinstance(exc.detail, str) else "Request could not be processed"
-        )
+        message = exc.detail if isinstance(exc.detail, str) else "Request could not be processed"
         # Starlette's HTTPException carries response headers of its own
         # (e.g. the router's 405 sets Allow) — preserving them is
         # existing HTTP semantics, not a new envelope field or contract

@@ -1,14 +1,7 @@
-"""User model tests — WP16 Amendment A-03 (schema foundation only).
+"""WP16 identity schema, original foundation plus Owner records 4/5.
 
-No database needed. `User` is deliberately minimal: `id`, `created_at`,
-`updated_at`, nothing else. ADW-02 (Identity and Workspace Boundary) owns
-identity/credential mechanics and is unwritten, so there is nothing
-approved to assert beyond bare identity — unlike `EnterpriseObject`,
-there's no constitutional prohibition to pin here, only an absence to
-keep absent.
-
-`test_user_persistence.py` covers the real round-trip against Postgres
-in CI.
+No passwords or email anchor. Identity binding/deactivation are now approved
+for the bounded synthetic scope; historical migration contracts are retained.
 """
 
 from pathlib import Path
@@ -34,17 +27,15 @@ def test_user_is_registered_on_base_metadata() -> None:
     assert "users" in Base.metadata.tables
 
 
-def test_user_has_exactly_bare_identity_columns() -> None:
-    """No credential fields — ADW-02 is unwritten and owns those.
-
-    Asserting the exact set is what stops a future edit from quietly
-    adding `email` or `password_hash` without ADW-02 having ever decided
-    what `User` should carry.
-    """
+def test_user_has_exactly_approved_identity_columns() -> None:
+    """Pin only the Owner-approved shared identity realization."""
     assert set(User.__table__.columns.keys()) == {
         "id",
         "created_at",
         "updated_at",
+        "auth_issuer",
+        "auth_subject",
+        "deactivated_at",
     }
 
 
@@ -77,3 +68,9 @@ def test_migration_is_wired_into_the_revision_chain() -> None:
 
     revision = script.get_revision(USER_AND_MEMBERSHIP_REVISION)
     assert revision.down_revision == ENTERPRISE_OBJECT_REVISION
+
+
+def test_identity_revision_is_the_single_head() -> None:
+    script = ScriptDirectory.from_config(Config(str(ALEMBIC_INI)))
+    assert script.get_heads() == ["adw02_01"]
+    assert script.get_revision("adw02_01").down_revision == "ea58e0c4ee4d"
