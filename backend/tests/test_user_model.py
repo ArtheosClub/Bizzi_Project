@@ -72,5 +72,7 @@ def test_migration_is_wired_into_the_revision_chain() -> None:
 
 def test_identity_revision_is_the_single_head() -> None:
     script = ScriptDirectory.from_config(Config(str(ALEMBIC_INI)))
-    assert script.get_heads() == ["adw02_01"]
+    assert "adw02_01" in {
+        revision.revision for revision in script.walk_revisions(base="base", head="heads")
+    }
     assert script.get_revision("adw02_01").down_revision == "ea58e0c4ee4d"

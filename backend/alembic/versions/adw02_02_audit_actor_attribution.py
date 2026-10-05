@@ -31,8 +31,20 @@ def upgrade() -> None:
         ),
     )
 
+    op.create_index(
+        "uq_audit_bootstrap_action",
+        "audit_records",
+        ["action"],
+        unique=True,
+        postgresql_where=sa.text(
+            "action IN ('user.bootstrap_created', 'workspace.bootstrap_created', "
+            "'workspace_membership.bootstrap_created')"
+        ),
+    )
+
 
 def downgrade() -> None:
+    op.drop_index("uq_audit_bootstrap_action", table_name="audit_records")
     op.drop_index("uq_audit_bootstrap_workspace_action", table_name="audit_records")
     op.drop_column("audit_records", "membership_id")
     op.drop_column("audit_records", "actor_id")

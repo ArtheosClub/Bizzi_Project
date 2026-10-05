@@ -112,6 +112,15 @@ class AuditRecord(Base):
                 "'workspace_membership.bootstrap_created')"
             ),
         ),
+        Index(
+            "uq_audit_bootstrap_action",
+            "action",
+            unique=True,
+            postgresql_where=text(
+                "action IN ('user.bootstrap_created', 'workspace.bootstrap_created', "
+                "'workspace_membership.bootstrap_created')"
+            ),
+        ),
     )
 
     actor_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)

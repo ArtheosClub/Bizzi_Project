@@ -344,6 +344,13 @@ class AuditService:
         """
         expected = ((user, User), (workspace, Workspace), (membership, WorkspaceMembership))
         with session.no_autoflush:
+            if (
+                session.scalar(
+                    select(AuditRecord.id).where(AuditRecord.action.in_(BOOTSTRAP_ACTIONS)).limit(1)
+                )
+                is not None
+            ):
+                raise ValueError("Owner bootstrap already exists")
             for obj, model in expected:
                 if type(obj) is not model or object_session(obj) is not session:
                     raise ValueError("bootstrap subjects must belong to the caller session")

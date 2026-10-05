@@ -191,3 +191,19 @@ def test_migration_is_wired_into_the_revision_chain() -> None:
     assert revision.down_revision == AGENT_DEFINITION_REVISION
     assert script.get_heads() == ["adw02_02"]
     assert script.get_revision("adw02_02").down_revision == "adw02_01"
+
+
+def test_bootstrap_unique_indexes_have_bounded_action_predicate():
+    indexes = {index.name: index for index in AuditRecord.__table__.indexes}
+    for name, columns in [
+        ("uq_audit_bootstrap_workspace_action", ["workspace_id", "action"]),
+        ("uq_audit_bootstrap_action", ["action"]),
+    ]:
+        index = indexes[name]
+        assert index.unique
+        assert [column.name for column in index.columns] == columns
+        predicate = str(index.dialect_options["postgresql"]["where"])
+        assert predicate == (
+            "action IN ('user.bootstrap_created', 'workspace.bootstrap_created', "
+            "'workspace_membership.bootstrap_created')"
+        )

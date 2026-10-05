@@ -8,10 +8,13 @@ Bootstrap RuntimeEvent is retained under the sixth bounded deferral.
 from dataclasses import dataclass
 from uuid import UUID
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.authentication import VerifiedIdentity
+from app.models.audit_record import AuditRecord
 from app.repositories import user_repository, workspace_membership_repository, workspace_repository
+from app.services.audit_actions import BOOTSTRAP_ACTIONS
 from app.services.audit_service import AuditService
 
 
@@ -37,6 +40,13 @@ class BootstrapService:
         if not db.in_transaction():
             raise ValueError("bootstrap requires a caller-owned transaction")
         with db.no_autoflush:
+            if (
+                db.scalar(
+                    select(AuditRecord.id).where(AuditRecord.action.in_(BOOTSTRAP_ACTIONS)).limit(1)
+                )
+                is not None
+            ):
+                raise ValueError("Owner bootstrap already exists")
             user = user_repository.create_for_bootstrap(
                 db, issuer=identity.issuer, subject=identity.subject
             )

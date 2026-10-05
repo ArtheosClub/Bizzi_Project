@@ -127,3 +127,80 @@ def test_partial_unique_index_refuses_duplicate_action(identity_db, verifier):
             )
             identity_db.flush()
     assert _counts(identity_db) == [1, 1, 1, 3]
+
+
+def test_second_bootstrap_with_different_verified_identity_refused(identity_db, verifier):
+    _create(identity_db, verifier)
+    before = _counts(identity_db)
+    verifier.claims["sub"] = "different-synthetic-owner"
+    with pytest.raises(ValueError, match="bootstrap already exists"):
+        with identity_db.begin_nested():
+            _create(identity_db, verifier)
+    assert _counts(identity_db) == before == [1, 1, 1, 3]
+
+
+@pytest.mark.parametrize("action", sorted(BOOTSTRAP_ACTIONS))
+def test_any_existing_bootstrap_action_refuses_before_creating_subjects(
+    identity_db, owner_graph, verifier, action
+):
+    user, workspace, member = owner_graph
+    columns = {
+        USER_BOOTSTRAP_CREATED: {"subject_user_id": user.id},
+        WORKSPACE_BOOTSTRAP_CREATED: {"subject_workspace_id": workspace.id},
+        MEMBERSHIP_BOOTSTRAP_CREATED: {"subject_workspace_membership_id": member.id},
+    }
+    identity_db.add(
+        AuditRecord(
+            workspace_id=workspace.id,
+            action=action,
+            content={"fixture": [None, "synthetic"]},
+            **columns[action],
+        )
+    )
+    identity_db.flush()
+    before = _counts(identity_db)
+    with pytest.raises(ValueError, match="bootstrap already exists"):
+        with identity_db.begin_nested():
+            _create(identity_db, verifier)
+    assert _counts(identity_db) == before
+
+
+def test_historical_workspace_without_bootstrap_does_not_prevent_new_subjects(
+    identity_db, owner_graph, verifier
+):
+    historical_user, historical_workspace, historical_member = owner_graph
+    verifier.claims["sub"] = "new-synthetic-owner"
+    result = _create(identity_db, verifier)
+    assert result.user_id != historical_user.id
+    assert result.workspace_id != historical_workspace.id
+    assert result.membership_id != historical_member.id
+    assert _counts(identity_db) == [2, 2, 2, 3]
+
+
+@pytest.mark.parametrize("action", sorted(BOOTSTRAP_ACTIONS))
+def test_global_index_rejects_duplicate_action_in_another_workspace(
+    identity_db, owner_graph, verifier, action
+):
+    # No second bootstrap: raw synthetic fixture isolates database enforcement.
+    _, other_workspace, _ = owner_graph
+    verifier.claims["sub"] = "new-synthetic-owner"
+    result = _create(identity_db, verifier)
+    columns = {
+        USER_BOOTSTRAP_CREATED: {"subject_user_id": result.user_id},
+        WORKSPACE_BOOTSTRAP_CREATED: {"subject_workspace_id": result.workspace_id},
+        MEMBERSHIP_BOOTSTRAP_CREATED: {"subject_workspace_membership_id": result.membership_id},
+    }
+    before = _counts(identity_db)
+    with pytest.raises(IntegrityError) as exc:
+        with identity_db.begin_nested():
+            identity_db.add(
+                AuditRecord(
+                    workspace_id=other_workspace.id,
+                    action=action,
+                    content={"fixture": [None, "synthetic"]},
+                    **columns[action],
+                )
+            )
+            identity_db.flush()
+    assert exc.value.orig.diag.constraint_name == "uq_audit_bootstrap_action"
+    assert _counts(identity_db) == before
