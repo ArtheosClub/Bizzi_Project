@@ -13,8 +13,14 @@ import pytest
 
 APP = Path(__file__).resolve().parents[1] / "app"
 MATRIX = {
-    "app.services.task_service": {"app.services.task_service"},
-    "app.services.enterprise_object_service": {"app.services.enterprise_object_service"},
+    "app.services.task_service": {
+        "app.services.task_service",
+        "app.services.business_request_intake_service",
+    },
+    "app.services.enterprise_object_service": {
+        "app.services.enterprise_object_service",
+        "app.services.business_request_intake_service",
+    },
     "app.repositories.task_repository": {"app.services.task_service"},
     "app.repositories.enterprise_object_repository": {"app.services.enterprise_object_service"},
 }
@@ -172,3 +178,52 @@ def test_forbidden_import_forms(source, module, package):
     assert violations(source, module, package=package)
     # Apply every fixture equally to the existing EnterpriseObject pair.
     assert violations(source.replace("task", "enterprise_object"), module, package=package)
+
+
+def test_intake_has_only_create_calls_and_no_transaction_or_orm_mutation():
+    path = APP / "services/business_request_intake_service.py"
+    tree = ast.parse(path.read_text())
+    imported = targets(path.read_text(), "app.services.business_request_intake_service")
+    assert imported == {"app.services.task_service", "app.services.enterprise_object_service"}
+    calls = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+    ]
+    for call in calls:
+        assert call.func.attr not in {
+            "commit",
+            "rollback",
+            "close",
+            "add",
+            "flush",
+            "execute",
+            "archive",
+            "unarchive",
+            "get_by_id",
+            "list_by_workspace",
+        }
+    primitive_calls = [
+        (call.func.value.id, call.func.attr)
+        for call in calls
+        if isinstance(call.func.value, ast.Name)
+        and call.func.value.id in {"TaskService", "EnterpriseObjectService"}
+    ]
+    assert sorted(primitive_calls) == [
+        ("EnterpriseObjectService", "create"),
+        ("TaskService", "create"),
+    ]
+    assert not any(
+        isinstance(node, ast.Assign) and any(isinstance(t, ast.Attribute) for t in node.targets)
+        for node in ast.walk(tree)
+    )
+    # Router imports neither primitive nor protected repository.
+    router_source = (APP / "api/business_request_intake.py").read_text()
+    assert not targets(router_source, "app.api.business_request_intake")
+
+
+def test_intake_matrix_does_not_admit_direct_repositories():
+    consumer = "app.services.business_request_intake_service"
+    for pair in ("task", "enterprise_object"):
+        assert not violations(f"from app.services.{pair}_service import X", consumer)
+        assert violations(f"from app.repositories import {pair}_repository", consumer)

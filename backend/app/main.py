@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from app.api.business_request_intake import router as business_request_router
 from app.api.health import router as health_router
 from app.core.config import get_settings
 from app.core.errors import register_error_handlers
@@ -27,6 +28,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 fastapi_app = FastAPI(title="Bizzi Platform Backend", lifespan=lifespan)
 register_error_handlers(fastapi_app)
 fastapi_app.include_router(health_router)
+fastapi_app.include_router(business_request_router)
 
 # `app` is the served ASGI callable — wrapped outside FastAPI's own
 # ServerErrorMiddleware, not installed via fastapi_app.add_middleware().
