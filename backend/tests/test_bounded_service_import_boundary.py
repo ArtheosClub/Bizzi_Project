@@ -227,3 +227,23 @@ def test_intake_matrix_does_not_admit_direct_repositories():
     for pair in ("task", "enterprise_object"):
         assert not violations(f"from app.services.{pair}_service import X", consumer)
         assert violations(f"from app.repositories import {pair}_repository", consumer)
+
+
+def test_public_actor_helper_and_no_private_imports():
+    from app.services.audit_service import validate_actor
+
+    assert callable(validate_actor)
+    for relative in (
+        "services/task_service.py",
+        "services/enterprise_object_service.py",
+        "services/audit_service.py",
+    ):
+        tree = ast.parse((APP / relative).read_text())
+        assert not any(
+            isinstance(node, ast.Name) and node.id == "_validate_actor" for node in ast.walk(tree)
+        )
+        assert not any(
+            isinstance(node, ast.ImportFrom)
+            and any(alias.name == "_validate_actor" for alias in node.names)
+            for node in ast.walk(tree)
+        )

@@ -1,4 +1,4 @@
-"""Prospective record-5 create-only checks plus preserved, excluded candidate tests."""
+"""Amendment 4 create/add-only surface; no A-13 approval implied."""
 
 import ast
 import inspect
@@ -8,39 +8,13 @@ from typing import get_type_hints
 from unittest.mock import Mock
 
 import pytest
-from sqlalchemy.dialects import postgresql
 
-from app.models.task import Task
 from app.repositories import task_repository as repository
 from app.services.audit_service import AuditService
 from app.services.task_service import TaskService
 
 APP = Path(__file__).resolve().parents[1] / "app"
-MODULES = (
-    APP / "services/task_service.py",
-    APP / "repositories/task_repository.py",
-)
-
-
-def test_exact_service_operations_and_mutation_return_types():
-    assert {name for name, _ in inspect.getmembers(TaskService, inspect.isfunction)} == {
-        "create",
-        "archive",
-        "unarchive",
-    }
-    assert get_type_hints(TaskService.create)["return"] is uuid.UUID
-    for operation in (
-        TaskService.archive,
-        TaskService.unarchive,
-        repository.add,
-    ):
-        assert get_type_hints(operation)["return"] is type(None)
-    assert list(inspect.signature(repository.add).parameters) == ["session", "obj"]
-    for operation in (repository.get_by_id, repository.list_by_workspace):
-        assert (
-            inspect.signature(operation).parameters["workspace_id"].default
-            is inspect.Parameter.empty
-        )
+MODULES = (APP / "services/task_service.py", APP / "repositories/task_repository.py")
 
 
 def test_no_transaction_end_or_runtime_symbols_in_slice():
@@ -64,15 +38,6 @@ def test_no_transaction_end_or_runtime_symbols_in_slice():
     )
 
 
-def test_repository_has_only_the_three_approved_operations():
-    tree = ast.parse(MODULES[1].read_text(encoding="utf-8"))
-    assert {n.name for n in tree.body if isinstance(n, ast.FunctionDef)} == {
-        "add",
-        "get_by_id",
-        "list_by_workspace",
-    }
-
-
 def test_service_module_has_no_public_free_operations():
     tree = ast.parse(MODULES[0].read_text(encoding="utf-8"))
     assert {
@@ -82,81 +47,6 @@ def test_service_module_has_no_public_free_operations():
         and not node.name.startswith("_")
     } == set()
     assert {node.name for node in tree.body if isinstance(node, ast.ClassDef)} == {"TaskService"}
-
-
-@pytest.mark.parametrize("limit", [None, 1, 100])
-def test_list_limit_and_no_offset(limit):
-    session = Mock()
-    session.scalars.return_value = []
-    kwargs = {} if limit is None else {"limit": limit}
-    repository.list_by_workspace(session, uuid.uuid4(), **kwargs)
-    statement = session.scalars.call_args.args[0]
-    compiled = statement.compile(dialect=postgresql.dialect())
-    assert "OFFSET" not in str(compiled)
-    assert compiled.params["param_1"] == (100 if limit is None else limit)
-    assert set(inspect.signature(repository.list_by_workspace).parameters) == {
-        "session",
-        "workspace_id",
-        "limit",
-    }
-
-
-@pytest.mark.parametrize(
-    "operation,phase",
-    [
-        ("archive", "archived"),
-        ("archive", "superseded"),
-        ("unarchive", "active"),
-        ("unarchive", "superseded"),
-        ("archive", "completed"),
-        ("archive", "cancelled"),
-        ("unarchive", "completed"),
-        ("unarchive", "cancelled"),
-    ],
-)
-def test_invalid_transition_precedes_mutation_and_audit(monkeypatch, operation, phase):
-    obj = Task(phase=phase)
-    get = Mock(return_value=obj)
-    record = Mock()
-    monkeypatch.setattr(repository, "get_by_id", get)
-    monkeypatch.setattr(AuditService, "record", record)
-    session = Mock()
-    workspace_id, task_id = uuid.uuid4(), uuid.uuid4()
-    with pytest.raises(ValueError, match="cannot transition"):
-        getattr(TaskService, operation)(session, workspace_id=workspace_id, task_id=task_id)
-    assert obj.phase == phase
-    record.assert_not_called()
-    get.assert_called_once_with(session, workspace_id, task_id, for_update=True)
-
-
-@pytest.mark.parametrize("operation", ["create", "archive", "unarchive"])
-def test_no_public_operation_accepts_superseded_target(operation):
-    kwargs = {"workspace_id": uuid.uuid4(), "phase": "superseded"}
-    if operation != "create":
-        kwargs["task_id"] = uuid.uuid4()
-    with pytest.raises(TypeError, match="phase"):
-        getattr(TaskService, operation)(Mock(), **kwargs)
-
-
-@pytest.mark.parametrize("limit", [0, -1, True, 1.5, "1", None])
-def test_invalid_list_limit_does_not_query(limit):
-    session = Mock()
-    with pytest.raises(ValueError, match="positive int"):
-        repository.list_by_workspace(session, uuid.uuid4(), limit=limit)
-    session.scalars.assert_not_called()
-
-
-def test_locked_get_is_scoped_and_refreshes_identity_map():
-    session = Mock()
-    workspace_id, task_id = uuid.uuid4(), uuid.uuid4()
-    repository.get_by_id(session, workspace_id, task_id, for_update=True)
-    statement = session.scalar.call_args.args[0]
-    compiled = statement.compile(dialect=postgresql.dialect())
-    assert "FOR UPDATE" in str(compiled)
-    assert "tasks.workspace_id =" in str(compiled)
-    assert "tasks.id =" in str(compiled)
-    assert set(compiled.params.values()) == {workspace_id, task_id}
-    assert statement.get_execution_options()["populate_existing"] is True
 
 
 def test_non_null_source_rejected_before_any_write(monkeypatch):
@@ -169,3 +59,18 @@ def test_non_null_source_rejected_before_any_write(monkeypatch):
     add.assert_not_called()
     record.assert_not_called()
     assert session.mock_calls == []
+
+
+def test_exact_create_add_surface():
+    assert {name for name, _ in inspect.getmembers(TaskService, inspect.isfunction)} == {"create"}
+    assert get_type_hints(TaskService.create)["return"] is uuid.UUID
+    assert get_type_hints(repository.add)["return"] is type(None)
+    assert list(inspect.signature(repository.add).parameters) == ["session", "obj"]
+    tree = ast.parse(MODULES[1].read_text())
+    assert {n.name for n in tree.body if isinstance(n, ast.FunctionDef)} == {"add"}
+    assert not hasattr(repository, "get_by_id") and not hasattr(repository, "list_by_workspace")
+
+
+def test_create_cannot_override_initial_phase():
+    with pytest.raises(TypeError, match="phase"):
+        TaskService.create(Mock(), workspace_id=uuid.uuid4(), phase="superseded")

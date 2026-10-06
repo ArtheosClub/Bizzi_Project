@@ -28,7 +28,7 @@ from app.core.actor_context import ActorContext
 from app.models.enterprise_object import PHASE_ACTIVE, PHASE_ARCHIVED, EnterpriseObject
 from app.repositories import enterprise_object_repository
 from app.services.audit_actions import ENTERPRISE_OBJECT_CREATED, ENTERPRISE_OBJECT_UPDATED
-from app.services.audit_service import AuditService, _validate_actor
+from app.services.audit_service import AuditService, validate_actor
 
 
 def _transition(
@@ -44,7 +44,7 @@ def _transition(
         raise LookupError("EnterpriseObject not found in workspace")
     if obj.phase != before:
         raise ValueError(f"cannot transition EnterpriseObject from {obj.phase!r} to {after!r}")
-    _validate_actor(session, actor_context, workspace_id)
+    validate_actor(session, actor_context, workspace_id)
     obj.phase = after
     AuditService.record(
         session,
@@ -69,7 +69,7 @@ class EnterpriseObjectService:
         actor_context: ActorContext | None = None,
     ) -> uuid.UUID:
         """Create active, flush for audit identity, and return only that identity."""
-        _validate_actor(session, actor_context, workspace_id)
+        validate_actor(session, actor_context, workspace_id)
         if actor_context is None or owner_id != actor_context.actor_id:
             raise ValueError("creation owner does not match trusted actor")
         obj = EnterpriseObject(

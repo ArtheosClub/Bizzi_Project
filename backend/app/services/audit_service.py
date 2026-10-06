@@ -312,7 +312,7 @@ class AuditService:
         # Record 4b: every new governed ordinary mutation has attribution.
         if actor_context is None:
             raise ValueError("ordinary audit requires actor attribution")
-        _validate_actor(session, actor_context, workspace_id)
+        validate_actor(session, actor_context, workspace_id)
 
         # 11. Exactly the mapped subject column is populated.
         record = AuditRecord(
@@ -420,9 +420,7 @@ class AuditService:
             raise ValueError("bootstrap audit timestamps differ")
 
 
-def _validate_actor(
-    session: Session, context: ActorContext | None, workspace_id: uuid.UUID
-) -> None:
+def validate_actor(session: Session, context: ActorContext | None, workspace_id: uuid.UUID) -> None:
     if context is None or not context.request_id:
         raise ValueError("ordinary audit requires actor attribution")
     with session.no_autoflush:
