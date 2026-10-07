@@ -11,6 +11,7 @@ from app.core.preproduction_guard import (
     ExecutionPolicy,
     require_engine,
     require_test_destination,
+    resolve_policy,
 )
 
 
@@ -27,4 +28,4 @@ def get_db_for_policy(policy: ExecutionPolicy) -> Generator[Session]:
 
 
 def get_db() -> Generator[Session]:
-    yield from get_db_for_policy(ExecutionPolicy(get_settings().synthetic_execution_profile))
+    yield from get_db_for_policy(resolve_policy(get_settings().synthetic_execution_profile))

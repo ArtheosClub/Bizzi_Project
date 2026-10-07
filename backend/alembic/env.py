@@ -10,7 +10,7 @@ from sqlalchemy import engine_from_config, pool
 import app.models  # noqa: F401
 from alembic import context
 from app.core.config import get_settings
-from app.core.preproduction_guard import ExecutionPolicy, require_engine, require_test_destination
+from app.core.preproduction_guard import require_engine, require_test_destination, resolve_policy
 from app.db.base import Base
 
 # this is the Alembic Config object, which provides
@@ -25,7 +25,7 @@ if config.config_file_name is not None:
 # DATABASE_URL comes from our own Settings (single source of truth), not a
 # hardcoded or separately-duplicated value in alembic.ini.
 settings = get_settings()
-policy = ExecutionPolicy(settings.synthetic_execution_profile)
+policy = resolve_policy(settings.synthetic_execution_profile)
 require_test_destination(settings.database_url, policy)
 config.set_main_option("sqlalchemy.url", settings.database_url)
 

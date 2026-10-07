@@ -39,7 +39,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
-from app.core.preproduction_guard import LOCAL_TEST_POLICY, POLICY_KEY, require_engine
+from app.core.preproduction_guard import POLICY_KEY, require_engine, resolve_policy
 from app.models import AuditRecord, EnterpriseObject, Task, User, Workspace
 from app.repositories import audit_record_repository
 from app.services.audit_actions import (
@@ -61,7 +61,7 @@ SUBJECT_COLUMN_NAMES = (
 @pytest.fixture(scope="module")
 def engine():  # type: ignore[no-untyped-def]
     engine = create_engine(get_settings().database_url, pool_pre_ping=True)
-    require_engine(engine, LOCAL_TEST_POLICY)
+    require_engine(engine, resolve_policy(get_settings().synthetic_execution_profile))
     try:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
@@ -83,7 +83,10 @@ def session(engine):  # type: ignore[no-untyped-def]
     """
     connection = engine.connect()
     transaction = connection.begin()
-    db = Session(bind=connection, info={POLICY_KEY: LOCAL_TEST_POLICY})
+    db = Session(
+        bind=connection,
+        info={POLICY_KEY: resolve_policy(get_settings().synthetic_execution_profile)},
+    )
     try:
         yield db
     finally:
@@ -142,7 +145,7 @@ def _visible_in_a_second_session(session: Session, model: type, pk: object) -> b
     other = Session(
         bind=session.connection(),
         join_transaction_mode="create_savepoint",
-        info={POLICY_KEY: LOCAL_TEST_POLICY},
+        info={POLICY_KEY: resolve_policy(get_settings().synthetic_execution_profile)},
     )
     try:
         return other.get(model, pk) is not None
@@ -560,7 +563,7 @@ def test_subject_from_a_different_session_is_rejected(
     other = Session(
         bind=session.connection(),
         join_transaction_mode="create_savepoint",
-        info={POLICY_KEY: LOCAL_TEST_POLICY},
+        info={POLICY_KEY: resolve_policy(get_settings().synthetic_execution_profile)},
     )
     try:
         subject = EnterpriseObject(

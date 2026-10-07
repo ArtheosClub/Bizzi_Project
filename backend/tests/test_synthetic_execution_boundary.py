@@ -197,14 +197,25 @@ def test_provider_and_external_fixture_refuse_before_connection(monkeypatch, cas
 def test_collection_gate_before_module_engine_construction(monkeypatch, case):
     import sqlalchemy
 
-    import app.core.preproduction_guard as guard
+    import app.core.config as config_module
 
     if case == "remote":
         monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg://bizzi@remote:5433/bizzi_test")
     if case == "PGHOSTADDR":
         monkeypatch.setenv("PGHOSTADDR", "remote")
     if case in {"disabled", "ci_test"}:
-        monkeypatch.setattr(guard, "LOCAL_TEST_POLICY", ExecutionPolicy(case))
+        settings = config_module.get_settings()
+        monkeypatch.setenv("SYNTHETIC_EXECUTION_PROFILE", case)
+        monkeypatch.setattr(
+            config_module,
+            "get_settings",
+            lambda: SimpleNamespace(
+                database_url=settings.database_url,
+                synthetic_execution_profile=case,
+            ),
+        )
+        # ci_test must have missing context, never an accidentally inherited valid job.
+        monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
     factory = Mock(side_effect=AssertionError("Collection must refuse first"))
     monkeypatch.setattr(sqlalchemy, "create_engine", factory)
     with pytest.raises(ScopeViolationError):
@@ -295,3 +306,34 @@ def test_alembic_checks_resolved_engine_or_offline_url(monkeypatch, mode):
     connect.assert_not_called()
     configure.assert_not_called()
     wrong_engine.dispose()
+
+
+@pytest.mark.parametrize("case", ["port", "database", "role", "remote", "query", "override"])
+def test_ci_bind_refuses_before_sql_on_mock(monkeypatch, case):
+    from app.core.preproduction_guard import PG_OVERRIDES, resolve_policy
+    from tests.test_preproduction_guard import CI_NAMES, CI_VALUES
+
+    for name, value in zip(CI_NAMES, CI_VALUES, strict=True):
+        monkeypatch.setenv(name, value)
+    policy = resolve_policy("ci_test")
+    urls = {
+        "port": "postgresql+psycopg://bizzi@localhost:5433/bizzi_test",
+        "database": "postgresql+psycopg://bizzi@localhost:5432/bizzi_dev",
+        "role": "postgresql+psycopg://other@localhost:5432/bizzi_test",
+        "remote": "postgresql+psycopg://bizzi@remote:5432/bizzi_test",
+        "query": "postgresql+psycopg://bizzi@localhost:5432/bizzi_test?host=remote",
+        "override": "postgresql+psycopg://bizzi@localhost:5432/bizzi_test",
+    }
+    db = Mock()
+    db.info = {POLICY_KEY: policy}
+    engine = create_engine(urls[case])
+    db.get_bind.return_value = engine
+    if case == "override":
+        monkeypatch.setenv(PG_OVERRIDES[0], "unadmitted")
+    with pytest.raises(ScopeViolationError):
+        require_session(db)
+    db.query.assert_not_called()
+    db.execute.assert_not_called()
+    db.add.assert_not_called()
+    db.flush.assert_not_called()
+    engine.dispose()

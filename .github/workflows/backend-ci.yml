@@ -2,17 +2,21 @@ name: Backend CI
 
 on:
   pull_request:
-    paths:
-      - "backend/**"
-      - ".github/workflows/backend-ci.yml"
-  push:
     branches: [main]
     paths:
       - "backend/**"
       - ".github/workflows/backend-ci.yml"
 
+permissions:
+  contents: read
+
 jobs:
   backend:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'ArtheosClub/Bizzi_Project' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'feat/wp15-bounded-task-service'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -34,10 +38,22 @@ jobs:
           --health-retries 10
 
     env:
+      SYNTHETIC_EXECUTION_PROFILE: ci_test
+      BIZZI_PR_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+      BIZZI_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
       DATABASE_URL: postgresql+psycopg://bizzi:bizzi@localhost:5432/bizzi_test
 
     steps:
       - uses: actions/checkout@v7.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Record exact event-head checkout
+        run: |
+          actual=$(git rev-parse HEAD)
+          test "$actual" = "$BIZZI_PR_HEAD_SHA"
+          echo "BIZZI_CHECKOUT_SHA=$actual" >> "$GITHUB_ENV"
 
       # Verified current (git ls-remote --tags, 2026-07-17):
       # actions/checkout v7.0.0, astral-sh/setup-uv v8.3.2. uv/Python
@@ -55,13 +71,29 @@ jobs:
         run: uv run ruff check .
 
       - name: Type check (mypy)
-        run: uv run mypy app
+        run: uv run mypy app tests/ci_verification.py
 
       - name: Run migrations against a clean database
         run: uv run alembic upgrade head
 
       - name: Test (pytest)
-        run: uv run pytest -v
+        env:
+          BIZZI_EVIDENCE_DIR: ${{ runner.temp }}
+          BIZZI_REPORT_PATH: ${{ runner.temp }}/backend-summary.json
+        run: |
+          files=$(uv run python -m tests.ci_verification --list-files tests/ci_test_inventory.json) || exit 1
+          test -n "$files" || exit 1
+          uv run python -m pytest -p tests.ci_verification -p no:cacheprovider \
+            --junitxml="$RUNNER_TEMP/backend.junit.xml" \
+            $files
+
+      - name: Validate full zero-skip result
+        run: |
+          uv run python -m tests.ci_verification \
+            --summary "$RUNNER_TEMP/backend-summary.json" \
+            --junit "$RUNNER_TEMP/backend.junit.xml" \
+            --inventory tests/ci_test_inventory.json \
+            --head "$BIZZI_PR_HEAD_SHA"
 
   compose-e2e:
     name: docker compose up (Gate B step 7 end-to-end)

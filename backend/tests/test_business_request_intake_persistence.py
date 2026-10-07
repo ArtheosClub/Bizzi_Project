@@ -8,7 +8,7 @@ from sqlalchemy import event, func, select
 from sqlalchemy.orm import Session
 
 from app.api.business_request_intake import get_token_verifier
-from app.core.preproduction_guard import LOCAL_TEST_POLICY, POLICY_KEY
+from app.core.preproduction_guard import POLICY_KEY
 from app.core.request_context import RequestIDMiddleware
 from app.db.session import get_db
 from app.main import create_application
@@ -16,9 +16,9 @@ from app.models import AuditRecord, EnterpriseObject, Task
 
 
 @pytest.fixture
-def intake_client(identity_db, owner_graph, verifier):
+def intake_client(identity_db, owner_graph, verifier, execution_policy):
     connection = identity_db.connection()
-    fastapi_app = create_application(LOCAL_TEST_POLICY)
+    fastapi_app = create_application(execution_policy)
     app = RequestIDMiddleware(fastapi_app)
 
     @contextmanager
@@ -26,7 +26,7 @@ def intake_client(identity_db, owner_graph, verifier):
         with Session(
             bind=connection,
             join_transaction_mode="create_savepoint",
-            info={POLICY_KEY: LOCAL_TEST_POLICY},
+            info={POLICY_KEY: execution_policy},
         ) as db:
             yield db
 
