@@ -10,6 +10,7 @@ from sqlalchemy import engine_from_config, pool
 import app.models  # noqa: F401
 from alembic import context
 from app.core.config import get_settings
+from app.core.preproduction_guard import ExecutionPolicy, require_engine, require_test_destination
 from app.db.base import Base
 
 # this is the Alembic Config object, which provides
@@ -23,7 +24,10 @@ if config.config_file_name is not None:
 
 # DATABASE_URL comes from our own Settings (single source of truth), not a
 # hardcoded or separately-duplicated value in alembic.ini.
-config.set_main_option("sqlalchemy.url", get_settings().database_url)
+settings = get_settings()
+policy = ExecutionPolicy(settings.synthetic_execution_profile)
+require_test_destination(settings.database_url, policy)
+config.set_main_option("sqlalchemy.url", settings.database_url)
 
 # Populated via the `app.models` import above — every model registered
 # there is visible to autogenerate through this metadata object.
@@ -48,6 +52,7 @@ def run_migrations_offline() -> None:
 
     """
     url = config.get_main_option("sqlalchemy.url")
+    require_test_destination(url, policy)
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -72,10 +77,9 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
     )
 
+    require_engine(connectable, policy)
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

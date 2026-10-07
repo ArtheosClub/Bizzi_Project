@@ -9,12 +9,11 @@ from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from app.core.preproduction_guard import require_test_destination
-
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
+    synthetic_execution_profile: str = "disabled"
     env: str = "development"
     port: int = 8000
     database_url: str
@@ -22,6 +21,4 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    settings = Settings()
-    require_test_destination(settings.database_url)
-    return settings
+    return Settings()

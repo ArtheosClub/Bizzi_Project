@@ -12,6 +12,7 @@ from app.core.actor_context import ActorContext
 from app.core.authentication import TokenVerifier, authenticate
 from app.core.authorization import AuthorizationService
 from app.core.errors import AccessDeniedError
+from app.core.preproduction_guard import require_session
 from app.repositories import user_repository, workspace_membership_repository
 
 
@@ -23,6 +24,7 @@ class IdentityService:
 
     def resolve_actor_context(self, token: str | None, request_id: str) -> ActorContext:
         identity = authenticate(token, self.verifier)
+        require_session(self.db)
         user = user_repository.get_by_auth_identity(self.db, identity.issuer, identity.subject)
         if user is None or user.deactivated_at is not None or not request_id:
             raise AccessDeniedError()
@@ -44,6 +46,7 @@ class IdentityService:
 
     def authorize(self, context: ActorContext, resource_workspace_id: UUID) -> None:
         # Re-read facts even when ORM identities already exist in this Session.
+        require_session(self.db)
         user = user_repository.get_by_id(self.db, context.actor_id)
         if user is None or user.deactivated_at is not None:
             raise AccessDeniedError()

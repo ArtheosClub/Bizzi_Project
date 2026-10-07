@@ -25,6 +25,7 @@ import uuid
 from sqlalchemy.orm import Session
 
 from app.core.actor_context import ActorContext
+from app.core.preproduction_guard import require_session
 from app.models.enterprise_object import PHASE_ACTIVE, PHASE_ARCHIVED, EnterpriseObject
 from app.repositories import enterprise_object_repository
 from app.services.audit_actions import ENTERPRISE_OBJECT_CREATED, ENTERPRISE_OBJECT_UPDATED
@@ -39,6 +40,7 @@ def _transition(
     after: str,
     actor_context: ActorContext | None,
 ) -> None:
+    require_session(session)
     obj = enterprise_object_repository.get_by_id(session, workspace_id, object_id, for_update=True)
     if obj is None:
         raise LookupError("EnterpriseObject not found in workspace")

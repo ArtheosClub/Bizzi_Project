@@ -6,17 +6,17 @@ from app.core.preproduction_guard import ScopeViolationError, require_test_desti
 
 
 def test_exact_test_destination_allowed():
-    require_test_destination("postgresql+psycopg://localhost:5433/bizzi_test")
+    require_test_destination("postgresql+psycopg://bizzi@localhost:5433/bizzi_test")
 
 
 @pytest.mark.parametrize(
     "url",
     [
-        "postgresql+psycopg://localhost:5432/bizzi_dev",
+        "postgresql+psycopg://bizzi@localhost:5432/bizzi_dev",
         "postgresql+psycopg://remote:5433/bizzi_test",
         "postgresql+psycopg://127.0.0.1:5433/bizzi_test",
         "postgresql+psycopg://localhost/bizzi_test",
-        "postgresql+psycopg://localhost:5433/bizzi_test?host=remote",
+        "postgresql+psycopg://bizzi@localhost:5433/bizzi_test?host=remote",
         "not-a-url",
     ],
 )

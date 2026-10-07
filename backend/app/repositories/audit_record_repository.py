@@ -35,6 +35,7 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.preproduction_guard import require_session
 from app.models.audit_record import AuditRecord
 
 DEFAULT_LIST_LIMIT = 100
@@ -52,6 +53,7 @@ def add(session: Session, record: AuditRecord) -> AuditRecord:
     sends the INSERT so `id` and `created_at` are readable within the
     same transaction.
     """
+    require_session(session)
     session.add(record)
     session.flush()
     return record

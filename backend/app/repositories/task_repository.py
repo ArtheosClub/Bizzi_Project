@@ -7,10 +7,12 @@ Amendment 4 removes excluded read/list operations. No update/delete API.
 
 from sqlalchemy.orm import Session
 
+from app.core.preproduction_guard import require_session
 from app.models.task import Task
 
 
 def add(session: Session, obj: Task) -> None:
     """Flush an already-formed instance without returning a mutable record."""
+    require_session(session)
     session.add(obj)
     session.flush()

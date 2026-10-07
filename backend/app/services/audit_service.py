@@ -115,6 +115,7 @@ from sqlalchemy.orm import Session, object_session
 
 from app.core.actor_context import ActorContext
 from app.core.authorization import AuthorizationService
+from app.core.preproduction_guard import require_session
 from app.db.base import Base
 from app.models.audit_record import AuditRecord
 from app.models.enterprise_object import EnterpriseObject
@@ -342,6 +343,7 @@ class AuditService:
         BootstrapService constructs the pending instances in this call; no caller IDs.
         No transaction-id proof or global Session/raw-SQL confinement is claimed.
         """
+        require_session(session)
         expected = ((user, User), (workspace, Workspace), (membership, WorkspaceMembership))
         with session.no_autoflush:
             if (
@@ -423,6 +425,7 @@ class AuditService:
 def validate_actor(session: Session, context: ActorContext | None, workspace_id: uuid.UUID) -> None:
     if context is None or not context.request_id:
         raise ValueError("ordinary audit requires actor attribution")
+    require_session(session)
     with session.no_autoflush:
         row = session.execute(
             select(User, WorkspaceMembership, Workspace)

@@ -8,8 +8,10 @@ from typing import get_type_hints
 from unittest.mock import Mock
 
 import pytest
+from sqlalchemy import create_engine
 from sqlalchemy.dialects import postgresql
 
+from app.core.preproduction_guard import LOCAL_TEST_POLICY, POLICY_KEY
 from app.models.enterprise_object import EnterpriseObject
 from app.repositories import enterprise_object_repository as repository
 from app.services.audit_service import AuditService
@@ -117,6 +119,10 @@ def test_invalid_transition_precedes_mutation_and_audit(monkeypatch, operation, 
     monkeypatch.setattr(repository, "get_by_id", get)
     monkeypatch.setattr(AuditService, "record", record)
     session = Mock()
+    session.info = {POLICY_KEY: LOCAL_TEST_POLICY}
+    session.get_bind.return_value = create_engine(
+        "postgresql+psycopg://bizzi@localhost:5433/bizzi_test"
+    )
     workspace_id, object_id = uuid.uuid4(), uuid.uuid4()
     with pytest.raises(ValueError, match="cannot transition"):
         getattr(EnterpriseObjectService, operation)(

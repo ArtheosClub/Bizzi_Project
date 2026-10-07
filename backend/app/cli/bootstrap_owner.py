@@ -7,7 +7,7 @@ No argument parser/entry point or provider contact is installed.
 from sqlalchemy.orm import Session
 
 from app.core.authentication import RejectingTokenVerifier, TokenVerifier, authenticate
-from app.core.preproduction_guard import require_test_destination
+from app.core.preproduction_guard import require_session
 from app.services.bootstrap_service import BootstrapResult, BootstrapService
 
 
@@ -15,6 +15,6 @@ def bootstrap_owner(
     db: Session, *, token: str | None, workspace_name: str, verifier: TokenVerifier | None = None
 ) -> BootstrapResult:
     identity = authenticate(token, verifier if verifier is not None else RejectingTokenVerifier())
-    require_test_destination(str(db.get_bind().engine.url.render_as_string(hide_password=True)))
+    require_session(db)
     with db.begin():
         return BootstrapService.create_owner(db, identity=identity, workspace_name=workspace_name)

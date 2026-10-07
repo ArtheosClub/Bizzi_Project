@@ -12,6 +12,7 @@ from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from app.core.authentication import RejectingTokenVerifier, TokenVerifier
+from app.core.preproduction_guard import require_session
 from app.core.request_context import get_request_id
 from app.db.session import get_db
 from app.schemas.business_request_intake import BusinessRequestInput, BusinessRequestOutput
@@ -35,6 +36,7 @@ async def create_business_request(
     scheme, separator, value = header.partition(" ")
     token = value if separator and scheme.lower() == "bearer" else None
     # On exceptions, context manager rolls back before the shared HTTP handler.
+    require_session(db)
     with db.begin():
         context = IdentityService(db, verifier).resolve_actor_context(token, get_request_id() or "")
         try:

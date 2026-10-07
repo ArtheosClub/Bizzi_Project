@@ -1,26 +1,30 @@
-"""SQLAlchemy engine and session factory.
-
-Sync engine/session (not async) — MVP simplicity per principle B15; nothing
-in Gate B needs async DB access, and Alembic's autogenerate tooling is most
-straightforward against a sync engine. Revisit only if a real need for
-async DB access is demonstrated.
-"""
+"""Lazy synthetic Session provider; prepare policy and Engine before connection."""
 
 from collections.abc import Generator
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
+from app.core.preproduction_guard import (
+    POLICY_KEY,
+    ExecutionPolicy,
+    require_engine,
+    require_test_destination,
+)
 
-engine = create_engine(get_settings().database_url, pool_pre_ping=True)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+def get_db_for_policy(policy: ExecutionPolicy) -> Generator[Session]:
+    url = get_settings().database_url
+    require_test_destination(url, policy)
+    engine = create_engine(url, pool_pre_ping=True)
+    require_engine(engine, policy)
+    try:
+        with Session(bind=engine, info={POLICY_KEY: policy}) as db:
+            yield db
+    finally:
+        engine.dispose()
 
 
 def get_db() -> Generator[Session]:
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    yield from get_db_for_policy(ExecutionPolicy(get_settings().synthetic_execution_profile))

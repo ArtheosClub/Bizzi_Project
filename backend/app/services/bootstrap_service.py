@@ -12,6 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.authentication import VerifiedIdentity
+from app.core.preproduction_guard import require_session
 from app.models.audit_record import AuditRecord
 from app.repositories import user_repository, workspace_membership_repository, workspace_repository
 from app.services.audit_actions import BOOTSTRAP_ACTIONS
@@ -39,6 +40,7 @@ class BootstrapService:
             raise ValueError("bootstrap identity and Workspace name required")
         if not db.in_transaction():
             raise ValueError("bootstrap requires a caller-owned transaction")
+        require_session(db)
         with db.no_autoflush:
             if (
                 db.scalar(

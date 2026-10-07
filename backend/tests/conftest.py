@@ -9,14 +9,23 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from app.core.authentication import VerifiedIdentity
+from app.core.config import get_settings
 from app.core.errors import UnauthenticatedError
-from app.core.preproduction_guard import require_test_destination
+from app.core.preproduction_guard import (
+    LOCAL_TEST_POLICY,
+    POLICY_KEY,
+    require_engine,
+    require_test_destination,
+)
 from app.models import User, Workspace, WorkspaceMembership
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env.test")
 
 # Record 5: fail closed BEFORE importing/collecting database test modules.
-require_test_destination(os.environ.get("DATABASE_URL", ""))
+require_test_destination(os.environ.get("DATABASE_URL", ""), LOCAL_TEST_POLICY)
+require_test_destination(get_settings().database_url, LOCAL_TEST_POLICY)
+if get_settings().database_url != os.environ.get("DATABASE_URL", ""):
+    raise RuntimeError("Collection database configuration mismatch")
 
 
 class SyntheticClaimsVerifier:
@@ -58,9 +67,10 @@ def verifier() -> SyntheticClaimsVerifier:
 @pytest.fixture
 def identity_db():  # type: ignore[no-untyped-def]
     engine = create_engine(os.environ["DATABASE_URL"])
+    require_engine(engine, LOCAL_TEST_POLICY)
     with engine.connect() as connection:
         transaction = connection.begin()
-        with Session(bind=connection) as db:
+        with Session(bind=connection, info={POLICY_KEY: LOCAL_TEST_POLICY}) as db:
             yield db
         transaction.rollback()
     engine.dispose()

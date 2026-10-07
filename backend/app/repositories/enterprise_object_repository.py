@@ -9,6 +9,7 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.preproduction_guard import require_session
 from app.models.enterprise_object import EnterpriseObject
 
 DEFAULT_LIST_LIMIT = 100
@@ -16,6 +17,7 @@ DEFAULT_LIST_LIMIT = 100
 
 def add(session: Session, obj: EnterpriseObject) -> None:
     """Flush an already-formed instance without returning a mutable record."""
+    require_session(session)
     session.add(obj)
     session.flush()
 

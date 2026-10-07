@@ -7,9 +7,11 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
+from sqlalchemy import create_engine
 
 from app.api.business_request_intake import router
 from app.core.errors import register_error_handlers
+from app.core.preproduction_guard import LOCAL_TEST_POLICY, POLICY_KEY
 from app.core.request_context import RequestIDMiddleware
 from app.db.session import get_db
 from app.schemas.business_request_intake import BusinessRequestInput
@@ -22,6 +24,8 @@ def test_default_verifier_rejects_before_body_and_database(body, header):
     register_error_handlers(api)
     api.include_router(router)
     db = Mock()
+    db.info = {POLICY_KEY: LOCAL_TEST_POLICY}
+    db.get_bind.return_value = create_engine("postgresql+psycopg://bizzi@localhost:5433/bizzi_test")
     db.begin.return_value = nullcontext()
     api.dependency_overrides[get_db] = lambda: db
     with TestClient(RequestIDMiddleware(api)) as client:
