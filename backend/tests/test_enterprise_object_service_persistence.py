@@ -4,15 +4,25 @@ No migrations are applied here. Connection failure fails these tests rather
 than presenting skipped acceptance criteria as a successful delivery.
 """
 
+import json
+import os
 import uuid
+from datetime import UTC, datetime
+from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
-from sqlalchemy import create_engine, delete, event, text
+from sqlalchemy import create_engine, delete, event, func, select, text
 from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
+from app.core.preproduction_guard import (
+    POLICY_KEY,
+    require_engine,
+    require_session,
+    resolve_policy,
+)
 from app.models import AuditRecord, EnterpriseObject, User, Workspace
 from app.repositories import audit_record_repository
 from app.repositories import enterprise_object_repository as repository
@@ -23,7 +33,9 @@ from app.services.enterprise_object_service import EnterpriseObjectService as Se
 
 @pytest.fixture(scope="module")
 def engine():
+    policy = resolve_policy(get_settings().synthetic_execution_profile)
     engine = create_engine(get_settings().database_url, pool_pre_ping=True)
+    require_engine(engine, policy)
     with engine.connect() as connection:
         connection.execute(text("SELECT 1"))
     yield engine
@@ -31,10 +43,11 @@ def engine():
 
 
 @pytest.fixture()
-def db(engine):
+def db(engine, execution_policy):
     with engine.connect() as connection:
         transaction = connection.begin()
-        with Session(bind=connection) as session:
+        with Session(bind=connection, info={POLICY_KEY: execution_policy}) as session:
+            require_session(session)
             user = User()
             session.add(user)
             session.flush()
@@ -90,7 +103,11 @@ def test_create_one_object_and_one_valid_audit(db):
         "phase": [None, "active"],
     }
     # A fresh identity map verifies that both rows reached the database.
-    with Session(bind=session.connection(), join_transaction_mode="create_savepoint") as observer:
+    with Session(
+        bind=session.connection(), join_transaction_mode="create_savepoint",
+        info={POLICY_KEY: session.info[POLICY_KEY]},
+    ) as observer:
+        require_session(observer)
         assert observer.get(EnterpriseObject, object_id).phase == "active"
         assert observer.get(AuditRecord, audit[0].id).subject_enterprise_object_id == object_id
 
@@ -235,7 +252,9 @@ def test_business_constraint_failure_precedes_audit(db, monkeypatch):
 
 
 @pytest.mark.parametrize("failure", ["audit_validation", "audit_database", "business_after_audit"])
-def test_create_failure_then_caller_rollback_is_not_durable(engine, monkeypatch, failure):
+def test_create_failure_then_caller_rollback_is_not_durable(
+    engine, execution_policy, monkeypatch, failure
+):
     observed = {}
     original = AuditService.record
 
@@ -252,7 +271,8 @@ def test_create_failure_then_caller_rollback_is_not_durable(engine, monkeypatch,
     if failure == "audit_database":
         event.listen(AuditRecord, "before_insert", corrupt_audit)
     try:
-        with Session(engine) as session:
+        with Session(engine, info={POLICY_KEY: execution_policy}) as session:
+            require_session(session)
             user = User()
             session.add(user)
             session.flush()
@@ -276,7 +296,8 @@ def test_create_failure_then_caller_rollback_is_not_durable(engine, monkeypatch,
                 session.flush()
             session.rollback()
         # Independent connection and transaction: no reliance on the writer's cache.
-        with Session(engine) as observer:
+        with Session(engine, info={POLICY_KEY: execution_policy}) as observer:
+            require_session(observer)
             assert observer.get(EnterpriseObject, observed["object_id"]) is None
             assert audit_record_repository.list_by_workspace(observer, workspace_id) == []
     finally:
@@ -334,77 +355,159 @@ def test_lock_refreshes_stale_loaded_phase(db):
     assert records(db)[0].content == {"phase": ["archived", "active"]}
 
 
-def test_two_connections_serialize_archive_and_reject_repeated_transition(engine):
-    # This test commits its own UUID-isolated setup; finally removes only those rows.
-    user_id, workspace_id = uuid.uuid4(), uuid.uuid4()
-    object_id = None
+def _durable_record(directory_variable, name, value):
+    directory = Path(os.environ[directory_variable])
+    # The Owner names fresh external destinations; never create or overwrite here.
+    if not directory.is_dir():
+        raise RuntimeError("Owner-named evidence destination is unavailable")
+    with (directory / name).open("x") as output:
+        json.dump(value, output, indent=2)
+        output.write("\n")
+        output.flush()
+        os.fsync(output.fileno())
+    descriptor = os.open(directory, os.O_RDONLY)
     try:
-        with Session(engine) as setup:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def _verify_lock_fixture(session, user_id, workspace_id, object_id):
+    from app.models import AgentDefinition, Task, WorkspaceMembership
+
+    require_session(session)
+    models = [User, Workspace, EnterpriseObject, WorkspaceMembership, AuditRecord,
+              Task, AgentDefinition]
+    counts = {model.__tablename__: session.scalar(select(func.count()).select_from(model))
+              for model in models}
+    expected = {model.__tablename__: int(model in (User, Workspace, EnterpriseObject))
+                for model in models}
+    if counts != expected:
+        raise RuntimeError("STOP: unexpected fixture rows or committed history")
+    user = session.get(User, user_id)
+    workspace = session.get(Workspace, workspace_id)
+    obj = session.get(EnterpriseObject, object_id)
+    if (
+        user is None or workspace is None or obj is None
+        or workspace.owner_id != user_id or obj.owner_id != user_id
+        or obj.workspace_id != workspace_id or obj.phase != "active"
+        or user.auth_issuer is not None or user.auth_subject is not None
+    ):
+        raise RuntimeError("STOP: fixture identities or recognition premises differ")
+    return counts
+
+
+def test_two_connections_hold_repository_lock_timeout_then_rollback(engine, execution_policy):
+    user_id, workspace_id, object_id = uuid.uuid4(), uuid.uuid4(), uuid.uuid4()
+    identity = {"user_id": str(user_id), "workspace_id": str(workspace_id),
+                "object_id": str(object_id)}
+    committed_setup = False
+    try:
+        with Session(engine, info={POLICY_KEY: execution_policy}) as setup:
+            require_session(setup)
             setup.add(User(id=user_id))
             setup.flush()
-            setup.add(Workspace(id=workspace_id, name="WP13 lock probe", owner_id=user_id))
+            setup.add(Workspace(
+                id=workspace_id, name="B4 synthetic lock fixture", owner_id=user_id
+            ))
             setup.flush()
-            object_id = Service.create(
-                setup,
-                workspace_id=workspace_id,
-                owner_id=user_id,
-                type="example",
-                actor_context=_test_context(setup, workspace_id),
-            )
+            repository.add(setup, EnterpriseObject(
+                id=object_id, workspace_id=workspace_id, owner_id=user_id,
+                type="example", phase="active",
+            ))
+            _verify_lock_fixture(setup, user_id, workspace_id, object_id)
             setup.commit()
-        with Session(engine) as first, Session(engine) as second:
-            assert first.scalar(text("SELECT pg_backend_pid()")) != second.scalar(
-                text("SELECT pg_backend_pid()")
-            )
-            Service.archive(
-                first,
-                workspace_id=workspace_id,
-                object_id=object_id,
-                actor_context=_test_context(first, workspace_id),
-            )
+            committed_setup = True
+        with Session(engine, info={POLICY_KEY: execution_policy}) as first, Session(
+            engine, info={POLICY_KEY: execution_policy}
+        ) as second:
+            require_session(first)
+            require_session(second)
+            pids = [first.scalar(text("SELECT pg_backend_pid()")),
+                    second.scalar(text("SELECT pg_backend_pid()"))]
+            assert pids[0] != pids[1]
+            obj = repository.get_by_id(first, workspace_id, object_id, for_update=True)
+            assert obj is not None and obj.phase == "active"
             second.execute(text("SET LOCAL lock_timeout = '200ms'"))
             with pytest.raises(OperationalError) as exc:
-                Service.archive(
-                    second,
-                    workspace_id=workspace_id,
-                    object_id=object_id,
-                    actor_context=_test_context(second, workspace_id),
-                )
+                repository.get_by_id(second, workspace_id, object_id, for_update=True)
             assert exc.value.orig.sqlstate == "55P03"
             second.rollback()
-            first.commit()
-            with pytest.raises(ValueError, match="cannot transition"):
-                Service.archive(
-                    second,
-                    workspace_id=workspace_id,
-                    object_id=object_id,
-                    actor_context=_test_context(second, workspace_id),
-                )
-            second.rollback()
-        with Session(engine) as observer:
-            assert repository.get_by_id(observer, workspace_id, object_id).phase == "archived"
-            audit = audit_record_repository.list_by_workspace(observer, workspace_id)
-            assert len(audit) == 2
-            assert sum(row.action == ENTERPRISE_OBJECT_UPDATED for row in audit) == 1
+            first.rollback()
+        with Session(engine, info={POLICY_KEY: execution_policy}) as observer:
+            counts = _verify_lock_fixture(observer, user_id, workspace_id, object_id)
+            # Successful re-acquisition independently proves release after rollback.
+            assert repository.get_by_id(
+                observer, workspace_id, object_id, for_update=True
+            ).phase == "active"
+            observer.rollback()
+        _durable_record("BIZZI_B4_EVIDENCE_DIR", "LOCK_AND_ROLLBACK_EVIDENCE.json", {
+            "identities": identity, "backend_pids": pids, "sqlstate": "55P03",
+            "first_transaction": "rolled back", "original_phase": "active",
+            "counts": counts, "committed_archive": False,
+        })
     finally:
-        with Session(engine) as cleanup:
-            cleanup.execute(delete(AuditRecord).where(AuditRecord.workspace_id == workspace_id))
-            cleanup.execute(
-                delete(EnterpriseObject).where(EnterpriseObject.workspace_id == workspace_id)
-            )
-            from app.models import WorkspaceMembership
+        # No broad finally cleanup: any unknown row/reference prevents deletion.
+        if committed_setup:
+            with Session(engine, info={POLICY_KEY: execution_policy}) as cleanup:
+                counts = _verify_lock_fixture(cleanup, user_id, workspace_id, object_id)
+                _durable_record("BIZZI_B4_LEDGER_DIR", "B4_FIXTURE_LEDGER.json", {
+                    "executor": "Codex", "requesting_owner": "Project Owner",
+                    "authority": "MVP-B4-D-LOCAL-2026-10-07; Block G and Block I",
+                    "decision_digest":
+                        "30b02899692ad495bbab2f56df0c18bc1eaa51d984dbb28a05b2c7f6d5ded782",
+                    "permission_digest":
+                        "6dd6312d6125212c7cddc42b7a87a8d154363d27b134af624364a0e48bb195b5",
+                    "scope_digest":
+                        "ff90b638527a6addf0f86caabaafce950339022192bcaf76f2f60e265745935c",
+                    "UTC": datetime.now(UTC).isoformat(), "identities": identity,
+                    "destination": "localhost:5433/bizzi_test", "role": "bizzi",
+                    "test_node": "test_two_connections_hold_repository_lock_timeout_then_rollback",
+                    "verified_counts": counts, "audit_and_membership_count": 0,
+                    "domain_attribution_added": False,
+                })
+                _durable_record("BIZZI_B4_LEDGER_DIR", "DELETION_INTENT.json", {
+                    "UTC": datetime.now(UTC).isoformat(), "identities": identity,
+                    "order": ["enterprise_objects", "workspaces", "users"],
+                    "authority": "Block G Q1-Q4; Block I item 4", "status": "intent",
+                })
+                affected = []
+                for model, row_id in [(EnterpriseObject, object_id),
+                                      (Workspace, workspace_id), (User, user_id)]:
+                    result = cleanup.execute(delete(model).where(model.id == row_id))
+                    if result.rowcount != 1:
+                        raise RuntimeError("STOP: exact fixture deletion count differs")
+                    affected.append({"table": model.__tablename__, "count": result.rowcount})
+                cleanup.commit()
+                _durable_record("BIZZI_B4_LEDGER_DIR", "DELETION_OUTCOME.json", {
+                    "UTC": datetime.now(UTC).isoformat(), "identities": identity,
+                    "rows_deleted": affected, "status": "committed",
+                })
 
-            cleanup.execute(
-                delete(WorkspaceMembership).where(WorkspaceMembership.workspace_id == workspace_id)
-            )
-            cleanup.execute(delete(Workspace).where(Workspace.id == workspace_id))
-            cleanup.execute(delete(User).where(User.id == user_id))
-            cleanup.commit()
+
+def test_repeated_archive_refused_with_one_pending_audit_then_rollback(db):
+    session, workspace_id, owner_id = db
+    obj = EnterpriseObject(workspace_id=workspace_id, owner_id=owner_id, type="example")
+    repository.add(session, obj)
+    context = _test_context(session, workspace_id)
+    Service.archive(session, workspace_id=workspace_id, object_id=obj.id, actor_context=context)
+    assert repository.get_by_id(session, workspace_id, obj.id).phase == "archived"
+    assert len(records(db)) == 1
+    assert records(db)[0].action == ENTERPRISE_OBJECT_UPDATED
+    with pytest.raises(ValueError, match="cannot transition"):
+        Service.archive(session, workspace_id=workspace_id, object_id=obj.id, actor_context=context)
+    assert len(records(db)) == 1
+    session.rollback()
+    assert repository.get_by_id(session, workspace_id, obj.id) is None
+    assert records(db) == []
+    _durable_record("BIZZI_B4_EVIDENCE_DIR", "REPEATED_TRANSITION_EVIDENCE.json", {
+        "archive_calls": 2, "pending_update_audits_before_rollback": 1,
+        "second_call": "refused", "after_rollback_object_present": False,
+        "after_rollback_audits": 0, "committed_archive": False,
+    })
 
 
 def _test_context(session, workspace_id):
-    from sqlalchemy import select
-
     from app.core.actor_context import ActorContext
     from app.models import WorkspaceMembership
 
