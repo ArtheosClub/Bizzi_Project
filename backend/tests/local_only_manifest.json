@@ -1,0 +1,7 @@
+{
+  "files": [
+    "tests/test_enterprise_object_repository_lock_local.py"
+  ],
+  "owner_decision_id": "Owner record L",
+  "owner_decision_source_sha256": "0123ced0601f832838cc0d0ccc4ab0c9a13c1bccdea30091d8b1e18b76d149b3"
+}

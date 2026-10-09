@@ -76,24 +76,63 @@ jobs:
       - name: Run migrations against a clean database
         run: uv run alembic upgrade head
 
+      - name: Prepare option L evidence and scratch
+        run: |
+          python - <<'PY_L_PATHS'
+          import os
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"])
+          evidence = root / "option-l-evidence"
+          scratch = root / "option-l-scratch"
+          if evidence.exists() or scratch.exists():
+              raise SystemExit("Fresh option L paths required")
+          evidence.mkdir()
+          scratch.mkdir()
+          (evidence / "rollback").mkdir()
+          values = {
+              "BIZZI_L_EVIDENCE": str(evidence),
+              "BIZZI_REPORT_PATH": str(evidence / "ci35.summary.json"),
+              "BIZZI_JUNIT_PATH": str(evidence / "ci35.junit.xml"),
+              "BIZZI_EVIDENCE_DIR": str(scratch),
+              "BIZZI_B4_EVIDENCE_DIR": str(evidence / "rollback"),
+          }
+          with Path(os.environ["GITHUB_ENV"]).open("a") as output:
+              for key, value in values.items():
+                  output.write(f"{key}={value}\n")
+          PY_L_PATHS
+
       - name: Test (pytest)
-        env:
-          BIZZI_EVIDENCE_DIR: ${{ runner.temp }}
-          BIZZI_REPORT_PATH: ${{ runner.temp }}/backend-summary.json
         run: |
           files=$(uv run python -m tests.ci_verification --list-files tests/ci_test_inventory.json) || exit 1
           test -n "$files" || exit 1
           uv run python -m pytest -p tests.ci_verification -p no:cacheprovider \
-            --junitxml="$RUNNER_TEMP/backend.junit.xml" \
+            --junitxml="$BIZZI_JUNIT_PATH" \
             $files
+
+      - name: Require partition guard node
+        run: |
+          python - <<'PY_L_GUARD'
+          import os
+          import xml.etree.ElementTree as ET
+          tree = ET.parse(os.environ["BIZZI_JUNIT_PATH"])
+          matches = [node for node in tree.findall(".//testcase")
+                     if node.get("classname") == "tests.test_ci_verification"
+                     and node.get("name") == "test_repository_partition_matches_declared_venues"]
+          if len(matches) != 1 or any(
+              matches[0].find(tag) is not None for tag in ("failure", "error", "skipped")
+          ):
+              raise SystemExit("Required partition guard missing or not successful")
+          print("Partition guard passed; one local-only file governed by Owner record L")
+          PY_L_GUARD
 
       - name: Validate full zero-skip result
         run: |
           uv run python -m tests.ci_verification \
-            --summary "$RUNNER_TEMP/backend-summary.json" \
-            --junit "$RUNNER_TEMP/backend.junit.xml" \
+            --summary "$BIZZI_REPORT_PATH" \
+            --junit "$BIZZI_JUNIT_PATH" \
             --inventory tests/ci_test_inventory.json \
             --head "$BIZZI_PR_HEAD_SHA"
+
 
   compose-e2e:
     name: docker compose up (Gate B step 7 end-to-end)

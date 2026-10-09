@@ -7,13 +7,12 @@ than presenting skipped acceptance criteria as a successful delivery.
 import json
 import os
 import uuid
-from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
-from sqlalchemy import create_engine, delete, event, func, select, text
-from sqlalchemy.exc import IntegrityError, OperationalError
+from sqlalchemy import create_engine, event, select, text
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
@@ -370,119 +369,6 @@ def _durable_record(directory_variable, name, value):
         os.fsync(descriptor)
     finally:
         os.close(descriptor)
-
-
-def _verify_lock_fixture(session, user_id, workspace_id, object_id):
-    from app.models import AgentDefinition, Task, WorkspaceMembership
-
-    require_session(session)
-    models = [User, Workspace, EnterpriseObject, WorkspaceMembership, AuditRecord,
-              Task, AgentDefinition]
-    counts = {model.__tablename__: session.scalar(select(func.count()).select_from(model))
-              for model in models}
-    expected = {model.__tablename__: int(model in (User, Workspace, EnterpriseObject))
-                for model in models}
-    if counts != expected:
-        raise RuntimeError("STOP: unexpected fixture rows or committed history")
-    user = session.get(User, user_id)
-    workspace = session.get(Workspace, workspace_id)
-    obj = session.get(EnterpriseObject, object_id)
-    if (
-        user is None or workspace is None or obj is None
-        or workspace.owner_id != user_id or obj.owner_id != user_id
-        or obj.workspace_id != workspace_id or obj.phase != "active"
-        or user.auth_issuer is not None or user.auth_subject is not None
-    ):
-        raise RuntimeError("STOP: fixture identities or recognition premises differ")
-    return counts
-
-
-def test_two_connections_hold_repository_lock_timeout_then_rollback(engine, execution_policy):
-    user_id, workspace_id, object_id = uuid.uuid4(), uuid.uuid4(), uuid.uuid4()
-    identity = {"user_id": str(user_id), "workspace_id": str(workspace_id),
-                "object_id": str(object_id)}
-    committed_setup = False
-    try:
-        with Session(engine, info={POLICY_KEY: execution_policy}) as setup:
-            require_session(setup)
-            setup.add(User(id=user_id))
-            setup.flush()
-            setup.add(Workspace(
-                id=workspace_id, name="B4 synthetic lock fixture", owner_id=user_id
-            ))
-            setup.flush()
-            repository.add(setup, EnterpriseObject(
-                id=object_id, workspace_id=workspace_id, owner_id=user_id,
-                type="example", phase="active",
-            ))
-            _verify_lock_fixture(setup, user_id, workspace_id, object_id)
-            setup.commit()
-            committed_setup = True
-        with Session(engine, info={POLICY_KEY: execution_policy}) as first, Session(
-            engine, info={POLICY_KEY: execution_policy}
-        ) as second:
-            require_session(first)
-            require_session(second)
-            pids = [first.scalar(text("SELECT pg_backend_pid()")),
-                    second.scalar(text("SELECT pg_backend_pid()"))]
-            assert pids[0] != pids[1]
-            obj = repository.get_by_id(first, workspace_id, object_id, for_update=True)
-            assert obj is not None and obj.phase == "active"
-            second.execute(text("SET LOCAL lock_timeout = '200ms'"))
-            with pytest.raises(OperationalError) as exc:
-                repository.get_by_id(second, workspace_id, object_id, for_update=True)
-            assert exc.value.orig.sqlstate == "55P03"
-            second.rollback()
-            first.rollback()
-        with Session(engine, info={POLICY_KEY: execution_policy}) as observer:
-            counts = _verify_lock_fixture(observer, user_id, workspace_id, object_id)
-            # Successful re-acquisition independently proves release after rollback.
-            assert repository.get_by_id(
-                observer, workspace_id, object_id, for_update=True
-            ).phase == "active"
-            observer.rollback()
-        _durable_record("BIZZI_B4_EVIDENCE_DIR", "LOCK_AND_ROLLBACK_EVIDENCE.json", {
-            "identities": identity, "backend_pids": pids, "sqlstate": "55P03",
-            "first_transaction": "rolled back", "original_phase": "active",
-            "counts": counts, "committed_archive": False,
-        })
-    finally:
-        # No broad finally cleanup: any unknown row/reference prevents deletion.
-        if committed_setup:
-            with Session(engine, info={POLICY_KEY: execution_policy}) as cleanup:
-                counts = _verify_lock_fixture(cleanup, user_id, workspace_id, object_id)
-                _durable_record("BIZZI_B4_LEDGER_DIR", "B4_FIXTURE_LEDGER.json", {
-                    "executor": "Codex", "requesting_owner": "Project Owner",
-                    "authority": "MVP-B4-D-LOCAL-2026-10-07; Block G and Block I",
-                    "decision_digest":
-                        "30b02899692ad495bbab2f56df0c18bc1eaa51d984dbb28a05b2c7f6d5ded782",
-                    "permission_digest":
-                        "6dd6312d6125212c7cddc42b7a87a8d154363d27b134af624364a0e48bb195b5",
-                    "scope_digest":
-                        "ff90b638527a6addf0f86caabaafce950339022192bcaf76f2f60e265745935c",
-                    "UTC": datetime.now(UTC).isoformat(), "identities": identity,
-                    "destination": "localhost:5433/bizzi_test", "role": "bizzi",
-                    "test_node": "test_two_connections_hold_repository_lock_timeout_then_rollback",
-                    "verified_counts": counts, "audit_and_membership_count": 0,
-                    "domain_attribution_added": False,
-                })
-                _durable_record("BIZZI_B4_LEDGER_DIR", "DELETION_INTENT.json", {
-                    "UTC": datetime.now(UTC).isoformat(), "identities": identity,
-                    "order": ["enterprise_objects", "workspaces", "users"],
-                    "authority": "Block G Q1-Q4; Block I item 4", "status": "intent",
-                })
-                affected = []
-                for model, row_id in [(EnterpriseObject, object_id),
-                                      (Workspace, workspace_id), (User, user_id)]:
-                    result = cleanup.execute(delete(model).where(model.id == row_id))
-                    if result.rowcount != 1:
-                        raise RuntimeError("STOP: exact fixture deletion count differs")
-                    affected.append({"table": model.__tablename__, "count": result.rowcount})
-                cleanup.commit()
-                _durable_record("BIZZI_B4_LEDGER_DIR", "DELETION_OUTCOME.json", {
-                    "UTC": datetime.now(UTC).isoformat(), "identities": identity,
-                    "rows_deleted": affected, "status": "committed",
-                })
 
 
 def test_repeated_archive_refused_with_one_pending_audit_then_rollback(db):
