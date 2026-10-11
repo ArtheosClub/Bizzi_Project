@@ -90,6 +90,41 @@ infrastructure, or any new AuditRecord subject kind.
 
 ---
 
+## D-12 — AR-2: reinstating main-push CI
+
+The push: main trigger removal covers only initial publication of
+feat/wp15-bounded-task-service. Block E item 4 requires:
+"A main-push run is reinstated, under its own Owner admission, before any second
+pull request to main or as soon as main can differ from a tested head,
+whichever comes first."
+This records the reopen condition, not permission to enable or execute CI.
+
+## D-13 — B4-E: deferred committed-audited-state interpretation
+
+No B4-E/D10 exception is adopted. **Reopen when** more than one test genuinely
+requires committed, audited state (Block G item 2), or a second local-only
+candidate arises (Block L item 4: Owner reconsideration of B4-E). Neither trigger
+automatically expands the one-file venue decision or deletion rules.
+
+## D-14 — Option L: reconsider local-only verification venue
+
+Editorial entry selected by Owner for this publication; not a DAI requirement
+invented from Block L. Return the single lock node to CI only under a new
+approved venue decision when admitted CI means satisfy Invariant 13 and
+preserve-rows STOP, with proper implementation/runtime/evidence. Variables,
+log streaming or post-test upload alone do not meet it (Block L item 10).
+Coverage frequency is reduced, provenance is local collector/Owner machine,
+and automation is reduced. Every exact candidate HEAD, including docs-only
+or rebase, needs a new approved local gate/review; no reuse on matching subtrees.
+Actual merge-result tree must equal tested tree; changed main is STOP.
+
+Sources for D-12–D-14:
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_OWNER_DECISION_BACKEND_CI_APPROVAL_AND_DECISION_2026-10-07.md`, SHA-256 `99d9efcdbd6644035cec2c13d16cb782648a4a114077f851b448cafbc2cb44a2`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_OWNER_DECISION_G_B4_ALTERNATIVE_D_2026-10-07.md`, SHA-256 `30b02899692ad495bbab2f56df0c18bc1eaa51d984dbb28a05b2c7f6d5ded782`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_OWNER_RECORD_L_OPTION_L_ARCHITECTURE_DECISION_2026-10-07_rev2.md`, SHA-256 `0123ced0601f832838cc0d0ccc4ab0c9a13c1bccdea30091d8b1e18b76d149b3`.
+
+---
+
 ## Explicitly not doing
 
 - **RKM-01 as a service** (`rkm validate/trace/graph/orphan/authority`
