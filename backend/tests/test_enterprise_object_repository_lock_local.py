@@ -28,6 +28,8 @@ from app.repositories import enterprise_object_repository as repository
 
 PREPARATION_ID = "MVP-OPTION-L-IMPLEMENTATION-2026-10-08"
 PREPARATION_SHA = "c758a1a01725262dc89e1c03d09df250d73dc0c741565e8bb1f2ff2b905f7fb9"
+GATE_PREPARATION_ID = "MVP-OPTION-L-MERGE-GATE-IMPLEMENTATION-2026-10-10"
+DEPENDENCY_PATHS = {"backend/pyproject.toml", "backend/uv.lock"}
 EDIT_PATHS = {
     "backend/tests/test_enterprise_object_service_persistence.py",
     "backend/tests/test_enterprise_object_repository_lock_local.py",
@@ -43,6 +45,80 @@ def _refuse(reason):
 
 def _hash(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _git(root, *args):
+    try:
+        return subprocess.check_output(
+            ["git", "--no-optional-locks", *args], cwd=root
+        )
+    except (OSError, subprocess.SubprocessError):
+        _refuse("git-observation")
+
+
+def _index_snapshot(root):
+    index = root / ".git/index"
+    try:
+        stat = index.stat()
+        return {"sha256": _hash(index), "size": stat.st_size, "mtime_ns": stat.st_mtime_ns}
+    except OSError:
+        _refuse("index")
+
+
+def _remote_main(root):
+    try:
+        result = subprocess.run(
+            ["git", "--no-optional-locks", "-c", "credential.helper=", "ls-remote",
+             "--exit-code", "https://github.com/ArtheosClub/Bizzi_Project.git", "refs/heads/main"],
+            cwd=root, env=dict(os.environ, GIT_TERMINAL_PROMPT="0",
+                               GIT_ASKPASS="/usr/bin/false", SSH_ASKPASS="/usr/bin/false"),
+            capture_output=True, text=True, timeout=20,
+        )
+    except (OSError, subprocess.SubprocessError):
+        _refuse("remote-main")
+    if result.returncode != 0:
+        _refuse("remote-main")
+    match = re.fullmatch(r"([0-9a-f]{40})\s+refs/heads/main\n?", result.stdout)
+    if match is None:
+        _refuse("remote-main")
+    return match[1]
+
+
+def _merge_gate_checks(root, binding, index_before):
+    if (root / ".env").exists() or (root / "backend/.env").exists():
+        _refuse("env-file")
+    for args in (("diff", "--name-only", "HEAD", "--", "backend", ".github"),
+                 ("diff", "--cached", "--name-only", "--", "backend", ".github"),
+                 ("ls-files", "--others", "--exclude-standard", "--", "backend", ".github")):
+        if _git(root, *args).strip():
+            _refuse("clean-tree")
+    for name in EDIT_PATHS:
+        if hashlib.sha256(_git(root, "show", "HEAD:" + name)).hexdigest() != binding[
+            "source_sha256_by_path"
+        ][name]:
+            _refuse("committed-source")
+    dependencies = binding.get("dependency_sha256_by_path", {})
+    if not isinstance(dependencies, dict) or set(dependencies) != DEPENDENCY_PATHS:
+        _refuse("dependency")
+    for name, digest in dependencies.items():
+        if _hash(root / name) != digest or hashlib.sha256(
+            _git(root, "show", "HEAD:" + name)
+        ).hexdigest() != digest:
+            _refuse("dependency")
+    values = _git(root, "rev-parse", "HEAD^{tree}", "HEAD:backend", "HEAD:.github",
+                  "origin/main").decode().splitlines()
+    if len(values) != 4:
+        _refuse("tree")
+    if values[:3] != [binding.get(k) for k in ("candidate_tree", "backend_tree", "github_tree")]:
+        _refuse("tree")
+    base = _git(root, "merge-base", "HEAD", "origin/main").decode().strip()
+    if (values[3] != binding.get("origin_main")
+            or base != binding.get("merge_base") or base != values[3]):
+        _refuse("main-base")
+    if _remote_main(root) != values[3]:
+        _refuse("remote-main")
+    if _index_snapshot(root) != index_before:
+        _refuse("index")
 
 
 def _load_admission():
@@ -75,11 +151,15 @@ def _load_admission():
         fields[label] = matches[0]
     if fields["Binding SHA-256"] != binding_sha:
         _refuse("binding-field")
-    if fields["Permission ID"] == PREPARATION_ID or not fields["Permission ID"].startswith(
-        "MVP-OPTION-L-WORKTREE-VALIDATION-"
-    ):
+    mode = binding.get("mode")
+    prefixes = {"WORKTREE_VALIDATION": "MVP-OPTION-L-WORKTREE-VALIDATION-",
+                "MERGE_GATE": "MVP-OPTION-L-MERGE-GATE-RUN-"}
+    prefix = prefixes.get(mode, "")
+    if fields["Permission ID"] in (PREPARATION_ID, GATE_PREPARATION_ID) or not prefix or not fields[
+        "Permission ID"
+    ].startswith(prefix):
         _refuse("permission-id")
-    if fields["Mode"] != binding.get("mode") or binding.get("mode") != "WORKTREE_VALIDATION":
+    if fields["Mode"] != mode:
         _refuse("mode")
     if not binding.get("collector") or fields["Collector"] != binding.get("collector"):
         _refuse("collector")
@@ -96,16 +176,17 @@ def _load_admission():
             _refuse("expired")
     except (ValueError, TypeError):
         _refuse("window")
-    if binding.get("preparation_permission_id") != PREPARATION_ID or binding.get(
-        "preparation_source_sha256"
-    ) != PREPARATION_SHA:
+    preparation_id = PREPARATION_ID if mode == "WORKTREE_VALIDATION" else GATE_PREPARATION_ID
+    preparation_sha = binding.get("preparation_source_sha256", "")
+    if binding.get("preparation_permission_id") != preparation_id or not re.fullmatch(
+        r"[0-9a-f]{64}", str(preparation_sha)
+    ) or (mode == "WORKTREE_VALIDATION" and preparation_sha != PREPARATION_SHA):
         _refuse("preparation")
     if any(key.startswith("execution_permission") for key in binding):
         _refuse("binding-run-fields")
     root = Path(__file__).resolve().parents[2]
-    head = subprocess.check_output(
-        ["git", "--no-optional-locks", "rev-parse", "HEAD"], cwd=root, text=True
-    ).strip()
+    index_before = _index_snapshot(root) if mode == "MERGE_GATE" else None
+    head = _git(root, "rev-parse", "HEAD").decode().strip()
     if binding.get("base_head") != head or binding.get("candidate_head") != head:
         _refuse("head")
     pins = binding.get("source_sha256_by_path", {})
@@ -121,8 +202,14 @@ def _load_admission():
     if get_settings().synthetic_execution_profile != "local_test":
         _refuse("profile")
     prep = Path(binding.get("preparation_source_path", ""))
-    if not prep.is_file() or _hash(prep) != PREPARATION_SHA:
+    if not prep.is_file() or _hash(prep) != preparation_sha:
         _refuse("preparation")
+    if mode == "MERGE_GATE":
+        if re.findall(r"^Preparation permission ID: (.+)$", prep.read_text(), re.M) != [
+            GATE_PREPARATION_ID
+        ]:
+            _refuse("preparation-field")
+        _merge_gate_checks(root, binding, index_before)
     allowed = binding.get("allowed_initial_contents", {})
     destinations = []
     for key in ("evidence_dir", "ledger_dir", "scratch_dir"):
@@ -293,8 +380,11 @@ def test_two_connections_hold_repository_lock_timeout_then_rollback(engine, exec
                     "executor": _ADMISSION["collector"], "requesting_owner": "Project Owner",
                     "authority": _ADMISSION["operative_permission_id"],
                     "permission_digest": _ADMISSION["operative_permission_sha256"],
-                    "preparation_permission": PREPARATION_ID,
-                    "preparation_digest": PREPARATION_SHA,
+                    "preparation_permission": _ADMISSION["preparation_permission_id"],
+                    "preparation_digest": _ADMISSION["preparation_source_sha256"],
+                    "mode": _ADMISSION["mode"],
+                    "candidate_head": _ADMISSION["candidate_head"],
+                    "candidate_tree": _ADMISSION.get("candidate_tree"),
                     "decision_digest":
                         "30b02899692ad495bbab2f56df0c18bc1eaa51d984dbb28a05b2c7f6d5ded782",
                     "UTC": datetime.now(UTC).isoformat(), "identities": identity,
