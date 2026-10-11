@@ -246,9 +246,9 @@ Default status for all packages in this version: `Planned`.
 
 | ID | Title | Priority | Depends On | Blocks | Deliverable / Acceptance Criteria |
 |---|---|---:|---|---|---|
-| WP13 | EnterpriseObject Model | P0 | WP06, WP08 | WP14, WP23 | `EnterpriseObject` model and migration plus a bounded audited repository/service — see Amendments A-01, A-02, A-12 |
+| WP13 | EnterpriseObject Model | P0 | WP06, WP08 | WP14, WP23 | `EnterpriseObject` model and migration plus a bounded audited repository/service — see Amendments A-01, A-02, A-12; proposed A-13 boundary is unapproved |
 | WP14 | AgentDefinition Model | P0 | WP13 | WP24, WP27 | Configurable agent definition with capabilities and permissions |
-| WP15 | Task Model and Lifecycle | P0 | WP13 | WP23–WP32 | Task states, owner, priority, source object, timestamps implemented — see Amendment A-04 |
+| WP15 | Task Model and Lifecycle | P0 | WP13 | WP23–WP32 | A-04 schema plus separately recorded create-only synthetic implementation; see publication amendment A-14; A-13 not approved |
 | WP16 | Minimal Identity and Authentication | P0 | WP09 | WP17, WP23, WP29 | One authenticated human user and service/agent identities supported — see Amendment A-03 |
 | WP17 | Role and Permission Checks | P1 | WP14, WP16 | WP27, WP29 | Basic RBAC for user, agent, reviewer, approver |
 | WP18 | Event Model and Persistence | P0 | WP08, WP13 | WP21, WP30, WP34 | Events stored with trace ID, correlation ID, type, source, timestamp |
@@ -268,6 +268,8 @@ the Project Owner decided; `Approved Commit or PR` records when that
 decision was committed — these are two distinct events and are not
 expected to fall on the same calendar date.
 
+**WP13 historical A-13 proposal note (not the current import matrix).** Unapproved proposed integration boundary: A-13 proposes applying the common WP13/WP15 implementation limitations to EnterpriseObjectService and its repository. The mandatory `backend/tests/test_bounded_service_import_boundary.py` would prohibit production consumers outside the proposed pair; reopening follows decision item 9 of A-13. A-12 is unchanged.
+
 | ID | WP | Date | Status | Change |
 |---|---|---|---|---|
 | A-01 | WP13 | 2026-08-02 | **Approved** | Acceptance criteria field `status` → `phase`. Original wording: *"CRUD model with canonical ID, type, status, owner, timestamps."* |
@@ -282,6 +284,8 @@ expected to fall on the same calendar date.
 | A-10 | WP14 | 2026-08-24 | **Approved** | Readiness and scope correction: WP14 status `🔴` → `🟡`. ADR-0013, ADR-0015, ADR-0009 and ADR-0004 authorize the schema foundation with exactly `id`, `workspace_id`, `phase`, `owner_id`, `created_at`, `updated_at`. GC-001 and ADW-05 remain open and unresolved; they are removed as schema-foundation blockers only. No repository, service, or API is authorized in this scope; ADR-0005/WP19 still applies. Original wording (`IMPLEMENTATION_BACKLOG.md`): *"Dependencies: WP13; GC-001 approval (Critical Path); ADW-05 (Critical Path — not yet written)."* Deliverables, Definition of Done, and Acceptance Criteria were *"not determinable until both Critical Path items close."* |
 | A-11 | WP19 | 2026-09-06 | **Approved** | Readiness and scope correction approved under the accepted ADR-0014 Q2 persisted-representation decision (`00_ARCHITECTURE/07_AUDIT/ADW07_Q2_PERSISTED_REPRESENTATION_DECISION.md`, ACCEPTED 2026-09-05), which closes the Q2 blocker A-09 recorded. Moves WP19 status `🔴` → `🟡` and narrows WP19 to a **minimal operational audit core**: `AuditRecord` model, migration, tests; an append-only repository (insert and read only); a minimal `AuditService.record(...)`; the business mutation and its audit record written through one SQLAlchemy session and one transaction; a required, indexed `workspace_id` (ADR-0004); five nullable subject-reference columns for `Workspace`, `EnterpriseObject`, `User`, `WorkspaceMembership`, `Task`, with database-enforced exactly-one and no persisted `subject_type`; action as a named constant; content as a field-level diff; every state-changing mutation within the authorized operational slice is treated as requiring atomic audit — WP19's own conservative interim choice, and GC-006's curated allowlist is still not adopted within that slice; the initial callable slice covers `EnterpriseObject` and `Task` mutations needed by WP13 and WP15, while other subject kinds remain schema-supported but require their own applicable workspace/context and service authorization before use. **Schema-only would not discharge the blocker**: a callable `AuditService` — not a table — is the unblocking unit. **Unblocking effect, precisely**: a callable `AuditService` is required to unlock the deferred audited-service work for WP13 and WP15. It also removes one prerequisite for later WP14 service work, but does **not** authorize or unblock audited `AgentDefinition` mutations: standalone `AgentDefinition` (ADR-0015, no `enterprise_objects` row) is not covered by the current five-kind AuditRecord subject contract and requires separate D5 / Q2-ST subject-kind or mapping authority, in addition to WP14's other unresolved runtime/configuration gates. Subject-reference columns are **not** FK constraints: Q2-RI admits absent database FK enforcement only "where durable correctness, validation, and historical subject resolvability are established through another explicit, recorded mechanism", which this amendment supplies as a write-time validation contract; creating real FKs would additionally require selecting a delete behavior, which the Q2 decision §8 neither selects nor pre-approves and which D3 §5 leaves expressly undecided. Actor attribution is **excluded** and remains with WP16's deferred remainder and ADW-02; D09 R10 remains unmodeled. Original opening wording (`IMPLEMENTATION_BACKLOG.md`, Deliverables, first sentence of a longer field): *"`AuditRecord` model/repository/service, atomic with the mutation it audits (ADR-0005)."* |
 | A-12 | WP13 | 2026-09-24 | **Approved** | Restores to WP13's Deliverables the audited-service half that A-02 deferred while `AuditService` did not exist, and narrows the Acceptance Criteria from the unqualified `CRUD works` to a bounded operation set. Records a bounded deferral of ADR-0005's post-commit `RuntimeEvent` emission. Wording being widened (`IMPLEMENTATION_BACKLOG.md`, as amended by A-02): *"EnterpriseObject model, migration."* |
+| A-13 | WP15, WP13 | — | **Not approved; deferred** | Adds bounded Task create/archive/unarchive and scoped repository without schema changes; common internal-use import gate for both Task and EnterpriseObject service/repository pairs; records retained D07 limitations, R9 exclusion and WP15-specific RuntimeEvent deferral. No production integration authority. The approval attribution was erroneous and is withdrawn. Original wording (`MVP_WORK_PACKAGE_PLAN.md`, WP15 row): *"Task states, owner, priority, source object, timestamps implemented — see Amendment A-04"*. |
+| A-14 | WP13, WP15, WP16, WP19, WP23 | 2026-10-11 | **Exact-byte adoption recorded separately** | Current bounded synthetic disposition; A-13 remains unapproved, A-12 unchanged; publication authority is the Owner register/write record, not the historical proposal. |
 
 **A-01 rationale.** WP13's original criteria were written before D07
 (`D07_STATE_SEMANTICS.md`) was approved and closed on 2026-07-22. D07 §6
@@ -999,6 +1003,74 @@ Decider: Andrew (Project Owner)
 Decision Date: 2026-09-24
 Approved Commit or PR: PR #50 (`docs/wp13-a12-approved`)
 ```
+
+#### Historical A-13 — not approved
+
+A-13 was never approved. The erroneous Approved attribution was withdrawn,
+with pre-correction bytes retained externally. No retrospective authority or
+A-12 expansion is created. The former candidate's operation list/import matrix
+is historical and is not the current scope in A-14.
+
+- Correction archive: `workflow_BIZZI/2026-10_wp15/a13_attribution_correction_2026-10-04/`, manifest.sha256 SHA-256 `ad2f7b9d49aabf693897ec3460b3d1d04ccab2b939b6118a2752eaeccd850183`.
+- Unapproved package: `workflow_BIZZI/2026-10_wp15/WP15_PROPOSED_APPROVAL_PACKAGE_2026-10-04.md`, SHA-256 `507bcf40140942fcc8aa134db796937039ea48b2ea6376b3964c2f0a68483be1`.
+
+Both sources remain unchanged. Current import control is retained under record 5
+and amendment 3, not A-13; intake is its specifically admitted service consumer.
+
+### A-14 — publication disposition of bounded synthetic MVP
+
+Publication authority is the separately recorded Owner adoption of these exact
+A-14 bytes. This amendment records independently adopted architecture
+and scoped local implementation; it does NOT approve A-13, expand A-12,
+ratify past use or authorize production, execution, push/PR/merge.
+
+| WP | Current bounded implementation | Remaining boundary |
+|---|---|---|
+| WP13 | Existing create/archive/unarchive primitive; create participates in synthetic WP23 | A-12 unchanged historically; no broad D07 or production certification |
+| WP16 | TokenVerifier interface, claims-only synthetic test double and server-resolved ActorContext | No real signature verification/provider project; G01 remains bounded/open |
+| WP19 | ActorContext ordinary audit; distinct bootstrap audit path and single-bootstrap rejection | Audit history/runtime event obligations retained; no generic deletion |
+| WP15 | Task create only, active phase forced, UUID return, same-transaction Task audit | Non-null source_object_id rejected; archive/unarchive/read APIs excluded |
+| WP23 | Synthetic pair creation returns Task ID; endpoint owns transaction under P4 | Default route disabled; enabled missing/invalid token 401, other authenticated denials uniform 404; no read endpoint |
+
+WP15 current Deliverables: create-only service/repository; Task-subject audit;
+full service/persistence tests; bounded import gate with intake service allowed
+to call both primitives, each repository callable only from its own service.
+No arbitrary ORM/reflection absence claim. Current acceptance: no non-null source
+reference or phase override accepted; persisted actor/membership/Workspace facts
+checked; both writes/audits roll back on failure; exact scoped whole-file evidence,
+not selected-test completion. Existing linked schema rows are not deleted.
+
+Task RuntimeEvent, bootstrap RuntimeEvent, G02, G03, G06 and G04 are bounded
+deferrals, not waivers, expiring before first real user or authoritative use,
+whichever first. WP13's historical event deferral remains A-12. No claims of
+complete attribution/authority history, ABA/version protection or idempotency.
+Historical environment/authoritative-use absence remains UNKNOWN; persistence
+and labels alone do not establish non-authority. Owner-supplied facts remain
+attestation, separate from technical evidence.
+
+Verification current record: 670 tests in 35 CI-inventory files and synthetic
+admission negatives; earlier one local-only lock run was WORKTREE_VALIDATION
+on previous bytes. Current positive MERGE_GATE NOT EXECUTED. Every candidate
+requires exact-head gate and successful applicable CI, no old-head substitution.
+CI/compose/runtime/publication/pre-merge/push/PR/merge requirements remain open.
+
+Authority is the independent Owner records, not historical A-13:
+- External adopted source `workflow_BIZZI/2026-10_adw02/mvp_decision_package_2026-10-04_revision_2/ADW02_MINIMUM_DECISIONS.md`, SHA-256 `d269d192e0793b5b44c94d71ac61ddb9e6e4b9388a47ff2399de0e11d59dd204`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/mvp_decision_package_2026-10-04_revision_2/MVP_BOUNDARY_DECISION_WP13_WP15.md`, SHA-256 `99f3bbb4b51207eecc50f076df080ad494c5a8e49910f317322dcb11a57e5fd7`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_RECORD_4B_BOOTSTRAP_AUDIT_ACTIONS_2026-10-04_rev3.md`, SHA-256 `b268398011f4e7752b683406bf7996fc0d70a0d1c15a97dbafc2d335cfe84378`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_RECORD_4C_SINGLE_BOOTSTRAP_2026-10-04.md`, SHA-256 `3e1396b1e95ff1c83416bb257c0c0eca5c9d425cd5ff4e81cf048446d6697948`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_RECORD_5_AMENDMENT_4_C1_C2_B5_2026-10-06_rev2.md`, SHA-256 `1b015fa8f805d4c6c914c004f54f2ac601a07fb71a12b45888e1ea4a1b9d7b71`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_WP23_CONTRACT_SELECTION_2026-10-05_rev2.md`, SHA-256 `30d5f61087d9f6aa54546fbf3dd78d870d7d82940273bf6c59999f1073441f83`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_WP23_DISABLED_ROUTE_AMENDMENT_2026-10-06_rev2.md`, SHA-256 `14af366e5059b8c4ecc60852bf5930dc325c50924d763cc02ecde21c4520fce0`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_OWNER_ARCHITECTURE_DECISIONS_F1_AND_P4_2026-10-07.md`, SHA-256 `9e20ac1b3e418dfb09a8e4685acfba6f4ea2748f9d8e013c2062349c0ad61011`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_OWNER_DECISION_BACKEND_CI_APPROVAL_AND_DECISION_2026-10-07.md`, SHA-256 `99d9efcdbd6644035cec2c13d16cb782648a4a114077f851b448cafbc2cb44a2`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_OWNER_DECISION_G_B4_ALTERNATIVE_D_2026-10-07.md`, SHA-256 `30b02899692ad495bbab2f56df0c18bc1eaa51d984dbb28a05b2c7f6d5ded782`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_OWNER_RECORD_L_OPTION_L_ARCHITECTURE_DECISION_2026-10-07_rev2.md`, SHA-256 `0123ced0601f832838cc0d0ccc4ab0c9a13c1bccdea30091d8b1e18b76d149b3`.
+
+
+Current import-matrix authority: external adopted record-5 amendment 3 source
+`workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_RECORD_5_AMENDMENT_3_WP23_IMPORT_MATRIX_2026-10-05_rev2.md`,
+SHA-256 `0e04a7ac047aca46f88084520b947daffb47c2b26ea7838827d962524ac6ec29`. This source, not A-13, admits the intake consumer.
 
 ## Gate D — First Vertical Slice
 

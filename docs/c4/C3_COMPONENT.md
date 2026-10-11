@@ -1,193 +1,126 @@
-# C3 — Component Diagram (Backend API container)
+# C3 — current bounded synthetic backend components
 
-Scope: components present in this revision of `backend/app/`, including the
-WP13/A-12 service slice. Solid nodes and arrows describe implemented pieces,
-not completion of an entire work package or availability through an API.
-The separate dashed graph retains earlier integration intentions, not current capabilities.
-The layer matrix below distinguishes models, repositories, services and APIs.
-This Python/FastAPI view follows ADR-0007 and ADR-0003.
+Current code baseline: 4ed6667a750cebfee1504bf665278518d2164860.
+This document describes implementation structure, not production exposure,
+completion of entire WPs, full D07 compliance or non-authority certification.
+A-13 is NOT APPROVED; its erroneous approval was corrected with external audit
+trail. A-12 remains historical WP13 authority without retroactive expansion.
+Later MVP records and scoped implementation grants are independent authority.
+Publication authority is the separately recorded Owner adoption of exact A-14
+bytes; this component view grants no code/runtime/provider/CI/compose operations.
 
-For the service/repository slice, dependency edges include its model and
-persistence layers (including explicitly labelled type dependencies), matching
-the layer matrix; service-internal helpers such as `audit_actions` are outside
-this view, not absent from the implementation.
-
-```mermaid
-%%{init: {"flowchart": {"nodeSpacing": 100, "rankSpacing": 160, "curve": "linear"}}}%%
-flowchart TB
-    subgraph API["Backend API — backend/app/"]
-        main["app.main / FastAPI"]
-        health["app.api.health / GET /health"]
-        config["app.core.config / Settings"]
-        logging_["app.core.logging / structured logging"]
-        errors["app.core.errors / error handlers"]
-        request["app.core.request_context / RequestIDMiddleware"]
-        session["app.db.session / engine, SessionLocal, get_db"]
-        base["app.db.base / Base + naming convention"]
-        models["app.models / ORM model modules"]
-        eo["EnterpriseObjectService / create, archive, unarchive"]
-        eorepo["enterprise_object_repository / add, scoped get/list"]
-        audit["AuditService.record / validate and derive audit subject"]
-        auditrepo["audit_record_repository / append-only API"]
-    end
-    db[("PostgreSQL")]
-    main --> health
-    main --> config
-    main --> logging_
-    main --> errors
-    request -->|"wraps FastAPI"| main
-    logging_ -->|"reads request identifier"| request
-    session --> config
-    session --> db
-    models --> base
-    eo -->|"scoped load or insert"| eorepo
-    eo -->|"same caller session"| audit
-    audit --> auditrepo
-    eo -->|"uses EnterpriseObject"| models
-    audit -->|"uses audit and subject models"| models
-    audit -->|"subject type annotation"| base
-    eorepo -->|"uses EnterpriseObject"| models
-    auditrepo -->|"uses AuditRecord"| models
-    eorepo -->|"caller-supplied SQLAlchemy Session"| db
-    auditrepo -->|"caller-supplied SQLAlchemy Session"| db
-```
-
-Repository-to-database arrows denote persistence through the supplied session,
-not repository-owned connections or transaction boundaries. Neither repository
-imports the application's session factory. `get_db` is not wired into a domain
-route. There is no implemented arrow from EnterpriseObjectService to runtime
-events or authorization: those integrations are outside A-12.
-
-## Implemented infrastructure
-
-| Component | Responsibility |
-| --- | --- |
-| `app.main`, `app.api.health` | FastAPI composition and health route |
-| `app.core.config` | Typed settings, required database URL |
-| `app.core.logging` | Structured logging with request identifier |
-| `app.core.request_context` | Outermost ASGI request-ID middleware, not domain-event correlation |
-| `app.core.errors` | ADR-0012 error handlers and error-only envelope |
-| `app.db.session` | SQLAlchemy engine, session factory and dependency generator |
-| `app.db.base` | Declarative base with constraint naming convention |
-| `app.models` | Groups ORM model submodules used by services and repositories; incoming edges refer to those model classes, not to an aggregation API. Its `__init__.py` separately imports models for `backend/alembic/env.py` metadata. |
-| `backend/alembic/` | Baseline and subsequent model migrations; not only an empty baseline |
-
-## Domain implementation by layer
-
-“Absent” means not implemented in this revision, not prohibited or authorized
-for immediate implementation. No row asserts that an entire WP is complete.
-
-| Subject | Model | Repository | Service | Domain API |
-| --- | --- | --- | --- | --- |
-| Workspace | Present | Absent | Absent | Absent |
-| User / WorkspaceMembership | Both present | Absent | Absent | Absent |
-| EnterpriseObject | Present; `phase`, not universal status | Scoped add/get/list | create/archive/unarchive (A-12) | Absent |
-| AgentDefinition | Present | Absent | Absent | Absent |
-| Task | Present | Absent | Absent | Absent |
-| AuditRecord | Present | Append-only insert and scoped reads | Existing AuditService.record (WP19 integration) | Absent |
-
-Role/permission checks, runtime events, ContextPackage and RuntimeSession are
-not implemented here. Their domain decisions and work-package dependencies
-remain governed by `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` and the relevant
-ADRs, rather than by the presence of a dashed node in this diagram.
-
-## Implemented mutation and audit path
-
-EnterpriseObjectService loads transitions by workspace and identity, locks and
-refreshes the row, validates its phase, and records the mutation through
-AuditService. Create flushes the new active object before the audit call.
-AuditService derives the canonical subject and workspace from that persistent
-subject and passes a formed audit record to its repository. Business code does
-not call the audit repository directly.
-
-The caller supplies one session and owns the transaction and failure rollback.
-Neither service nor repository commits or rolls back. Mutation operations return
-an identity or None, not an ORM object. Reads remain repository operations.
-
-The A-12 implementation does not discharge ADR-0005's post-commit RuntimeEvent
-obligation or amend that ADR. The obligation remains deferred outside this
-slice, as recorded in the A-12 approved Deliverables in
-`50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md` (Approval Record: PR 50).
-ADR-0009 §3 explicitly permits `active -> superseded` and
-`archived -> superseded`; its "A constraint on future work" section requires
-the D09-typed relationship. Those transitions remain outside A-12 until that
-relationship exists. See `docs/adr/0009-enterprise-object-phase-lifecycle.md`.
-No actor attribution, domain API, type/owner mutation or delete operation is
-introduced.
-
-The endpoint-level canonical flow remains documented in
-`docs/c4/C4_DYNAMIC_CANONICAL_FLOW.md`; this slice implements its bounded
-service/repository/audit portion, not a routed endpoint.
-
-## Retained integration intentions — not the implementation view
-
-The earlier diagram's thirteen dashed relationships are retained below rather
-than silently removed by the layer taxonomy change. This is a trace of the
-earlier target view, not authorization to implement its deferred components.
-Some relationships (EnterpriseObject persistence and audit) now have a bounded
-implementation shown above. Others still depend on approved future work.
-In particular, this graph does not override A-12's RuntimeEvent deferral or
-assert that actor resolution, authorization or domain routes exist today.
+## Component path
 
 ```mermaid
-%%{init: {"flowchart": {"nodeSpacing": 100, "rankSpacing": 160, "curve": "linear"}}}%%
 flowchart TB
-    identity["Identity / actor resolution"]
-    eo["EnterpriseObject integration"]
-    rbac["Role / permission checks"]
-    task["Task integration"]
-    agentDef["AgentDefinition integration"]
-    context["ContextPackage"]
-    runtime["RuntimeSession"]
-    event["Runtime events"]
-    audit["Audit integration"]
-    dbsession["Session-based persistence"]
-    apistd["Domain API error / response integration"]
-    identity -.->|"supplies ActorContext to"| eo
-    eo -.->|"checked via"| rbac
-    task -.->|"checked via"| rbac
-    task -.->|"assigned to"| agentDef
-    task -.->|"assembles"| context
-    agentDef -.->|"executes within"| runtime
-    runtime -.->|"produces"| event
-    eo -.->|"records via"| audit
-    task -.->|"records via"| audit
-    task -.->|"persists via (workspace-scoped repository, ADR-0004)"| dbsession
-    eo -.->|"persists via"| dbsession
-    apistd -.->|"wraps"| eo
-    apistd -.->|"wraps"| task
+    factory["app.main.create_application / default health-only"]
+    health["app.api.health"]
+    router["app.api.business_request_intake / explicitly composed only"]
+    identity["IdentityService / verified identity and ActorContext"]
+    auth["authenticate / TokenVerifier boundary"]
+    authorization["AuthorizationService / persisted owner facts"]
+    ur["user_repository"]
+    wr["workspace_repository"]
+    mr["workspace_membership_repository"]
+    ar["audit_record_repository"]
+    cli["app.cli.bootstrap_owner / test-invoked wrapper"]
+    verifier["TokenVerifier / default reject; synthetic claims test double"]
+    intake["BusinessRequestIntakeService.create"]
+    eo["EnterpriseObjectService / create, archive, unarchive"]
+    task["TaskService / create only"]
+    er["enterprise_object_repository"]
+    tr["task_repository / add only"]
+    audit["AuditService / ordinary actor path"]
+    bootstrap["Bootstrap service / own new User, Workspace, Membership"]
+    baudit["AuditService / separate bootstrap operation"]
+    db["guarded SQLAlchemy Session / PostgreSQL"]
+    factory --> health
+    factory -. admitted test policy .-> router
+    router --> identity
+    identity --> auth
+    auth --> verifier
+    identity --> ur
+    identity --> mr
+    identity --> authorization
+    cli --> auth
+    cli --> bootstrap
+    bootstrap --> ur
+    bootstrap --> wr
+    bootstrap --> mr
+    router --> intake
+    intake --> eo
+    intake --> task
+    eo --> er
+    task --> tr
+    eo --> audit
+    task --> audit
+    bootstrap --> baudit
+    bootstrap -->|"single-bootstrap AuditRecord query"| db
+    er --> db
+    tr --> db
+    audit --> ar
+    baudit --> ar
+    ar --> db
+    ur --> db
+    wr --> db
+    mr --> db
 ```
 
-## Multi-tenancy: implementation traceability, not a decision record
+## Layer/authority matrix
 
-This section describes the implementation and its governing sources; it does
-not create or amend authority. The governing artifacts are
-`docs/adr/0004-workspace-scoped-multi-tenancy.md` (Decision),
-`docs/adr/0010-workspace-membership-mvp-scope.md`, and Amendments A-03, A-11 and
-A-12 in `50_IMPLEMENTATION/MVP_WORK_PACKAGE_PLAN.md`.
+| Component | Implemented surface | Boundary |
+|---|---|---|
+| User/Workspace/Membership | Models, scoped persistence, identity/bootstrap | Synthetic verifier only; no real signature/provider |
+| EnterpriseObject | create/archive/unarchive, scoped repository | A-12 historical; actor/policy integration separately recorded |
+| Task | create, repository add | No archive/unarchive/get/list/read endpoint; non-null source creation rejected |
+| Business request | EO+Task create, Task ID response | One endpoint transaction under ADR-0017; no persisted EO-Task link |
+| Audit | ActorContext ordinary record and separate bootstrap record set | Bootstrap actions rejected by ordinary path; caller transaction |
+| AgentDefinition | Existing schema foundation | No new runtime/configuration authority |
+| RuntimeEvent | Not emitted by this bounded slice | Retained obligations and explicit hard-expiry deferrals |
 
-ADR-0004 permits no exception to workspace isolation. Its direct-field rule
-explicitly excludes `users` and `sessions`; that exception is not permission
-to bypass isolation, nor a claim that a sessions implementation exists here.
+Default application omits intake (404). In explicitly admitted test composition,
+missing/invalid token is 401; authenticated denial is uniform 404. The endpoint
+owns begin/commit/rollback only; intake delegates to guarded primitives. Audit
+and mutation share the caller Session/transaction, actor context resolved from
+persisted authorization facts. G01 is not globally closed by this bounded design.
+Bootstrap directly queries AuditRecord through the guarded Session for the
+single-bootstrap check. It creates its own new subjects and three linked audit records, one
+bootstrap only; no ordinary-audit spoofing and no retrospective authority.
 
-- The implemented `EnterpriseObject`, `Task`, `AgentDefinition` and
-  `AuditRecord` models carry required, indexed `workspace_id` fields.
-  Event, ContextPackage and RuntimeSession remain future components; their
-  inclusion in the earlier target view does not establish delivered models.
-- `User` is not itself workspace-scoped. `WorkspaceMembership` records the
-  workspace relationship using `id, workspace_id, user_id, role, created_at`
-  under ADR-0010. A-03's rationale and Approval Record (2026-08-03, PR 19)
-  distinguish this schema foundation from deferred login, authentication
-  middleware and `ActorContext` resolution. No current runtime actor-resolution
-  behavior is claimed here.
-- A-12 repository reads take workspace identity explicitly. Insert takes an
-  already-formed object rather than a second, competing workspace argument.
-  Scoping does not implement authorization; the trusted caller supplies context.
-- `AuditRecord` carries `workspace_id`, but the value is never supplied
-  independently by a calling service — `AuditService.record(...)` derives it
-  from the audited subject and constructs the record; `audit_record_repository`
-  receives an already-formed record and does not compute the scope. There is
-  one owner of this derivation, rather than a separate implementation per
-  calling service. No calling service constructs an `AuditRecord.workspace_id`
-  itself. This is existing WP19 infrastructure integrated by the A-12 slice,
-  not a new WP13 audit service.
+## Boundaries and unresolved gates
+
+The import checker permits business_request_intake_service to call both bounded
+services and permits each protected repository only from its own service.
+Computed reflection/arbitrary Session/raw SQL remain outside static coverage.
+ExecutionPolicy guards named paths, actual bind/role/libpq; profile is not an
+authority/provenance/non-authority label. Migration preflight is guarded too.
+CI inventory and exactly one local-only lock file form a recursive partition.
+Every exact-head formal local gate and applicable exact-head CI remain required.
+The latest positive lock evidence is prior-byte WORKTREE_VALIDATION, not a gate
+for current HEAD. No completed CI/compose/production gate claimed here.
+History UNKNOWNs, runtime/event/idempotency/version/history deferrals and expiry
+before first real user/authoritative use remain. See ADR-0016, ADR-0017 and plan A-14.
+
+## Historical correction trail
+
+Prior working C3 bytes and full SHA-256 are preserved in this publication
+package's baseline copy and the original A-13 attribution correction at
+workflow_BIZZI/2026-10_wp15/a13_attribution_correction_2026-10-04/.
+This replaces stale current diagrams, not the historical correction or A-12.
+
+## Decision references
+
+- External adopted source `workflow_BIZZI/2026-10_adw02/mvp_decision_package_2026-10-04_revision_2/ADW02_MINIMUM_DECISIONS.md`, SHA-256 `d269d192e0793b5b44c94d71ac61ddb9e6e4b9388a47ff2399de0e11d59dd204`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/mvp_decision_package_2026-10-04_revision_2/MVP_BOUNDARY_DECISION_WP13_WP15.md`, SHA-256 `99f3bbb4b51207eecc50f076df080ad494c5a8e49910f317322dcb11a57e5fd7`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_RECORD_4B_BOOTSTRAP_AUDIT_ACTIONS_2026-10-04_rev3.md`, SHA-256 `b268398011f4e7752b683406bf7996fc0d70a0d1c15a97dbafc2d335cfe84378`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_RECORD_4C_SINGLE_BOOTSTRAP_2026-10-04.md`, SHA-256 `3e1396b1e95ff1c83416bb257c0c0eca5c9d425cd5ff4e81cf048446d6697948`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_RECORD_5_AMENDMENT_4_C1_C2_B5_2026-10-06_rev2.md`, SHA-256 `1b015fa8f805d4c6c914c004f54f2ac601a07fb71a12b45888e1ea4a1b9d7b71`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_WP23_CONTRACT_SELECTION_2026-10-05_rev2.md`, SHA-256 `30d5f61087d9f6aa54546fbf3dd78d870d7d82940273bf6c59999f1073441f83`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_WP23_DISABLED_ROUTE_AMENDMENT_2026-10-06_rev2.md`, SHA-256 `14af366e5059b8c4ecc60852bf5930dc325c50924d763cc02ecde21c4520fce0`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_OWNER_ARCHITECTURE_DECISIONS_F1_AND_P4_2026-10-07.md`, SHA-256 `9e20ac1b3e418dfb09a8e4685acfba6f4ea2748f9d8e013c2062349c0ad61011`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_OWNER_DECISION_BACKEND_CI_APPROVAL_AND_DECISION_2026-10-07.md`, SHA-256 `99d9efcdbd6644035cec2c13d16cb782648a4a114077f851b448cafbc2cb44a2`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_OWNER_RECORD_L_OPTION_L_ARCHITECTURE_DECISION_2026-10-07_rev2.md`, SHA-256 `0123ced0601f832838cc0d0ccc4ab0c9a13c1bccdea30091d8b1e18b76d149b3`.
+
+Current import-matrix authority: external adopted record-5 amendment 3 source
+`workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_RECORD_5_AMENDMENT_3_WP23_IMPORT_MATRIX_2026-10-05_rev2.md`,
+SHA-256 `0e04a7ac047aca46f88084520b947daffb47c2b26ea7838827d962524ac6ec29`. This source, not A-13, admits the intake consumer.

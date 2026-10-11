@@ -158,6 +158,8 @@ item), 🟢 Unblocked.
 - **Risk**: Low.
 - **Owner**: Engineering.
 
+**WP13 historical A-13 proposal note (not the current import matrix).** Unapproved proposed integration boundary: A-13 proposes applying the common WP13/WP15 implementation limitations to EnterpriseObjectService and its repository. The mandatory `backend/tests/test_bounded_service_import_boundary.py` would prohibit production consumers outside the proposed pair; reopening follows decision item 9 of A-13. A-12 is unchanged.
+
 ## WP14 — AgentDefinition Model 🟡
 
 Split by Amendment A-10 (`MVP_WORK_PACKAGE_PLAN.md` § Gate C —
@@ -249,6 +251,78 @@ remainder, the same split shape WP16 carries after A-03.
 
 ## WP15 — Task Model and Lifecycle 🟢
 
+### A-14 — publication disposition of bounded synthetic MVP
+
+Publication authority is the separately recorded Owner adoption of these exact
+A-14 bytes. This amendment records independently adopted architecture
+and scoped local implementation; it does NOT approve A-13, expand A-12,
+ratify past use or authorize production, execution, push/PR/merge.
+
+| WP | Current bounded implementation | Remaining boundary |
+|---|---|---|
+| WP13 | Existing create/archive/unarchive primitive; create participates in synthetic WP23 | A-12 unchanged historically; no broad D07 or production certification |
+| WP16 | TokenVerifier interface, claims-only synthetic test double and server-resolved ActorContext | No real signature verification/provider project; G01 remains bounded/open |
+| WP19 | ActorContext ordinary audit; distinct bootstrap audit path and single-bootstrap rejection | Audit history/runtime event obligations retained; no generic deletion |
+| WP15 | Task create only, active phase forced, UUID return, same-transaction Task audit | Non-null source_object_id rejected; archive/unarchive/read APIs excluded |
+| WP23 | Synthetic pair creation returns Task ID; endpoint owns transaction under P4 | Default route disabled; enabled missing/invalid token 401, other authenticated denials uniform 404; no read endpoint |
+
+WP15 current Deliverables: create-only service/repository; Task-subject audit;
+full service/persistence tests; bounded import gate with intake service allowed
+to call both primitives, each repository callable only from its own service.
+No arbitrary ORM/reflection absence claim. Current acceptance: no non-null source
+reference or phase override accepted; persisted actor/membership/Workspace facts
+checked; both writes/audits roll back on failure; exact scoped whole-file evidence,
+not selected-test completion. Existing linked schema rows are not deleted.
+
+Task RuntimeEvent, bootstrap RuntimeEvent, G02, G03, G06 and G04 are bounded
+deferrals, not waivers, expiring before first real user or authoritative use,
+whichever first. WP13's historical event deferral remains A-12. No claims of
+complete attribution/authority history, ABA/version protection or idempotency.
+Historical environment/authoritative-use absence remains UNKNOWN; persistence
+and labels alone do not establish non-authority. Owner-supplied facts remain
+attestation, separate from technical evidence.
+
+Verification current record: 670 tests in 35 CI-inventory files and synthetic
+admission negatives; earlier one local-only lock run was WORKTREE_VALIDATION
+on previous bytes. Current positive MERGE_GATE NOT EXECUTED. Every candidate
+requires exact-head gate and successful applicable CI, no old-head substitution.
+CI/compose/runtime/publication/pre-merge/push/PR/merge requirements remain open.
+
+Authority is the independent Owner records, not historical A-13:
+- External adopted source `workflow_BIZZI/2026-10_adw02/mvp_decision_package_2026-10-04_revision_2/ADW02_MINIMUM_DECISIONS.md`, SHA-256 `d269d192e0793b5b44c94d71ac61ddb9e6e4b9388a47ff2399de0e11d59dd204`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/mvp_decision_package_2026-10-04_revision_2/MVP_BOUNDARY_DECISION_WP13_WP15.md`, SHA-256 `99f3bbb4b51207eecc50f076df080ad494c5a8e49910f317322dcb11a57e5fd7`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_RECORD_4B_BOOTSTRAP_AUDIT_ACTIONS_2026-10-04_rev3.md`, SHA-256 `b268398011f4e7752b683406bf7996fc0d70a0d1c15a97dbafc2d335cfe84378`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_RECORD_4C_SINGLE_BOOTSTRAP_2026-10-04.md`, SHA-256 `3e1396b1e95ff1c83416bb257c0c0eca5c9d425cd5ff4e81cf048446d6697948`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_RECORD_5_AMENDMENT_4_C1_C2_B5_2026-10-06_rev2.md`, SHA-256 `1b015fa8f805d4c6c914c004f54f2ac601a07fb71a12b45888e1ea4a1b9d7b71`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_WP23_CONTRACT_SELECTION_2026-10-05_rev2.md`, SHA-256 `30d5f61087d9f6aa54546fbf3dd78d870d7d82940273bf6c59999f1073441f83`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_WP23_DISABLED_ROUTE_AMENDMENT_2026-10-06_rev2.md`, SHA-256 `14af366e5059b8c4ecc60852bf5930dc325c50924d763cc02ecde21c4520fce0`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_OWNER_ARCHITECTURE_DECISIONS_F1_AND_P4_2026-10-07.md`, SHA-256 `9e20ac1b3e418dfb09a8e4685acfba6f4ea2748f9d8e013c2062349c0ad61011`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_OWNER_DECISION_BACKEND_CI_APPROVAL_AND_DECISION_2026-10-07.md`, SHA-256 `99d9efcdbd6644035cec2c13d16cb782648a4a114077f851b448cafbc2cb44a2`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/RC_DRAFT_OWNER_DECISION_G_B4_ALTERNATIVE_D_2026-10-07.md`, SHA-256 `30b02899692ad495bbab2f56df0c18bc1eaa51d984dbb28a05b2c7f6d5ded782`.
+- External adopted source `workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_OWNER_RECORD_L_OPTION_L_ARCHITECTURE_DECISION_2026-10-07_rev2.md`, SHA-256 `0123ced0601f832838cc0d0ccc4ab0c9a13c1bccdea30091d8b1e18b76d149b3`.
+
+
+Current import-matrix authority: external adopted record-5 amendment 3 source
+`workflow_BIZZI/2026-10_adw02/CODEX_DRAFT_RECORD_5_AMENDMENT_3_WP23_IMPORT_MATRIX_2026-10-05_rev2.md`,
+SHA-256 `0e04a7ac047aca46f88084520b947daffb47c2b26ea7838827d962524ac6ec29`. This source, not A-13, admits the intake consumer.
+
+#### Historical A-13 — not approved
+
+A-13 was never approved. The erroneous Approved attribution was withdrawn,
+with pre-correction bytes retained externally. No retrospective authority or
+A-12 expansion is created. The former candidate's operation list/import matrix
+is historical and is not the current scope in A-14.
+
+- Correction archive: `workflow_BIZZI/2026-10_wp15/a13_attribution_correction_2026-10-04/`, manifest.sha256 SHA-256 `ad2f7b9d49aabf693897ec3460b3d1d04ccab2b939b6118a2752eaeccd850183`.
+- Unapproved package: `workflow_BIZZI/2026-10_wp15/WP15_PROPOSED_APPROVAL_PACKAGE_2026-10-04.md`, SHA-256 `507bcf40140942fcc8aa134db796937039ea48b2ea6376b3964c2f0a68483be1`.
+
+Both sources remain unchanged. Current import control is retained under record 5
+and amendment 3, not A-13; intake is its specifically admitted service consumer.
+
+### Retained A-04 schema foundation — historical baseline
+
+The following schema criteria remain in force. References below to deferred service work describe the A-04 baseline; A-13 above is proposed and provides no service authority; the working service remains deferred.
+
 Narrowed by Amendment A-04 (`MVP_WORK_PACKAGE_PLAN.md` § Gate C —
 Amendments; approved 2026-08-04 by Project Owner) after
 `docs/adr/DOMAIN_REVIEW_TASK_LIFECYCLE.md` and `docs/adr/0011-task-phase-transition-graph.md`.
@@ -309,7 +383,14 @@ Amendments; approved 2026-08-04 by Project Owner) after
   undecided is blocking this WP's own scope," not "fully complete
   end-to-end."
 
+
+
+
 ## WP16 — Minimal Identity and Authentication 🟡
+
+Current bounded synthetic disposition: see A-14 in WP15 and the plan. Older
+schema/workshop readiness text below is retained historical baseline, not a
+claim that the current synthetic implementation grants production scope.
 
 Split by Amendment A-03 (`MVP_WORK_PACKAGE_PLAN.md` § Gate C —
 Amendments; approved 2026-08-03 by Project Owner) into a schema
@@ -486,6 +567,10 @@ ADW-07 must define, at minimum:
 workshop draft.)
 
 ## WP19 — AuditRecord Model 🟡
+
+Current bounded synthetic disposition: see A-14 in WP15 and the plan. Older
+schema/workshop readiness text below is retained historical baseline, not a
+claim that the current synthetic implementation grants production scope.
 
 Amended by A-11 (`MVP_WORK_PACKAGE_PLAN.md` § Gate C — Amendments;
 approved 2026-09-06 by Project Owner). The authorized scope is the minimal
@@ -737,6 +822,10 @@ established as that source.
 - **Owner**: Engineering.
 
 ## WP23 — Business Request Intake API 🟢
+
+Current bounded synthetic disposition: see A-14 in WP15 and the plan. Older
+schema/workshop readiness text below is retained historical baseline, not a
+claim that the current synthetic implementation grants production scope.
 
 - **Goal**: authenticated user creates request, object, and task.
 - **Dependencies**: WP13, WP15, WP16, WP22.
