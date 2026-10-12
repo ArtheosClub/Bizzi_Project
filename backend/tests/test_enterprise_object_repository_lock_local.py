@@ -411,5 +411,3 @@ def test_two_connections_hold_repository_lock_timeout_then_rollback(engine, exec
                     "UTC": datetime.now(UTC).isoformat(), "identities": identity,
                     "rows_deleted": affected, "status": "committed",
                 })
-
-
