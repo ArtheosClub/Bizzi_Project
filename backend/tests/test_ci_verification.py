@@ -468,10 +468,17 @@ def _merge_gate_probes(case_root, case, repo, profile, targets):
     run_id = "MVP-OPTION-L-MERGE-GATE-RUN-synthetic"
     preparation = case_root / "preparation-source.md"
     binding_path, grant_path = case_root / "binding.json", case_root / "owner-grant.md"
-    observations = subprocess.check_output(
-        ["git", "--no-optional-locks", "rev-parse", "HEAD", "HEAD^{tree}",
-         "HEAD:backend", "HEAD:.github", "origin/main"], text=True
-    ).splitlines()
+    observation_command = [
+        "git", "--no-optional-locks", "rev-parse", "HEAD", "HEAD^{tree}",
+        "HEAD:backend", "HEAD:.github",
+    ]
+    if profile != "ci_test":
+        observation_command.append("origin/main")
+    observations = subprocess.check_output(observation_command, text=True).splitlines()
+    if profile == "ci_test":
+        # Mock probe input only: shallow CI checkout has no local origin/main.
+        # Runtime admission still observes the real ref and remote independently.
+        observations.append("f" * 40)
     results = []
     for subcase in MERGE_CASES[case]:
         start = datetime.now(UTC) - timedelta(minutes=1)
@@ -681,3 +688,18 @@ def test_compose_verifier_is_in_full_partition():
     assert inventory["files"].count("tests/test_ci_compose_verification.py") == 1
     assert "tests/test_enterprise_object_service_persistence.py" in inventory["files"]
     assert LOCAL_FILE not in inventory["files"]
+
+
+@pytest.mark.parametrize("case", ADMISSION_CASES)
+def test_ci_admission_probes_need_no_remote_tracking_ref(probe_dir, monkeypatch, case):
+    check_output = subprocess.check_output
+
+    def shallow_checkout(command, **kwargs):
+        assert "origin/main" not in command
+        return check_output(command, **kwargs)
+
+    monkeypatch.setattr(subprocess, "check_output", shallow_checkout)
+    monkeypatch.setenv("SYNTHETIC_EXECUTION_PROFILE", "ci_test")
+    monkeypatch.setenv("BIZZI_EVIDENCE_DIR", str(probe_dir))
+    # Run every existing adverse case; child connection/remote calls stay trapped.
+    test_local_admission_negative_subprocesses(case)
