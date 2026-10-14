@@ -9,6 +9,7 @@ from app.core.config import get_settings
 from app.core.preproduction_guard import (
     POLICY_KEY,
     ExecutionPolicy,
+    require_business_policy,
     require_engine,
     require_test_destination,
     resolve_policy,
@@ -16,6 +17,7 @@ from app.core.preproduction_guard import (
 
 
 def get_db_for_policy(policy: ExecutionPolicy) -> Generator[Session]:
+    require_business_policy(policy)
     url = get_settings().database_url
     require_test_destination(url, policy)
     engine = create_engine(url, pool_pre_ping=True)

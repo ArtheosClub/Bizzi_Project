@@ -673,3 +673,11 @@ else:print(json.dumps({"status":"unexpected-success",**counts}))
                         "short_circuit": short_circuit,
                         "local_counterpart": subcase if short_circuit else None, **value})
     return results
+
+
+def test_compose_verifier_is_in_full_partition():
+    root = Path(__file__).resolve().parent.parent
+    inventory = json.loads((root / "tests/ci_test_inventory.json").read_text())
+    assert inventory["files"].count("tests/test_ci_compose_verification.py") == 1
+    assert "tests/test_enterprise_object_service_persistence.py" in inventory["files"]
+    assert LOCAL_FILE not in inventory["files"]

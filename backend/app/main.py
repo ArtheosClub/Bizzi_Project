@@ -8,7 +8,7 @@ from app.api.health import router as health_router
 from app.core.config import get_settings
 from app.core.errors import register_error_handlers
 from app.core.logging import configure_logging
-from app.core.preproduction_guard import ExecutionPolicy, require_policy
+from app.core.preproduction_guard import ExecutionPolicy, require_business_policy
 from app.core.request_context import RequestIDMiddleware
 
 configure_logging()
@@ -30,7 +30,7 @@ def create_application(policy: ExecutionPolicy | None = None) -> FastAPI:
     register_error_handlers(api)
     api.include_router(health_router)
     if policy is not None:
-        require_policy(policy)
+        require_business_policy(policy)
         from app.api.business_request_intake import router
         from app.db.session import get_db, get_db_for_policy
 

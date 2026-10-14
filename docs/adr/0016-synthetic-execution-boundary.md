@@ -1,6 +1,6 @@
 # ADR-0016: One explicit execution policy for synthetic mutation paths
 
-- Status: Accepted
+- Status: Superseded by ADR-0018
 - Date: 2026-10-07
 - Publication authority: separately recorded Owner adoption of this exact publication text.
 - Deciders: Project Owner.

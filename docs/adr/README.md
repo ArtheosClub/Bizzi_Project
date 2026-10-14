@@ -58,5 +58,6 @@ one decision per file. Template: `0000-adr-template.md`.
 | [0013](0013-agentdefinition-is-a-d02-enterprise-object.md) | AgentDefinition is a D02 EnterpriseObject | Accepted |
 | [0014](0014-auditrecord-must-durably-identify-its-subject.md) | AuditRecord must durably identify its audited subject | Accepted |
 | [0015](0015-standalone-persistence-default-for-d02-specializations.md) | Standalone persistence is the default for D02 EnterpriseObject specializations in the MVP | Accepted |
-| [0016](0016-synthetic-execution-boundary.md) | Explicit synthetic execution policy | Accepted |
+| [0016](0016-synthetic-execution-boundary.md) | Explicit synthetic execution policy | Superseded by ADR-0018 |
 | [0017](0017-wp23-synthetic-endpoint-transaction-exception.md) | Bounded synthetic WP23 transaction exception | Accepted |
+| [0018](0018-compose-synthetic-execution-boundary.md) | Synthetic execution boundary including compose migration/health | Accepted |

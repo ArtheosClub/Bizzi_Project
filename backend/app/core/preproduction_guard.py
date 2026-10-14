@@ -52,13 +52,13 @@ class ExecutionPolicy:
 LOCAL_TEST_POLICY = ExecutionPolicy("local_test")
 
 
-def _require_ci_context(context: CIContext | None) -> None:
+def _require_ci_context(context: CIContext | None, job: str = "backend") -> None:
     if type(context) is not CIContext:
         raise ScopeViolationError("Synthetic CI context is outside admitted policy")
     valid = (
         context.repository == "ArtheosClub/Bizzi_Project"
         and context.owner == "ArtheosClub"
-        and context.job == "backend"
+        and context.job == job
         and context.event == "pull_request"
         and context.base_ref == "main"
         and context.head_ref == "feat/wp15-bounded-task-service"
@@ -77,7 +77,7 @@ def _require_ci_context(context: CIContext | None) -> None:
 
 def resolve_policy(profile: str) -> ExecutionPolicy:
     """Context corroborates the job; it is not Owner authority or provenance."""
-    if profile == "ci_test":
+    if profile in {"ci_test", "ci_compose"}:
         names = (
             "GITHUB_REPOSITORY", "GITHUB_REPOSITORY_OWNER", "GITHUB_WORKFLOW_REF",
             "GITHUB_JOB", "GITHUB_EVENT_NAME", "GITHUB_REF", "GITHUB_BASE_REF",
@@ -95,8 +95,10 @@ def require_policy(policy: object) -> ExecutionPolicy:
         raise ScopeViolationError("Synthetic execution is outside admitted local policy")
     if policy.profile == "local_test" and policy.context is None:
         return policy
-    if policy.profile == "ci_test":
-        _require_ci_context(policy.context)
+    if policy.profile in {"ci_test", "ci_compose"}:
+        _require_ci_context(
+            policy.context, "compose-e2e" if policy.profile == "ci_compose" else "backend"
+        )
         return policy
     raise ScopeViolationError("Synthetic execution is outside admitted local policy")
 
@@ -109,7 +111,7 @@ def require_test_destination(database_url: str | URL, policy: object = LOCAL_TES
         url = make_url(database_url)
         valid = (
             url.drivername == "postgresql+psycopg"
-            and url.host == "localhost"
+            and url.host == ("postgres-test" if selected.profile == "ci_compose" else "localhost")
             and url.port == (5433 if selected.profile == "local_test" else 5432)
             and url.database == "bizzi_test"
             and url.username == "bizzi"
@@ -125,8 +127,16 @@ def require_engine(engine: Engine, policy: object) -> None:
     require_test_destination(engine.url, policy)
 
 
+def require_business_policy(policy: object) -> ExecutionPolicy:
+    """Compose admits migrations/health, never a domain Session or intake."""
+    selected = require_policy(policy)
+    if selected.profile == "ci_compose":
+        raise ScopeViolationError("Compose business execution is outside admitted policy")
+    return selected
+
+
 def require_session(session: Session) -> None:
-    policy = require_policy(session.info.get(POLICY_KEY))
+    policy = require_business_policy(session.info.get(POLICY_KEY))
     bind = session.get_bind()
     engine = bind.engine if isinstance(bind, Connection) else bind
     require_engine(engine, policy)

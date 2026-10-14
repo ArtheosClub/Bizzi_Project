@@ -1,0 +1,44 @@
+# Standalone synthetic migration/health composition; never overlay the dev file.
+services:
+  postgres-test:
+    image: postgres:18.4-alpine
+    environment:
+      POSTGRES_USER: bizzi
+      POSTGRES_PASSWORD: bizzi
+      POSTGRES_DB: bizzi_test
+    volumes:
+      - type: tmpfs
+        target: /var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bizzi -d bizzi_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  api:
+    build: .
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://bizzi:bizzi@postgres-test:5432/bizzi_test
+      SYNTHETIC_EXECUTION_PROFILE: ci_compose
+      GITHUB_REPOSITORY: ${GITHUB_REPOSITORY:?required}
+      GITHUB_REPOSITORY_OWNER: ${GITHUB_REPOSITORY_OWNER:?required}
+      GITHUB_WORKFLOW_REF: ${GITHUB_WORKFLOW_REF:?required}
+      GITHUB_JOB: ${GITHUB_JOB:?required}
+      GITHUB_EVENT_NAME: ${GITHUB_EVENT_NAME:?required}
+      GITHUB_REF: ${GITHUB_REF:?required}
+      GITHUB_BASE_REF: ${GITHUB_BASE_REF:?required}
+      GITHUB_HEAD_REF: ${GITHUB_HEAD_REF:?required}
+      BIZZI_PR_HEAD_REPOSITORY: ${BIZZI_PR_HEAD_REPOSITORY:?required}
+      BIZZI_PR_HEAD_SHA: ${BIZZI_PR_HEAD_SHA:?required}
+      BIZZI_CHECKOUT_SHA: ${BIZZI_CHECKOUT_SHA:?required}
+      GITHUB_ACTIONS: ${GITHUB_ACTIONS:?required}
+      RUNNER_ENVIRONMENT: ${RUNNER_ENVIRONMENT:?required}
+    ports:
+      - "127.0.0.1:8000:8000"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"]
+      interval: 5s
+      timeout: 10s
+      retries: 12

@@ -15,6 +15,7 @@
     "tests/test_bounded_service_import_boundary.py",
     "tests/test_business_request_intake.py",
     "tests/test_business_request_intake_persistence.py",
+    "tests/test_ci_compose_verification.py",
     "tests/test_ci_verification.py",
     "tests/test_enterprise_object_model.py",
     "tests/test_enterprise_object_persistence.py",

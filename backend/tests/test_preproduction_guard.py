@@ -66,3 +66,42 @@ def test_missing_or_changed_ci_context_refused(monkeypatch, name):
     monkeypatch.setenv(name, "unadmitted")
     with pytest.raises(ScopeViolationError):
         resolve_policy("ci_test")
+
+
+@pytest.mark.parametrize("name", CI_NAMES)
+def test_compose_context_missing_or_changed_refused(monkeypatch, name):
+    from app.core.preproduction_guard import resolve_policy
+
+    values = list(CI_VALUES)
+    values[3] = "compose-e2e"
+    for key, value in zip(CI_NAMES, values, strict=True):
+        monkeypatch.setenv(key, value)
+    monkeypatch.delenv(name)
+    with pytest.raises(ScopeViolationError):
+        resolve_policy("ci_compose")
+    monkeypatch.setenv(name, "unadmitted")
+    with pytest.raises(ScopeViolationError):
+        resolve_policy("ci_compose")
+
+
+def test_compose_migration_policy_never_business_policy(monkeypatch):
+    from app.core.preproduction_guard import require_business_policy, resolve_policy
+
+    for key, value in zip(CI_NAMES, CI_VALUES, strict=True):
+        monkeypatch.setenv(key, "compose-e2e" if key == "GITHUB_JOB" else value)
+    policy = resolve_policy("ci_compose")
+    require_test_destination("postgresql+psycopg://bizzi@postgres-test:5432/bizzi_test", policy)
+    with pytest.raises(ScopeViolationError):
+        require_business_policy(policy)
+    for url in (
+        "postgresql+psycopg://bizzi@localhost:5432/bizzi_test",
+        "postgresql+psycopg://bizzi@postgres:5432/bizzi_dev",
+        "postgresql+psycopg://bizzi@postgres-test:5433/bizzi_test",
+        "postgresql+psycopg://other@postgres-test:5432/bizzi_test",
+        "postgresql+psycopg://bizzi@postgres-test:5432/bizzi_test?host=remote",
+    ):
+        with pytest.raises(ScopeViolationError):
+            require_test_destination(url, policy)
+    monkeypatch.setenv("PGHOST", "unadmitted")
+    with pytest.raises(ScopeViolationError):
+        require_test_destination("postgresql+psycopg://bizzi@postgres-test:5432/bizzi_test", policy)

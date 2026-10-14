@@ -337,3 +337,184 @@ def test_ci_bind_refuses_before_sql_on_mock(monkeypatch, case):
     db.add.assert_not_called()
     db.flush.assert_not_called()
     engine.dispose()
+
+
+def test_compose_refuses_business_factory_provider_and_session(monkeypatch):
+    import app.db.session as provider
+    from app.core.preproduction_guard import resolve_policy
+    from app.main import create_application
+    from tests.test_preproduction_guard import CI_NAMES, CI_VALUES
+
+    for key, value in zip(CI_NAMES, CI_VALUES, strict=True):
+        monkeypatch.setenv(key, "compose-e2e" if key == "GITHUB_JOB" else value)
+    policy = resolve_policy("ci_compose")
+    constructor = Mock(side_effect=AssertionError("Engine creation forbidden"))
+    monkeypatch.setattr(provider, "create_engine", constructor)
+    monkeypatch.setattr(provider, "get_settings", lambda: SimpleNamespace(
+        database_url="postgresql+psycopg://bizzi@postgres-test:5432/bizzi_test"))
+    with pytest.raises(ScopeViolationError):
+        next(provider.get_db_for_policy(policy))
+    constructor.assert_not_called()
+    with pytest.raises(ScopeViolationError):
+        create_application(policy)
+    db = Mock()
+    db.info = {POLICY_KEY: policy}
+    with pytest.raises(ScopeViolationError):
+        require_session(db)
+    db.get_bind.assert_not_called()
+    for name in ("execute", "query", "scalar", "scalars", "add", "flush", "commit", "delete"):
+        getattr(db, name).assert_not_called()
+
+
+# Fixed bounded corpus: any changed/new source must be reviewed, never silently classified.
+CORPUS_SHA256 = {
+    'backend/app/api/__init__.py': (
+        'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    ),
+    'backend/app/api/business_request_intake.py': (
+        '7b15ca5d2a099f7561d051b5be3d8d886ecb586478fedaf86ca63a12d83950a4'
+    ),
+    'backend/app/api/health.py': (
+        'fcc29735819fec8288d87103525ea5b9c3c07683b444b4716344ddb599bff4b3'
+    ),
+    'backend/app/cli/__init__.py': (
+        'f4c0120ab70daf2f266725b1b98dc1711ed0bf9934a128408d3f5cd4a664909d'
+    ),
+    'backend/app/cli/bootstrap_owner.py': (
+        'b3363e919907bf7e76a4b9c54f337cdfc597065d7b890983970125d7ee941702'
+    ),
+    'backend/app/repositories/__init__.py': (
+        'a7f4ce28f14a68fbd25223aa964da9c5c36d7baeb669ec01caa424f6598c7dbd'
+    ),
+    'backend/app/repositories/audit_record_repository.py': (
+        '1bedd743606efca51dafdec797af9dc338de00f18fa3df0d6af255b59396b00e'
+    ),
+    'backend/app/repositories/enterprise_object_repository.py': (
+        '9870d0bd3fc7ea78eb360e7c881022a3a369f803749723f4fcb7bd2ffea2776e'
+    ),
+    'backend/app/repositories/task_repository.py': (
+        '0000a67b089f3f1a4e7b970582a413120b85b08204b207714d0f1f7d239d49c7'
+    ),
+    'backend/app/repositories/user_repository.py': (
+        '780ccdf2fdcd3bb912aa87f89ea3364ee5c0336fe775839b63949bd9d6c53007'
+    ),
+    'backend/app/repositories/workspace_membership_repository.py': (
+        'c2e24c69c136abbecaa319c82e6aeb61c973bc2389f0352099908465241ec2da'
+    ),
+    'backend/app/repositories/workspace_repository.py': (
+        '12836c803bca4942ba2644d3519c2f9f4981dee1a45ffc5b998bdad39ffc8678'
+    ),
+    'backend/app/services/__init__.py': (
+        'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    ),
+    'backend/app/services/audit_actions.py': (
+        '4433d0eca5b6a23dc02da490fb704a7c14db711713f64b30b15ad5fe2a3a9c22'
+    ),
+    'backend/app/services/audit_service.py': (
+        'b6071ede934df42423bd0e48a4b4eb23cd264e3bfaa455633b10c072606957d6'
+    ),
+    'backend/app/services/bootstrap_service.py': (
+        'fcb2aa57ab322e3cc6f23accbedd7da6585f4ff66676a1764fbe4315b02acfb4'
+    ),
+    'backend/app/services/business_request_intake_service.py': (
+        'd4c819325ab33576a2e995cd73294b964df6fdbd836d7bd170de46c6c1e15434'
+    ),
+    'backend/app/services/enterprise_object_service.py': (
+        'a7a367ed10341f0c5f730bb37711b529091efbe242142358ba16476cc384cf9b'
+    ),
+    'backend/app/services/identity_service.py': (
+        '18a5c2ede20bef2290caa7be6e68b95882d3537029e9d4c5aff5dc7aeabc7fa6'
+    ),
+    'backend/app/services/task_service.py': (
+        '7171a7d5d5cbd432e1f73a6da3ba2356c4687a04c767703b9be15a77a4c1e7e5'
+    ),
+}
+DELEGATED_CALLERS = {
+    "user_repository.get_by_auth_identity": {
+        "identity_service.IdentityService.resolve_actor_context"
+    },
+    "user_repository.get_by_id": {"identity_service.IdentityService.authorize"},
+    "user_repository.create_for_bootstrap": {"bootstrap_service.BootstrapService.create_owner"},
+    "workspace_repository.create_for_bootstrap": {
+        "bootstrap_service.BootstrapService.create_owner"
+    },
+    "workspace_membership_repository.find_for_identity": {
+        "identity_service.IdentityService.resolve_actor_context",
+        "identity_service.IdentityService.authorize"
+    },
+    "workspace_membership_repository.create_for_bootstrap": {
+        "bootstrap_service.BootstrapService.create_owner"},
+    "enterprise_object_repository.get_by_id": {"enterprise_object_service._transition"},
+    "enterprise_object_repository.list_by_workspace": set(),
+    "audit_record_repository.list_by_workspace": set(),
+}
+
+
+def test_current_business_paths_reach_require_session():
+    import ast
+    import hashlib
+    import json
+    import os
+
+    root = Path(__file__).parents[2]
+    files = {p.relative_to(root).as_posix(): p for folder in
+             ("services", "repositories", "api", "cli")
+             for p in (root / "backend/app" / folder).rglob("*.py")}
+    assert set(files) == set(CORPUS_SHA256), "new/missing static module requires review"
+    observed = {key: set() for key in DELEGATED_CALLERS}
+    evidence = []
+    for name, path in files.items():
+        source = path.read_bytes()
+        assert hashlib.sha256(source).hexdigest() == CORPUS_SHA256[name], name
+        tree = ast.parse(source)
+        aliases = {}
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom):
+                for alias in node.names:
+                    aliases[alias.asname or alias.name] = alias.name
+        parents = {child: node for node in ast.walk(tree) for child in ast.iter_child_nodes(node)}
+        functions = [node for node in ast.walk(tree)
+                     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))]
+        # The pins freeze all other service ordering/delegation; enumerate the unguarded
+        # repository call sites explicitly rather than claiming a general Python sandbox.
+        for function in functions:
+            owner = parents.get(function)
+            label = path.stem + "." + (
+                owner.name + "." if isinstance(owner, ast.ClassDef) else "") + function.name
+            guard_lines = [node.lineno for node in ast.walk(function)
+                           if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                           and aliases.get(node.func.id, node.func.id) == "require_session"]
+            for node in ast.walk(function):
+                if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute):
+                    continue
+                target = node.func
+                if not isinstance(target.value, ast.Name):
+                    continue
+                key = aliases.get(target.value.id, target.value.id) + "." + target.attr
+                if key not in DELEGATED_CALLERS:
+                    continue
+                observed[key].add(label)
+                # In these pinned callers, require_session is a standalone preceding
+                # statement. Check ancestor blocks, not merely textual line numbers.
+                guards = [statement for statement in function.body
+                          if isinstance(statement, ast.Expr)
+                          and isinstance(statement.value, ast.Call)
+                          and isinstance(statement.value.func, ast.Name)
+                          and aliases.get(statement.value.func.id, statement.value.func.id)
+                          == "require_session"]
+                assert any(g.lineno < node.lineno for g in guards), (label, key)
+                assert guard_lines
+                evidence.append({"caller": label, "target": key,
+                                 "guard_line": min(guard_lines), "call_line": node.lineno})
+    assert observed == DELEGATED_CALLERS
+    payload = {"scope": "bounded application delegation; direct repository entry excluded",
+               "pins": CORPUS_SHA256, "delegated_calls": evidence,
+               "test_only_outside_certification": [
+                   key for key, value in observed.items() if not value
+               ],
+               "dynamic_external": "UNKNOWN", "non_session": [
+                   "services/__init__.py", "services/audit_actions.py",
+                   "repositories/__init__.py", "api/__init__.py", "cli/__init__.py",
+                   "api/health.py"]}
+    (Path(os.environ["BIZZI_EVIDENCE_DIR"]) / "STATIC_BUSINESS_PATH_INVENTORY.json").write_text(
+        json.dumps(payload, indent=2) + "\n")
