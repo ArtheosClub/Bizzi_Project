@@ -200,7 +200,7 @@ CONTEXT_NAMES = (
 QUERIES = {
     "identity": "SELECT current_database(), current_user",
     "system_identifier": "SELECT system_identifier::text FROM pg_control_system()",
-    "psql_address": "SELECT inet_server_addr()::text, inet_server_port()",
+    "psql_address": "SELECT host(inet_server_addr()), inet_server_port()",
     "tables": "SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename",
     "revisions": "SELECT version_num FROM alembic_version ORDER BY version_num",
     "columns": ("SELECT table_name,column_name,data_type FROM information_schema.columns "

@@ -2,12 +2,14 @@
 
 import json
 from copy import deepcopy
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock
+from urllib.error import HTTPError
 
 import pytest
 
 from tests.ci_compose_verification import (
     EXPECTED_SCHEMA,
+    QUERIES,
     SCHEMA_SHA256,
     TABLES,
     Collector,
@@ -172,3 +174,106 @@ def test_public_failure_vocabulary_is_exact():
         "fresh-evidence", "command", "metadata", "container", "storage", "destination",
         "fresh-project", "fresh-schema", "schema", "health", "intake",
     }
+
+
+@pytest.fixture
+def mocked_collection(tmp_path, monkeypatch):
+    collector = Collector(tmp_path / "fresh", context())
+    state = {"migrated": False, "address": [["127.0.0.1", 5432]],
+             "identity": [["bizzi_test", "bizzi"]], "system": "123",
+             "schema": deepcopy(EXPECTED_SCHEMA), "rows": 0,
+             "health": 200, "intake": 404}
+
+    def command(argv, **kwargs):
+        if argv == ["git", "--no-optional-locks", "rev-parse", "HEAD"]:
+            return "a" * 40
+        if argv == ["git", "--no-optional-locks", "rev-parse", "HEAD^{tree}"]:
+            return "b" * 40
+        if argv == ["git", "--no-optional-locks", "diff", "--exit-code", "HEAD", "--"]:
+            return ""
+        assert argv[:len(collector.prefix)] == collector.prefix
+        if "api" in argv:
+            state["migrated"] = True
+        return ""
+
+    def rows(statement):
+        if statement == QUERIES["tables"]:
+            return [[v] for v in state["schema"]["tables"]] if state["migrated"] else []
+        if statement == QUERIES["identity"]:
+            return state["identity"]
+        if statement == QUERIES["psql_address"]:
+            return state["address"]
+        if statement == QUERIES["system_identifier"]:
+            return [[state["system"]]]
+        for key in ("columns", "indexes", "foreign_keys"):
+            if statement == QUERIES[key]:
+                return state["schema"][key]
+        if statement == QUERIES["revisions"]:
+            return [[v] for v in state["schema"]["revisions"]]
+        assert statement in {"SELECT count(*) FROM " + name for name in TABLES}
+        return [[state["rows"]]]
+
+    def http(request, **kwargs):
+        if isinstance(request, str):
+            assert request == "http://127.0.0.1:8000/health"
+            response = MagicMock()
+            response.__enter__.return_value = response
+            response.status = state["health"]
+            response.read.return_value = b'{"status":"ok"}'
+            return response
+        assert request.full_url == "http://127.0.0.1:8000/business-requests"
+        raise HTTPError(request.full_url, state["intake"], "synthetic", None, None)
+
+    monkeypatch.setattr(collector, "command", Mock(side_effect=command))
+    monkeypatch.setattr(collector, "rows", Mock(side_effect=rows))
+    monkeypatch.setattr(collector, "inspect", Mock(return_value={"Id": "c" * 64}))
+    monkeypatch.setattr("tests.ci_compose_verification.urlopen", Mock(side_effect=http))
+    return collector, state
+
+
+def test_psql_address_query_uses_host_without_netmask():
+    # This pins the SQL interface that the former mocked scalar test missed.
+    assert QUERIES["psql_address"] == "SELECT host(inet_server_addr()), inet_server_port()"
+
+
+def test_complete_mocked_collection_checks_schema_health_and_intake(mocked_collection):
+    collector, _ = mocked_collection
+    result = collector.collect()
+    validate_summary(result)
+    assert json.loads((collector.root / "PUBLIC_SUMMARY.json").read_text()) == result
+    assert result["host"] == "postgres-test" and result["port"] == 5432
+    assert result["schema_match"] and result["table_counts"] == dict.fromkeys(TABLES, 0)
+
+
+@pytest.mark.parametrize("case,reason", [
+    ("identity", "destination"), ("address", "destination"),
+    ("schema", "schema"), ("rows", "rows"), ("health", "health"), ("intake", "intake"),
+])
+def test_collection_preserves_adverse_findings(mocked_collection, case, reason):
+    collector, state = mocked_collection
+    if case == "identity":
+        state["identity"] = [["other", "bizzi"]]
+    elif case == "address":
+        state["address"] = [["10.0.0.1", 5432]]
+    elif case == "schema":
+        state["schema"]["indexes"].pop()
+    elif case == "rows":
+        state["rows"] = 1
+    elif case == "health":
+        state["health"] = 503
+    else:
+        state["intake"] = 200
+    with pytest.raises(EvidenceRefused, match="^" + reason + "$"):
+        collector.collect()
+    assert not (collector.root / "PUBLIC_SUMMARY.json").exists()
+
+
+@pytest.mark.parametrize("address", [
+    [["127.0.0.1/32", 5432]], [["10.0.0.1", 5432]], [["127.0.0.1", 5433]],
+])
+def test_psql_destination_acceptance_is_not_widened(mocked_collection, address):
+    collector, state = mocked_collection
+    state["address"] = address
+    with pytest.raises(EvidenceRefused, match="^destination$"):
+        collector.collect()
+    assert not state["migrated"]
