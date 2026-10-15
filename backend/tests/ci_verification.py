@@ -32,6 +32,36 @@ class RunSummary:
     marker: str = ""
     checkout_sha: str = ""
     event_head_sha: str = ""
+    event: str = ""
+    push_before: str | None = None
+    push_after: str | None = None
+    push_forced: bool | None = None
+    push_deleted: bool | None = None
+
+
+def event_metadata(env: dict[str, str]) -> dict[str, object]:
+    if any(key in env for key in ("BIZZI_PR_HEAD_SHA", "BIZZI_PR_HEAD_REPOSITORY")):
+        raise ValueError("Legacy event input refused")
+    event = env.get("GITHUB_EVENT_NAME", "")
+    if event not in {"", "pull_request", "push"}:
+        raise ValueError("Unknown event")
+    values: dict[str, object] = {"event": event, "push_before": None,
+        "push_after": None, "push_forced": None, "push_deleted": None}
+    names = ("BIZZI_PUSH_BEFORE", "BIZZI_PUSH_AFTER", "BIZZI_PUSH_FORCED", "BIZZI_PUSH_DELETED")
+    if event == "push":
+        head = env.get("BIZZI_EVENT_HEAD_SHA", "")
+        if (env.get("GITHUB_REF") != "refs/heads/main"
+            or re.fullmatch(r"[0-9a-f]{40}", head) is None
+            or env.get("GITHUB_SHA") != head or env.get("BIZZI_PUSH_AFTER") != head
+            or re.fullmatch(r"[0-9a-f]{40}", env.get("BIZZI_PUSH_BEFORE", "")) is None
+            or env.get("BIZZI_PUSH_FORCED") not in {"true", "false"}
+            or env.get("BIZZI_PUSH_DELETED") != "false"):
+            raise ValueError("Invalid push metadata")
+        values.update(push_before=env["BIZZI_PUSH_BEFORE"], push_after=head,
+                      push_forced=env["BIZZI_PUSH_FORCED"] == "true", push_deleted=False)
+    elif any(env.get(name) for name in names):
+        raise ValueError("Mixed event metadata")
+    return values
 
 
 _summary: RunSummary | None = None
@@ -39,13 +69,19 @@ _summary: RunSummary | None = None
 
 def pytest_configure(config: pytest.Config) -> None:
     global _summary
+    metadata = event_metadata(dict(os.environ))
     _summary = RunSummary(
         arguments=list(config.invocation_params.args),
         addopts=list(config.getini("addopts")),
         keyword=str(config.option.keyword),
         marker=str(config.option.markexpr),
         checkout_sha=os.environ.get("BIZZI_CHECKOUT_SHA", ""),
-        event_head_sha=os.environ.get("BIZZI_PR_HEAD_SHA", ""),
+        event_head_sha=os.environ.get("BIZZI_EVENT_HEAD_SHA", ""),
+        event=str(metadata["event"]),
+        push_before=cast(str | None, metadata["push_before"]),
+        push_after=cast(str | None, metadata["push_after"]),
+        push_forced=cast(bool | None, metadata["push_forced"]),
+        push_deleted=cast(bool | None, metadata["push_deleted"]),
     )
 
 
@@ -150,6 +186,17 @@ def validate(summary: Path, junit: Path, inventory: Path, head: str | None = Non
         or tree.findall(".//skipped")
     ):
         raise ValueError("JUnit disagrees with successful completion")
+    if report.get("event", "") == "push":
+        if (re.fullmatch(r"[0-9a-f]{40}", str(report.get("push_before", ""))) is None
+            or report.get("push_after") != report.get("event_head_sha")
+            or report.get("checkout_sha") != report.get("event_head_sha")
+            or type(report.get("push_forced")) is not bool
+            or report.get("push_deleted") is not False):
+            raise ValueError("Invalid push report")
+    elif (report.get("event", "") not in {"", "pull_request"}
+          or any(report.get(k) is not None for k in
+                 ("push_before", "push_after", "push_forced", "push_deleted"))):
+        raise ValueError("Mixed event report")
     if head is not None and (
         re.fullmatch(r"[0-9a-f]{40}", head) is None
         or report.get("checkout_sha") != head

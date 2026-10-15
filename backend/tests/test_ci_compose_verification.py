@@ -41,6 +41,7 @@ def summary():
         "table_counts": dict.fromkeys(TABLES, 0), "health_status": 200,
         "intake_unavailable": True, "observed_utc": "2026-10-13T00:00:00+00:00",
         "disposal_basis": "github-hosted-vm-platform-disposal",
+        "push_before": None, "push_after": None, "push_forced": None, "push_deleted": None,
     }
 
 
@@ -277,3 +278,60 @@ def test_psql_destination_acceptance_is_not_widened(mocked_collection, address):
     with pytest.raises(EvidenceRefused, match="^destination$"):
         collector.collect()
     assert not state["migrated"]
+
+
+@pytest.mark.parametrize("empty", [False, True])
+def test_push_context_and_public_report_have_no_pr_number(empty):
+    from tests.test_preproduction_guard import push_context
+
+    env = push_context("compose-e2e", empty=empty)
+    env.update(GITHUB_RUN_ID="1", GITHUB_RUN_ATTEMPT="1")
+    validate_context(env)
+    value = summary()
+    value.update(event="push", pr=None, push_before="b" * 40,
+                 push_after="a" * 40, push_forced=True, push_deleted=False)
+    validate_summary(value)
+    assert value["push_forced"] is True
+
+
+@pytest.mark.parametrize("key,value", [
+    ("BIZZI_PR_HEAD_SHA", ""), ("BIZZI_PR_HEAD_REPOSITORY", ""),
+    ("GITHUB_BASE_REF", "main"), ("GITHUB_SHA", "d" * 40),
+    ("BIZZI_PUSH_DELETED", "true"), ("BIZZI_PUSH_FORCED", "False"),
+    ("GITHUB_REF", "refs/tags/main"), ("GITHUB_JOB", "backend"),
+])
+def test_push_collector_refuses_mixed_or_legacy_context(key, value):
+    from tests.test_preproduction_guard import push_context
+
+    env = push_context("compose-e2e")
+    env.update(GITHUB_RUN_ID="1", GITHUB_RUN_ATTEMPT="1")
+    env[key] = value
+    with pytest.raises(EvidenceRefused):
+        validate_context(env)
+
+
+@pytest.mark.parametrize("key,value", [
+    ("pr", 0), ("push_before", "bad"), ("push_after", "c" * 40),
+    ("push_forced", "false"), ("push_deleted", True), ("event", "workflow_dispatch"),
+])
+def test_push_report_refuses_wrong_types_or_invented_pr(key, value):
+    data = summary()
+    data.update(event="push", pr=None, push_before="b" * 40,
+                push_after="a" * 40, push_forced=False, push_deleted=False)
+    data[key] = value
+    with pytest.raises(EvidenceRefused):
+        validate_summary(data)
+
+
+def test_full_mocked_push_collection_reports_native_flags(mocked_collection):
+    from tests.test_preproduction_guard import push_context
+
+    collector, _ = mocked_collection
+    env = push_context("compose-e2e")
+    env.update(GITHUB_RUN_ID="1", GITHUB_RUN_ATTEMPT="1")
+    collector.context = validate_context(env)
+    collector.env = env
+    result = collector.collect()
+    assert result["event"] == "push" and result["pr"] is None
+    assert result["push_before"] == "b" * 40 and result["push_after"] == "a" * 40
+    assert result["push_forced"] is False and result["push_deleted"] is False

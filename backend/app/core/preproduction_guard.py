@@ -41,6 +41,11 @@ class CIContext:
     checkout_sha: str
     actions: str
     runner_environment: str
+    native_sha: str = ""
+    push_before: str = ""
+    push_after: str = ""
+    push_forced: str = ""
+    push_deleted: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,22 +60,38 @@ LOCAL_TEST_POLICY = ExecutionPolicy("local_test")
 def _require_ci_context(context: CIContext | None, job: str = "backend") -> None:
     if type(context) is not CIContext:
         raise ScopeViolationError("Synthetic CI context is outside admitted policy")
-    valid = (
+    common = (
         context.repository == "ArtheosClub/Bizzi_Project"
         and context.owner == "ArtheosClub"
         and context.job == job
-        and context.event == "pull_request"
-        and context.base_ref == "main"
-        and context.head_ref == "feat/wp15-bounded-task-service"
-        and context.head_repository == context.repository
         and context.actions == "true"
         and context.runner_environment == "github-hosted"
-        and re.fullmatch(r"refs/pull/[1-9][0-9]*/merge", context.ref) is not None
         and context.workflow_ref
         == f"{context.repository}/.github/workflows/backend-ci.yml@{context.ref}"
         and re.fullmatch(r"[0-9a-f]{40}", context.head_sha) is not None
         and context.checkout_sha == context.head_sha
     )
+    pr = (
+        context.event == "pull_request"
+        and context.base_ref == "main"
+        and context.head_ref == "feat/wp15-bounded-task-service"
+        and context.head_repository == context.repository
+        and re.fullmatch(r"refs/pull/[1-9][0-9]*/merge", context.ref) is not None
+        and all(value == "" for value in (
+            context.push_before, context.push_after, context.push_forced,
+            context.push_deleted,
+        ))
+    )
+    push = (
+        context.event == "push"
+        and context.ref == "refs/heads/main"
+        and context.base_ref == context.head_ref == context.head_repository == ""
+        and context.native_sha == context.push_after == context.head_sha
+        and re.fullmatch(r"[0-9a-f]{40}", context.push_before) is not None
+        and context.push_forced in {"true", "false"}
+        and context.push_deleted == "false"
+    )
+    valid = common and (pr or push)
     if not valid:
         raise ScopeViolationError("Synthetic CI context is outside admitted policy")
 
@@ -78,13 +99,18 @@ def _require_ci_context(context: CIContext | None, job: str = "backend") -> None
 def resolve_policy(profile: str) -> ExecutionPolicy:
     """Context corroborates the job; it is not Owner authority or provenance."""
     if profile in {"ci_test", "ci_compose"}:
-        names = (
+        names: tuple[str, ...] = (
             "GITHUB_REPOSITORY", "GITHUB_REPOSITORY_OWNER", "GITHUB_WORKFLOW_REF",
             "GITHUB_JOB", "GITHUB_EVENT_NAME", "GITHUB_REF", "GITHUB_BASE_REF",
-            "GITHUB_HEAD_REF", "BIZZI_PR_HEAD_REPOSITORY", "BIZZI_PR_HEAD_SHA",
+            "GITHUB_HEAD_REF", "BIZZI_EVENT_HEAD_REPOSITORY", "BIZZI_EVENT_HEAD_SHA",
             "BIZZI_CHECKOUT_SHA", "GITHUB_ACTIONS", "RUNNER_ENVIRONMENT",
         )
-        policy = ExecutionPolicy(profile, CIContext(*(os.environ.get(n, "") for n in names)))
+        if any(n in os.environ for n in ("BIZZI_PR_HEAD_SHA", "BIZZI_PR_HEAD_REPOSITORY")):
+            raise ScopeViolationError("Legacy CI context is outside admitted policy")
+        names += ("GITHUB_SHA", "BIZZI_PUSH_BEFORE", "BIZZI_PUSH_AFTER",
+                  "BIZZI_PUSH_FORCED", "BIZZI_PUSH_DELETED")
+        context = CIContext(*(os.environ.get(n, "") for n in names))
+        policy = ExecutionPolicy(profile, context)
     else:
         policy = ExecutionPolicy(profile)
     return require_policy(policy)

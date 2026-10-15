@@ -1,6 +1,8 @@
 name: Backend CI
 
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
     paths:
@@ -13,10 +15,11 @@ permissions:
 jobs:
   backend:
     if: >-
-      github.event_name == 'pull_request' &&
       github.repository == 'ArtheosClub/Bizzi_Project' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      github.event.pull_request.head.ref == 'feat/wp15-bounded-task-service'
+      ((github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.head.ref == 'feat/wp15-bounded-task-service') ||
+       (github.event_name == 'push' && github.ref == 'refs/heads/main' && !github.event.deleted))
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -39,20 +42,24 @@ jobs:
 
     env:
       SYNTHETIC_EXECUTION_PROFILE: ci_test
-      BIZZI_PR_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
-      BIZZI_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      BIZZI_EVENT_HEAD_REPOSITORY: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || '' }}
+      BIZZI_EVENT_HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      BIZZI_PUSH_BEFORE: ${{ github.event_name == 'push' && github.event.before || '' }}
+      BIZZI_PUSH_AFTER: ${{ github.event_name == 'push' && github.event.after || '' }}
+      BIZZI_PUSH_FORCED: ${{ github.event_name == 'push' && toJSON(github.event.forced) || '' }}
+      BIZZI_PUSH_DELETED: ${{ github.event_name == 'push' && toJSON(github.event.deleted) || '' }}
       DATABASE_URL: postgresql+psycopg://bizzi:bizzi@localhost:5432/bizzi_test
 
     steps:
       - uses: actions/checkout@v7.0.0
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
 
       - name: Record exact event-head checkout
         run: |
           actual=$(git rev-parse HEAD)
-          test "$actual" = "$BIZZI_PR_HEAD_SHA"
+          test "$actual" = "$BIZZI_EVENT_HEAD_SHA"
           echo "BIZZI_CHECKOUT_SHA=$actual" >> "$GITHUB_ENV"
 
       # Verified current (git ls-remote --tags, 2026-07-17):
@@ -71,7 +78,7 @@ jobs:
         run: uv run ruff check .
 
       - name: Type check (mypy)
-        run: uv run mypy app tests/ci_verification.py
+        run: uv run mypy app tests/ci_verification.py tests/ci_compose_verification.py
 
       - name: Run migrations against a clean database
         run: uv run alembic upgrade head
@@ -131,33 +138,38 @@ jobs:
             --summary "$BIZZI_REPORT_PATH" \
             --junit "$BIZZI_JUNIT_PATH" \
             --inventory tests/ci_test_inventory.json \
-            --head "$BIZZI_PR_HEAD_SHA"
+            --head "$BIZZI_EVENT_HEAD_SHA"
 
 
   compose-e2e:
     name: docker compose up (Gate B step 7 end-to-end)
     if: >-
-      github.event_name == 'pull_request' &&
       github.repository == 'ArtheosClub/Bizzi_Project' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      github.event.pull_request.head.ref == 'feat/wp15-bounded-task-service'
+      ((github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.head.ref == 'feat/wp15-bounded-task-service') ||
+       (github.event_name == 'push' && github.ref == 'refs/heads/main' && !github.event.deleted))
     runs-on: ubuntu-latest
     needs: backend
     defaults:
       run:
         working-directory: backend
     env:
-      BIZZI_PR_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
-      BIZZI_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      BIZZI_EVENT_HEAD_REPOSITORY: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || '' }}
+      BIZZI_EVENT_HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      BIZZI_PUSH_BEFORE: ${{ github.event_name == 'push' && github.event.before || '' }}
+      BIZZI_PUSH_AFTER: ${{ github.event_name == 'push' && github.event.after || '' }}
+      BIZZI_PUSH_FORCED: ${{ github.event_name == 'push' && toJSON(github.event.forced) || '' }}
+      BIZZI_PUSH_DELETED: ${{ github.event_name == 'push' && toJSON(github.event.deleted) || '' }}
     steps:
       - uses: actions/checkout@v7.0.0
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Record exact event-head checkout
         run: |
           actual=$(git rev-parse HEAD)
-          test "$actual" = "$BIZZI_PR_HEAD_SHA"
+          test "$actual" = "$BIZZI_EVENT_HEAD_SHA"
           echo "BIZZI_CHECKOUT_SHA=$actual" >> "$GITHUB_ENV"
       - name: Collect bounded migration and health evidence
         # No raw build/up/psql/service logs printed; no uploader or explicit down -v.

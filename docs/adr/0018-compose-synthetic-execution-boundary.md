@@ -8,7 +8,7 @@ Affected Work Packages: bounded WP16/WP19/WP15/WP23; Gate B compose proof.
 Affected code: backend/app/core/preproduction_guard.py, main.py, db/session.py,
 backend/docker-compose.ci.yml, backend/tests/ci_compose_verification.py and workflow.
 
-- Status: Accepted
+- Status: Superseded by ADR-0019
 - Date: 2026-10-13
 - Deciders: Project Owner (recorded COMP-C01 and COMP-A-D).
 - Governance level: L3 / A7; DECISION_0003 section 11.

@@ -703,3 +703,45 @@ def test_ci_admission_probes_need_no_remote_tracking_ref(probe_dir, monkeypatch,
     monkeypatch.setenv("BIZZI_EVIDENCE_DIR", str(probe_dir))
     # Run every existing adverse case; child connection/remote calls stay trapped.
     test_local_admission_negative_subprocesses(case)
+
+
+@pytest.mark.parametrize("forced", ["false", "true"])
+def test_reporter_preserves_native_push_metadata(forced):
+    from tests.ci_verification import event_metadata
+    from tests.test_preproduction_guard import push_context
+
+    env = push_context()
+    env["BIZZI_PUSH_FORCED"] = forced
+    result = event_metadata(env)
+    assert result["push_after"] == env["GITHUB_SHA"]
+    assert result["push_forced"] is (forced == "true")
+    assert result["push_deleted"] is False
+
+
+@pytest.mark.parametrize("key,value", [
+    ("BIZZI_PR_HEAD_SHA", ""), ("BIZZI_PR_HEAD_REPOSITORY", ""),
+    ("GITHUB_SHA", "d" * 40), ("BIZZI_PUSH_DELETED", "true"),
+    ("BIZZI_PUSH_FORCED", "1"), ("BIZZI_PUSH_BEFORE", "bad"),
+    ("GITHUB_REF", "refs/heads/other"),
+])
+def test_reporter_rejects_mixed_or_bad_push_inputs(key, value):
+    from tests.ci_verification import event_metadata
+    from tests.test_preproduction_guard import push_context
+
+    env = push_context()
+    env[key] = value
+    with pytest.raises(ValueError):
+        event_metadata(env)
+
+
+def test_exact_head_push_report_is_validated(probe_dir):
+    summary, junit, inventory, report = report_files(probe_dir)
+    report.update(event="push", event_head_sha="a" * 40, checkout_sha="a" * 40,
+                  push_before="b" * 40, push_after="a" * 40,
+                  push_forced=True, push_deleted=False)
+    summary.write_text(json.dumps(report))
+    validate(summary, junit, inventory, "a" * 40)
+    report["push_after"] = "c" * 40
+    summary.write_text(json.dumps(report))
+    with pytest.raises(ValueError):
+        validate(summary, junit, inventory, "a" * 40)

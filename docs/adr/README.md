@@ -60,4 +60,5 @@ one decision per file. Template: `0000-adr-template.md`.
 | [0015](0015-standalone-persistence-default-for-d02-specializations.md) | Standalone persistence is the default for D02 EnterpriseObject specializations in the MVP | Accepted |
 | [0016](0016-synthetic-execution-boundary.md) | Explicit synthetic execution policy | Superseded by ADR-0018 |
 | [0017](0017-wp23-synthetic-endpoint-transaction-exception.md) | Bounded synthetic WP23 transaction exception | Accepted |
-| [0018](0018-compose-synthetic-execution-boundary.md) | Synthetic execution boundary including compose migration/health | Accepted |
+| [0018](0018-compose-synthetic-execution-boundary.md) | Synthetic execution boundary including compose migration/health | Superseded by ADR-0019 |
+| [0019](0019-main-push-ci-reinstatement.md) | Event-discriminated PR and main-push synthetic CI | Accepted |

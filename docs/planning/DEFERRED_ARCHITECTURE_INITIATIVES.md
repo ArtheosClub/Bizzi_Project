@@ -99,6 +99,8 @@ pull request to main or as soon as main can differ from a tested head,
 whichever comes first."
 This records the reopen condition, not permission to enable or execute CI.
 
+MAINCI-A prospectively admits event-discriminated PR/push-main contracts and one restoration delivery PR (explicitly the second PR) plus one exact final-H fast-forward as the sole AR2-55 freeze exception. See ADR-0019 and external MAINCI-A source SHA-256 35abda606c016c60db4a4130835f99a9ef3120ed5aabb7ab338c3edf2e2695a4. This publication is not runtime proof: implementation, local runtime, publication, hosted PR, G2, main integration, push observation and Owner closure require their separate records. Restoration status: PENDING observed exact-main push backend/compose success, reviewed native before/after/forced/deleted evidence and explicit Owner closure. No closure is claimed. On that closure the special AR2-55 freeze ends and Block E item 4 is satisfied, without granting future PR/main writes; Record L and action permissions remain. Unprotected-main residual retained.
+
 ## D-13 — B4-E: deferred committed-audited-state interpretation
 
 No B4-E/D10 exception is adopted. **Reopen when** more than one test genuinely

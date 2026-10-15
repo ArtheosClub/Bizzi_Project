@@ -194,8 +194,10 @@ EXPECTED_SCHEMA = {'columns': [['agent_definitions', 'id', 'uuid'],
 CONTEXT_NAMES = (
     "GITHUB_REPOSITORY", "GITHUB_REPOSITORY_OWNER", "GITHUB_WORKFLOW_REF",
     "GITHUB_JOB", "GITHUB_EVENT_NAME", "GITHUB_REF", "GITHUB_BASE_REF",
-    "GITHUB_HEAD_REF", "BIZZI_PR_HEAD_REPOSITORY", "BIZZI_PR_HEAD_SHA",
+    "GITHUB_HEAD_REF", "BIZZI_EVENT_HEAD_REPOSITORY", "BIZZI_EVENT_HEAD_SHA",
     "BIZZI_CHECKOUT_SHA", "GITHUB_ACTIONS", "RUNNER_ENVIRONMENT",
+    "GITHUB_SHA", "BIZZI_PUSH_BEFORE", "BIZZI_PUSH_AFTER",
+    "BIZZI_PUSH_FORCED", "BIZZI_PUSH_DELETED",
 )
 QUERIES = {
     "identity": "SELECT current_database(), current_user",
@@ -216,7 +218,8 @@ FIELDS = {"status", "reason", "repository", "event", "pr", "head_sha", "checkout
           "container_id", "project", "network", "storage_kind", "system_identifier",
           "host", "port", "database", "role", "migration_revision", "schema_sha256",
           "schema_match", "table_counts", "health_status", "intake_unavailable",
-          "observed_utc", "disposal_basis"}
+          "observed_utc", "disposal_basis", "push_before", "push_after",
+          "push_forced", "push_deleted"}
 
 
 # Public error vocabulary is closed; arbitrary exception text never becomes a reason.
@@ -242,28 +245,43 @@ def canonical_schema(value: object) -> str:
 
 
 def validate_context(env: dict[str, str]) -> dict[str, str]:
+    need(not any(k in env for k in ("BIZZI_PR_HEAD_SHA", "BIZZI_PR_HEAD_REPOSITORY")), "context")
     ref = env.get("GITHUB_REF", "")
-    sha = env.get("BIZZI_PR_HEAD_SHA", "")
+    sha = env.get("BIZZI_EVENT_HEAD_SHA", "")
     fixed = {"GITHUB_REPOSITORY": REPOSITORY, "GITHUB_REPOSITORY_OWNER": "ArtheosClub",
-             "GITHUB_JOB": "compose-e2e", "GITHUB_EVENT_NAME": "pull_request",
-             "GITHUB_BASE_REF": "main", "GITHUB_HEAD_REF": "feat/wp15-bounded-task-service",
-             "BIZZI_PR_HEAD_REPOSITORY": REPOSITORY, "GITHUB_ACTIONS": "true",
+             "GITHUB_JOB": "compose-e2e", "GITHUB_ACTIONS": "true",
              "RUNNER_ENVIRONMENT": "github-hosted"}
     need(all(env.get(k) == v for k, v in fixed.items()), "context")
-    need(re.fullmatch(r"refs/pull/[1-9][0-9]*/merge", ref), "context")
+    event = env.get("GITHUB_EVENT_NAME")
+    if event == "pull_request":
+        need(env.get("GITHUB_BASE_REF") == "main" and
+             env.get("GITHUB_HEAD_REF") == "feat/wp15-bounded-task-service" and
+             env.get("BIZZI_EVENT_HEAD_REPOSITORY") == REPOSITORY and
+             re.fullmatch(r"refs/pull/[1-9][0-9]*/merge", ref), "context")
+        need(not any(env.get(k) for k in
+             ("BIZZI_PUSH_BEFORE", "BIZZI_PUSH_AFTER", "BIZZI_PUSH_FORCED", "BIZZI_PUSH_DELETED")),
+             "context")
+    elif event == "push":
+        need(ref == "refs/heads/main" and not any(env.get(k) for k in
+             ("GITHUB_BASE_REF", "GITHUB_HEAD_REF", "BIZZI_EVENT_HEAD_REPOSITORY")), "context")
+        need(env.get("GITHUB_SHA") == env.get("BIZZI_PUSH_AFTER") == sha and
+             re.fullmatch(r"[0-9a-f]{40}", env.get("BIZZI_PUSH_BEFORE", "")) and
+             env.get("BIZZI_PUSH_FORCED") in {"true", "false"} and
+             env.get("BIZZI_PUSH_DELETED") == "false", "context")
+    else:
+        raise EvidenceRefused("context")
     need(env.get("GITHUB_WORKFLOW_REF") ==
          f"{REPOSITORY}/.github/workflows/backend-ci.yml@{ref}", "context")
-    need(re.fullmatch(r"[0-9a-f]{40}", sha) and env.get("BIZZI_CHECKOUT_SHA") == sha,
-         "checkout")
+    need(re.fullmatch(r"[0-9a-f]{40}", sha) and env.get("BIZZI_CHECKOUT_SHA") == sha, "checkout")
     for name in ("GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT"):
         need(re.fullmatch(r"[1-9][0-9]*", env.get(name, "")), "context")
-    return {k: env[k] for k in CONTEXT_NAMES}
+    return {k: env.get(k, "") for k in CONTEXT_NAMES}
 
 
 def validate_summary(value: dict[str, Any]) -> None:
     need(set(value) == FIELDS, "summary-fields")
     fixed = {"status": "PASS", "reason": "verified", "repository": REPOSITORY,
-             "event": "pull_request", "job": "compose-e2e", "runner_environment": "github-hosted",
+             "job": "compose-e2e", "runner_environment": "github-hosted",
              "image": "postgres:18.4-alpine", "storage_kind": "tmpfs",
              "host": "postgres-test", "port": 5432, "database": "bizzi_test", "role": "bizzi",
              "migration_revision": "adw02_02", "schema_sha256": SCHEMA_SHA256,
@@ -284,7 +302,19 @@ def validate_summary(value: dict[str, Any]) -> None:
             "summary-value",
         )
     need(value["checkout_sha"] == value["head_sha"], "checkout")
-    for name in ("pr", "run_id", "attempt"):
+    if value["event"] == "pull_request":
+        need(type(value["pr"]) is int and value["pr"] > 0 and
+             all(value[k] is None for k in
+                 ("push_before", "push_after", "push_forced", "push_deleted")), "summary-value")
+    elif value["event"] == "push":
+        need(value["pr"] is None and
+             isinstance(value["push_before"], str) and
+             re.fullmatch(r"[0-9a-f]{40}", value["push_before"]) and
+             value["push_after"] == value["head_sha"] and
+             type(value["push_forced"]) is bool and value["push_deleted"] is False, "summary-value")
+    else:
+        raise EvidenceRefused("summary-value")
+    for name in ("run_id", "attempt"):
         need(type(value[name]) is int and int(str(value[name])) > 0, "summary-value")
     counts = value["table_counts"]
     need(type(counts) is dict and set(counts) == set(TABLES), "rows")
@@ -362,7 +392,7 @@ class Collector:
         need(not self.command(self.prefix + ["ps", "-aq"]).strip(), "fresh-project")
         sha = self.command(["git", "--no-optional-locks", "rev-parse", "HEAD"]).strip()
         tree = self.command(["git", "--no-optional-locks", "rev-parse", "HEAD^{tree}"]).strip()
-        need(sha == self.context["BIZZI_PR_HEAD_SHA"] and
+        need(sha == self.context["BIZZI_EVENT_HEAD_SHA"] and
              re.fullmatch(r"[0-9a-f]{40}", tree), "checkout")
         self.command(self.prefix + ["up", "-d", "--wait", "--wait-timeout", "180", "postgres-test"])
         db = self.inspect("postgres-test")
@@ -397,7 +427,15 @@ class Collector:
             need(error.code == 404, "intake")
         summary: dict[str, Any] = {
             "status": "PASS", "reason": "verified", "repository": REPOSITORY,
-            "event": "pull_request", "pr": int(self.context["GITHUB_REF"].split("/")[2]),
+            "event": self.context["GITHUB_EVENT_NAME"],
+            "pr": (int(self.context["GITHUB_REF"].split("/")[2])
+                   if self.context["GITHUB_EVENT_NAME"] == "pull_request" else None),
+            "push_before": self.context["BIZZI_PUSH_BEFORE"] or None,
+            "push_after": self.context["BIZZI_PUSH_AFTER"] or None,
+            "push_forced": (self.context["BIZZI_PUSH_FORCED"] == "true"
+                            if self.context["GITHUB_EVENT_NAME"] == "push" else None),
+            "push_deleted": (self.context["BIZZI_PUSH_DELETED"] == "true"
+                             if self.context["GITHUB_EVENT_NAME"] == "push" else None),
             "head_sha": sha, "checkout_sha": sha, "checkout_tree": tree,
             "run_id": int(self.env["GITHUB_RUN_ID"]),
             "attempt": int(self.env["GITHUB_RUN_ATTEMPT"]),

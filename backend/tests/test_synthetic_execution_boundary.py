@@ -311,10 +311,9 @@ def test_alembic_checks_resolved_engine_or_offline_url(monkeypatch, mode):
 @pytest.mark.parametrize("case", ["port", "database", "role", "remote", "query", "override"])
 def test_ci_bind_refuses_before_sql_on_mock(monkeypatch, case):
     from app.core.preproduction_guard import PG_OVERRIDES, resolve_policy
-    from tests.test_preproduction_guard import CI_NAMES, CI_VALUES
+    from tests.test_preproduction_guard import CI_NAMES, CI_VALUES, install_ci_environment
 
-    for name, value in zip(CI_NAMES, CI_VALUES, strict=True):
-        monkeypatch.setenv(name, value)
+    install_ci_environment(monkeypatch, dict(zip(CI_NAMES, CI_VALUES, strict=True)))
     policy = resolve_policy("ci_test")
     urls = {
         "port": "postgresql+psycopg://bizzi@localhost:5433/bizzi_test",
@@ -343,10 +342,11 @@ def test_compose_refuses_business_factory_provider_and_session(monkeypatch):
     import app.db.session as provider
     from app.core.preproduction_guard import resolve_policy
     from app.main import create_application
-    from tests.test_preproduction_guard import CI_NAMES, CI_VALUES
+    from tests.test_preproduction_guard import CI_NAMES, CI_VALUES, install_ci_environment
 
-    for key, value in zip(CI_NAMES, CI_VALUES, strict=True):
-        monkeypatch.setenv(key, "compose-e2e" if key == "GITHUB_JOB" else value)
+    env = dict(zip(CI_NAMES, CI_VALUES, strict=True))
+    env["GITHUB_JOB"] = "compose-e2e"
+    install_ci_environment(monkeypatch, env)
     policy = resolve_policy("ci_compose")
     constructor = Mock(side_effect=AssertionError("Engine creation forbidden"))
     monkeypatch.setattr(provider, "create_engine", constructor)
