@@ -1087,6 +1087,20 @@ SHA-256 `0e04a7ac047aca46f88084520b947daffb47c2b26ea7838827d962524ac6ec29`. This
 | WP31 | Task and Session Completion | P0 | WP21, WP30 | WP32 | Task/session statuses close consistently with result references |
 | WP32 | Internal End-to-End Demo | P0 | WP23–WP31 | WP33–WP39 | Full scenario runs from request to visible approved result |
 
+### Gate D · recorded N exercise boundary (2026-11-23)
+
+Authority reference: recorded Owner Block `GATE-D-S0-N-SEMANTICS-ACCEPTANCE`, accepted source SHA-256 `238a44be9fdb95c3cc53b444ec50f11766f46707d06bd505196f22e9c0c44c73`. Recording receipt: `workflow_BIZZI/2026-10_adw02/mvp_revision_2_owner_records_audit_2026-10-04/gate_d_s0_n_semantics_2026-11-23_RECORDING.json`, SHA-256 `ce441fbc3904173977acb271de337eb02ab9aa89904d733f0ad31eea0d69bc15`. Recording verified by `workflow_BIZZI/2026-10_adw02/c01_gate_d_s0_n_semantics_recording_claude_verification_2026-11-23/VERIFICATION_RECORDING_GATE_D_S0_N_SEMANTICS_CLAUDE_2026-11-23.md`, SHA-256 `e195e9ec9879bae072ebad8d2c346ec49c72d6a79d512f3851a1cc3ffed90286`. These are external governance records, not repository implementation evidence.
+
+The accepted N boundary is a deterministic offline contract exercise on synthetic fixtures only: no domain reads or writes, real RuntimeSession/ContextPackage, provider/model/SDK, credentials, network, tools, delegation, business effects or retries. AgentDefinition, Task and Workspace are fixture values, not live records or actors. Approve/reject/rework are test observations only and never a business Decision or authorization. Technical evidence requires a separate scope and cannot be a hidden domain store.
+
+N does not demonstrate durable context. PRE-CODING-BRIEF §5.2 remains unchanged for real sessions; N creates no such session. In-memory fixture values or a technical report do not satisfy that requirement. Class A, P, D5 / Q2-ST subject-kind extensions, and persistence models are not accepted by N. Moving to P requires a new architecture decision.
+
+Provider/model remain OPEN. WP statuses, dependencies, deliverables, acceptance criteria and Definition of Done are unchanged: N closes no WP, including WP24–WP29, WP26 or WP32, and does not pass Gate D. A-14/A-12, the unapproved status of A-13 and ADR-0019 admission remain unchanged. Implementation, fixtures and execution are not authorized by this documentary synchronization.
+
+**WP17 conditional deferral (N only).** The agent-side WP17 deferral applies only to N because N uses no agent actor, protected domain call or domain mutation. WP14/WP16 runtime and actor prerequisites and GC-004/GC-008 remain open; existing checks are not disabled. The deferral expires before the first agent protected call, new role/actor, tools/delegation or real user, and no later than the first authoritative use, whichever occurs first. If the current exercise itself needs agent-side permissions, the deferral is inapplicable and that path remains BLOCKED. There is no automatic extension or RBAC bypass.
+
+Future fixture shapes must be explicitly test-only: they are not an approved canonical envelope or WP26 adapter interface. Product reuse requires an ACR. A separate implementation/admission scope must locate the stub in test-only code outside product runtime paths, bind exact fixtures and authorize any technical evidence. No run quota is granted here.
+
 ## Gate E — MVP Completion
 
 | ID | Title | Priority | Depends On | Blocks | Deliverable / Acceptance Criteria |
